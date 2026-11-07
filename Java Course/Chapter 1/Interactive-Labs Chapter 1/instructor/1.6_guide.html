@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The library kiosk</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 1.6</div>
+  <h1>The library kiosk</h1>
+<h2>Objectives</h2><ul><li>Find logic errors by comparing a program&#x27;s output with its specification</li><li>Modify a compiled class so its output changes</li><li>Explain why a change doesn&#x27;t appear until the class is recompiled</li><li>Distinguish compile-time errors from runtime (logic) errors</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The welcome appears on two lines, <code>Welcome to</code> and <code>Westside Library</code>, spelled correctly.</li><li><strong>R2</strong> <code>Closed Sundays</code> appears directly after the hours.</li><li><strong>R3</strong> Every message is on its own line: none run together.</li><li><strong>R4</strong> The full output matches the kiosk screen exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Predict exactly what the starter prints. How many lines appear, and what does the last one say?</p><div class="answer"><p>Three lines: <code>Welcome to Westside Libary</code>, the hours line, and <code>Returns go in the blue bin by the doorAsk a librarian for help</code>. The last two messages are joined because the first was printed with <code>print()</code>, which doesn&#x27;t move to a new line.</p></div></li><li><p>The starter compiles with no errors. Is &quot;Libary&quot; a syntax error or a logic error? Explain.</p><div class="answer"><p>A logic error. The misspelling is inside a literal string, and any combination of letters is legal there, so the compiler accepts it. The program runs but produces incorrect output, which can only be found by examining the output.</p></div></li></ol>
+<h2>Solution</h2><div class="file">KioskMessage.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">KioskMessage</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Welcome to"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Westside Library"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Hours: 9 AM to 8 PM, Monday to Saturday"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Closed Sundays"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Returns go in the blue bin by the door"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Ask a librarian for help"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Two logic errors were in the starter: <code>Libary</code> is misspelled inside a literal string (the compiler never checks spelling there), and <code>print()</code> leaves the insertion point on the same line, so the next message ran into it: <code>...by the doorAsk a librarian...</code>. Splitting the welcome is a modification: one statement becomes two, because a literal string can&#x27;t be broken across lines. After saving, the class must be recompiled, or <code>java KioskMessage</code> runs the old <code>.class</code> file.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestKioskMessage.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestKioskMessage</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java KioskMessage" would.</span>
+<span class="t-w">        </span><span class="t-n">KioskMessage</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Welcome to
+Westside Library
+Hours: 9 AM to 8 PM, Monday to Saturday
+Closed Sundays
+Returns go in the blue bin by the door
+Ask a librarian for help
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The welcome is split and spelled correctly<div class="small">in <code>KioskMessage.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>println\s*\(\s*&quot;Welcome to&quot;\s*\)\s*;\s*System\s*\.\s*out\s*\.\s*println\s*\(\s*&quot;Westside Library&quot;\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>Libary</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Closed Sundays follows the hours<div class="small">in <code>KioskMessage.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>&quot;Hours: 9 AM to 8 PM, Monday to Saturday&quot;\s*\)\s*;\s*System\s*\.\s*out\s*\.\s*println\s*\(\s*&quot;Closed Sundays&quot;\s*\)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>No message runs into the next one<div class="small">in <code>KioskMessage.main</code></div></td><td><div><span class="tag">require</span> <code>println</code></div><div><span class="tag">forbid</span> <code>\.\s*print\s*\(</code></div></td></tr><tr><td>C4</td><td>R3</td><td>Lines are built from separate statements<div class="small">in <code>KioskMessage.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>&quot;Westside Library&quot;</code></div><div><span class="tag">forbid</span> <code>\\n</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The welcome is split and spelled correctly</dt><dd><p>Use two consecutive <code>println()</code> statements: one for <code>Welcome to</code>, one for <code>Westside Library</code>. A literal string can&#x27;t continue onto the next line, so the split takes two statements. Check the spelling of Library against the screen.</p><div class='small'><strong>Hint:</strong></div><p>Read the starter&#x27;s first message one letter at a time.</p></dd><dt>C2 · Closed Sundays follows the hours</dt><dd><p>Add a <code>println()</code> statement with <code>Closed Sundays</code> immediately after the hours statement, so the two pieces of schedule information sit together.</p></dd><dt>C3 · No message runs into the next one</dt><dd><p>One statement uses <code>print()</code>, which leaves the insertion point on the same line, so the next message is glued to it (<code>...doorAsk a librarian...</code>). Each kiosk message needs to end its line.</p></dd><dt>C4 · Lines are built from separate statements</dt><dd><p>Make each line its own <code>println()</code> statement rather than putting <code>\n</code> inside a string, the way Figure 1-19 splits the First application&#x27;s output.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Write the starter&#x27;s actual output on paper, line by line, then put it next to the kiosk screen. Every difference is a logic error.</p></li><li><p>There are two kinds of difference: text that&#x27;s wrong inside the quotation marks, and lines that are joined because of the method used to print them.</p></li><li><p>Figure 1-19 shows how the First application&#x27;s output was split into two lines: two <code>println()</code> statements, each with part of the text.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>You edit <code>KioskMessage.java</code>, save it, and type <code>java KioskMessage</code>, but the kiosk still shows the old text. What happened, and what are the steps that fix it?</p><div class="answer"><p><code>java</code> runs the compiled <code>KioskMessage.class</code>, and that file still contains the old bytecode because the class wasn&#x27;t recompiled. The fix: save the source file, recompile it with <code>javac KioskMessage.java</code> (which replaces the old <code>.class</code> file), then run <code>java KioskMessage</code>.</p></div></li><li><p>The reading calls a logic error a kind of runtime error. Why is it usually harder to find than a syntax error?</p><div class="answer"><p>A syntax error is found by the compiler, which reports its line and nature. A logic error passes compilation; it shows up only when the program runs and someone notices the output is wrong, so the programmer must test and examine output carefully and then trace which statement caused it.</p></div></li></ol>
+<h2>Extension</h2><p>The library adds a message for holidays. Add it as the last line, then deliberately run the program before recompiling and note what you see. What does that show about the <code>.class</code> file?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; class and method names follow Java conventions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The fire drill that compiles</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 1.1</div>
+  <h1>The fire drill that compiles</h1>
+<h2>Objectives</h2><ul><li>Tell a syntax error from a logic error in a real program</li><li>Explain why a compiler accepts a program whose instructions are wrong</li><li>Fix logic by putting the right commands in the right order</li><li>Choose a test that would reveal a logic error</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The title line prints first, then the steps print in order: Step 1, Step 2, Step 3, Step 4.</li><li><strong>R2</strong> Step 2 sends people down the stairs, never the elevator: <code>Step 2: Take the stairs to the ground floor.</code></li><li><strong>R3</strong> A final step prints last: <code>Step 5: Do not re-enter until staff say it is safe.</code></li><li><strong>R4</strong> The program&#x27;s complete output matches the drill card exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Look at the starter without changing it. Will it compile? If it does, does that prove the program is correct? Explain in a sentence or two.</p><div class="answer"><p>Yes, it compiles: every statement follows Java&#x27;s syntax rules and ends with a semicolon. That only proves there are no syntax errors. The program can still be wrong: it prints Step 3 before Step 1 and tells people to use the elevator, which are logic errors the compiler cannot detect.</p></div></li><li><p>Predict the starter&#x27;s output line by line. Which line would a student in Room 214 see second?</p><div class="answer"><p>The title, then Step 3, Step 1, Step 2 (elevator) and Step 4, in the order the statements are written. The second line is &quot;Step 3: Walk to the assembly point in Lot C.&quot;, which is wrong: people would be told to walk to the lot before stopping work.</p></div></li></ol>
+<h2>Solution</h2><div class="file">FireDrill.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">FireDrill</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"FIRE DRILL - ROOM 214"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Step 1: Stop work and leave your belongings."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Step 2: Take the stairs to the ground floor."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Step 3: Walk to the assembly point in Lot C."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Step 4: Wait for your name to be called."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Step 5: Do not re-enter until staff say it is safe."</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Statements in <code>main()</code> run one after another, top to bottom, so the order of the <code>println()</code> calls <em>is</em> the order of the drill. The compiler accepted the original because every statement was legal Java; it cannot know that elevators are unsafe in a fire or that Step 3 should not come first. Those are logic errors, and only reading the output against the specification reveals them.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestFireDrill.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestFireDrill</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java FireDrill" would.</span>
+<span class="t-w">        </span><span class="t-n">FireDrill</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">FIRE DRILL - ROOM 214
+Step 1: Stop work and leave your belongings.
+Step 2: Take the stairs to the ground floor.
+Step 3: Walk to the assembly point in Lot C.
+Step 4: Wait for your name to be called.
+Step 5: Do not re-enter until staff say it is safe.
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The steps print in order after the title<div class="small">in <code>FireDrill.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>FIRE DRILL[\s\S]*&quot;Step 1:[\s\S]*&quot;Step 2:[\s\S]*&quot;Step 3:[\s\S]*&quot;Step 4:</code></div></td></tr><tr><td>C2</td><td>R2</td><td>No one is sent to the elevator<div class="small">in <code>FireDrill.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>&quot;Step 2: Take the stairs to the ground floor\.&quot;</code></div><div><span class="tag">forbid</span> <code>elevator</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Step 5 is added at the end<div class="small">in <code>FireDrill.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>&quot;Step 4:[\s\S]*println\s*\(\s*&quot;Step 5: Do not re-enter until staff say it is safe\.&quot;\s*\)\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The steps print in order after the title</dt><dd><p>Statements run from top to bottom, so the <code>println()</code> for Step 1 must come before Step 2, and so on, all after the title. Move whole statements; don&#x27;t renumber the text.</p><div class='small'><strong>Hint:</strong></div><p>Read the output as a student standing in Room 214 would. Which instruction must they follow first?</p></dd><dt>C2 · No one is sent to the elevator</dt><dd><p>Change the Step 2 text so it reads exactly <code>Step 2: Take the stairs to the ground floor.</code> The compiler can&#x27;t catch this one: any text inside quotation marks is legal Java, so a dangerous instruction compiles perfectly.</p></dd><dt>C3 · Step 5 is added at the end</dt><dd><p>Add one more <code>System.out.println(...)</code> statement after Step 4 with the exact text <code>Step 5: Do not re-enter until staff say it is safe.</code> Every statement ends with a semicolon.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter in your head first: <code>main()</code> executes its statements from the first line to the last. Write down the output in that order and compare it with what a safe drill needs.</p></li><li><p>You don&#x27;t need new Java for R1: cut a whole statement and paste it in a different place. The number inside the quotation marks is just text; it doesn&#x27;t control when a line runs.</p></li><li><p>For Step 5, copy the shape of an existing <code>println()</code> statement (class, dot, object, dot, method, parentheses, quotation marks, semicolon) and change only the text between the quotation marks.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The compiler accepted the word &quot;elevator&quot; without a warning. Why can&#x27;t a compiler catch this kind of mistake, and who is responsible for catching it?</p><div class="answer"><p>A compiler only checks that statements follow the language&#x27;s rules. Text inside quotation marks is a literal string and can contain any characters, so &quot;elevator&quot; is as legal as &quot;stairs&quot;. Whether the instruction is safe is a question about meaning, a logic error, so the programmer has to catch it by examining the output against the specification.</p></div></li><li><p>The reading warns that correct output for one test doesn&#x27;t prove a program is logically correct (a program that adds 2 and 2 also prints 4). Describe a check you could make on this drill program that would reveal an ordering mistake that a quick glance might miss.</p><div class="answer"><p>Compare every output line with the official drill card, in order, rather than looking only at the first or last line. A glance at the title or a single step would look fine; reading the full sequence (or having a second person do a structured walkthrough) shows whether Step 1 truly comes before Step 2, and so on.</p></div></li></ol>
+<h2>Extension</h2><p>Add a line before Step 1 that tells people which exit to use. Where must that statement go so the drill still makes sense, and why does the compiler not care where you put it?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; class and method names follow Java conventions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

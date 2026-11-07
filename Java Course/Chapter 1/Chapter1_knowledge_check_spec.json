@@ -1,0 +1,1403 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 1: Creating Java Programs",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 1 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "1.1",
+   "title": "Learning Programming Terminology",
+   "subtitle": "Software types, compilers and interpreters, syntax and logic errors, debugging",
+   "source": "Ch. 1, section 1.1 (pp. 1–4)",
+   "intro": "A payroll program translates without a single error message, yet every paycheck shows $40 instead of $4,000. Five questions on what a translator can and cannot catch.",
+   "takeaways": [
+    "A compiler or interpreter rejects only statements that break the language's rules. A program that translates cleanly can still do the wrong thing, so its output has to be tested.",
+    "A compiler translates the whole program before any statement runs. An interpreter translates and runs one statement at a time. Java uses both.",
+    "A test is only useful if a likely mistake would change its result: choose inputs where the right logic and the wrong logic give different answers."
+   ],
+   "questions": [
+    {
+     "id": "sw-categories",
+     "concept": "Application software vs system software",
+     "level": "apply",
+     "stem": "A school's lab computers run Linux, which manages memory, files and devices, and a gradebook program that teachers use to record scores. How does the reading classify these two programs?",
+     "options": [
+      {
+       "text": "Linux is system software; the gradebook is application software",
+       "feedback": "Linux manages the computer itself, which makes it system software. The gradebook performs a task for a user, which makes it an application.",
+       "correct": true
+      },
+      {
+       "text": "Both are application software, since people use both of them",
+       "feedback": "Everyone uses system software indirectly, so that can't be the dividing line. What decides it is whether the program manages the computer or does a task for a user."
+      },
+      {
+       "text": "Linux is a low-level language; the gradebook is a high-level one",
+       "feedback": "High-level and low-level describe programming *languages*. Linux and the gradebook are *programs*, which can be written in either kind of language."
+      },
+      {
+       "text": "Linux is hardware; the gradebook is software",
+       "feedback": "Hardware is physical equipment like a monitor or keyboard. An operating system is a set of instructions, so it is software."
+      }
+     ],
+     "hint": "Ask what each program is *for*: running the machine, or getting a job done for a person?",
+     "explanation": "Software splits by purpose. System software (such as Windows or Linux) manages the computer. Application software (payroll, word processing, games) performs a task for a user.",
+     "ref": "Ch. 1.1, application and system software, p. 2"
+    },
+    {
+     "id": "compiler-vs-interpreter",
+     "concept": "Compiler vs interpreter",
+     "level": "analyze",
+     "stem": "A program has 200 statements, and statement 150 contains a syntax error. What happens with a pure compiler compared with a pure interpreter?",
+     "options": [
+      {
+       "text": "The compiler reports it before anything runs; the interpreter runs 1–149 first",
+       "feedback": "A compiler translates the entire program before executing any of it. An interpreter translates and executes one statement at a time, so it only reaches the error after running the earlier statements.",
+       "correct": true
+      },
+      {
+       "text": "Both report the error before any statement runs",
+       "feedback": "That describes the compiler. An interpreter executes each statement as soon as it has translated it, so it has no chance to see statement 150 in advance."
+      },
+      {
+       "text": "The interpreter reports it before anything runs; the compiler runs 1–149 first",
+       "feedback": "This swaps the two. Translating everything first is what defines a compiler, not an interpreter."
+      },
+      {
+       "text": "Neither reports it; a syntax error only shows up as wrong output",
+       "feedback": "Wrong output is the sign of a logic error. A syntax error makes a statement untranslatable, and both kinds of translator stop to report it."
+      }
+     ],
+     "hint": "Which translator handles the *whole* program before carrying out any statement?",
+     "explanation": "A compiler translates a complete program before execution; an interpreter translates and executes statement by statement. Compiled programs tend to run faster; interpreted ones can be easier to develop and debug.",
+     "aside": "Java's split is less clear-cut today. The JVM starts by interpreting bytecode, but it notices code that runs often and compiles that part to machine code while the program runs. This is called just-in-time (JIT) compilation, and it is a large part of why Java programs run fast.",
+     "ref": "Ch. 1.1, compilers and interpreters, p. 2"
+    },
+    {
+     "id": "testing-2-and-2",
+     "concept": "Correct output does not prove correct logic",
+     "level": "evaluate",
+     "stem": "A program should multiply two numbers the user enters. A tester enters `2` and `2`, sees `4`, and declares the logic correct. What is the flaw in that conclusion?",
+     "options": [
+      {
+       "text": "2 + 2 is also 4, so this test can't tell multiplying from adding",
+       "feedback": "The test passes whether the program multiplies or adds by mistake. It only reveals the bug when those two operations give different answers.",
+       "correct": true
+      },
+      {
+       "text": "The compiler would have flagged a wrong operator, so no test was needed",
+       "feedback": "Using `+` where you meant `*` is perfectly legal Java. Translators catch syntax errors, not mistakes in logic."
+      },
+      {
+       "text": "There is no flaw; matching the expected value shows the logic is right",
+       "feedback": "One matching result shows the program worked for *those* inputs. Different logic can produce the same answer by coincidence."
+      },
+      {
+       "text": "Retesting with 0 and 0 instead would settle the question",
+       "feedback": "0 + 0 and 0 × 0 are both 0, so this falls into the same trap. Pick values such as 5 and 7, where the sum and product differ."
+      }
+     ],
+     "hint": "Can you think of a *wrong* operation that gives 4 from 2 and 2?",
+     "explanation": "A program that produces correct output can still contain a logic error. Choose test values for which the likely mistakes would give different results, and examine the output carefully.",
+     "aside": "The computer scientist Edsger Dijkstra put it this way around 1970: testing can show that bugs are present, but never that they are absent. That is why professionals combine testing with careful reading of the code.",
+     "ref": "Ch. 1.1, Note on correct output, p. 4"
+    },
+    {
+     "id": "syntax-vs-logic",
+     "concept": "Syntax errors vs logic errors",
+     "level": "apply",
+     "stem": "Which of these mistakes would the compiler catch?",
+     "options": [
+      {
+       "text": "Typing `statc` where the keyword `static` belongs",
+       "feedback": "A misspelled keyword breaks the language's rules, which makes it a syntax error, and the translator reports it.",
+       "correct": true
+      },
+      {
+       "text": "Dividing two values when the formula calls for multiplying",
+       "feedback": "Division is a legal operation, so this translates without complaint. It is a logic error, and it only shows up in wrong results."
+      },
+      {
+       "text": "Displaying a total before the user has entered any values",
+       "feedback": "Each statement here can be perfectly legal; only the *order* is wrong. That makes it a logic error, which no translator detects."
+      },
+      {
+       "text": "Displaying hours worked instead of the net pay value",
+       "feedback": "Displaying a value is legal whichever value you choose. Choosing the wrong one is a logic error, found only by checking the output."
+      }
+     ],
+     "hint": "A translator checks whether each statement follows the language's rules, not whether it does what you meant.",
+     "explanation": "Syntax errors break the language's rules (a misspelled keyword, a missing word) and the translator reports them. Logic errors are legal statements that do the wrong thing or happen in the wrong order, so they get through translation.",
+     "ref": "Ch. 1.1, syntax and logic errors, pp. 3–4"
+    },
+    {
+     "id": "debugging-stage",
+     "concept": "The program development process",
+     "level": "understand",
+     "stem": "A student's program finally translates with zero error messages. According to the development process in Figure 1-1, where is the student?",
+     "options": [
+      {
+       "text": "Partway: next, run the program and check its output for errors",
+       "feedback": "Figure 1-1 has two debugging loops. Clearing the syntax errors finishes the first one; the second runs the program and examines its output.",
+       "correct": true
+      },
+      {
+       "text": "Finished: debugging means removing the syntax errors",
+       "feedback": "Removing syntax errors is only the *first* part of debugging. Logic errors can still remain in a program that translates cleanly."
+      },
+      {
+       "text": "Not started: debugging begins only once the program runs",
+       "feedback": "Fixing the syntax errors the translator reports is already debugging, the first of the two loops in Figure 1-1."
+      },
+      {
+       "text": "Finished, as long as the translator printed no warnings",
+       "feedback": "Warnings or not, a translator never reports logic errors. Those only show up when you run the program and examine its output."
+      }
+     ],
+     "hint": "How many places in Figure 1-1 send the programmer back to fix something?",
+     "explanation": "Development runs through two debugging loops: first fix syntax errors until the program translates, then run it and examine the output for logic errors. A program is done only after it passes both.",
+     "ref": "Ch. 1.1, Figure 1-1, p. 3"
+    }
+   ]
+  },
+  {
+   "id": "1.2",
+   "title": "Procedural and Object-Oriented Programming",
+   "subtitle": "Variables and procedures, classes and objects, encapsulation, inheritance, polymorphism",
+   "source": "Ch. 1, section 1.2 (pp. 4–8)",
+   "intro": "A city wants software that simulates rush-hour traffic, with thousands of cars that each speed up and brake. Six questions on how procedural and object-oriented thinking would model it.",
+   "takeaways": [
+    "A class says which attributes and methods all of its objects have. Each object holds its own values for those attributes, and those values are its state.",
+    "Encapsulation keeps an object's data and methods together and hides how they work behind an interface. Inheritance builds a more specific class from an existing one. Polymorphism lets one name work correctly for different types."
+   ],
+   "questions": [
+    {
+     "id": "procedure-call",
+     "concept": "Calling a procedure",
+     "level": "understand",
+     "stem": "A procedural payroll program is partway through its statements when it calls `calculateFederalWithholding()`. What happens to the program's current logic?",
+     "options": [
+      {
+       "text": "It pauses while the procedure runs, then picks up again",
+       "feedback": "Calling a procedure temporarily suspends the current logic so the procedure's commands can execute; afterward the program picks up where it left off.",
+       "correct": true
+      },
+      {
+       "text": "It ends, and the procedure becomes the rest of the program",
+       "feedback": "A call is a detour, not a hand-off. A program can make any number of procedure calls and keeps going after each one."
+      },
+      {
+       "text": "It keeps running while the procedure runs alongside it",
+       "feedback": "In the procedural model in this reading, operations execute one after another in sequence, so the caller waits for the procedure to finish."
+      },
+      {
+       "text": "It restarts from the top once the procedure finishes",
+       "feedback": "Restarting would repeat work already done. The program goes back to the point right after the call."
+      }
+     ],
+     "hint": "Procedural programs execute operations one after another. Where does that sequence go during a call, and where does it come back to?",
+     "explanation": "Procedures (also called modules, functions, subroutines or, in Java, methods) group operations into named units. Calling one suspends the current logic, runs the procedure, then resumes.",
+     "ref": "Ch. 1.2, Procedural Programming, p. 5"
+    },
+    {
+     "id": "class-or-object",
+     "concept": "Classes vs objects",
+     "level": "apply",
+     "stem": "In the traffic simulation, which of these is an **object** rather than a class?",
+     "options": [
+      {
+       "text": "`myRedCamaro`, one particular car with speed 35",
+       "feedback": "A specific, concrete instance with its own values is an object. Here the speed is part of that object's state.",
+       "correct": true
+      },
+      {
+       "text": "`Automobile`, which says every car has a speed",
+       "feedback": "Describing what *every* car has is the job of a class definition, the blueprint objects are created from."
+      },
+      {
+       "text": "`Convertible`, a kind of `Automobile` with a top",
+       "feedback": "The reading is explicit: `Convertible` is not an object, it is a class. A specific convertible would be an object."
+      },
+      {
+       "text": "`Vehicle`, the class every `Automobile` inherits from",
+       "feedback": "Being more general doesn't make something an object. `Vehicle` is a class, too, just a broader one."
+      }
+     ],
+     "hint": "Could you point at it in the street? Or does it describe many cars at once?",
+     "explanation": "A class is a blueprint describing attributes and methods; an object is one specific instance created from it. Specialised classes (such as `Convertible`) are still classes.",
+     "ref": "Ch. 1.2, Understanding Classes, Objects, and Encapsulation, pp. 6–7"
+    },
+    {
+     "id": "dog-state",
+     "concept": "Attributes and state",
+     "level": "understand",
+     "stem": "Two `Dog` objects, Ginger and Bowser, are created from the same `Dog` class. What do they share, and what can differ?",
+     "options": [
+      {
+       "text": "The same attributes, but each can hold different values",
+       "feedback": "Every `Dog` has a name, breed, age and shot status because the class says so. Ginger is a 6-year-old Akita and Bowser is a 2-year-old Retriever: same attributes, different values (different state).",
+       "correct": true
+      },
+      {
+       "text": "The same attribute values; only their names can differ",
+       "feedback": "If only names could differ, every dog would be the same breed and age. Any attribute's value can differ between objects."
+      },
+      {
+       "text": "Nothing at all; each object defines its own attributes",
+       "feedback": "Objects don't define attributes; the class does. That is why you can ask any dog about its breed."
+      },
+      {
+       "text": "The same state; only the methods they use can differ",
+       "feedback": "State *is* the set of attribute values, which is exactly what differs. Methods come from the class and are the same for both."
+      }
+     ],
+     "hint": "The class decides *which* properties exist. What does each object decide?",
+     "explanation": "A class fixes the attributes and methods; each object carries its own values for those attributes. The values of an object's properties are its state.",
+     "ref": "Ch. 1.2, attributes and state, p. 6; Figure 1-2, p. 7"
+    },
+    {
+     "id": "speedometer",
+     "concept": "Encapsulation and interfaces",
+     "level": "analyze",
+     "stem": "A carmaker swaps your car's speedometer for a more accurate sensor. You read your speed exactly as before, without knowing how the new part works. Which idea does this illustrate?",
+     "options": [
+      {
+       "text": "Encapsulation: you rely on the interface, not on how it works",
+       "feedback": "The details are hidden inside, and you only deal with the interface (the dial you read). Because that stays the same, the inside can be replaced freely.",
+       "correct": true
+      },
+      {
+       "text": "Inheritance: the new sensor reuses the old sensor's features",
+       "feedback": "Inheritance means building a more specific class from an existing one. Nothing in this story says the new sensor was built that way. What matters is that the interface didn't change."
+      },
+      {
+       "text": "Polymorphism: the word speed means different things in each car",
+       "feedback": "Polymorphism is one name working correctly for different types. Here a single car keeps one meaning of speed; only the hidden mechanism changed."
+      },
+      {
+       "text": "Instantiation: the new sensor is a fresh instance of a class",
+       "feedback": "The new sensor may well be an instance, but creating an object doesn't explain why you could swap it in without learning anything new."
+      }
+     ],
+     "hint": "What did you need to know about the new part, and what did you never need to know?",
+     "explanation": "Encapsulation bundles data and methods into an object and conceals the details (information and implementation hiding). Users work only with the interface, so the implementation can change without affecting them.",
+     "aside": "Information hiding became a core design principle after David Parnas's 1972 paper on how to divide software into modules. His advice was to hide inside each module a design decision that is likely to change, which is exactly what makes the speedometer swappable.",
+     "ref": "Ch. 1.2, encapsulation and interfaces, p. 7"
+    },
+    {
+     "id": "turn-polymorphism",
+     "concept": "Inheritance vs polymorphism",
+     "level": "apply",
+     "stem": "`Automobile`, `Sailboat` and `Airplane` all inherit from `Vehicle`, and each one turns in its own way. A program calls `turn()` on whichever vehicle it has. Which concept makes that single call behave correctly for each one?",
+     "options": [
+      {
+       "text": "Polymorphism: one method name works correctly for each type",
+       "feedback": "One name (`turn()`) is interpreted according to the type of object it's used on. That is polymorphism: many forms behind one name.",
+       "correct": true
+      },
+      {
+       "text": "Inheritance: each type gets `Vehicle`'s single version of `turn()`",
+       "feedback": "Inheritance is how the classes share `Vehicle`'s features. But if all of them used one shared version, a boat and a plane would turn the same way. The per-type behaviour is polymorphism."
+      },
+      {
+       "text": "Encapsulation: each type hides how its `turn()` works",
+       "feedback": "Each class probably does hide its details, but hiding them doesn't make one call choose the right behaviour. Polymorphism does that."
+      },
+      {
+       "text": "Instantiation: each vehicle is created from its own class",
+       "feedback": "Creating the objects is a precondition, but it doesn't explain why the same call does different, correct things."
+      }
+     ],
+     "hint": "The question is about one *name* meaning the right thing in different situations. Which concept literally means \"many forms\"?",
+     "explanation": "Inheritance creates more specific classes from existing ones; polymorphism lets the same word or symbol be interpreted correctly by context, such as `turn()` on different vehicles, or `+` between numbers.",
+     "aside": "The word comes from Greek: *poly* (many) and *morphē* (form). Biologists use it too, for species that come in several distinct forms, like the colour variants of the two-spot ladybird.",
+     "ref": "Ch. 1.2, Understanding Inheritance and Polymorphism, pp. 7–8"
+    },
+    {
+     "id": "oop-not-gui",
+     "concept": "OOP is broader than GUIs",
+     "level": "evaluate",
+     "stem": "A classmate says, \"Object-oriented programming is just another name for GUI programming.\" How does the reading respond?",
+     "options": [
+      {
+       "text": "Many GUI programs are OO, but OOP is used for non-GUI programs too",
+       "feedback": "The reading says that although many GUI programs are object oriented, not all object-oriented programs use GUI objects; businesses use OO design for all kinds of applications.",
+       "correct": true
+      },
+      {
+       "text": "It agrees: OOP began with GUIs and is still used only for building them",
+       "feedback": "GUIs were one of two early uses (simulations were the other), and today OO design is used for business applications of every kind."
+      },
+      {
+       "text": "It reverses it: GUI programs cannot be object oriented",
+       "feedback": "The reading calls GUIs a *natural* use of objects, since buttons and scroll bars have data and behaviours."
+      },
+      {
+       "text": "It agrees for Java, which uses objects only to build windows",
+       "feedback": "Java's very first program in this chapter uses objects (`System.out`) to write text to a console, with no window in sight."
+      }
+     ],
+     "hint": "Besides GUIs, what other kind of application did the reading say object orientation was first used for?",
+     "explanation": "Object-oriented programming means organising a program around classes and objects. GUIs and simulations were its early showcases, but the technique applies to any kind of program.",
+     "ref": "Ch. 1.2, Object-Oriented Programming, p. 5"
+    }
+   ]
+  },
+  {
+   "id": "1.3",
+   "title": "Features of the Java Programming Language",
+   "subtitle": "Source code, bytecode, the JVM, architectural neutrality and security",
+   "source": "Ch. 1, section 1.3 (pp. 8–10)",
+   "intro": "A friend compiles a Java program on Windows and sends the compiled file to someone with a Mac, and it runs there unchanged. Four questions on why.",
+   "takeaways": [
+    "`javac` turns `.java` source code into `.class` bytecode. The JVM then checks that bytecode and runs it on whatever operating system it is installed on.",
+    "Java programs are compiled for the JVM, not for a particular machine. So one compiled version runs on every platform that has a JVM: \"write once, run anywhere\"."
+   ],
+   "questions": [
+    {
+     "id": "java-pipeline",
+     "concept": "From source code to execution",
+     "level": "understand",
+     "stem": "Which sequence matches what happens to a Java program?",
+     "options": [
+      {
+       "text": "Source in a `.java` file → compiler → bytecode in a `.class` file → JVM runs it",
+       "feedback": "You write source code, the compiler turns it into bytecode, and the JVM's interpreter checks and executes that bytecode.",
+       "correct": true
+      },
+      {
+       "text": "Source in a `.java` file → JVM → bytecode → compiler makes machine language",
+       "feedback": "The JVM comes last, not second: it runs bytecode that the compiler has already produced."
+      },
+      {
+       "text": "Bytecode in a `.java` file → compiler → source in a `.class` file → JVM runs it",
+       "feedback": "This swaps the files. People write *source code* (`.java`); the compiler *produces* bytecode (`.class`)."
+      },
+      {
+       "text": "Source in a `.java` file → compiler → machine code for one processor → OS runs it",
+       "feedback": "That is how many languages work, such as C++. Java's compiler produces bytecode for the JVM instead of one processor's machine code."
+      }
+     ],
+     "hint": "What does Figure 1-3 say the compiler stores in a file ending in `.class`?",
+     "explanation": "Java source code (`.java`) is compiled into bytecode (`.class`); the JVM, a machine made of software, checks the bytecode and executes it by working with the operating system.",
+     "aside": "You can look at bytecode yourself. After compiling, run `javap -c First`. It lists the JVM instructions inside `First.class`, such as `getstatic` (fetch `System.out`) and `invokevirtual` (call `println`).",
+     "ref": "Ch. 1.3, Figure 1-3, p. 9"
+    },
+    {
+     "id": "why-portable",
+     "concept": "Architecturally neutral",
+     "level": "analyze",
+     "stem": "Why can one compiled Java program run on Windows, macOS and Linux?",
+     "options": [
+      {
+       "text": "It runs on the JVM, so only the JVM has to be built for each system",
+       "feedback": "The program targets the JVM, a hypothetical computer made of software. Each platform has its own JVM, and every one of them runs the same bytecode.",
+       "correct": true
+      },
+      {
+       "text": "Its source code uses English-like words that every system understands",
+       "feedback": "Being high-level isn't the reason. C++ is high-level too, but it must be recompiled for each platform. Computers don't read English-like words anyway."
+      },
+      {
+       "text": "The compiler outputs machine language for every processor at once",
+       "feedback": "The compiler produces one thing: bytecode. Translating to a specific machine's language happens later, inside each platform's JVM."
+      },
+      {
+       "text": "Java has no keywords that depend on the operating system",
+       "feedback": "Any language can avoid OS-specific keywords and still need a separate build per platform. What makes the difference is where the compiled code runs."
+      }
+     ],
+     "hint": "Java doesn't execute instructions on the computer directly. What does it run on instead?",
+     "explanation": "Because Java bytecode runs on the JVM rather than on the hardware directly, one program version works on any platform with a JVM. That is what \"architecturally neutral\" and \"write once, run anywhere\" mean.",
+     "aside": "Every `.class` file begins with the same four bytes, `CA FE BA BE` in hexadecimal. This \"magic number\" lets the JVM recognise a class file before it loads it.",
+     "ref": "Ch. 1.3, Java Virtual Machine and WORA, pp. 8–9"
+    },
+    {
+     "id": "neutral-lie",
+     "concept": "What \"architecturally neutral\" means",
+     "level": "evaluate",
+     "stem": "A student writes: \"Java is architecturally neutral, which means anyone can build an application without extensive study.\" What is wrong with the statement?",
+     "options": [
+      {
+       "text": "Neutral means a program runs on any platform, not that Java is easy",
+       "feedback": "The term is about platforms: one Java program can run on any operating system or device. It says nothing about how hard the language is to learn.",
+       "correct": true
+      },
+      {
+       "text": "Nothing; Java dropped pointers, so beginners need little study",
+       "feedback": "Java did drop pointers and multiple inheritance to be simpler than C++. But that is a different advantage, and the reading still says no language is easy at first."
+      },
+      {
+       "text": "It mixes neutrality up with security; neutral means intruders are blocked",
+       "feedback": "Protection from intruders is a separate advantage that comes from the JVM isolating programs. Architectural neutrality is about portability."
+      },
+      {
+       "text": "Neutral describes the JVM's hardware, which is the same on every PC",
+       "feedback": "The JVM has no hardware. It is made only of software, which is why the reading calls it hypothetical."
+      }
+     ],
+     "hint": "\"Architecture\" here refers to the kind of computer or device a program runs on.",
+     "explanation": "Architecturally neutral means a Java program can run on any operating system or device. Security (isolation by the JVM) and simplicity (no pointers or multiple inheritance) are separate advantages.",
+     "ref": "Ch. 1.3, p. 8; Two Truths & a Lie, p. 10"
+    },
+    {
+     "id": "jvm-security",
+     "concept": "Why the JVM adds security",
+     "level": "understand",
+     "stem": "According to the reading, how does the JVM make Java programs more secure?",
+     "options": [
+      {
+       "text": "Programs run isolated from the OS, so intruders can't reach the hardware",
+       "feedback": "The program runs inside the JVM, which checks the bytecode and stands between it and the operating system. That isolation guards the hardware.",
+       "correct": true
+      },
+      {
+       "text": "Bytecode is encrypted, so nobody can read or change a program's instructions",
+       "feedback": "Bytecode isn't encrypted; tools such as `javap` will display it. Security comes from isolation and checking, not from secrecy."
+      },
+      {
+       "text": "The compiler rejects any program that still contains a logic error",
+       "feedback": "No compiler can detect logic errors; that was the lesson of section 1.1. Security doesn't come from the compiler."
+      },
+      {
+       "text": "Removing pointers stopped intruders from breaking into Java programs",
+       "feedback": "The reading says pointers were removed to make Java *simpler* than C++. It credits security to the JVM's isolation."
+      }
+     ],
+     "hint": "Look at Figure 1-3: what sits between a Java program and the computer's operating system?",
+     "explanation": "The JVM performs security checks on bytecode and isolates the program from the operating system and hardware, which protects against intruders accessing the computer through the program.",
+     "ref": "Ch. 1.3, p. 9"
+    }
+   ]
+  },
+  {
+   "id": "1.4",
+   "title": "Analyzing a Java Application That Produces Console Output",
+   "subtitle": "print and println, the parts of a statement, identifiers, the class and main() headers, saving a class",
+   "source": "Ch. 1, section 1.4 (pp. 10–17)",
+   "intro": "Seven lines, one statement, one job: put a sentence on the screen. Six questions that take apart every word of Java's smallest complete program.",
+   "takeaways": [
+    "In `System.out.println(\"...\");`, `System` is a class, `out` is an object stored in it, `println()` is a method, and the text in parentheses is the argument. Dots separate the parts, and a semicolon ends the statement.",
+    "Every Java application needs a class containing `public static void main(String[] args)`. The JVM always runs `main()` first.",
+    "A public class must be saved in a file with exactly the same name, including capital letters, plus `.java`. Java is case sensitive everywhere."
+   ],
+   "questions": [
+    {
+     "id": "print-println",
+     "concept": "print() vs println()",
+     "level": "apply",
+     "stem": "What does this program display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Greeting\n{\n    public static void main(String[] args)\n    {\n        System.out.print(\"Java \");\n        System.out.println(\"is\");\n        System.out.print(\"fun\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "Java is fun"
+      }
+     },
+     "options": [
+      {
+       "text": "`Java is` on line 1, `fun` on line 2",
+       "feedback": "`print()` leaves the insertion point where it is, so `is` follows `Java ` on the same line. `println()` then moves to a new line, so `fun` starts line 2.",
+       "correct": true
+      },
+      {
+       "text": "`Java` on line 1, `is fun` on line 2",
+       "feedback": "This treats `print()` as the one that ends the line. It's the other way around: `println()` moves to the next line *after* its output."
+      },
+      {
+       "text": "`Java`, `is` and `fun` on three separate lines",
+       "feedback": "Only `println()` advances to a new line. Two of these three calls are `print()`, which keeps the output on the current line."
+      },
+      {
+       "text": "`Java is fun`, all on a single line",
+       "feedback": "That would happen if `println()` behaved like `print()`. But after `is` is displayed, `println()` moves to the next line."
+      }
+     ],
+     "hint": "Which of the two methods moves the insertion point to the next line, and does it do that *before* or *after* its own output?",
+     "explanation": "`println()` displays its argument and then moves the insertion point to the next line. `print()` displays its argument and leaves the insertion point at the end of it. Calling `println()` with no argument outputs a blank line.",
+     "aside": "Different systems end a line differently: Windows uses two characters (carriage return and line feed), while macOS and Linux use one (line feed). `println()` uses whichever one the computer it runs on expects.",
+     "ref": "Ch. 1.4, Understanding the Statement That Produces the Output, p. 11"
+    },
+    {
+     "id": "what-is-out",
+     "concept": "Anatomy of System.out.println()",
+     "level": "analyze",
+     "stem": "In the statement `System.out.println(\"First Java application\");`, what is `out`?",
+     "options": [
+      {
+       "text": "An object inside `System` that refers to the standard output device",
+       "feedback": "`out` is a property of the `System` class. It is an object (an instance of `PrintStream`) that refers to the standard output device, normally the monitor.",
+       "correct": true
+      },
+      {
+       "text": "A method of the `System` class that sends text to the screen",
+       "feedback": "Methods are always followed by parentheses, and `out` has none. The method in this statement is `println()`."
+      },
+      {
+       "text": "A keyword that tells Java this statement produces screen output",
+       "feedback": "`out` isn't in Java's list of keywords (Figure 1-6). It is a name defined in the `System` class."
+      },
+      {
+       "text": "The class that contains the code for the `println()` method",
+       "feedback": "That class is `PrintStream`. `out` is one particular object of that class, which is why you can call `println()` on it."
+      }
+     ],
+     "hint": "Use the clues in the syntax: dots separate classes, objects and methods, and methods are followed by parentheses.",
+     "explanation": "`System` is a class; `out` is an object that is a property of it (a `PrintStream` referring to the standard output device); `println()` is a method called on that object; the string is its argument.",
+     "ref": "Ch. 1.4, Figure 1-5, pp. 11–12"
+    },
+    {
+     "id": "class-names",
+     "concept": "Legal and conventional identifiers",
+     "level": "apply",
+     "stem": "Which class name is **legal but unconventional** in Java?",
+     "options": [
+      {
+       "text": "`budget2024`",
+       "feedback": "Digits after the first character are allowed, so it compiles. But class names conventionally start with an uppercase letter (Pascal casing).",
+       "correct": true
+      },
+      {
+       "text": "`2024Budget`",
+       "feedback": "An identifier cannot begin with a digit, so this won't compile at all. It is illegal, not merely unconventional."
+      },
+      {
+       "text": "`UnderGradStudent`",
+       "feedback": "This one is both legal and conventional: it starts with an uppercase letter, has no spaces, and capitalises each new word."
+      },
+      {
+       "text": "`Inventory Item`",
+       "feedback": "A space can't appear inside an identifier, so this is illegal. The conventional fix is `InventoryItem`."
+      }
+     ],
+     "hint": "Sort them in two steps: which ones would compile, and of those, which one starts the way a class name usually does?",
+     "explanation": "An identifier must start with a letter, underscore or dollar sign, contain only letters, digits, underscores or dollar signs, and not be a reserved word. By convention, class names also use Pascal casing (`InventoryItem`).",
+     "ref": "Ch. 1.4, Understanding the First Class and Tables 1-1 to 1-3, pp. 12–14"
+    },
+    {
+     "id": "file-name-case",
+     "concept": "Saving a public class",
+     "level": "apply",
+     "stem": "A student saves `public class Hello` in a file named `hello.java` on a Windows PC and compiles it. What happens?",
+     "options": [
+      {
+       "text": "Compile error: public class `Hello` must be in `Hello.java`",
+       "feedback": "The file name must match the public class name exactly, capital letters included. javac reports that `Hello` is public and should be declared in `Hello.java`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because Windows file names ignore capital letters",
+       "feedback": "Windows may not care about case, but Java does. The compiler compares the class name with the file name exactly, on every system."
+      },
+      {
+       "text": "It compiles, and the program then runs with `java hello`",
+       "feedback": "The mismatch stops the compile, so there's nothing to run yet. Once fixed, the command uses the class name: `java Hello`."
+      },
+      {
+       "text": "It compiles into `hello.class`, named after the file",
+       "feedback": "If it compiled, the bytecode file would be named after the *class*. But the case mismatch stops the compile first."
+      }
+     ],
+     "hint": "Java is case sensitive. Is `hello` the same name as `Hello`?",
+     "explanation": "A public class must be saved in a file whose name matches the class name exactly, including uppercase and lowercase letters, with a `.java` extension.",
+     "ref": "Ch. 1.4, Saving a Java Class, p. 16; Ch. 1.5, p. 18"
+    },
+    {
+     "id": "void-meaning",
+     "concept": "The main() method header",
+     "level": "understand",
+     "stem": "In the header `public static void main(String[] args)`, what does the word `void` tell you?",
+     "options": [
+      {
+       "text": "`main()` sends no value back to whatever calls it",
+       "feedback": "`void` is the return type: `main()` returns nothing. It can still produce output, and this one does.",
+       "correct": true
+      },
+      {
+       "text": "`main()` is an empty method that produces no output",
+       "feedback": "This is the false statement from the section's Two Truths & a Lie. `main()` here clearly produces output; `void` is about return values, not output."
+      },
+      {
+       "text": "`main()` can run without an object of the class",
+       "feedback": "That describes `static`, which makes a method usable even when no objects of the class exist."
+      },
+      {
+       "text": "`main()` receives no arguments when the program starts",
+       "feedback": "The parameters are described inside the parentheses: `String[] args` can hold Strings passed in when the program starts."
+      }
+     ],
+     "hint": "Each word in the header answers a different question. `void` is the method's *return type*.",
+     "explanation": "In the `main()` header, `public` is the access specifier, `static` makes the method usable without an object, `void` means it returns no value, and `String[] args` names the list of Strings it can receive.",
+     "aside": "Java 25 (2025) also accepts a shorter header for simple programs: just `void main()`, with no `public`, `static` or `String[] args`. The full header from this chapter still works everywhere, and it is what most existing code uses.",
+     "ref": "Ch. 1.4, Understanding the main() Method, pp. 14–15"
+    },
+    {
+     "id": "safe-change",
+     "concept": "Rules that are and aren't flexible",
+     "level": "analyze",
+     "stem": "Which change to the `First` class still compiles and produces exactly the same output?",
+     "options": [
+      {
+       "text": "Renaming `args` to `inputs` in the header of `main()`",
+       "feedback": "The parameter needs *a* legal identifier; `args` is traditional, not required. Any legal name works.",
+       "correct": true
+      },
+      {
+       "text": "Changing `System` to `system` in the output statement",
+       "feedback": "Java is case sensitive, so `system` is a different (and nonexistent) name. The compiler can't find it."
+      },
+      {
+       "text": "Splitting the literal string across two lines of code",
+       "feedback": "A statement can span several lines, but a literal string can't be broken across lines. The compiler reports an error."
+      },
+      {
+       "text": "Deleting the semicolon at the end of the output statement",
+       "feedback": "Every Java statement ends with a semicolon; without one, javac reports `';' expected`."
+      }
+     ],
+     "hint": "Which of these names is a tradition rather than a rule?",
+     "explanation": "Some parts of a Java program are fixed by the language (case, semicolons, unbroken string literals) and some are your choice (identifiers such as `args`, whitespace, indent style). Knowing which is which saves debugging time.",
+     "ref": "Ch. 1.4, pp. 10–12 and 15"
+    }
+   ]
+  },
+  {
+   "id": "1.5",
+   "title": "Compiling a Java Class and Correcting Syntax Errors",
+   "subtitle": "Running javac, its three outcomes, reading error messages, cascading errors",
+   "source": "Ch. 1, section 1.5 (pp. 18–22)",
+   "intro": "You delete one letter from a program and the compiler answers with four error messages. Five questions on reading what `javac` tells you.",
+   "takeaways": [
+    "`javac File.java` either finishes without a message and creates `File.class`, or lists syntax errors with the file name, line number and a caret. The line it points to is where the error was *noticed*, which can be after the real mistake.",
+    "One mistake can cause several messages, and fixing one can reveal new ones. Fix the first error, recompile, and read again."
+   ],
+   "questions": [
+    {
+     "id": "missing-semicolon",
+     "concept": "Reading a compiler error",
+     "level": "apply",
+     "stem": "What does `javac` report for this class?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Missing\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"First Java application\")\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        ":5: error: ';' expected"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "`';' expected`, pointing at line 5",
+       "feedback": "The statement on line 5 ends without a semicolon. javac names the file, line 5, the problem (`';' expected`) and puts a caret where it noticed it.",
+       "correct": true
+      },
+      {
+       "text": "`';' expected`, pointing at line 6, where the `}` is",
+       "feedback": "Errors are *sometimes* noticed on a later line, but here javac spots the missing semicolon at the end of line 5 and reports that line."
+      },
+      {
+       "text": "No error: the closing brace ends the statement",
+       "feedback": "Braces close blocks, not statements. Every statement needs its own semicolon."
+      },
+      {
+       "text": "It compiles, then crashes when the program runs",
+       "feedback": "A missing semicolon breaks the language's rules, so it's caught at compile time. No `.class` file is produced, so there's nothing to run."
+      }
+     ],
+     "hint": "Is this a rule of the language or a mistake in logic? That tells you *when* it's caught.",
+     "explanation": "A syntax error is a compile-time error: the compiler reports the file, line number, nature of the error and a caret. The reported spot is where the error was discovered, which isn't always where it was made.",
+     "aside": "Since JDK 11 you can skip the separate compile step for a one-file program: `java First.java` compiles it in memory and runs it straight away. No `.class` file is written, and syntax errors are reported the same way.",
+     "ref": "Ch. 1.5, Correcting Syntax Errors, pp. 19–20"
+    },
+    {
+     "id": "silent-success",
+     "concept": "The outcomes of compiling",
+     "level": "understand",
+     "stem": "You type `javac First.java`, and the prompt comes back with no message at all. What does that mean?",
+     "options": [
+      {
+       "text": "It compiled; `First.class` now sits beside `First.java`",
+       "feedback": "No message is the success outcome. The bytecode file `First.class` is created in the same folder as the source.",
+       "correct": true
+      },
+      {
+       "text": "Nothing happened; you still need to press Run to compile",
+       "feedback": "`javac` *is* the compile step. Running is a separate command (`java First`)."
+      },
+      {
+       "text": "It compiled and ran, but the output was blank",
+       "feedback": "`javac` only translates; it never runs the program. Output appears only when you use the `java` command."
+      },
+      {
+       "text": "javac isn't installed, so the command was ignored",
+       "feedback": "A missing or misconfigured javac produces a message, such as `'javac' is not recognized...`. Silence means success."
+      }
+     ],
+     "hint": "Of the three outcomes listed in the reading, which one produces no message?",
+     "explanation": "Compiling has three outcomes: a \"not recognized\" message (javac can't be found), one or more language error messages (syntax errors), or no message (success, and a `.class` file is created).",
+     "ref": "Ch. 1.5, Compiling a Java Class, pp. 18–19"
+    },
+    {
+     "id": "not-recognized",
+     "concept": "Command not recognized",
+     "level": "analyze",
+     "stem": "A student types `javac Hello.java` and and Windows replies that `javac` is unrecognized as a command. Which is a likely cause?",
+     "options": [
+      {
+       "text": "Java isn't installed properly, or its path isn't set",
+       "feedback": "This message means the system couldn't find a program called javac at all. An installation or path problem is one of the causes the reading lists.",
+       "correct": true
+      },
+      {
+       "text": "`Hello.java` is missing a semicolon at the end of a statement",
+       "feedback": "A syntax error produces a *language* error message from javac, which means javac was found and ran."
+      },
+      {
+       "text": "The class inside the file is named `hello`, not `Hello`",
+       "feedback": "A class/file mismatch is reported by javac itself, so javac must have been found first."
+      },
+      {
+       "text": "Programs must be compiled with `java`, not `javac`",
+       "feedback": "`javac` is the compiler and `java` runs the program, so the student typed the right command. The problem is that the system couldn't find it."
+      }
+     ],
+     "hint": "Did javac even get to look at the file? Who is printing this message?",
+     "explanation": "\"Not recognized\" comes from the operating system before Java does anything: javac is misspelled, you're in the wrong folder, or Java isn't installed or configured correctly. Syntax errors produce javac's own messages.",
+     "ref": "Ch. 1.5, Compiling a Java Class, p. 18"
+    },
+    {
+     "id": "four-messages",
+     "concept": "Cascading error messages",
+     "level": "evaluate",
+     "stem": "After removing the `c` from `class` on line 1, a student gets four error messages, for lines 1, 3, 6 and 7. What's the best first move?",
+     "options": [
+      {
+       "text": "Fix the first error, recompile, and see which messages remain",
+       "feedback": "One slip often triggers several messages. Restoring `class` makes all four disappear, as the reading shows, so fix the earliest error and let the compiler re-check.",
+       "correct": true
+      },
+      {
+       "text": "Edit all four lines the messages name before recompiling",
+       "feedback": "Lines 3, 6 and 7 were fine. They were reported only because the compiler was still looking for `class`. Editing them could introduce new errors."
+      },
+      {
+       "text": "Start over, since four errors means the design is wrong",
+       "feedback": "The count of messages says little about how much is wrong. Here a single keystroke caused all four."
+      },
+      {
+       "text": "Ignore them, since javac often reports errors that don't exist",
+       "feedback": "The program genuinely doesn't compile. The extra messages are side effects of a real error, not false alarms."
+      }
+     ],
+     "hint": "If the later lines were fine before the edit, why might the compiler complain about them now?",
+     "explanation": "A single syntax error can produce several messages, and fixing it can remove all of them, or let the compiler get further and reveal new ones. Fix from the top, recompile, and repeat.",
+     "aside": "Compilers use \"error recovery\": after a mistake, they guess where valid code starts again so they can keep looking for more errors. When the guess is wrong, one slip produces a cascade of messages, which is what happened here.",
+     "ref": "Ch. 1.5, pp. 20–22 (Figure 1-15)"
+    },
+    {
+     "id": "missing-void",
+     "concept": "Interpreting error messages",
+     "level": "apply",
+     "stem": "`void` has been removed from this class. What does `javac` report?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class HelloErrors\n{\n    public static main(String[] args)\n    {\n        System.out.println(\"Hello\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "return type required"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A return type is required for the method",
+       "feedback": "javac knows a method header needs a return type but not *which* one you meant, so it says a return type is required.",
+       "correct": true
+      },
+      {
+       "text": "The word `void` is missing from line 3",
+       "feedback": "Java supports many return types, so the compiler can't know you meant `void`. It reports what's missing in general, not the word itself."
+      },
+      {
+       "text": "`main` cannot be found when the program starts",
+       "feedback": "That would be a problem at run time. This class never gets that far, because the header breaks a syntax rule."
+      },
+      {
+       "text": "`static` can only be used together with `void`",
+       "feedback": "`static` works with any return type. The problem is that the header has no return type at all."
+      }
+     ],
+     "hint": "Can the compiler know *which* return type you intended?",
+     "explanation": "Error messages describe what the compiler expected at the point it got stuck, which isn't always the exact fix. Read them as clues and use what you know about the code to decide the correction.",
+     "ref": "Ch. 1.5, You Do It: Correcting Syntax Errors, p. 22"
+    }
+   ]
+  },
+  {
+   "id": "1.6",
+   "title": "Running a Java Application and Correcting Logic Errors",
+   "subtitle": "The java command, recompiling after changes, keeping versions, logic and runtime errors",
+   "source": "Ch. 1, section 1.6 (pp. 23–24)",
+   "intro": "You fix the typo, save the file, run the program, and the old output appears anyway. Four questions on running Java programs and on the bugs a compiler can't see.",
+   "takeaways": [
+    "Run a compiled class with `java ClassName`, with no extension. Saving edited source code changes nothing until you recompile with `javac`.",
+    "A logic error compiles and runs but produces wrong results. Only careful examination of the output finds it, and that is the programmer's job."
+   ],
+   "questions": [
+    {
+     "id": "run-command",
+     "concept": "Running a compiled class",
+     "level": "apply",
+     "stem": "`Payroll.java` compiled successfully and created `Payroll.class`. Which command runs the program?",
+     "options": [
+      {
+       "text": "`java Payroll`",
+       "feedback": "The `java` command takes the class name with no extension and looks for `Payroll.class`.",
+       "correct": true
+      },
+      {
+       "text": "`java Payroll.class`",
+       "feedback": "Adding the extension makes the interpreter look for the wrong name. The reading says it would search for `Payroll.class.class`. Give just the class name."
+      },
+      {
+       "text": "`javac Payroll.class`",
+       "feedback": "`javac` is the compiler, and it compiles `.java` source files, not `.class` bytecode."
+      },
+      {
+       "text": "`javac Payroll`",
+       "feedback": "`javac` compiles rather than runs, and it needs the full source file name (`Payroll.java`)."
+      }
+     ],
+     "hint": "One command compiles and the other runs. And which file name does the running command want, if any?",
+     "explanation": "`javac File.java` compiles source code into bytecode; `java ClassName` (no extension) runs the bytecode in the JVM.",
+     "ref": "Ch. 1.6, Running a Java Application, p. 23"
+    },
+    {
+     "id": "stale-output",
+     "concept": "Modifying a compiled class",
+     "level": "analyze",
+     "stem": "A student changes the message in `First.java`, saves the file, types `java First`, and sees the **old** message. Why?",
+     "options": [
+      {
+       "text": "`First.class` keeps the old bytecode until `javac` runs again",
+       "feedback": "`java` runs the compiled `.class` file, not the source. Until you recompile, the class file contains the previous version.",
+       "correct": true
+      },
+      {
+       "text": "The file was saved under its old name, so Java ignored the change",
+       "feedback": "Saving under the same name is correct. What's missing is the step that turns the edited source into new bytecode."
+      },
+      {
+       "text": "`java` reads `First.java` only the first time it runs a class",
+       "feedback": "`java` never reads the `.java` file at all; it always runs the bytecode in `First.class`."
+      },
+      {
+       "text": "The JVM remembers previous output and needs a restart",
+       "feedback": "The JVM doesn't cache output between runs. Every run executes whatever bytecode is in the `.class` file at that moment."
+      }
+     ],
+     "hint": "Which file does the `java` command actually execute?",
+     "explanation": "After changing source code you must save, recompile with `javac`, then run with `java`. Recompiling replaces the old `.class` file.",
+     "ref": "Ch. 1.6, Modifying a Compiled Java Class, pp. 23–24"
+    },
+    {
+     "id": "jave-typo",
+     "concept": "Logic errors pass the compiler",
+     "level": "apply",
+     "stem": "What happens when this class is compiled and run?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class FirstBadOutput\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"First Jave application\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "First Jave application"
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `First Jave application`, typo and all",
+       "feedback": "Any combination of letters is legal inside a literal string, so the program compiles and prints exactly what's between the quotes. That makes the typo a logic error.",
+       "correct": true
+      },
+      {
+       "text": "javac reports that `Jave` is misspelled",
+       "feedback": "The compiler checks the *language*, not the spelling of your text. Inside quotes, `Jave` is just characters."
+      },
+      {
+       "text": "It prints `First Java application`; Java corrects the text",
+       "feedback": "A literal string appears in the output exactly as entered. Java never changes it."
+      },
+      {
+       "text": "It compiles, then stops with a runtime error at `Jave`",
+       "feedback": "Nothing illegal happens while it runs. It successfully prints the wrong text."
+      }
+     ],
+     "hint": "Does the compiler check what's *inside* the quotation marks?",
+     "explanation": "A logic error lets a program compile and run while it produces incorrect results. The compiler can't find these, so the programmer must test the program and examine its output.",
+     "aside": "The 1947 moth from the reading was taped into the Harvard Mark II's logbook with the note \"First actual case of bug being found.\" That page is now held by the Smithsonian's National Museum of American History. The joke worked because engineers already called faults \"bugs\".",
+     "ref": "Ch. 1.6, Correcting Logic Errors, p. 24"
+    },
+    {
+     "id": "keep-original",
+     "concept": "Keeping two versions of a class",
+     "level": "apply",
+     "stem": "You want to keep the original `First` program **and** a modified version you are about to compile. What does the reading say you must do?",
+     "options": [
+      {
+       "text": "Give the new version a new class and file name, or use another folder",
+       "feedback": "Recompiling replaces the old `First.class`. To keep both, the new version needs its own class and file name (as with `Hello2`) or a different folder.",
+       "correct": true
+      },
+      {
+       "text": "Nothing; javac keeps the old `.class` file as a backup automatically",
+       "feedback": "javac keeps no backups. The original `.class` file is replaced and no longer exists."
+      },
+      {
+       "text": "Rename only the file, such as `FirstNew.java`, and keep the class name",
+       "feedback": "A public class must be in a file of exactly the same name, so this won't compile. Change the class name too."
+      },
+      {
+       "text": "Compile the new version under a different command, such as `java`",
+       "feedback": "`java` runs programs; it doesn't compile them. Only `javac` compiles, and it overwrites the `.class` file."
+      }
+     ],
+     "hint": "What happens to `First.class` when `First` is compiled again?",
+     "explanation": "Compiling a class writes a `.class` file named after the class, replacing any earlier one. Keep versions apart with different class and file names, or different folders.",
+     "ref": "Ch. 1.6, Modifying a Compiled Java Class, p. 24"
+    }
+   ]
+  },
+  {
+   "id": "1.7",
+   "title": "Adding Comments to a Java Class",
+   "subtitle": "Line, block and Javadoc comments, commenting out code, keeping comments current",
+   "source": "Ch. 1, section 1.7 (pp. 25–27)",
+   "intro": "Six months from now you'll open your own program and wonder why a line is there. Four questions on writing notes the compiler ignores.",
+   "takeaways": [
+    "`//` comments run to the end of the line. `/* ... */` comments run until the closing `*/`, across any number of lines. `/** ... */` comments are read by the Javadoc tool.",
+    "Comments are for people: the compiler skips them. That lets you comment out a statement to test the program without deleting it, and it means an outdated comment will mislead readers without any warning."
+   ],
+   "questions": [
+    {
+     "id": "comment-trace",
+     "concept": "What executes around comments",
+     "level": "apply",
+     "stem": "What does this program display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Notes\n{\n    public static void main(String[] args)\n    {\n        // System.out.println(\"A\");\n        System.out.println(\"B\"); // System.out.println(\"C\");\n        /* System.out.println(\"D\");\n        System.out.println(\"E\"); */\n        System.out.println(\"F\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "B F"
+      }
+     },
+     "options": [
+      {
+       "text": "`B`, then `F`",
+       "feedback": "`A` sits in a line comment; `C` follows `//` on the same line; `D` and `E` are inside a block comment that closes after `E`. Only `B` and `F` execute.",
+       "correct": true
+      },
+      {
+       "text": "`B`, `C`, then `F`",
+       "feedback": "This assumes the comment after `B` ends at the semicolon. A line comment runs to the end of the line, so `C` never executes."
+      },
+      {
+       "text": "`B`, `E`, then `F`",
+       "feedback": "This treats `/*` like `//`, ending at the line break. A block comment continues until `*/`, which comes after `E`."
+      },
+      {
+       "text": "`A`, `B`, then `F`",
+       "feedback": "A line comment can stand on a line by itself, as `A`'s does. Everything after `//` on that line is skipped."
+      }
+     ],
+     "hint": "Where does each kind of comment *end*?",
+     "explanation": "A line comment (`//`) ends at the end of its line, even when it follows code. A block comment (`/* */`) ends only at `*/`, however many lines later.",
+     "ref": "Ch. 1.7, types of comments and Figure 1-22, pp. 25–26"
+    },
+    {
+     "id": "javadoc-choice",
+     "concept": "Choosing a comment type",
+     "level": "apply",
+     "stem": "You want your method descriptions to appear in automatically generated documentation pages, like the Java API pages. Which comment style should you use?",
+     "options": [
+      {
+       "text": "`/** ... */`",
+       "feedback": "Comments that begin with `/**` are Javadoc (documentation) comments, which the Javadoc program uses to generate formatted documentation.",
+       "correct": true
+      },
+      {
+       "text": "`/* ... */`",
+       "feedback": "A plain block comment can span lines, but the Javadoc tool only picks up comments that start with `/**`."
+      },
+      {
+       "text": "`// ...`",
+       "feedback": "Line comments are notes for people reading the source code; documentation tools don't collect them."
+      },
+      {
+       "text": "`\\\\ ...`",
+       "feedback": "Backslashes don't start comments at all. The slash and backslash are different characters, and Java comments use forward slashes."
+      }
+     ],
+     "hint": "The documentation comment is a special case of the block comment, with one extra character.",
+     "explanation": "Javadoc comments are block comments that begin with `/**`. The Javadoc program turns them into formatted documentation.",
+     "aside": "The Java API pages you'll explore in section 1.9 were generated this way, by running Javadoc on the `/** */` comments in Java's own source code.",
+     "ref": "Ch. 1.7, p. 25"
+    },
+    {
+     "id": "unclosed-comment",
+     "concept": "Ending block comments",
+     "level": "analyze",
+     "stem": "What happens when this class is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Unclosed\n{\n    /* Prints a greeting\n    public static void main(String[] args)\n    {\n        System.out.println(\"Hi\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "unclosed comment"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the comment never closes and swallows the file",
+       "feedback": "Without `*/`, everything after `/*`, including `main()` and the closing brace, is inside the comment. javac reports an unclosed comment.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `Hi`; the comment ends at the end of its line",
+       "feedback": "That is how `//` behaves. A `/*` comment keeps going until it finds `*/`."
+      },
+      {
+       "text": "It compiles, but `main()` is hidden, so it can't be run",
+       "feedback": "The class's closing brace is swallowed too, so the file never compiles in the first place."
+      },
+      {
+       "text": "Compile error: comments can't appear inside a class body",
+       "feedback": "Comments may appear almost anywhere, including inside a class. The problem is that this one never ends."
+      }
+     ],
+     "hint": "Find the `*/` that ends the comment that starts on line 3.",
+     "explanation": "Every `/*` must have a matching `*/`, even many lines later. A missing `*/` turns the rest of the file into a comment.",
+     "aside": "Block comments don't nest in Java. In `/* a /* b */ c */`, the first `*/` ends the whole comment, so `c */` is read as code and causes an error. Use `//` to comment out lines that already contain block comments.",
+     "ref": "Ch. 1.7, p. 25; Don't Do It list, p. 30"
+    },
+    {
+     "id": "stale-comment",
+     "concept": "Keeping comments current",
+     "level": "evaluate",
+     "stem": "A programmer changes a method to calculate a **monthly** total, but the comment above it still says it calculates a weekly total. Why does the reading treat this as a real problem?",
+     "options": [
+      {
+       "text": "Future readers trust the comment and are misled about the code",
+       "feedback": "Comments are written for people. When the code changes and the comment doesn't, the next person to read it is confused or misled.",
+       "correct": true
+      },
+      {
+       "text": "The compiler compares comments with code and reports a mismatch",
+       "feedback": "The compiler ignores comments entirely; it would never notice this. That is exactly why it's dangerous."
+      },
+      {
+       "text": "Out-of-date comments make the program run more slowly",
+       "feedback": "Comments aren't executed at all, so they have no effect on speed."
+      },
+      {
+       "text": "Javadoc refuses to generate pages from outdated comments",
+       "feedback": "Javadoc can't tell whether a comment is accurate. It would happily publish the wrong description."
+      }
+     ],
+     "hint": "Who reads comments: the compiler, the JVM, or people?",
+     "explanation": "Comments are nonexecuting documentation for human readers. Because no tool checks them, update every relevant comment whenever you modify code.",
+     "ref": "Ch. 1.7, Note on modifying programs, p. 26"
+    }
+   ]
+  },
+  {
+   "id": "1.8",
+   "title": "Creating a Java Application That Produces GUI Output",
+   "subtitle": "JOptionPane dialog boxes, import statements and packages, methods with several arguments",
+   "source": "Ch. 1, section 1.8 (pp. 27–29)",
+   "intro": "Same \"Hello, world!\", new stage: a window with an OK button. Four questions on the two lines that turn console output into a dialog box.",
+   "takeaways": [
+    "To use a class from a package other than `java.lang`, write an `import` statement at the top of the file, outside any class.",
+    "When a method takes several arguments, they go inside the parentheses separated by commas, in the order the method expects. `showMessageDialog()` takes the placement (`null` centres the box) and then the message."
+   ],
+   "questions": [
+    {
+     "id": "missing-import",
+     "concept": "Why import is needed",
+     "level": "apply",
+     "stem": "This class leaves out one line from `FirstDialog`. What happens when it is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class NoImport\n{\n    public static void main(String[] args)\n    {\n        JOptionPane.showMessageDialog(null, \"Hi\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol",
+        "JOptionPane"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the compiler can't find `JOptionPane`",
+       "feedback": "`JOptionPane` lives in the `javax.swing` package. Without the import statement, the compiler doesn't know what the name refers to.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, since Java imports every built-in class automatically",
+       "feedback": "Only the `java.lang` package is imported automatically. `JOptionPane` comes from `javax.swing`."
+      },
+      {
+       "text": "It compiles, then shows the dialog without a title",
+       "feedback": "Leaving out the import affects whether the code compiles at all, not how the dialog looks."
+      },
+      {
+       "text": "Compile error: `null` isn't a legal argument",
+       "feedback": "`null` is a reserved value and a legal first argument; it centres the dialog on the screen."
+      }
+     ],
+     "hint": "Which line of `FirstDialog` is missing here, and what is that line for?",
+     "explanation": "An `import` statement gives access to a built-in class stored in a package. Without it, a class from another package such as `javax.swing` is unknown to the compiler.",
+     "ref": "Ch. 1.8, p. 28"
+    },
+    {
+     "id": "why-no-import-system",
+     "concept": "The java.lang package",
+     "level": "understand",
+     "stem": "Why does `System.out.println()` work without any import statement?",
+     "options": [
+      {
+       "text": "`System` is in `java.lang`, which every program gets automatically",
+       "feedback": "The `java.lang` package is imported into every Java program, so its classes, including `System`, are always available.",
+       "correct": true
+      },
+      {
+       "text": "`System` is a keyword, so it doesn't belong to any package",
+       "feedback": "`System` isn't in the keyword list; it's a class. It's available because of the package it's in."
+      },
+      {
+       "text": "Console output is built into the compiler rather than into a class",
+       "feedback": "Output goes through real classes and objects: the `System` class, its `out` object and `PrintStream`'s methods."
+      },
+      {
+       "text": "Import statements are only needed for GUI classes",
+       "feedback": "Many non-GUI classes need imports too. What matters is the package, not whether the class draws windows."
+      }
+     ],
+     "hint": "Imports are about packages. Which package does every Java program get for free?",
+     "explanation": "Classes in `java.lang` (such as `System` and `String`) are imported automatically. Classes in any other package need an `import` statement, or their full package name.",
+     "aside": "The x in `javax` stands for \"extension\". Swing started out as an add-on library and became a standard part of Java with version 1.2 in 1998, keeping its `javax` package name.",
+     "ref": "Ch. 1.8, Note on java.lang, p. 28"
+    },
+    {
+     "id": "dialog-args",
+     "concept": "Passing several arguments",
+     "level": "apply",
+     "stem": "Which call shows a dialog box, centred on the screen, that says `Done`?",
+     "options": [
+      {
+       "text": "`JOptionPane.showMessageDialog(null, \"Done\");`",
+       "feedback": "The two arguments go in order and are separated by a comma: first the placement (`null` means centred on the screen), then the message.",
+       "correct": true
+      },
+      {
+       "text": "`JOptionPane.showMessageDialog(\"Done\");`",
+       "feedback": "Unlike `println()`, `showMessageDialog()` needs two arguments. One isn't enough."
+      },
+      {
+       "text": "`JOptionPane.showMessageDialog(null; \"Done\");`",
+       "feedback": "Arguments are separated by commas. A semicolon ends a statement, so it can't go inside the parentheses."
+      },
+      {
+       "text": "`JOptionPane.showMessageDialog(\"Done\", null);`",
+       "feedback": "Order matters: the placement comes first and the message second. With the arguments swapped, the call won't compile."
+      }
+     ],
+     "hint": "How many arguments does this method need, what separates them, and which comes first?",
+     "explanation": "Different methods need different numbers of arguments. When there are several, they appear inside the parentheses separated by commas, in the order the method expects.",
+     "ref": "Ch. 1.8, showMessageDialog() arguments, p. 28"
+    },
+    {
+     "id": "import-placement",
+     "concept": "Where import goes",
+     "level": "analyze",
+     "stem": "What is wrong with this class?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Placement\n{\n    import javax.swing.JOptionPane;\n\n    public static void main(String[] args)\n    {\n        JOptionPane.showMessageDialog(null, \"Hi\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "illegal start of type"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "The import is inside the class; it must come before the class",
+       "feedback": "Import statements must be placed outside any class you write, at the top of the file. Inside the class body, javac reports an error.",
+       "correct": true
+      },
+      {
+       "text": "The import must name the whole `javax.swing` package",
+       "feedback": "Importing one class by name, as here, is exactly what the reading does. The problem is *where* the line is."
+      },
+      {
+       "text": "Nothing; an import may appear anywhere in a file",
+       "feedback": "The compiler rejects an import inside a class body. It must come before the class."
+      },
+      {
+       "text": "The import must come after `main()`, the place where `JOptionPane` is used",
+       "feedback": "Imports don't go next to the code that uses them. They go before the class, at the top of the file."
+      }
+     ],
+     "hint": "Compare it with `FirstDialog`: which comes first, the import or the class header?",
+     "explanation": "An `import` statement goes outside any class, at the top of the file, before the class header.",
+     "ref": "Ch. 1.8, import statements, p. 28"
+    }
+   ]
+  },
+  {
+   "id": "1.9",
+   "title": "Finding Help",
+   "subtitle": "The Java API, the JDK, The Java Tutorial and reading documentation pages",
+   "source": "Ch. 1, section 1.9 (pp. 29–30)",
+   "intro": "You need a method you've never used, and nobody is around to ask. Four questions on finding answers in Java's own documentation.",
+   "takeaways": [
+    "The Java API, also called the Java class library, documents every prewritten class: its fields, its methods, and the arguments each method accepts.",
+    "The JDK is the free development kit you install to compile and run Java. The API documentation and The Java Tutorial are what you look things up in while you write."
+   ],
+   "questions": [
+    {
+     "id": "where-methods",
+     "concept": "The Java API",
+     "level": "apply",
+     "stem": "You want a list of every method the `PrintStream` class offers. Where should you look?",
+     "options": [
+      {
+       "text": "The Java API documentation, the Java class library",
+       "feedback": "The API documents every prewritten Java class, including lists of all the methods you can use with each one.",
+       "correct": true
+      },
+      {
+       "text": "The FAQ pages on the Java website, which answer common questions",
+       "feedback": "FAQs give short answers to common questions about Java software. They don't list the methods of every class."
+      },
+      {
+       "text": "The first trail of The Java Tutorial, which teaches the basics",
+       "feedback": "The Tutorial teaches through lessons and examples, not a complete reference for each class."
+      },
+      {
+       "text": "The messages javac prints while compiling a program",
+       "feedback": "Compiler messages describe errors in *your* code. They don't catalogue a class's methods."
+      }
+     ],
+     "hint": "Which resource is described as covering every prewritten class and all of its methods?",
+     "explanation": "The Java API (application programming interface), also called the Java class library, is the reference for how to use every prewritten Java class and its methods.",
+     "aside": "Every class and method page in the API includes a \"Since\" line showing the Java version where it first appeared. `String`, for example, has been there since JDK 1.0.",
+     "ref": "Ch. 1.9, p. 29"
+    },
+    {
+     "id": "follow-out",
+     "concept": "Navigating the documentation",
+     "level": "analyze",
+     "stem": "On the API page for `java.lang.System`, the Field Summary shows that `out` has the type `PrintStream`. Where do you go next to read about `println()`?",
+     "options": [
+      {
+       "text": "The `PrintStream` page, since `out` is a `PrintStream` object",
+       "feedback": "`println()` is a method of whatever class `out` belongs to. The field's type tells you that class, and its page lists the `println()` versions.",
+       "correct": true
+      },
+      {
+       "text": "Further down the `System` page, since the call begins with `System`",
+       "feedback": "`System` only holds the `out` field. The methods you call on `out` are documented in `out`'s own class."
+      },
+      {
+       "text": "The `String` page, because `println()` prints strings",
+       "feedback": "`String` is the type of the *argument* you pass in. The method itself belongs to the class of the object you call it on."
+      },
+      {
+       "text": "The `JOptionPane` page, because it handles output",
+       "feedback": "`JOptionPane` produces dialog boxes. Console output goes through `System.out`, a `PrintStream`."
+      }
+     ],
+     "hint": "A method is documented on the page of the class whose object you call it on. What class is `out`?",
+     "explanation": "To learn what you can do with an object, find its type (here in the Field Summary) and open that class's page. `System.out` is a `PrintStream`, so its methods are on the `PrintStream` page.",
+     "ref": "Ch. 1.9, You Do It: Exploring Java Documentation, p. 30"
+    },
+    {
+     "id": "what-to-download",
+     "concept": "The JDK",
+     "level": "understand",
+     "stem": "A classmate asks what to download so they can compile Java programs on their own laptop. What does the reading point to?",
+     "options": [
+      {
+       "text": "The JDK, a free development kit that includes the compiler",
+       "feedback": "The Java Development Kit is an SDK, a software development kit with tools for programmers, and it is free to download.",
+       "correct": true
+      },
+      {
+       "text": "The Java API, which contains the compiler and its libraries",
+       "feedback": "The API is documentation of the class library. It describes classes; it doesn't compile anything."
+      },
+      {
+       "text": "The Java Tutorial, which installs the Java Virtual Machine",
+       "feedback": "The Tutorial is a set of lessons with working examples, not software you install to compile programs."
+      },
+      {
+       "text": "A Java IDE, which the reading says replaces the JDK",
+       "feedback": "Development environments such as Eclipse help you write code, but the reading never says they replace the JDK. Compiling and running still rely on Java's own tools."
+      }
+     ],
+     "hint": "Which resource is described as a software development kit?",
+     "explanation": "The JDK (Java Development Kit) is a free SDK containing the tools needed to compile and run Java programs; its documentation can also be downloaded for offline use.",
+     "ref": "Ch. 1.9, pp. 29–30"
+    },
+    {
+     "id": "println-versions",
+     "concept": "Reading method entries",
+     "level": "apply",
+     "stem": "Scrolling through `PrintStream`, a student finds several versions of `println()`. Which detail in the API tells them which version applies to `System.out.println(\"Hi\")`?",
+     "options": [
+      {
+       "text": "The type of argument each version accepts",
+       "feedback": "Each version is listed with the argument it takes. The one that accepts a `String` is the one used when you pass `\"Hi\"`.",
+       "correct": true
+      },
+      {
+       "text": "Which version was added most recently",
+       "feedback": "Being newer doesn't decide which version a call uses. What decides it is the argument you pass."
+      },
+      {
+       "text": "The order the versions appear on the page",
+       "feedback": "The page's order is just how it's laid out. Java matches a call to a version by its argument."
+      },
+      {
+       "text": "Which version is marked as the default",
+       "feedback": "None of them is a default. Each version handles a different kind of argument."
+      }
+     ],
+     "hint": "What is different about the line `println(String x)` compared with its neighbours?",
+     "explanation": "Several methods can share a name if they accept different arguments. The API lists each version with its parameters, which is how you tell them apart.",
+     "aside": "Several methods sharing a name but taking different arguments is called *overloading*. You'll write overloaded methods of your own later in this course.",
+     "ref": "Ch. 1.9, You Do It: Exploring Java Documentation, p. 30"
+    }
+   ]
+  }
+ ]
+}

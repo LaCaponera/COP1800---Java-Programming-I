@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bus-stop display</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 1.4</div>
+  <h1>The bus-stop display</h1>
+<h2>Objectives</h2><ul><li>Identify the class, object, method and argument in an output statement</li><li>Choose print() or println() to control where the next output appears</li><li>Output a blank line with println() and no argument</li><li>Write literal strings exactly as they must appear</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> A blank line follows the title, produced by <code>println()</code> with no argument.</li><li><strong>R2</strong> <code>Loading arrivals... </code> (with one trailing space) and <code>done</code> are printed by two statements and appear on one line.</li><li><strong>R3</strong> The two route lines follow, each on its own line.</li><li><strong>R4</strong> Lines are started only with <code>println()</code>: no <code>\n</code> inside strings.</li><li><strong>R5</strong> The full display matches the screen above exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In <code>System.out.println(&quot;CITY TRANSIT - STOP 4417&quot;);</code> name the class, the object, the method and the argument.</p><div class="answer"><p><code>System</code> is the class, <code>out</code> is the object (a property of <code>System</code> that refers to the standard output device), <code>println()</code> is the method, and the literal string <code>&quot;CITY TRANSIT - STOP 4417&quot;</code> is the argument passed to it.</p></div></li><li><p>The method header in the starter is <code>public static void main(String[] args)</code>. What does <code>void</code> tell you, and does it mean <code>main()</code> produces no output?</p><div class="answer"><p><code>void</code> means <code>main()</code> doesn&#x27;t return a value to any method that calls it. It doesn&#x27;t mean there&#x27;s no output: <code>main()</code> can still display text, as this program does.</p></div></li></ol>
+<h2>Solution</h2><div class="file">StopDisplay.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">StopDisplay</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"CITY TRANSIT - STOP 4417"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Loading arrivals... "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"done"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Route 12 to Downtown: 7 min"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Route 30 to Airport: 15 min"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>print()</code> displays its argument and leaves the insertion point at the end of that line, so <code>done</code> continues it; <code>println()</code> moves to the next line afterwards. <code>println()</code> with empty parentheses outputs just a line break, the blank line. Every literal string sits inside double quotation marks and appears exactly as typed, including the trailing space before <code>done</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestStopDisplay.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestStopDisplay</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java StopDisplay" would.</span>
+<span class="t-w">        </span><span class="t-n">StopDisplay</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">CITY TRANSIT - STOP 4417
+
+Loading arrivals... done
+Route 12 to Downtown: 7 min
+Route 30 to Airport: 15 min
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>A blank line comes from println() with no argument<div class="small">in <code>StopDisplay.main</code></div></td><td><div><span class="tag">require</span> <code>System\s*\.\s*out\s*\.\s*println\s*\(\s*\)\s*;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The status line uses print() and then println()<div class="small">in <code>StopDisplay.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>System\s*\.\s*out\s*\.\s*print\s*\(\s*&quot;Loading arrivals\.\.\. &quot;\s*\)\s*;\s*System\s*\.\s*out\s*\.\s*println\s*\(\s*&quot;done&quot;\s*\)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Both route lines are printed in order<div class="small">in <code>StopDisplay.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>println\s*\(\s*&quot;Route 12 to Downtown: 7 min&quot;\s*\)\s*;[\s\S]*println\s*\(\s*&quot;Route 30 to Airport: 15 min&quot;\s*\)\s*;</code></div></td></tr><tr><td>C4</td><td>R4</td><td>No \n escapes<div class="small">in <code>StopDisplay.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>&quot;done&quot;</code></div><div><span class="tag">forbid</span> <code>\\n</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · A blank line comes from println() with no argument</dt><dd><p>Call <code>println</code> with empty parentheses: it outputs nothing but a line break, which is the blank line. Methods always keep their parentheses, even with no argument.</p></dd><dt>C2 · The status line uses print() and then println()</dt><dd><p>Print <code>&quot;Loading arrivals... &quot;</code> with <code>print()</code> so the insertion point stays on that line, then print <code>&quot;done&quot;</code> with <code>println()</code> so the next output starts on a new line. Keep the space before the closing quotation mark.</p><div class='small'><strong>Hint:</strong></div><p>Which of the two methods leaves the insertion point at the end of the current line?</p></dd><dt>C3 · Both route lines are printed in order</dt><dd><p>After the status line, use one <code>println()</code> per route with the text exactly as shown on the screen: capital R, a colon after the destination, then the minutes.</p></dd><dt>C4 · No \n escapes</dt><dd><p>Use <code>println()</code> to end a line instead of <code>\n</code> inside a string. The reading builds every line from its own statement, which also keeps each statement short and readable.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Count the lines on the target screen (the blank one too) and match each with one statement. One line needs two statements.</p></li><li><p>Remember the difference: after <code>println()</code> the next output starts on a new line; after <code>print()</code> it continues on the same line.</p></li><li><p>Spaces inside quotation marks are part of the output. Check the space between <code>...</code> and <code>done</code> against the screen.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why did the status line need <code>print()</code> for its first part rather than <code>println()</code>? Describe what the screen would show with <code>println()</code>.</p><div class="answer"><p><code>print()</code> leaves the insertion point at the end of the line, so <code>done</code> appears right after <code>Loading arrivals... </code>. With <code>println()</code> the insertion point would move to the next line, and <code>done</code> would appear alone on its own line, breaking the display&#x27;s layout.</p></div></li><li><p>Your class is named <code>StopDisplay</code>. What must the file be called, and what would go wrong if you saved it as <code>stopdisplay.java</code>?</p><div class="answer"><p>It must be saved as <code>StopDisplay.java</code>, matching the public class name exactly, including case. Java is case sensitive, so with <code>stopdisplay.java</code> the compiler reports that the public class <code>StopDisplay</code> should be declared in a file named <code>StopDisplay.java</code>.</p></div></li></ol>
+<h2>Extension</h2><p>Add a third route that is delayed: print <code>Route 7 to Harbor: </code> with <code>print()</code>, then <code>DELAYED</code> with <code>println()</code>. When would a real display want to print the two parts separately?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; class and method names follow Java conventions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

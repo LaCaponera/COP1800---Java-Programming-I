@@ -1,0 +1,1203 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 1: Creating Java Programs",
+ "collection_intro": "Hands-on labs for each section of Chapter 1 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict, write or fix the program, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "1.1",
+   "title": "The fire drill that compiles",
+   "subtitle": "A program with zero syntax errors can still give dangerous instructions",
+   "source": "Ch. 1, section 1.1 (pp. 1–4)",
+   "minutes": 20,
+   "objectives": [
+    "Tell a syntax error from a logic error in a real program",
+    "Explain why a compiler accepts a program whose instructions are wrong",
+    "Fix logic by putting the right commands in the right order",
+    "Choose a test that would reveal a logic error"
+   ],
+   "scenario": "Room 214's evacuation screen runs a small Java program, `FireDrill`. It compiles without a single error message and runs every morning. During last week's drill, though, students followed the screen and headed for the **elevator**, and some walked to the assembly point before they had even left the room.\n\nThe safety officer has asked you to correct the program. As you work, notice that the compiler never complained once: every statement follows Java's rules. The mistakes are in the *logic*, which only a person reading the output can catch.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The title line prints first, then the steps print in order: Step 1, Step 2, Step 3, Step 4."
+    },
+    {
+     "id": "R2",
+     "text": "Step 2 sends people down the stairs, never the elevator: `Step 2: Take the stairs to the ground floor.`"
+    },
+    {
+     "id": "R3",
+     "text": "A final step prints last: `Step 5: Do not re-enter until staff say it is safe.`"
+    },
+    {
+     "id": "R4",
+     "text": "The program's complete output matches the drill card exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "FireDrill.java",
+   "starter_code": "public class FireDrill\n{\n    public static void main(String[] args)\n    {\n        // This program compiles and runs, but the drill card it prints is wrong.\n        // TODO (R1): put the steps in the order people must follow them.\n        // TODO (R2): fix the step that would send people into danger.\n        // TODO (R3): add the missing final step.\n        System.out.println(\"FIRE DRILL - ROOM 214\");\n        System.out.println(\"Step 3: Walk to the assembly point in Lot C.\");\n        System.out.println(\"Step 1: Stop work and leave your belongings.\");\n        System.out.println(\"Step 2: Take the elevator to the ground floor.\");\n        System.out.println(\"Step 4: Wait for your name to be called.\");\n    }\n}\n",
+   "solution": "public class FireDrill\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"FIRE DRILL - ROOM 214\");\n        System.out.println(\"Step 1: Stop work and leave your belongings.\");\n        System.out.println(\"Step 2: Take the stairs to the ground floor.\");\n        System.out.println(\"Step 3: Walk to the assembly point in Lot C.\");\n        System.out.println(\"Step 4: Wait for your name to be called.\");\n        System.out.println(\"Step 5: Do not re-enter until staff say it is safe.\");\n    }\n}\n",
+   "solution_notes": "Statements in `main()` run one after another, top to bottom, so the order of the `println()` calls *is* the order of the drill. The compiler accepted the original because every statement was legal Java; it cannot know that elevators are unsafe in a fire or that Step 3 should not come first. Those are logic errors, and only reading the output against the specification reveals them.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The steps print in order after the title",
+     "within": "FireDrill.main",
+     "strings": true,
+     "require": "FIRE DRILL[\\s\\S]*\"Step 1:[\\s\\S]*\"Step 2:[\\s\\S]*\"Step 3:[\\s\\S]*\"Step 4:",
+     "message": "Statements run from top to bottom, so the `println()` for Step 1 must come before Step 2, and so on, all after the title. Move whole statements; don't renumber the text.",
+     "hint": "Read the output as a student standing in Room 214 would. Which instruction must they follow first?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "No one is sent to the elevator",
+     "within": "FireDrill.main",
+     "strings": true,
+     "require": "\"Step 2: Take the stairs to the ground floor\\.\"",
+     "forbid": "elevator",
+     "message": "Change the Step 2 text so it reads exactly `Step 2: Take the stairs to the ground floor.` The compiler can't catch this one: any text inside quotation marks is legal Java, so a dangerous instruction compiles perfectly."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Step 5 is added at the end",
+     "within": "FireDrill.main",
+     "strings": true,
+     "require": "\"Step 4:[\\s\\S]*println\\s*\\(\\s*\"Step 5: Do not re-enter until staff say it is safe\\.\"\\s*\\)\\s*;",
+     "message": "Add one more `System.out.println(...)` statement after Step 4 with the exact text `Step 5: Do not re-enter until staff say it is safe.` Every statement ends with a semicolon."
+    }
+   ],
+   "hints": [
+    "Run the starter in your head first: `main()` executes its statements from the first line to the last. Write down the output in that order and compare it with what a safe drill needs.",
+    "You don't need new Java for R1: cut a whole statement and paste it in a different place. The number inside the quotation marks is just text; it doesn't control when a line runs.",
+    "For Step 5, copy the shape of an existing `println()` statement (class, dot, object, dot, method, parentheses, quotation marks, semicolon) and change only the text between the quotation marks."
+   ],
+   "test_program": {
+    "file_name": "TestFireDrill.java",
+    "code": "public class TestFireDrill\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java FireDrill\" would.\n        FireDrill.main(new String[0]);\n    }\n}\n",
+    "expected_output": "FIRE DRILL - ROOM 214\nStep 1: Stop work and leave your belongings.\nStep 2: Take the stairs to the ground floor.\nStep 3: Walk to the assembly point in Lot C.\nStep 4: Wait for your name to be called.\nStep 5: Do not re-enter until staff say it is safe.\n",
+    "predict": "Before running: how many lines will appear, and which line will be the second one? Then check whether the screen now tells people to do things in a safe order."
+   },
+   "warmup": [
+    {
+     "question": "Look at the starter without changing it. Will it compile? If it does, does that prove the program is correct? Explain in a sentence or two.",
+     "model_answer": "Yes, it compiles: every statement follows Java's syntax rules and ends with a semicolon. That only proves there are no syntax errors. The program can still be wrong: it prints Step 3 before Step 1 and tells people to use the elevator, which are logic errors the compiler cannot detect."
+    },
+    {
+     "question": "Predict the starter's output line by line. Which line would a student in Room 214 see second?",
+     "model_answer": "The title, then Step 3, Step 1, Step 2 (elevator) and Step 4, in the order the statements are written. The second line is \"Step 3: Walk to the assembly point in Lot C.\", which is wrong: people would be told to walk to the lot before stopping work."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The compiler accepted the word \"elevator\" without a warning. Why can't a compiler catch this kind of mistake, and who is responsible for catching it?",
+     "model_answer": "A compiler only checks that statements follow the language's rules. Text inside quotation marks is a literal string and can contain any characters, so \"elevator\" is as legal as \"stairs\". Whether the instruction is safe is a question about meaning, a logic error, so the programmer has to catch it by examining the output against the specification."
+    },
+    {
+     "question": "The reading warns that correct output for one test doesn't prove a program is logically correct (a program that adds 2 and 2 also prints 4). Describe a check you could make on this drill program that would reveal an ordering mistake that a quick glance might miss.",
+     "model_answer": "Compare every output line with the official drill card, in order, rather than looking only at the first or last line. A glance at the title or a single step would look fine; reading the full sequence (or having a second person do a structured walkthrough) shows whether Step 1 truly comes before Step 2, and so on."
+    }
+   ],
+   "worth_knowing": "\"Bug\" was engineering slang long before computers: Thomas Edison used it in the 1870s. The famous 1947 Harvard Mark II logbook entry joked \"First actual case of bug being found\" next to a taped-in moth, and that page is now in the Smithsonian.",
+   "extension": "Add a line before Step 1 that tells people which exit to use. Where must that statement go so the drill still makes sense, and why does the compiler not care where you put it?",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.2",
+   "title": "The shelter board",
+   "subtitle": "One class, three objects, and state that changes only through methods",
+   "source": "Ch. 1, section 1.2 (pp. 4–8)",
+   "minutes": 30,
+   "objectives": [
+    "Distinguish a class (the blueprint) from its objects (instances)",
+    "Create objects whose attributes hold different values (different state)",
+    "Ask an object to act by calling its methods",
+    "Explain how encapsulation protects an object's data"
+   ],
+   "scenario": "The Riverside Animal Shelter shows a board of its dogs at the front desk, the way Figure 1-2 shows Dog objects created from one `Dog` class. A teammate already wrote the `Dog` class (the blueprint, in the read-only `Dog.java` tab). Your job is the board itself, in `ShelterBoard.java`.\n\nThis morning there are three dogs: **Ginger** (6, Akita, shots up to date), **Bowser** (2, Retriever, shots up to date) and **Roxy** (1, Beagle, shots due). By evening, Ginger has had a birthday and the vet has updated Roxy's shots.\n\nThe starter's line `Dog ginger = new Dog(...)` shows how to create an object from a class. Read it as: *make a new Dog object with this starting state, and call it `ginger`*. The values in the parentheses follow the order of the parameters in `Dog.java`. You'll study this syntax properly in a later chapter; for now, follow the pattern.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Create two more Dog objects named `bowser` and `roxy` with the morning values above (Roxy's shot status is `\"Due\"`)."
+    },
+    {
+     "id": "R2",
+     "text": "The morning board describes Ginger, Bowser and Roxy, in that order."
+    },
+    {
+     "id": "R3",
+     "text": "After the evening heading, change Ginger and Roxy by calling their methods (`haveBirthday()`, `updateShots()`): don't create replacement dogs and don't touch their data directly."
+    },
+    {
+     "id": "R4",
+     "text": "The evening board describes all three dogs again, in the same order, showing their new state.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ShelterBoard.java",
+     "editable": true,
+     "starter": "public class ShelterBoard\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Shelter board - morning\");\n        Dog ginger = new Dog(\"Ginger\", 6, \"Akita\", \"Up to date\");\n        ginger.describe();\n\n        // TODO (R1): create bowser and roxy from the Dog class.\n        // TODO (R2): describe bowser, then roxy.\n\n        System.out.println(\"Shelter board - evening\");\n        // TODO (R3): Ginger had a birthday; Roxy's shots were updated.\n        // TODO (R4): describe all three dogs again.\n    }\n}\n",
+     "solution": "public class ShelterBoard\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Shelter board - morning\");\n        Dog ginger = new Dog(\"Ginger\", 6, \"Akita\", \"Up to date\");\n        ginger.describe();\n\n        Dog bowser = new Dog(\"Bowser\", 2, \"Retriever\", \"Up to date\");\n        Dog roxy = new Dog(\"Roxy\", 1, \"Beagle\", \"Due\");\n        bowser.describe();\n        roxy.describe();\n\n        System.out.println(\"Shelter board - evening\");\n        ginger.haveBirthday();\n        roxy.updateShots();\n        ginger.describe();\n        bowser.describe();\n        roxy.describe();\n    }\n}\n"
+    },
+    {
+     "name": "Dog.java",
+     "editable": false,
+     "starter": "public class Dog\n{\n    // Attributes: every Dog has these four properties.\n    private String name;\n    private int age;\n    private String breed;\n    private String shotStatus;\n\n    // Creates a Dog with its starting state.\n    public Dog(String name, int age, String breed, String shotStatus)\n    {\n        this.name = name;\n        this.age = age;\n        this.breed = breed;\n        this.shotStatus = shotStatus;\n    }\n\n    // Methods: what every Dog can do.\n    public void haveBirthday()\n    {\n        age = age + 1;\n    }\n\n    public void updateShots()\n    {\n        shotStatus = \"Up to date\";\n    }\n\n    public void describe()\n    {\n        System.out.println(name + \" | age \" + age + \" | \" + breed + \" | shots: \" + shotStatus);\n    }\n}\n"
+    }
+   ],
+   "main_file": "ShelterBoard.java",
+   "solution_notes": "`Dog` is written once; `ginger`, `bowser` and `roxy` are three instances of it. They share the same attributes and methods but hold different values, which is their state. Because the attributes are `private` (encapsulation), the board can't assign `ginger.age` directly; it asks the object to change itself with `haveBirthday()`. Creating a new 7-year-old Ginger would print the same text but would model a different dog, not the same dog getting older.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Bowser is created with his morning state",
+     "within": "ShelterBoard.main",
+     "strings": true,
+     "require": "\\bbowser\\s*=\\s*new\\s+Dog\\s*\\(\\s*\"Bowser\"\\s*,\\s*2\\s*,\\s*\"Retriever\"\\s*,\\s*\"Up to date\"\\s*\\)\\s*;",
+     "message": "Follow the pattern of the Ginger line: `Dog bowser = new Dog(...)` with the name, age, breed and shot status in the same order as the `Dog` constructor's parameters (look at `Dog.java`).",
+     "hint": "The order of the values matters: name, age, breed, shot status."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "Roxy is created with her shots due",
+     "within": "ShelterBoard.main",
+     "strings": true,
+     "require": "\\broxy\\s*=\\s*new\\s+Dog\\s*\\(\\s*\"Roxy\"\\s*,\\s*1\\s*,\\s*\"Beagle\"\\s*,\\s*\"Due\"\\s*\\)\\s*;",
+     "message": "Create `roxy` the same way with `\"Roxy\"`, `1`, `\"Beagle\"` and `\"Due\"`. Text values go in quotation marks; the age is a number, so it doesn't."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The morning board describes all three dogs",
+     "within": "ShelterBoard.main",
+     "strings": true,
+     "require": "ginger\\s*\\.\\s*describe\\s*\\(\\s*\\)[\\s\\S]*bowser\\s*\\.\\s*describe\\s*\\(\\s*\\)[\\s\\S]*roxy\\s*\\.\\s*describe\\s*\\(\\s*\\)[\\s\\S]*\"Shelter board - evening\"",
+     "message": "Before the evening heading, ask each object to describe itself: the object's name, a dot, then the method name with parentheses, in the order Ginger, Bowser, Roxy."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "Ginger and Roxy change through their own methods",
+     "within": "ShelterBoard.main",
+     "require": "^(?=[\\s\\S]*\\bginger\\s*\\.\\s*haveBirthday\\s*\\(\\s*\\)\\s*;)(?=[\\s\\S]*\\broxy\\s*\\.\\s*updateShots\\s*\\(\\s*\\)\\s*;)",
+     "forbid": "\\.\\s*(?:name|age|breed|shotStatus)\\s*=",
+     "message": "Call `haveBirthday()` on `ginger` and `updateShots()` on `roxy`. Don't assign their fields (they're private: only `Dog`'s own methods may change them) and don't replace them with new objects, which would be different dogs rather than the same dogs changing.",
+     "hint": "Methods are the verbs of an object. Which verb in `Dog.java` makes a dog one year older?"
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "The same dogs change: no replacement objects",
+     "within": "ShelterBoard.main",
+     "strings": true,
+     "require": "haveBirthday",
+     "forbid": "new\\s+Dog\\s*\\(\\s*\"(Ginger|Bowser|Roxy)\"[\\s\\S]*new\\s+Dog\\s*\\(\\s*\"\\1\"",
+     "message": "Each dog should be created once. Building a second Ginger (or Roxy) with new values makes a different object that only looks the same; ask the existing object to change with its method instead."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The evening board describes all three again",
+     "within": "ShelterBoard.main",
+     "strings": true,
+     "require": "\"Shelter board - evening\"[\\s\\S]*ginger\\s*\\.\\s*describe\\s*\\(\\s*\\)[\\s\\S]*bowser\\s*\\.\\s*describe\\s*\\(\\s*\\)[\\s\\S]*roxy\\s*\\.\\s*describe\\s*\\(\\s*\\)",
+     "message": "After the evening heading and the two changes, describe Ginger, Bowser and Roxy again, in that order, so the desk sees each dog's current state."
+    }
+   ],
+   "hints": [
+    "Open the `Dog.java` tab first. Find the four attributes and the three methods. Which of them could the shelter board use directly, and which are hidden?",
+    "Each new dog needs one line shaped like the Ginger line: a type, a name for the object, `=`, `new`, the class name, and the starting values in the constructor's order.",
+    "Changing state is a request to the object, not an assignment: write the object's name, a dot and the method that makes the change. Do both changes *before* the evening `describe()` calls, or the board will show the morning values."
+   ],
+   "test_program": {
+    "file_name": "TestShelterBoard.java",
+    "code": "public class TestShelterBoard\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java ShelterBoard\" would.\n        ShelterBoard.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Shelter board - morning\nGinger | age 6 | Akita | shots: Up to date\nBowser | age 2 | Retriever | shots: Up to date\nRoxy | age 1 | Beagle | shots: Due\nShelter board - evening\nGinger | age 7 | Akita | shots: Up to date\nBowser | age 2 | Retriever | shots: Up to date\nRoxy | age 1 | Beagle | shots: Up to date\n",
+    "predict": "Before running: write the eight lines you expect. Which two lines change between morning and evening, and which dog's lines stay identical?",
+    "how_to_run": "Put `Dog.java`, `ShelterBoard.java` and `TestShelterBoard.java` in the same folder (or project), then compile and run `TestShelterBoard`. From a command prompt: `javac *.java` then `java TestShelterBoard`."
+   },
+   "warmup": [
+    {
+     "question": "Read `Dog.java`. Name the four attributes every Dog has, and the three methods every Dog can perform. Which are like adjectives, and which like verbs?",
+     "model_answer": "The attributes are name, age, breed and shotStatus; they describe a dog, like adjectives. The methods are haveBirthday(), updateShots() and describe(); they are actions, like verbs."
+    },
+    {
+     "question": "All four attributes are marked `private`. What does that prevent `ShelterBoard` from doing, and how can the board still change a dog's age?",
+     "model_answer": "Code outside `Dog` can't read or assign those fields directly, so `ShelterBoard` can't write something like `ginger.age = 7`. It can still change the age by calling a public method, `haveBirthday()`, which runs inside `Dog` and is allowed to update the field. That is encapsulation."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "`ginger`, `bowser` and `roxy` all come from the same class. What is the same about them, and what makes each one different?",
+     "model_answer": "They share the same attributes and methods because they were all built from the `Dog` blueprint. What differs is the values stored in those attributes, each object's state: different names, ages, breeds and shot status."
+    },
+    {
+     "question": "A classmate replaced the birthday call with `ginger = new Dog(\"Ginger\", 7, \"Akita\", \"Up to date\");`. The output looks identical. Why is calling `haveBirthday()` still the better design?",
+     "model_answer": "The new statement throws away the original object and builds a different dog that happens to have the same values, and the board has to know Ginger's breed and shot status to do it. `haveBirthday()` changes the existing object's state through its own method, so the rule for ageing lives in one place inside `Dog`, and the board doesn't need to know or retype the other attributes."
+    }
+   ],
+   "worth_knowing": "Object-oriented programming began with simulation, exactly as the reading says: Simula, created in Norway by Ole-Johan Dahl and Kristen Nygaard in the 1960s, introduced classes and objects to model real-world systems such as ships and queues.",
+   "extension": "Add a fourth dog that arrives in the evening. Then, in your own copy of `Dog.java`, add a method `adopt()` that sets a new attribute `status` to \"Adopted\". Which other method must change so the board shows it?",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.3",
+   "title": "How a Java program travels",
+   "subtitle": "Source code, bytecode and the JVM, written as a card for a new teammate",
+   "source": "Ch. 1, section 1.3 (pp. 8–10)",
+   "minutes": 20,
+   "objectives": [
+    "Trace a program from source file to bytecode to execution in the JVM",
+    "Name the file each step reads and the file it produces",
+    "Explain what \"write once, run anywhere\" means and which file makes it possible",
+    "Write a console application that displays text output"
+   ],
+   "scenario": "Your team's ticket-scanning app is a Java class named `TicketScanner`, stored in `TicketScanner.java`. A new teammate keeps asking the same question: *what actually happens between saving the file and seeing the program run?*\n\nWrite a small console application, `JavaJourney`, that prints a five-line card answering it for **TicketScanner**. The first two lines are done. Each remaining line has a fixed sentence with blanks that you must fill with the right file name or command:\n\n- `2. javac ____ creates bytecode in ____`\n- `3. java ____ starts the JVM, which interprets the bytecode`\n- `4. The same ____ runs on Windows, macOS and Linux`\n\nGetting the blanks right is the point: one wrong extension and your teammate types a command that fails.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Line 2 names the file `javac` compiles and the bytecode file it creates."
+    },
+    {
+     "id": "R2",
+     "text": "Line 3 gives the exact command that runs the program in the JVM."
+    },
+    {
+     "id": "R3",
+     "text": "Line 4 names the file that can be copied to Windows, macOS or Linux and run unchanged."
+    },
+    {
+     "id": "R4",
+     "text": "The card prints exactly five lines, in order, one `println()` per line.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "JavaJourney.java",
+   "starter_code": "public class JavaJourney\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"How TicketScanner travels\");\n        System.out.println(\"1. Source code is saved in TicketScanner.java\");\n        // TODO (R1): 2. javac ____ creates bytecode in ____\n        // TODO (R2): 3. java ____ starts the JVM, which interprets the bytecode\n        // TODO (R3): 4. The same ____ runs on Windows, macOS and Linux\n    }\n}\n",
+   "solution": "public class JavaJourney\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"How TicketScanner travels\");\n        System.out.println(\"1. Source code is saved in TicketScanner.java\");\n        System.out.println(\"2. javac TicketScanner.java creates bytecode in TicketScanner.class\");\n        System.out.println(\"3. java TicketScanner starts the JVM, which interprets the bytecode\");\n        System.out.println(\"4. The same TicketScanner.class runs on Windows, macOS and Linux\");\n    }\n}\n",
+   "solution_notes": "The compiler reads source code (`.java`) and writes bytecode (`.class`). The `java` command takes the class name without any extension: typing `java TicketScanner.class` makes the JVM look for `TicketScanner.class.class`. Portability comes from the bytecode file: every platform's JVM translates the same `.class` file to its own machine language, so there's one version of the program, not one per operating system.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Line 2: javac reads the .java file and writes the .class file",
+     "within": "JavaJourney.main",
+     "strings": true,
+     "require": "\"2\\. javac TicketScanner\\.java creates bytecode in TicketScanner\\.class\"",
+     "forbid": "javac TicketScanner\\.class|bytecode in TicketScanner\\.java",
+     "message": "The compiler's input is the source file you save, and its output is the bytecode file. Fill line 2 with those two file names, extensions included: `2. javac ... creates bytecode in ...`.",
+     "hint": "Figure 1-3 shows the extension of the file on each side of the Java compiler."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Line 3: the run command uses the class name only",
+     "within": "JavaJourney.main",
+     "strings": true,
+     "require": "\"3\\. java TicketScanner starts the JVM, which interprets the bytecode\"",
+     "forbid": "java TicketScanner\\.(?:class|java) starts",
+     "message": "The `java` command takes the *class* name with no extension. With `.class` added, the JVM looks for a file named `TicketScanner.class.class` and fails."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Line 4: the bytecode file is the portable one",
+     "within": "JavaJourney.main",
+     "strings": true,
+     "require": "\"4\\. The same TicketScanner\\.class runs on Windows, macOS and Linux\"",
+     "forbid": "same TicketScanner\\.java",
+     "message": "Write once, run anywhere works because every platform has a JVM that understands the same bytecode. Which file contains bytecode? Put that name in line 4."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "Lines appear in order, one statement per line",
+     "within": "JavaJourney.main",
+     "strings": true,
+     "require": "\"How TicketScanner travels\"[\\s\\S]*\"1\\.[\\s\\S]*\"2\\.[\\s\\S]*\"3\\.[\\s\\S]*\"4\\.",
+     "forbid": "\\\\n",
+     "message": "Keep the card in order (title, then 1 to 4) and use one `println()` per line. Don't put `\\n` inside a string: the reading starts each new line with a new `println()` statement."
+    }
+   ],
+   "hints": [
+    "Draw the three boxes of Figure 1-3 on paper. Under each arrow, write the file name that goes in and the one that comes out.",
+    "A command typed at the prompt is just text inside your string. The only question for each blank is which name, and with which extension, if any.",
+    "The `java` command needs a class name, not a file name. For line 4, ask which file the JVM actually reads."
+   ],
+   "test_program": {
+    "file_name": "TestJavaJourney.java",
+    "code": "public class TestJavaJourney\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java JavaJourney\" would.\n        JavaJourney.main(new String[0]);\n    }\n}\n",
+    "expected_output": "How TicketScanner travels\n1. Source code is saved in TicketScanner.java\n2. javac TicketScanner.java creates bytecode in TicketScanner.class\n3. java TicketScanner starts the JVM, which interprets the bytecode\n4. The same TicketScanner.class runs on Windows, macOS and Linux\n",
+    "predict": "Before running: after you compile `JavaJourney.java` and `TestJavaJourney.java`, which two new files will appear in your folder? Write their names, then run the test."
+   },
+   "warmup": [
+    {
+     "question": "Line 1 is already written. After it, which program turns `TicketScanner.java` into something the computer can run, and what kind of code does it produce?",
+     "model_answer": "The Java compiler, `javac`, translates the source code in `TicketScanner.java` into bytecode, a binary program stored in `TicketScanner.class`. The bytecode is not run directly by the computer; the JVM interprets it."
+    },
+    {
+     "question": "`JavaJourney` itself is a console application. What does that mean, and how is it different from the other type of Java application the reading describes?",
+     "model_answer": "A console application displays character (text) output on the screen, here through `System.out.println()`. A windowed application creates a GUI with elements such as menus, toolbars and dialog boxes."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why does a software company using Java usually ship one version of its program instead of separate Windows, macOS and Linux versions?",
+     "model_answer": "Java programs are compiled to bytecode that runs on the Java Virtual Machine, not directly on the operating system. Each platform has its own JVM that translates the same bytecode into its machine language, so one `.class` file works everywhere: write once, run anywhere."
+    },
+    {
+     "question": "The JVM is called a hypothetical computer. In your own words, what does that mean, and how does it make Java programs more secure?",
+     "model_answer": "The JVM isn't hardware; it's software that behaves like a computer for bytecode. Because programs run inside it instead of talking to the hardware directly, it can check the bytecode before running it and insulate the real machine from the program, which protects against intruders reaching the hardware through the operating system."
+    }
+   ],
+   "worth_knowing": "Every `.class` file starts with the same four bytes, written in hexadecimal as CA FE BA BE (\"cafe babe\"). The JVM checks this \"magic number\" before treating a file as bytecode.",
+   "extension": "Add a line 5 that explains what a programmer must do after editing `TicketScanner.java` before the change appears when the program runs. (Section 1.6 has the answer.)",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.4",
+   "title": "The bus-stop display",
+   "subtitle": "println() versus print(), and the anatomy of an output statement",
+   "source": "Ch. 1, section 1.4 (pp. 10–17)",
+   "minutes": 25,
+   "objectives": [
+    "Identify the class, object, method and argument in an output statement",
+    "Choose print() or println() to control where the next output appears",
+    "Output a blank line with println() and no argument",
+    "Write literal strings exactly as they must appear"
+   ],
+   "scenario": "City Transit's stop displays run a Java console program. At stop 4417 the screen must look exactly like this:\n\n```\nCITY TRANSIT - STOP 4417\n\nLoading arrivals... done\nRoute 12 to Downtown: 7 min\nRoute 30 to Airport: 15 min\n```\n\nThe status line matters. The display shows `Loading arrivals... ` the moment it starts, while it waits for the arrival data, and adds `done` **on the same line** when the data comes in. So the two parts must come from two separate statements, and the first one must not move the cursor to a new line.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "A blank line follows the title, produced by `println()` with no argument."
+    },
+    {
+     "id": "R2",
+     "text": "`Loading arrivals... ` (with one trailing space) and `done` are printed by two statements and appear on one line."
+    },
+    {
+     "id": "R3",
+     "text": "The two route lines follow, each on its own line."
+    },
+    {
+     "id": "R4",
+     "text": "Lines are started only with `println()`: no `\\n` inside strings."
+    },
+    {
+     "id": "R5",
+     "text": "The full display matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "StopDisplay.java",
+   "starter_code": "public class StopDisplay\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"CITY TRANSIT - STOP 4417\");\n        // TODO (R1): a blank line.\n        // TODO (R2): \"Loading arrivals... \" then \"done\", on one line, from two statements.\n        // TODO (R3): the two route lines.\n    }\n}\n",
+   "solution": "public class StopDisplay\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"CITY TRANSIT - STOP 4417\");\n        System.out.println();\n        System.out.print(\"Loading arrivals... \");\n        System.out.println(\"done\");\n        System.out.println(\"Route 12 to Downtown: 7 min\");\n        System.out.println(\"Route 30 to Airport: 15 min\");\n    }\n}\n",
+   "solution_notes": "`print()` displays its argument and leaves the insertion point at the end of that line, so `done` continues it; `println()` moves to the next line afterwards. `println()` with empty parentheses outputs just a line break, the blank line. Every literal string sits inside double quotation marks and appears exactly as typed, including the trailing space before `done`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A blank line comes from println() with no argument",
+     "within": "StopDisplay.main",
+     "require": "System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\\)\\s*;",
+     "message": "Call `println` with empty parentheses: it outputs nothing but a line break, which is the blank line. Methods always keep their parentheses, even with no argument."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The status line uses print() and then println()",
+     "within": "StopDisplay.main",
+     "strings": true,
+     "require": "System\\s*\\.\\s*out\\s*\\.\\s*print\\s*\\(\\s*\"Loading arrivals\\.\\.\\. \"\\s*\\)\\s*;\\s*System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\"done\"\\s*\\)\\s*;",
+     "message": "Print `\"Loading arrivals... \"` with `print()` so the insertion point stays on that line, then print `\"done\"` with `println()` so the next output starts on a new line. Keep the space before the closing quotation mark.",
+     "hint": "Which of the two methods leaves the insertion point at the end of the current line?"
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Both route lines are printed in order",
+     "within": "StopDisplay.main",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\"Route 12 to Downtown: 7 min\"\\s*\\)\\s*;[\\s\\S]*println\\s*\\(\\s*\"Route 30 to Airport: 15 min\"\\s*\\)\\s*;",
+     "message": "After the status line, use one `println()` per route with the text exactly as shown on the screen: capital R, a colon after the destination, then the minutes."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "No \\n escapes",
+     "within": "StopDisplay.main",
+     "strings": true,
+     "forbid": "\\\\n",
+     "require": "\"done\"",
+     "message": "Use `println()` to end a line instead of `\\n` inside a string. The reading builds every line from its own statement, which also keeps each statement short and readable."
+    }
+   ],
+   "hints": [
+    "Count the lines on the target screen (the blank one too) and match each with one statement. One line needs two statements.",
+    "Remember the difference: after `println()` the next output starts on a new line; after `print()` it continues on the same line.",
+    "Spaces inside quotation marks are part of the output. Check the space between `...` and `done` against the screen."
+   ],
+   "test_program": {
+    "file_name": "TestStopDisplay.java",
+    "code": "public class TestStopDisplay\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java StopDisplay\" would.\n        StopDisplay.main(new String[0]);\n    }\n}\n",
+    "expected_output": "CITY TRANSIT - STOP 4417\n\nLoading arrivals... done\nRoute 12 to Downtown: 7 min\nRoute 30 to Airport: 15 min\n",
+    "predict": "Before running: if you had used `println()` for `Loading arrivals... `, how would the display look different? Predict, then run your real version."
+   },
+   "warmup": [
+    {
+     "question": "In `System.out.println(\"CITY TRANSIT - STOP 4417\");` name the class, the object, the method and the argument.",
+     "model_answer": "`System` is the class, `out` is the object (a property of `System` that refers to the standard output device), `println()` is the method, and the literal string `\"CITY TRANSIT - STOP 4417\"` is the argument passed to it."
+    },
+    {
+     "question": "The method header in the starter is `public static void main(String[] args)`. What does `void` tell you, and does it mean `main()` produces no output?",
+     "model_answer": "`void` means `main()` doesn't return a value to any method that calls it. It doesn't mean there's no output: `main()` can still display text, as this program does."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why did the status line need `print()` for its first part rather than `println()`? Describe what the screen would show with `println()`.",
+     "model_answer": "`print()` leaves the insertion point at the end of the line, so `done` appears right after `Loading arrivals... `. With `println()` the insertion point would move to the next line, and `done` would appear alone on its own line, breaking the display's layout."
+    },
+    {
+     "question": "Your class is named `StopDisplay`. What must the file be called, and what would go wrong if you saved it as `stopdisplay.java`?",
+     "model_answer": "It must be saved as `StopDisplay.java`, matching the public class name exactly, including case. Java is case sensitive, so with `stopdisplay.java` the compiler reports that the public class `StopDisplay` should be declared in a file named `StopDisplay.java`."
+    }
+   ],
+   "worth_knowing": "The \"Hello, world!\" tradition comes from Brian Kernighan, who used it in a 1972 Bell Labs tutorial. He is the K in the \"K & R\" brace style the reading describes.",
+   "extension": "Add a third route that is delayed: print `Route 7 to Harbor: ` with `print()`, then `DELAYED` with `println()`. When would a real display want to print the two parts separately?",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.5",
+   "title": "Five errors, two compiles",
+   "subtitle": "Read compiler messages and repair syntax errors, one round at a time",
+   "source": "Ch. 1, section 1.5 (pp. 18–22)",
+   "minutes": 30,
+   "objectives": [
+    "Compile a class and read each part of an error message (file, line, problem, caret)",
+    "Repair common syntax errors: missing semicolon, missing return type, unmatched brace, wrong case",
+    "Explain why fixing errors can reveal new ones",
+    "Confirm that a clean compile creates a .class file"
+   ],
+   "scenario": "A teammate typed `RoomBooking.java`, the class that prints confirmations for the library's study rooms, and went on vacation. It doesn't compile. It contains **five** syntax errors.\n\nCopy the code into your IDE (or save it and run `javac RoomBooking.java`) and let the compiler find the errors. Read every message: it names the file, the line number and the problem, and the caret `^` points where the compiler noticed it.\n\nExpect a surprise: when you've fixed everything the first compile reported and compile again, **new** messages appear. Keep a note of what each round reported; the reflection asks about it. The checks on this page also point at each error, but try the compiler first.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The public class name matches the file name `RoomBooking.java` exactly."
+    },
+    {
+     "id": "R2",
+     "text": "`main()` has the complete header the JVM looks for."
+    },
+    {
+     "id": "R3",
+     "text": "Every statement ends with a semicolon."
+    },
+    {
+     "id": "R4",
+     "text": "Every class name is written with the correct uppercase and lowercase letters."
+    },
+    {
+     "id": "R5",
+     "text": "Every opening curly brace has a matching closing brace."
+    },
+    {
+     "id": "R6",
+     "text": "The program compiles and prints the four-line confirmation.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "RoomBooking.java",
+   "starter_code": "// This file has five syntax errors. Compile it and let the compiler find them.\npublic class roomBooking\n{\n    public static main(String[] args)\n    {\n        System.out.println(\"Study Room Booking\");\n        System.out.println(\"Room: 3B (seats 6)\")\n        system.out.println(\"Date: Thursday, 2:00 PM to 4:00 PM\");\n        System.out.println(\"Booked by: Team Falcon\");\n    }\n",
+   "solution": "public class RoomBooking\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Study Room Booking\");\n        System.out.println(\"Room: 3B (seats 6)\");\n        System.out.println(\"Date: Thursday, 2:00 PM to 4:00 PM\");\n        System.out.println(\"Booked by: Team Falcon\");\n    }\n}\n",
+   "solution_notes": "The first compile reports the three errors that stop the compiler from *parsing* the file: the missing return type `void` (\"invalid method declaration; return type required\"), the missing semicolon (\"';' expected\") and the missing closing brace (\"reached end of file while parsing\"). Only once the file can be parsed does the compiler check names, so the second compile reports `class roomBooking is public, should be declared in a file named roomBooking.java` and `package system does not exist`. Fixing errors lets the compiler get further, which is why new messages can appear.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The class name matches RoomBooking.java",
+     "require": "public\\s+class\\s+RoomBooking\\b",
+     "message": "A public class must be saved in a file with exactly the same name. The file is `RoomBooking.java`, so the class header needs `RoomBooking` with a capital R and a capital B.",
+     "hint": "Compare the class header with the file name letter by letter. Java is case sensitive."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "main() has its return type",
+     "require": "public\\s+static\\s+void\\s+main\\s*\\(\\s*String\\s*\\[\\s*\\]\\s*\\w+\\s*\\)",
+     "message": "The compiler says a return type is required. The JVM looks for `public static void main(String[] args)`: `void` belongs between `static` and `main`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Every output statement ends with a semicolon",
+     "flags": "m",
+     "require": "println",
+     "forbid": "println\\s*\\([^\\n]*\\)[ \\t]*$",
+     "message": "One `println()` statement ends at its closing parenthesis. The compiler reports `';' expected` there (sometimes on the line after). Every Java statement ends with a semicolon."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "System is spelled with a capital S",
+     "forbid": "\\bsystem\\s*\\.",
+     "require": "System\\s*\\.\\s*out",
+     "message": "`system` and `System` are different names in Java. The compiler reports `package system does not exist` because it can't find anything called `system`. The class is `System`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R5",
+     "title": "The class body is closed",
+     "require": "\\}\\s*\\}\\s*$",
+     "message": "The file ends after `main()`'s closing brace, so the class is never closed: `reached end of file while parsing`. Add the class's closing curly brace at the very end, aligned with the opening one under the class header."
+    }
+   ],
+   "hints": [
+    "Compile first and fix only what the compiler reports. Don't hunt by eye yet: reading the messages is the skill this lab trains.",
+    "The caret `^` shows where the compiler *noticed* the problem, which can be just after the real mistake. For `';' expected`, look at the end of the line the caret points to, or the line above.",
+    "If the second compile reports new errors, that's normal: the compiler couldn't read far enough to see them before. Compare each name in the code with the file name and with Java's own class names, letter by letter."
+   ],
+   "test_program": {
+    "file_name": "TestRoomBooking.java",
+    "code": "public class TestRoomBooking\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java RoomBooking\" would.\n        RoomBooking.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Study Room Booking\nRoom: 3B (seats 6)\nDate: Thursday, 2:00 PM to 4:00 PM\nBooked by: Team Falcon\n",
+    "predict": "Before running: once `RoomBooking.java` compiles, which new file appears next to it? Then predict the four lines of output.",
+    "how_to_run": "Save the fixed code as `RoomBooking.java` and `TestRoomBooking.java` in one folder. From a command prompt: `javac RoomBooking.java TestRoomBooking.java`, then `java TestRoomBooking`. In an IDE, put both files in the same project and run `TestRoomBooking`."
+   },
+   "warmup": [
+    {
+     "question": "Before compiling, read the starter. How many error messages do you predict the compiler will report on the *first* compile, and why might the count differ from five?",
+     "model_answer": "Any reasonable prediction is fine. The count can differ because the compiler reports what it notices as it parses: some errors stop it from reading further (so later mistakes aren't seen yet), and one error can also trigger several messages. In fact the first compile reports three errors here."
+    },
+    {
+     "question": "The file is saved as `RoomBooking.java`. Find one error that has nothing to do with punctuation. What rule does it break?",
+     "model_answer": "The class header says `roomBooking` with a lowercase r, but a public class must be in a file with exactly the same name, and Java is case sensitive. (Another: `system.out` should be `System.out`.)"
+    }
+   ],
+   "reflection": [
+    {
+     "question": "What did your first compile report, and what new errors appeared on the second compile? Explain why the compiler didn't report them the first time.",
+     "model_answer": "The first compile reported the missing return type, the missing semicolon and the missing closing brace (reached end of file while parsing). After fixing them, the second compile reported that the public class `roomBooking` should be in a file named `roomBooking.java` and that `package system does not exist`. The compiler must parse the code into meaningful parts before it can check names; while the structure was broken it couldn't get that far."
+    },
+    {
+     "question": "The message for the missing semicolon pointed at the right line, but other messages can point after the real mistake. Why can the reported location differ from where the error was made?",
+     "model_answer": "The compiler reports where it first discovers that something is wrong, not where the programmer made the mistake. For example, a missing brace isn't noticed until the end of the file, and a missing semicolon can be noticed only when the next line starts, so you sometimes have to look before the caret."
+    }
+   ],
+   "worth_knowing": "The Java compiler, `javac`, is itself written in Java. A compiler that compiles its own source code is called self-hosting; once a language has one, its tools can be improved in the language itself.",
+   "extension": "Introduce one new error of your own (for example, delete a quotation mark) and compile. Write down the message and explain how it relates to what you changed.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.6",
+   "title": "The library kiosk",
+   "subtitle": "Find logic errors by examining output, then modify, recompile and run",
+   "source": "Ch. 1, section 1.6 (pp. 23–24)",
+   "minutes": 25,
+   "objectives": [
+    "Find logic errors by comparing a program's output with its specification",
+    "Modify a compiled class so its output changes",
+    "Explain why a change doesn't appear until the class is recompiled",
+    "Distinguish compile-time errors from runtime (logic) errors"
+   ],
+   "scenario": "The Westside branch library's entrance kiosk runs `KioskMessage`. It compiles and runs, and nobody noticed anything wrong until a visitor pointed at the screen and laughed. The kiosk's screen is also narrow, so the manager wants the welcome split in two.\n\nThis is what the kiosk must show:\n\n```\nWelcome to\nWestside Library\nHours: 9 AM to 8 PM, Monday to Saturday\nClosed Sundays\nReturns go in the blue bin by the door\nAsk a librarian for help\n```\n\n**Run the starter first** (in your head or in your IDE) and compare its output with the screen above, character by character. The compiler can't help you here: every mistake is in output it considers perfectly legal.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The welcome appears on two lines, `Welcome to` and `Westside Library`, spelled correctly."
+    },
+    {
+     "id": "R2",
+     "text": "`Closed Sundays` appears directly after the hours."
+    },
+    {
+     "id": "R3",
+     "text": "Every message is on its own line: none run together."
+    },
+    {
+     "id": "R4",
+     "text": "The full output matches the kiosk screen exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "KioskMessage.java",
+   "starter_code": "public class KioskMessage\n{\n    public static void main(String[] args)\n    {\n        // TODO (R1): split the welcome into two lines (and check the spelling).\n        System.out.println(\"Welcome to Westside Libary\");\n        System.out.println(\"Hours: 9 AM to 8 PM, Monday to Saturday\");\n        // TODO (R2): Closed Sundays\n        // TODO (R3): compare the next two lines with the kiosk screen.\n        System.out.print(\"Returns go in the blue bin by the door\");\n        System.out.println(\"Ask a librarian for help\");\n    }\n}\n",
+   "solution": "public class KioskMessage\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Welcome to\");\n        System.out.println(\"Westside Library\");\n        System.out.println(\"Hours: 9 AM to 8 PM, Monday to Saturday\");\n        System.out.println(\"Closed Sundays\");\n        System.out.println(\"Returns go in the blue bin by the door\");\n        System.out.println(\"Ask a librarian for help\");\n    }\n}\n",
+   "solution_notes": "Two logic errors were in the starter: `Libary` is misspelled inside a literal string (the compiler never checks spelling there), and `print()` leaves the insertion point on the same line, so the next message ran into it: `...by the doorAsk a librarian...`. Splitting the welcome is a modification: one statement becomes two, because a literal string can't be broken across lines. After saving, the class must be recompiled, or `java KioskMessage` runs the old `.class` file.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The welcome is split and spelled correctly",
+     "within": "KioskMessage.main",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\"Welcome to\"\\s*\\)\\s*;\\s*System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\"Westside Library\"\\s*\\)\\s*;",
+     "forbid": "Libary",
+     "message": "Use two consecutive `println()` statements: one for `Welcome to`, one for `Westside Library`. A literal string can't continue onto the next line, so the split takes two statements. Check the spelling of Library against the screen.",
+     "hint": "Read the starter's first message one letter at a time."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Closed Sundays follows the hours",
+     "within": "KioskMessage.main",
+     "strings": true,
+     "require": "\"Hours: 9 AM to 8 PM, Monday to Saturday\"\\s*\\)\\s*;\\s*System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\"Closed Sundays\"\\s*\\)\\s*;",
+     "message": "Add a `println()` statement with `Closed Sundays` immediately after the hours statement, so the two pieces of schedule information sit together."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "No message runs into the next one",
+     "within": "KioskMessage.main",
+     "forbid": "\\.\\s*print\\s*\\(",
+     "require": "println",
+     "message": "One statement uses `print()`, which leaves the insertion point on the same line, so the next message is glued to it (`...doorAsk a librarian...`). Each kiosk message needs to end its line."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "Lines are built from separate statements",
+     "within": "KioskMessage.main",
+     "strings": true,
+     "forbid": "\\\\n",
+     "require": "\"Westside Library\"",
+     "message": "Make each line its own `println()` statement rather than putting `\\n` inside a string, the way Figure 1-19 splits the First application's output."
+    }
+   ],
+   "hints": [
+    "Write the starter's actual output on paper, line by line, then put it next to the kiosk screen. Every difference is a logic error.",
+    "There are two kinds of difference: text that's wrong inside the quotation marks, and lines that are joined because of the method used to print them.",
+    "Figure 1-19 shows how the First application's output was split into two lines: two `println()` statements, each with part of the text."
+   ],
+   "test_program": {
+    "file_name": "TestKioskMessage.java",
+    "code": "public class TestKioskMessage\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java KioskMessage\" would.\n        KioskMessage.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Welcome to\nWestside Library\nHours: 9 AM to 8 PM, Monday to Saturday\nClosed Sundays\nReturns go in the blue bin by the door\nAsk a librarian for help\n",
+    "predict": "Before running: if you saved your changes but forgot to recompile `KioskMessage.java`, what would the test print? Then compile both files and run it."
+   },
+   "warmup": [
+    {
+     "question": "Predict exactly what the starter prints. How many lines appear, and what does the last one say?",
+     "model_answer": "Three lines: `Welcome to Westside Libary`, the hours line, and `Returns go in the blue bin by the doorAsk a librarian for help`. The last two messages are joined because the first was printed with `print()`, which doesn't move to a new line."
+    },
+    {
+     "question": "The starter compiles with no errors. Is \"Libary\" a syntax error or a logic error? Explain.",
+     "model_answer": "A logic error. The misspelling is inside a literal string, and any combination of letters is legal there, so the compiler accepts it. The program runs but produces incorrect output, which can only be found by examining the output."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "You edit `KioskMessage.java`, save it, and type `java KioskMessage`, but the kiosk still shows the old text. What happened, and what are the steps that fix it?",
+     "model_answer": "`java` runs the compiled `KioskMessage.class`, and that file still contains the old bytecode because the class wasn't recompiled. The fix: save the source file, recompile it with `javac KioskMessage.java` (which replaces the old `.class` file), then run `java KioskMessage`."
+    },
+    {
+     "question": "The reading calls a logic error a kind of runtime error. Why is it usually harder to find than a syntax error?",
+     "model_answer": "A syntax error is found by the compiler, which reports its line and nature. A logic error passes compilation; it shows up only when the program runs and someone notices the output is wrong, so the programmer must test and examine output carefully and then trace which statement caused it."
+    }
+   ],
+   "worth_knowing": "In 1999 NASA lost the Mars Climate Orbiter to a logic error: one team's software produced thrust data in pound-force seconds while another's expected newton-seconds. Every program ran without complaint; only the numbers were wrong.",
+   "extension": "The library adds a message for holidays. Add it as the last line, then deliberately run the program before recompiling and note what you see. What does that show about the `.class` file?",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.7",
+   "title": "Comments that help, comments that hide",
+   "subtitle": "Document a class, comment out debug code, and fix a runaway block comment",
+   "source": "Ch. 1, section 1.7 (pp. 25–27)",
+   "minutes": 25,
+   "objectives": [
+    "Write the header comments every class file should begin with",
+    "Use a block comment to describe a class's purpose",
+    "Comment out a statement so it no longer executes, without deleting it",
+    "Explain how a misplaced block comment changes what runs"
+   ],
+   "scenario": "`ShiftReminder` prints the reminder that the coffee shop's staff see before the Saturday shift. Three problems have come up:\n\n- The file has no documentation, so nobody knows who wrote it or what it's for.\n- A debug line, `DEBUG: reminder program started`, still prints on the staff screen. The developer wants to keep it in the code for later, just not have it run.\n- Staff say the **break and lunch times have disappeared** from the reminder, yet the statements that print them are right there in the code.\n\nThe staff screen must show exactly:\n\n```\nReminder for the Saturday shift\nDoors open at 7:00 AM\nBreak: 10:30 AM (15 minutes)\nLunch: 12:30 PM (30 minutes)\nBring your badge to clock in\n```\n\nNote: the checks on this page ignore comments, so they can only see *where* comments are, not what they say. Your instructor reads the comments in your submitted code.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The file starts with three line comments: `// Filename ShiftReminder.java`, `// Written by <your name>`, `// Written on <today's date>`."
+    },
+    {
+     "id": "R2",
+     "text": "Right after the class header's opening brace, a block comment of at least two lines (`/* ... */`) describes what the class does."
+    },
+    {
+     "id": "R3",
+     "text": "The debug statement is commented out, not deleted, so it doesn't execute."
+    },
+    {
+     "id": "R4",
+     "text": "The break and lunch times print again: the note about them stays a comment, but the statements run."
+    },
+    {
+     "id": "R5",
+     "text": "The staff screen shows exactly the five lines above.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "ShiftReminder.java",
+   "starter_code": "// TODO (R1): header\npublic class ShiftReminder\n{\n    // TODO (R2)\n    public static void main(String[] args)\n    {\n        System.out.println(\"DEBUG: reminder program started\");\n        System.out.println(\"Reminder for the Saturday shift\");\n        System.out.println(\"Doors open at 7:00 AM\");\n        /* Break times were moved by the manager on May 3\n        System.out.println(\"Break: 10:30 AM (15 minutes)\");\n        System.out.println(\"Lunch: 12:30 PM (30 minutes)\"); */\n        System.out.println(\"Bring your badge to clock in\");\n    }\n}\n",
+   "solution": "// Filename ShiftReminder.java\n// Written by Alex Rivera\n// Written on September 4\npublic class ShiftReminder\n{\n    /* This class prints the reminder that staff see before the\n       Saturday shift: opening time, break times and badge rule. */\n    public static void main(String[] args)\n    {\n        // System.out.println(\"DEBUG: reminder program started\");\n        System.out.println(\"Reminder for the Saturday shift\");\n        System.out.println(\"Doors open at 7:00 AM\");\n        // Break times were moved by the manager on May 3\n        System.out.println(\"Break: 10:30 AM (15 minutes)\");\n        System.out.println(\"Lunch: 12:30 PM (30 minutes)\");\n        System.out.println(\"Bring your badge to clock in\");\n    }\n}\n",
+   "solution_notes": "Comments are nonexecuting: the compiler skips everything from `//` to the end of a line, and everything between `/*` and the next `*/`, however many lines that is. In the starter, the note about break times opened a block comment that wasn't closed until after the Lunch statement, so both statements became part of the comment. The program still compiled, which is what makes this mistake hard to spot. A line comment on the note (or closing `*/` on the same line) fixes it.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Header comment lines sit above the class",
+     "require": "^\\s*?(?:[ \\t]{12,}\\n){3,}\\s*public\\s+class\\s+ShiftReminder\\b",
+     "message": "Above `public class ShiftReminder`, add three line comments: the file name, your name and the date, each starting with `//`. These checks can't read comments, so this one only confirms that three comment lines are there."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "A comment of two or more lines follows the class header",
+     "require": "class\\s+ShiftReminder\\s*\\{[ \\t]*\\n(?:[ \\t]{0,4}\\n)*(?:[ \\t]{6,}\\n){2,}\\s*public\\s+static",
+     "message": "Between the class's opening brace and the `main()` header, add a block comment that starts with `/*`, describes what the class does in at least two lines, and ends with `*/`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The debug line no longer executes",
+     "within": "ShiftReminder.main",
+     "strings": true,
+     "forbid": "\"DEBUG",
+     "require": "\"Reminder for the Saturday shift\"",
+     "message": "Turn the debug statement into a comment by putting `//` at the start of its line. The statement stays in the file for later, but the compiler no longer translates it."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "The break and lunch statements execute",
+     "within": "ShiftReminder.main",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*println\\s*\\(\\s*\"Break: 10:30 AM \\(15 minutes\\)\"\\s*\\)\\s*;)(?=[\\s\\S]*println\\s*\\(\\s*\"Lunch: 12:30 PM \\(30 minutes\\)\"\\s*\\)\\s*;)",
+     "message": "The Break and Lunch statements are inside a block comment: it starts with `/*` on the note line and doesn't end until the `*/` after Lunch. Make only the note a comment, so both statements run again.",
+     "hint": "Find the `/*` and then find the first `*/` after it. Everything between them is a comment, whatever it looks like."
+    },
+    {
+     "id": "C5",
+     "requirement": "R5",
+     "title": "The reminder lines print in order",
+     "within": "ShiftReminder.main",
+     "strings": true,
+     "require": "\"Reminder for the Saturday shift\"[\\s\\S]*\"Doors open at 7:00 AM\"[\\s\\S]*\"Break:[\\s\\S]*\"Lunch:[\\s\\S]*\"Bring your badge to clock in\"",
+     "message": "Keep the order of the staff screen: reminder, doors, break, lunch, badge."
+    }
+   ],
+   "hints": [
+    "Section 1.7's \"You Do It\" shows the exact shape of the three header comments. They go at the very top of the file, before the class header.",
+    "A comment that turns off a statement is a line comment placed at the start of that statement's line. Only that one line is affected.",
+    "For the missing times, find where the block comment begins and where it ends. How many statements are between the two markers?"
+   ],
+   "test_program": {
+    "file_name": "TestShiftReminder.java",
+    "code": "public class TestShiftReminder\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java ShiftReminder\" would.\n        ShiftReminder.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Reminder for the Saturday shift\nDoors open at 7:00 AM\nBreak: 10:30 AM (15 minutes)\nLunch: 12:30 PM (30 minutes)\nBring your badge to clock in\n",
+    "predict": "Before running: your file now has more comment lines than before. Will that change the output in any way? Predict, then run."
+   },
+   "warmup": [
+    {
+     "question": "Before changing anything, predict what the starter prints. Which statements in `main()` will not run, and why?",
+     "model_answer": "It prints the DEBUG line, the reminder, the doors line and the badge line. The Break and Lunch statements don't run because they are between `/*` (on the note line) and `*/` (after the Lunch statement), so the compiler treats them as part of a block comment."
+    },
+    {
+     "question": "Java has three kinds of comments. Name them and the symbols that start (and, where needed, end) each one.",
+     "model_answer": "Line comments start with `//` and run to the end of the line. Block comments start with `/*` and end with `*/`, across any number of lines. Javadoc comments start with `/**` and end with `*/` and are used to generate documentation."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why is commenting out the debug statement better here than deleting it? Describe a situation where commenting out a statement helps you find a bug.",
+     "model_answer": "Commenting it out stops it from running but keeps the code, so the developer can turn it back on later by removing the `//`. When a program misbehaves, you can comment out statements one at a time and rerun it to see which one causes the problem, then restore the others."
+    },
+    {
+     "question": "The missing break times caused no compiler error. Why not, and what habit would prevent this mistake?",
+     "model_answer": "Everything between `/*` and `*/` is a legal comment, so the compiler simply skipped the two statements; the program was still valid Java. Prevent it by closing every block comment on purpose (check that each `/*` has its `*/` where you intend), using `//` for one-line notes, and checking the output after editing."
+    }
+   ],
+   "worth_knowing": "The official Java API pages you'll use in section 1.9 are generated by the Javadoc tool from `/** ... */` comments written inside the Java library's own source code.",
+   "extension": "Add a Javadoc comment (`/** ... */`) above `main()` that describes it in one sentence. Look in Appendix E or the Javadoc documentation to find out what the `@param` tag is for.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.8",
+   "title": "Lot B is full",
+   "subtitle": "Import a Swing class and produce GUI output with a dialog box",
+   "source": "Ch. 1, section 1.8 (pp. 27–29)",
+   "minutes": 25,
+   "objectives": [
+    "Use an import statement to reach a class in a package",
+    "Display a message in a dialog box with JOptionPane.showMessageDialog()",
+    "Pass two arguments to a method, separated by a comma",
+    "Explain the difference between console output and GUI output"
+   ],
+   "scenario": "The parking office's desktop app warns the gate attendant when a lot fills up. Console text is easy to miss, so the alert must appear in a **dialog box** in the centre of the screen:\n\n> Lot B is full. Please park in Lot C on Elm Street.\n\nThe office also keeps a log, so *before* the dialog appears, the program writes one line to the console: `Alert sent: Lot B is full`.\n\nWhen you run it, a small window appears. Click **OK** to close it and let the program finish. (In some IDEs the dialog opens behind the editor window: check the taskbar.)",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The file imports `JOptionPane` from the `javax.swing` package, above the class."
+    },
+    {
+     "id": "R2",
+     "text": "First, the program logs `Alert sent: Lot B is full` to the console."
+    },
+    {
+     "id": "R3",
+     "text": "Then it shows the alert text in a dialog box centred on the screen."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program shows the log line between the test's own two lines.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "LotAlert.java",
+   "starter_code": "// TODO (R1): the import statement JOptionPane needs.\n\npublic class LotAlert\n{\n    public static void main(String[] args)\n    {\n        // TODO (R2): log the alert to the console first.\n\n        // TODO (R3): show the alert in a dialog box centred on the screen.\n    }\n}\n",
+   "solution": "import javax.swing.JOptionPane;\n\npublic class LotAlert\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Alert sent: Lot B is full\");\n        JOptionPane.showMessageDialog(null,\n            \"Lot B is full. Please park in Lot C on Elm Street.\");\n    }\n}\n",
+   "solution_notes": "`JOptionPane` lives in the `javax.swing` package, which isn't imported automatically (only `java.lang`, home of `System`, is), so the import statement goes at the top of the file, outside the class. `showMessageDialog()` takes two arguments separated by a comma: `null` places the dialog in the centre of the screen, and the second is the message. The console line comes first so the log is written even if nobody clicks OK for a while.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "JOptionPane is imported above the class",
+     "require": "^\\s*import\\s+javax\\s*\\.\\s*swing\\s*\\.\\s*(?:JOptionPane|\\*)\\s*;[\\s\\S]*public\\s+class\\s+LotAlert\\b",
+     "message": "Add `import javax.swing.JOptionPane;` as the first statement in the file, before `public class LotAlert`. Import statements must be outside any class you write.",
+     "hint": "Figure 1-23 shows where the import line goes."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The alert is logged to the console",
+     "within": "LotAlert.main",
+     "strings": true,
+     "require": "System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\"Alert sent: Lot B is full\"\\s*\\)\\s*;",
+     "message": "Write the log line with `System.out.println()`, exactly `Alert sent: Lot B is full`. That is console output, separate from the dialog."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The dialog is centred and shows the alert",
+     "within": "LotAlert.main",
+     "strings": true,
+     "require": "JOptionPane\\s*\\.\\s*showMessageDialog\\s*\\(\\s*null\\s*,\\s*\"Lot B is full\\. Please park in Lot C on Elm Street\\.\"\\s*\\)\\s*;",
+     "message": "Call `JOptionPane.showMessageDialog` with two arguments separated by a comma: `null` (which centres the dialog) and the alert text in quotation marks.",
+     "hint": "Unlike `println()`, this method needs two pieces of information. The first one isn't a string."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "The log line comes before the dialog",
+     "within": "LotAlert.main",
+     "require": "System\\s*\\.\\s*out\\s*\\.\\s*println[\\s\\S]*showMessageDialog",
+     "message": "Put the `println()` statement above the dialog. Statements run in order, and the program waits at the dialog until someone clicks OK; the log should already be written by then."
+    }
+   ],
+   "hints": [
+    "You need two kinds of output: one that goes to the console (you know this statement from section 1.4) and one that opens a window.",
+    "The class for dialog boxes isn't in `java.lang`, so the compiler can't find it unless you import it. The import names the package, a dot, then the class.",
+    "When a method needs more than one argument, the arguments go inside the same parentheses, separated by commas. Here the first argument controls where the dialog appears."
+   ],
+   "test_program": {
+    "file_name": "TestLotAlert.java",
+    "code": "public class TestLotAlert\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Running LotAlert (click OK when the dialog appears)...\");\n        try\n        {\n            LotAlert.main(new String[0]);\n        }\n        catch (java.awt.HeadlessException e)\n        {\n            // No screen is available (for example on a server), so the dialog is skipped.\n        }\n        System.out.println(\"LotAlert finished\");\n    }\n}\n",
+    "expected_output": "Running LotAlert (click OK when the dialog appears)...\nAlert sent: Lot B is full\nLotAlert finished\n",
+    "predict": "Before running: while the dialog is open and you haven't clicked OK, which lines will already be in the console? Which line waits until you click?",
+    "how_to_run": "Save `LotAlert.java` and `TestLotAlert.java` in one folder, compile both (`javac LotAlert.java TestLotAlert.java`) and run `java TestLotAlert`. A dialog appears; click OK, then copy all the console output into the box below."
+   },
+   "warmup": [
+    {
+     "question": "`System.out.println()` works without any import statement, but `JOptionPane` needs one. Why the difference?",
+     "model_answer": "`System` is in the `java.lang` package, which is imported automatically into every Java program. `JOptionPane` is in `javax.swing`, which isn't, so the program must import it to use it."
+    },
+    {
+     "question": "`println()` takes one argument; `showMessageDialog()` takes two. What is each of the two arguments for?",
+     "model_answer": "The first argument says where the dialog is placed: `null` puts it in the centre of the screen. The second argument is the message (a literal string here) shown in the dialog."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why must the import statement be placed above the class rather than inside `main()`?",
+     "model_answer": "Import statements tell the compiler where to find classes used anywhere in the file, and Java requires them to be outside any class you write, at the top of the file. Inside `main()` it's a syntax error."
+    },
+    {
+     "question": "For this alert, why is a dialog box a better choice than console output alone? When would console output be the better choice?",
+     "model_answer": "A dialog appears in the middle of the screen and stays until someone clicks OK, so the attendant can't miss it; console text can scroll away unnoticed. Console output is better for logs and records that people don't need to act on immediately, or for programs without a GUI."
+    }
+   ],
+   "worth_knowing": "The \"x\" in `javax.swing` stands for extension: Swing first shipped in 1997 as an add-on library and only became part of standard Java with version 1.2 in 1998, keeping its `javax` name.",
+   "extension": "Show a second dialog after the first one that says `Lot C has 40 spaces left.` In what order do the two dialogs appear, and what does the program do while the first one is open?",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  },
+  {
+   "id": "1.9",
+   "title": "Read the docs: a better weather alert",
+   "subtitle": "Use the Java API documentation to find a method version the chapter didn't show",
+   "source": "Ch. 1, section 1.9 (pp. 29–30)",
+   "minutes": 30,
+   "objectives": [
+    "Find a class's page in the Java API documentation",
+    "Read a method summary to choose the version with the arguments you need",
+    "Use a constant from the documentation in your code",
+    "Explain how the API docs help you learn beyond the textbook"
+   ],
+   "scenario": "Campus Safety sends severe-weather alerts with a desktop program. The dialog from section 1.8 works, but its title bar just says **Message** and it shows an ordinary information icon. Staff want the title bar to say **Campus Weather Alert** and the dialog to show the **warning** icon so it can't be mistaken for routine news.\n\nThe chapter only showed the two-argument `showMessageDialog()`. Find out how to do more **in the Java API documentation**:\n\n- Search the web for `oracle docs java api JOptionPane` and open the page for class `JOptionPane` (package `javax.swing`).\n- In the **Method Summary**, find every version of `showMessageDialog`. Pick the one that also takes a *title* and a *message type*.\n- In the **Field Summary**, find the constants that name the message types.\n\nAfter the warning, a second dialog with the same title and an **information** icon tells staff where updates appear.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Before any dialog, the console log reads `Alert issued: severe thunderstorm until 6:00 PM`."
+    },
+    {
+     "id": "R2",
+     "text": "The warning dialog shows `Severe thunderstorm until 6:00 PM. Stay indoors.` with the title `Campus Weather Alert` and the warning icon."
+    },
+    {
+     "id": "R3",
+     "text": "A second dialog shows `Updates every 15 minutes on the CampusSafe app.` with the same title and the information icon."
+    },
+    {
+     "id": "R4",
+     "text": "Both dialogs are centred on the screen."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's console output matches.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "WeatherAlert.java",
+   "starter_code": "import javax.swing.JOptionPane;\n\npublic class WeatherAlert\n{\n    public static void main(String[] args)\n    {\n        // TODO (R1): log the alert to the console before any dialog.\n\n        // TODO (R2): this version shows the title \"Message\". Use the docs to find\n        //            the version that also takes a title and a message type.\n        JOptionPane.showMessageDialog(null,\n            \"Severe thunderstorm until 6:00 PM. Stay indoors.\");\n\n        // TODO (R3): a second dialog, same title, information icon.\n    }\n}\n",
+   "solution": "import javax.swing.JOptionPane;\n\npublic class WeatherAlert\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Alert issued: severe thunderstorm until 6:00 PM\");\n        JOptionPane.showMessageDialog(null,\n            \"Severe thunderstorm until 6:00 PM. Stay indoors.\",\n            \"Campus Weather Alert\", JOptionPane.WARNING_MESSAGE);\n        JOptionPane.showMessageDialog(null,\n            \"Updates every 15 minutes on the CampusSafe app.\",\n            \"Campus Weather Alert\", JOptionPane.INFORMATION_MESSAGE);\n    }\n}\n",
+   "solution_notes": "The `JOptionPane` page lists three versions of `showMessageDialog`. The four-argument one, `showMessageDialog(Component parentComponent, Object message, String title, int messageType)`, adds the title and the message type. The message types are constants in the Field Summary (`ERROR_MESSAGE`, `INFORMATION_MESSAGE`, `WARNING_MESSAGE`, `QUESTION_MESSAGE`, `PLAIN_MESSAGE`), written with the class name and a dot because they belong to `JOptionPane`. Same method name, different argument lists: Java picks the version that matches the arguments you pass.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The alert is logged before any dialog",
+     "within": "WeatherAlert.main",
+     "strings": true,
+     "require": "System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\"Alert issued: severe thunderstorm until 6:00 PM\"\\s*\\)\\s*;[\\s\\S]*showMessageDialog",
+     "message": "Put a `System.out.println()` with exactly `Alert issued: severe thunderstorm until 6:00 PM` above the first dialog. Statements run in order, and the program waits at each dialog."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The warning dialog has the title and warning icon",
+     "within": "WeatherAlert.main",
+     "strings": true,
+     "require": "showMessageDialog\\s*\\(\\s*null\\s*,\\s*\"Severe thunderstorm until 6:00 PM\\. Stay indoors\\.\"\\s*,\\s*\"Campus Weather Alert\"\\s*,\\s*JOptionPane\\s*\\.\\s*WARNING_MESSAGE\\s*\\)\\s*;",
+     "message": "Use the four-argument version from the docs: where the dialog goes, the message, the title, then the message type. The warning type is a constant of `JOptionPane`, so write the class name, a dot, and the constant's name.",
+     "hint": "In the docs, the Method Summary shows each version's parameter list in order. The Field Summary lists the message-type constants."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The second dialog uses the information icon",
+     "within": "WeatherAlert.main",
+     "strings": true,
+     "require": "WARNING_MESSAGE[\\s\\S]*showMessageDialog\\s*\\(\\s*null\\s*,\\s*\"Updates every 15 minutes on the CampusSafe app\\.\"\\s*,\\s*\"Campus Weather Alert\"\\s*,\\s*JOptionPane\\s*\\.\\s*INFORMATION_MESSAGE\\s*\\)\\s*;",
+     "message": "After the warning, add a second four-argument call with the updates message, the same title, and the message-type constant for information."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "Both dialogs are centred",
+     "within": "WeatherAlert.main",
+     "require": "^(?=(?:[\\s\\S]*?showMessageDialog\\s*\\(\\s*null\\s*,){2})",
+     "forbid": "showMessageDialog\\s*\\(\\s*(?!null\\b)\\w",
+     "message": "Pass `null` as the first argument of each `showMessageDialog` call, so the dialog appears in the centre of the screen."
+    }
+   ],
+   "hints": [
+    "Start at the class page for `JOptionPane`. Use your browser's Find (Ctrl+F) for `showMessageDialog` to jump between its versions.",
+    "Read the parameter list of each version from left to right: the names (`parentComponent`, `message`, `title`, `messageType`) tell you what each argument is for and in what order.",
+    "The message type is an `int`, but you don't need to know the number: the docs give it a name in the Field Summary. Constants that belong to a class are written as `ClassName.CONSTANT_NAME`."
+   ],
+   "test_program": {
+    "file_name": "TestWeatherAlert.java",
+    "code": "public class TestWeatherAlert\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Running WeatherAlert (click OK on each dialog)...\");\n        try\n        {\n            WeatherAlert.main(new String[0]);\n        }\n        catch (java.awt.HeadlessException e)\n        {\n            // No screen is available (for example on a server), so the dialog is skipped.\n        }\n        System.out.println(\"WeatherAlert finished\");\n    }\n}\n",
+    "expected_output": "Running WeatherAlert (click OK on each dialog)...\nAlert issued: severe thunderstorm until 6:00 PM\nWeatherAlert finished\n",
+    "predict": "Before running: how many dialogs will appear, which icon will each show, and what will each title bar say?",
+    "how_to_run": "Save `WeatherAlert.java` and `TestWeatherAlert.java` in one folder, compile both (`javac WeatherAlert.java TestWeatherAlert.java`) and run `java TestWeatherAlert`. Click OK on each dialog, then copy all the console output into the box below."
+   },
+   "warmup": [
+    {
+     "question": "The starter's dialog call passes two arguments. Based on section 1.8, what does each one do, and why can't you change the title with only these two?",
+     "model_answer": "`null` centres the dialog and the string is the message shown. The two-argument version has no parameter for a title or an icon type, so it always uses the defaults; a different version of the method, with more parameters, is needed."
+    },
+    {
+     "question": "Section 1.9 says the Java API is also called the Java class library. What kind of information does it give you about a class like `JOptionPane`?",
+     "model_answer": "It explains how to use each prewritten Java class: its fields (such as constants), and a list of all its methods with the arguments each version takes and what it does."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "How many versions of `showMessageDialog` did you find, and how does Java know which one you mean when you call it?",
+     "model_answer": "Three: with two arguments (parent and message), with four (adding title and message type), and with five (adding a custom icon). Java chooses the version whose parameter list matches the number and types of the arguments in the call."
+    },
+    {
+     "question": "Describe how you would use the API docs to learn something the textbook hasn't covered yet. Use a concrete example other than this lab.",
+     "model_answer": "Find the class's page (for example `PrintStream`, the type of `System.out`), scan the Method Summary for a method whose description matches the goal, then read its details: parameters, return type and what it does. For example, the `PrintStream` page shows `println()` versions that accept different types of argument, such as a `char` or an `int`."
+    }
+   ],
+   "worth_knowing": "Since Java 9, the API documentation pages have a built-in search box: type a class or method name, such as `showMessageDialog`, and it jumps straight to the matching entries.",
+   "extension": "Find the five-argument version of `showMessageDialog`. What extra argument does it take? Try `JOptionPane.ERROR_MESSAGE` and `JOptionPane.PLAIN_MESSAGE` and describe how each dialog looks.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; class and method names follow Java conventions."
+    }
+   ]
+  }
+ ]
+}

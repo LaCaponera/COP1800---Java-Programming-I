@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Five errors, two compiles</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 1.5</div>
+  <h1>Five errors, two compiles</h1>
+<h2>Objectives</h2><ul><li>Compile a class and read each part of an error message (file, line, problem, caret)</li><li>Repair common syntax errors: missing semicolon, missing return type, unmatched brace, wrong case</li><li>Explain why fixing errors can reveal new ones</li><li>Confirm that a clean compile creates a .class file</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The public class name matches the file name <code>RoomBooking.java</code> exactly.</li><li><strong>R2</strong> <code>main()</code> has the complete header the JVM looks for.</li><li><strong>R3</strong> Every statement ends with a semicolon.</li><li><strong>R4</strong> Every class name is written with the correct uppercase and lowercase letters.</li><li><strong>R5</strong> Every opening curly brace has a matching closing brace.</li><li><strong>R6</strong> The program compiles and prints the four-line confirmation. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Before compiling, read the starter. How many error messages do you predict the compiler will report on the <em>first</em> compile, and why might the count differ from five?</p><div class="answer"><p>Any reasonable prediction is fine. The count can differ because the compiler reports what it notices as it parses: some errors stop it from reading further (so later mistakes aren&#x27;t seen yet), and one error can also trigger several messages. In fact the first compile reports three errors here.</p></div></li><li><p>The file is saved as <code>RoomBooking.java</code>. Find one error that has nothing to do with punctuation. What rule does it break?</p><div class="answer"><p>The class header says <code>roomBooking</code> with a lowercase r, but a public class must be in a file with exactly the same name, and Java is case sensitive. (Another: <code>system.out</code> should be <code>System.out</code>.)</p></div></li></ol>
+<h2>Solution</h2><div class="file">RoomBooking.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RoomBooking</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Study Room Booking"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Room: 3B (seats 6)"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Date: Thursday, 2:00 PM to 4:00 PM"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Booked by: Team Falcon"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The first compile reports the three errors that stop the compiler from <em>parsing</em> the file: the missing return type <code>void</code> (&quot;invalid method declaration; return type required&quot;), the missing semicolon (&quot;&#x27;;&#x27; expected&quot;) and the missing closing brace (&quot;reached end of file while parsing&quot;). Only once the file can be parsed does the compiler check names, so the second compile reports <code>class roomBooking is public, should be declared in a file named roomBooking.java</code> and <code>package system does not exist</code>. Fixing errors lets the compiler get further, which is why new messages can appear.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRoomBooking.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRoomBooking</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java RoomBooking" would.</span>
+<span class="t-w">        </span><span class="t-n">RoomBooking</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Study Room Booking
+Room: 3B (seats 6)
+Date: Thursday, 2:00 PM to 4:00 PM
+Booked by: Team Falcon
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The class name matches RoomBooking.java<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>public\s+class\s+RoomBooking\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>main() has its return type<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>public\s+static\s+void\s+main\s*\(\s*String\s*\[\s*\]\s*\w+\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Every output statement ends with a semicolon<div class="small">whole file, flags m</div></td><td><div><span class="tag">require</span> <code>println</code></div><div><span class="tag">forbid</span> <code>println\s*\([^\n]*\)[ \t]*$</code></div></td></tr><tr><td>C4</td><td>R4</td><td>System is spelled with a capital S<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>System\s*\.\s*out</code></div><div><span class="tag">forbid</span> <code>\bsystem\s*\.</code></div></td></tr><tr><td>C5</td><td>R5</td><td>The class body is closed<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\}\s*\}\s*$</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The class name matches RoomBooking.java</dt><dd><p>A public class must be saved in a file with exactly the same name. The file is <code>RoomBooking.java</code>, so the class header needs <code>RoomBooking</code> with a capital R and a capital B.</p><div class='small'><strong>Hint:</strong></div><p>Compare the class header with the file name letter by letter. Java is case sensitive.</p></dd><dt>C2 · main() has its return type</dt><dd><p>The compiler says a return type is required. The JVM looks for <code>public static void main(String[] args)</code>: <code>void</code> belongs between <code>static</code> and <code>main</code>.</p></dd><dt>C3 · Every output statement ends with a semicolon</dt><dd><p>One <code>println()</code> statement ends at its closing parenthesis. The compiler reports <code>&#x27;;&#x27; expected</code> there (sometimes on the line after). Every Java statement ends with a semicolon.</p></dd><dt>C4 · System is spelled with a capital S</dt><dd><p><code>system</code> and <code>System</code> are different names in Java. The compiler reports <code>package system does not exist</code> because it can&#x27;t find anything called <code>system</code>. The class is <code>System</code>.</p></dd><dt>C5 · The class body is closed</dt><dd><p>The file ends after <code>main()</code>&#x27;s closing brace, so the class is never closed: <code>reached end of file while parsing</code>. Add the class&#x27;s closing curly brace at the very end, aligned with the opening one under the class header.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compile first and fix only what the compiler reports. Don&#x27;t hunt by eye yet: reading the messages is the skill this lab trains.</p></li><li><p>The caret <code>^</code> shows where the compiler <em>noticed</em> the problem, which can be just after the real mistake. For <code>&#x27;;&#x27; expected</code>, look at the end of the line the caret points to, or the line above.</p></li><li><p>If the second compile reports new errors, that&#x27;s normal: the compiler couldn&#x27;t read far enough to see them before. Compare each name in the code with the file name and with Java&#x27;s own class names, letter by letter.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>What did your first compile report, and what new errors appeared on the second compile? Explain why the compiler didn&#x27;t report them the first time.</p><div class="answer"><p>The first compile reported the missing return type, the missing semicolon and the missing closing brace (reached end of file while parsing). After fixing them, the second compile reported that the public class <code>roomBooking</code> should be in a file named <code>roomBooking.java</code> and that <code>package system does not exist</code>. The compiler must parse the code into meaningful parts before it can check names; while the structure was broken it couldn&#x27;t get that far.</p></div></li><li><p>The message for the missing semicolon pointed at the right line, but other messages can point after the real mistake. Why can the reported location differ from where the error was made?</p><div class="answer"><p>The compiler reports where it first discovers that something is wrong, not where the programmer made the mistake. For example, a missing brace isn&#x27;t noticed until the end of the file, and a missing semicolon can be noticed only when the next line starts, so you sometimes have to look before the caret.</p></div></li></ol>
+<h2>Extension</h2><p>Introduce one new error of your own (for example, delete a quotation mark) and compile. Write down the message and explain how it relates to what you changed.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; class and method names follow Java conventions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

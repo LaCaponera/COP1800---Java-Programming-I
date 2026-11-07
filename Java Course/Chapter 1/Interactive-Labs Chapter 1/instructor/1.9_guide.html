@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Read the docs: a better weather alert</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 1.9</div>
+  <h1>Read the docs: a better weather alert</h1>
+<h2>Objectives</h2><ul><li>Find a class&#x27;s page in the Java API documentation</li><li>Read a method summary to choose the version with the arguments you need</li><li>Use a constant from the documentation in your code</li><li>Explain how the API docs help you learn beyond the textbook</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Before any dialog, the console log reads <code>Alert issued: severe thunderstorm until 6:00 PM</code>.</li><li><strong>R2</strong> The warning dialog shows <code>Severe thunderstorm until 6:00 PM. Stay indoors.</code> with the title <code>Campus Weather Alert</code> and the warning icon.</li><li><strong>R3</strong> A second dialog shows <code>Updates every 15 minutes on the CampusSafe app.</code> with the same title and the information icon.</li><li><strong>R4</strong> Both dialogs are centred on the screen.</li><li><strong>R5</strong> The test program&#x27;s console output matches. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s dialog call passes two arguments. Based on section 1.8, what does each one do, and why can&#x27;t you change the title with only these two?</p><div class="answer"><p><code>null</code> centres the dialog and the string is the message shown. The two-argument version has no parameter for a title or an icon type, so it always uses the defaults; a different version of the method, with more parameters, is needed.</p></div></li><li><p>Section 1.9 says the Java API is also called the Java class library. What kind of information does it give you about a class like <code>JOptionPane</code>?</p><div class="answer"><p>It explains how to use each prewritten Java class: its fields (such as constants), and a list of all its methods with the arguments each version takes and what it does.</p></div></li></ol>
+<h2>Solution</h2><div class="file">WeatherAlert.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.JOptionPane</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">WeatherAlert</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Alert issued: severe thunderstorm until 6:00 PM"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showMessageDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Severe thunderstorm until 6:00 PM. Stay indoors."</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Campus Weather Alert"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">WARNING_MESSAGE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showMessageDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Updates every 15 minutes on the CampusSafe app."</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Campus Weather Alert"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">INFORMATION_MESSAGE</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The <code>JOptionPane</code> page lists three versions of <code>showMessageDialog</code>. The four-argument one, <code>showMessageDialog(Component parentComponent, Object message, String title, int messageType)</code>, adds the title and the message type. The message types are constants in the Field Summary (<code>ERROR_MESSAGE</code>, <code>INFORMATION_MESSAGE</code>, <code>WARNING_MESSAGE</code>, <code>QUESTION_MESSAGE</code>, <code>PLAIN_MESSAGE</code>), written with the class name and a dot because they belong to <code>JOptionPane</code>. Same method name, different argument lists: Java picks the version that matches the arguments you pass.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestWeatherAlert.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestWeatherAlert</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Running WeatherAlert (click OK on each dialog)..."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">WeatherAlert</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">java</span><span class="t-p">.</span><span class="t-na">awt</span><span class="t-p">.</span><span class="t-na">HeadlessException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-c1">// No screen is available (for example on a server), so the dialog is skipped.</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"WeatherAlert finished"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Running WeatherAlert (click OK on each dialog)...
+Alert issued: severe thunderstorm until 6:00 PM
+WeatherAlert finished
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The alert is logged before any dialog<div class="small">in <code>WeatherAlert.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>System\s*\.\s*out\s*\.\s*println\s*\(\s*&quot;Alert issued: severe thunderstorm until 6:00 PM&quot;\s*\)\s*;[\s\S]*showMessageDialog</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The warning dialog has the title and warning icon<div class="small">in <code>WeatherAlert.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>showMessageDialog\s*\(\s*null\s*,\s*&quot;Severe thunderstorm until 6:00 PM\. Stay indoors\.&quot;\s*,\s*&quot;Campus Weather Alert&quot;\s*,\s*JOptionPane\s*\.\s*WARNING_MESSAGE\s*\)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The second dialog uses the information icon<div class="small">in <code>WeatherAlert.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>WARNING_MESSAGE[\s\S]*showMessageDialog\s*\(\s*null\s*,\s*&quot;Updates every 15 minutes on the CampusSafe app\.&quot;\s*,\s*&quot;Campus Weather Alert&quot;\s*,\s*JOptionPane\s*\.\s*INFORMATION_MESSAGE\s*\)\s*;</code></div></td></tr><tr><td>C4</td><td>R4</td><td>Both dialogs are centred<div class="small">in <code>WeatherAlert.main</code></div></td><td><div><span class="tag">require</span> <code>^(?=(?:[\s\S]*?showMessageDialog\s*\(\s*null\s*,){2})</code></div><div><span class="tag">forbid</span> <code>showMessageDialog\s*\(\s*(?!null\b)\w</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The alert is logged before any dialog</dt><dd><p>Put a <code>System.out.println()</code> with exactly <code>Alert issued: severe thunderstorm until 6:00 PM</code> above the first dialog. Statements run in order, and the program waits at each dialog.</p></dd><dt>C2 · The warning dialog has the title and warning icon</dt><dd><p>Use the four-argument version from the docs: where the dialog goes, the message, the title, then the message type. The warning type is a constant of <code>JOptionPane</code>, so write the class name, a dot, and the constant&#x27;s name.</p><div class='small'><strong>Hint:</strong></div><p>In the docs, the Method Summary shows each version&#x27;s parameter list in order. The Field Summary lists the message-type constants.</p></dd><dt>C3 · The second dialog uses the information icon</dt><dd><p>After the warning, add a second four-argument call with the updates message, the same title, and the message-type constant for information.</p></dd><dt>C4 · Both dialogs are centred</dt><dd><p>Pass <code>null</code> as the first argument of each <code>showMessageDialog</code> call, so the dialog appears in the centre of the screen.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start at the class page for <code>JOptionPane</code>. Use your browser&#x27;s Find (Ctrl+F) for <code>showMessageDialog</code> to jump between its versions.</p></li><li><p>Read the parameter list of each version from left to right: the names (<code>parentComponent</code>, <code>message</code>, <code>title</code>, <code>messageType</code>) tell you what each argument is for and in what order.</p></li><li><p>The message type is an <code>int</code>, but you don&#x27;t need to know the number: the docs give it a name in the Field Summary. Constants that belong to a class are written as <code>ClassName.CONSTANT_NAME</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>How many versions of <code>showMessageDialog</code> did you find, and how does Java know which one you mean when you call it?</p><div class="answer"><p>Three: with two arguments (parent and message), with four (adding title and message type), and with five (adding a custom icon). Java chooses the version whose parameter list matches the number and types of the arguments in the call.</p></div></li><li><p>Describe how you would use the API docs to learn something the textbook hasn&#x27;t covered yet. Use a concrete example other than this lab.</p><div class="answer"><p>Find the class&#x27;s page (for example <code>PrintStream</code>, the type of <code>System.out</code>), scan the Method Summary for a method whose description matches the goal, then read its details: parameters, return type and what it does. For example, the <code>PrintStream</code> page shows <code>println()</code> versions that accept different types of argument, such as a <code>char</code> or an <code>int</code>.</p></div></li></ol>
+<h2>Extension</h2><p>Find the five-argument version of <code>showMessageDialog</code>. What extra argument does it take? Try <code>JOptionPane.ERROR_MESSAGE</code> and <code>JOptionPane.PLAIN_MESSAGE</code> and describe how each dialog looks.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; class and method names follow Java conventions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

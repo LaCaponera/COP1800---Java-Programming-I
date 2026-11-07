@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Lot B is full</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 1.8</div>
+  <h1>Lot B is full</h1>
+<h2>Objectives</h2><ul><li>Use an import statement to reach a class in a package</li><li>Display a message in a dialog box with JOptionPane.showMessageDialog()</li><li>Pass two arguments to a method, separated by a comma</li><li>Explain the difference between console output and GUI output</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The file imports <code>JOptionPane</code> from the <code>javax.swing</code> package, above the class.</li><li><strong>R2</strong> First, the program logs <code>Alert sent: Lot B is full</code> to the console.</li><li><strong>R3</strong> Then it shows the alert text in a dialog box centred on the screen.</li><li><strong>R4</strong> Running the test program shows the log line between the test&#x27;s own two lines. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>System.out.println()</code> works without any import statement, but <code>JOptionPane</code> needs one. Why the difference?</p><div class="answer"><p><code>System</code> is in the <code>java.lang</code> package, which is imported automatically into every Java program. <code>JOptionPane</code> is in <code>javax.swing</code>, which isn&#x27;t, so the program must import it to use it.</p></div></li><li><p><code>println()</code> takes one argument; <code>showMessageDialog()</code> takes two. What is each of the two arguments for?</p><div class="answer"><p>The first argument says where the dialog is placed: <code>null</code> puts it in the centre of the screen. The second argument is the message (a literal string here) shown in the dialog.</p></div></li></ol>
+<h2>Solution</h2><div class="file">LotAlert.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.JOptionPane</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">LotAlert</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Alert sent: Lot B is full"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showMessageDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Lot B is full. Please park in Lot C on Elm Street."</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>JOptionPane</code> lives in the <code>javax.swing</code> package, which isn&#x27;t imported automatically (only <code>java.lang</code>, home of <code>System</code>, is), so the import statement goes at the top of the file, outside the class. <code>showMessageDialog()</code> takes two arguments separated by a comma: <code>null</code> places the dialog in the centre of the screen, and the second is the message. The console line comes first so the log is written even if nobody clicks OK for a while.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestLotAlert.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestLotAlert</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Running LotAlert (click OK when the dialog appears)..."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">LotAlert</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">java</span><span class="t-p">.</span><span class="t-na">awt</span><span class="t-p">.</span><span class="t-na">HeadlessException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-c1">// No screen is available (for example on a server), so the dialog is skipped.</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"LotAlert finished"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Running LotAlert (click OK when the dialog appears)...
+Alert sent: Lot B is full
+LotAlert finished
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>JOptionPane is imported above the class<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>^\s*import\s+javax\s*\.\s*swing\s*\.\s*(?:JOptionPane|\*)\s*;[\s\S]*public\s+class\s+LotAlert\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The alert is logged to the console<div class="small">in <code>LotAlert.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>System\s*\.\s*out\s*\.\s*println\s*\(\s*&quot;Alert sent: Lot B is full&quot;\s*\)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The dialog is centred and shows the alert<div class="small">in <code>LotAlert.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>JOptionPane\s*\.\s*showMessageDialog\s*\(\s*null\s*,\s*&quot;Lot B is full\. Please park in Lot C on Elm Street\.&quot;\s*\)\s*;</code></div></td></tr><tr><td>C4</td><td>R2</td><td>The log line comes before the dialog<div class="small">in <code>LotAlert.main</code></div></td><td><div><span class="tag">require</span> <code>System\s*\.\s*out\s*\.\s*println[\s\S]*showMessageDialog</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · JOptionPane is imported above the class</dt><dd><p>Add <code>import javax.swing.JOptionPane;</code> as the first statement in the file, before <code>public class LotAlert</code>. Import statements must be outside any class you write.</p><div class='small'><strong>Hint:</strong></div><p>Figure 1-23 shows where the import line goes.</p></dd><dt>C2 · The alert is logged to the console</dt><dd><p>Write the log line with <code>System.out.println()</code>, exactly <code>Alert sent: Lot B is full</code>. That is console output, separate from the dialog.</p></dd><dt>C3 · The dialog is centred and shows the alert</dt><dd><p>Call <code>JOptionPane.showMessageDialog</code> with two arguments separated by a comma: <code>null</code> (which centres the dialog) and the alert text in quotation marks.</p><div class='small'><strong>Hint:</strong></div><p>Unlike <code>println()</code>, this method needs two pieces of information. The first one isn&#x27;t a string.</p></dd><dt>C4 · The log line comes before the dialog</dt><dd><p>Put the <code>println()</code> statement above the dialog. Statements run in order, and the program waits at the dialog until someone clicks OK; the log should already be written by then.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>You need two kinds of output: one that goes to the console (you know this statement from section 1.4) and one that opens a window.</p></li><li><p>The class for dialog boxes isn&#x27;t in <code>java.lang</code>, so the compiler can&#x27;t find it unless you import it. The import names the package, a dot, then the class.</p></li><li><p>When a method needs more than one argument, the arguments go inside the same parentheses, separated by commas. Here the first argument controls where the dialog appears.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why must the import statement be placed above the class rather than inside <code>main()</code>?</p><div class="answer"><p>Import statements tell the compiler where to find classes used anywhere in the file, and Java requires them to be outside any class you write, at the top of the file. Inside <code>main()</code> it&#x27;s a syntax error.</p></div></li><li><p>For this alert, why is a dialog box a better choice than console output alone? When would console output be the better choice?</p><div class="answer"><p>A dialog appears in the middle of the screen and stays until someone clicks OK, so the attendant can&#x27;t miss it; console text can scroll away unnoticed. Console output is better for logs and records that people don&#x27;t need to act on immediately, or for programs without a GUI.</p></div></li></ol>
+<h2>Extension</h2><p>Show a second dialog after the first one that says <code>Lot C has 40 spaces left.</code> In what order do the two dialogs appear, and what does the program do while the first one is open?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; class and method names follow Java conventions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
