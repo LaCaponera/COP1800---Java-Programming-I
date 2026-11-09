@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The arcade scoreboard</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 3.5</div>
+  <h1>The arcade scoreboard</h1>
+<h2>Objectives</h2><ul><li>Identify the block in which a variable is in scope</li><li>Explain why changing a parameter inside a method doesn&#x27;t change the caller&#x27;s variable</li><li>Send a new value back with <code>return</code>, and store it in the caller</li><li>Remove a block that exists for no reason</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>addBonus()</code> returns the new score as an <code>int</code>, and <code>main()</code> stores what it returns.</li><li><strong>R2</strong> <code>combo</code> is declared in <code>main()</code>&#x27;s outer block (remove the unnecessary inner block), so the final line can use it.</li><li><strong>R3</strong> The final line prints the score times the combo, and the whole printout matches the screen above. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Predict the starter&#x27;s <code>After bonus:</code> line. <code>addBonus()</code> clearly prints 1700; explain why <code>main()</code> prints something else.</p><div class="answer"><p><code>main()</code> prints 1200. It passes a copy of its <code>score</code>; inside <code>addBonus()</code> the parameter <code>score</code> is a different variable in a different memory location, so adding 500 changes only that copy, which goes out of scope when the method ends. <code>main()</code>&#x27;s <code>score</code> is untouched.</p></div></li><li><p>If you change only the final line to print <code>score * combo</code>, what does the compiler report, and why?</p><div class="answer"><p><em>cannot find symbol</em> for <code>combo</code>. It was declared inside the inner block, so it went out of scope at that block&#x27;s closing brace; the final line is outside its scope.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ScoreBoard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ScoreBoard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1200</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Start: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">score</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">addBonus</span><span class="t-p">(</span><span class="t-n">score</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"After bonus: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">combo</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Combo x"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">combo</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Final: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">score</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">combo</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">addBonus</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">BONUS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">500</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">score</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BONUS</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"In addBonus, score is "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>addBonus()</code>&#x27;s parameter <code>score</code> is a different variable from <code>main()</code>&#x27;s <code>score</code>: it receives a copy of 1200, becomes 1700, and goes out of scope at the method&#x27;s closing brace. Returning it and assigning the result in <code>main()</code> is how the new value gets back. <code>combo</code> was declared inside a block that existed for no reason, so it went out of scope at that block&#x27;s closing brace; declared in <code>main()</code>&#x27;s outer block it stays in scope until the end of <code>main()</code>. The parentheses around <code>score * combo</code> are optional (<code>*</code> happens before <code>+</code>) but make the intent clear.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestScoreBoard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestScoreBoard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java ScoreBoard" would.</span>
+<span class="t-w">        </span><span class="t-n">ScoreBoard</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ScoreBoard</span><span class="t-p">.</span><span class="t-na">addBonus</span><span class="t-p">(</span><span class="t-mi">100</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"addBonus(100) returned "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Start: 1200
+In addBonus, score is 1700
+After bonus: 1700
+Combo x3
+Final: 5100
+In addBonus, score is 600
+addBonus(100) returned 600
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>addBonus() is of type int<div class="small">in <code>ScoreBoard</code></div></td><td><div><span class="tag">require</span> <code>\b(?:public\s+static|static\s+public)\s+int\s+addBonus\s*\(\s*(?:final\s+)?int\s+\w+\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>addBonus() returns the updated score<div class="small">in <code>ScoreBoard.addBonus</code></div></td><td><div><span class="tag">require</span> <code>\breturn\s+\w</code></div></td></tr><tr><td>C3</td><td>R1</td><td>main() stores what addBonus() returns<div class="small">in <code>ScoreBoard.main</code></div></td><td><div><span class="tag">require</span> <code>=\s*addBonus\s*\(\s*score\s*\)\s*;</code></div></td></tr><tr><td>C4</td><td>R2</td><td>No block made for no reason<div class="small">in <code>ScoreBoard.main</code></div></td><td><div><span class="tag">forbid</span> <code>;\s*\{</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The final line multiplies by combo<div class="small">in <code>ScoreBoard.main</code></div></td><td><div><span class="tag">require</span> <code>\bscore\s*\*\s*combo\b|\bcombo\s*\*\s*score\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · addBonus() is of type int</dt><dd><p>Change <code>addBonus()</code>&#x27;s return type from <code>void</code> to <code>int</code>, so it can send the new score back to its caller.</p></dd><dt>C2 · addBonus() returns the updated score</dt><dd><p>End <code>addBonus()</code> with a <code>return</code> statement that sends back the updated score. The parameter is a copy that disappears when the method ends; <code>return</code> is the way its value gets out.</p></dd><dt>C3 · main() stores what addBonus() returns</dt><dd><p>Assign the result of <code>addBonus(score)</code> to a variable in <code>main()</code>, normally <code>score</code> itself. A call alone on its line throws the returned value away.</p></dd><dt>C4 · No block made for no reason</dt><dd><p>Remove the extra pair of braces around <code>combo</code>. That block has no purpose, and <code>combo</code> goes out of scope at its closing brace, so the final line can&#x27;t see it.</p></dd><dt>C5 · The final line multiplies by combo</dt><dd><p>Print the final score as <code>score</code> times <code>combo</code>. It compiles only once <code>combo</code> is in scope on that line.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter and compare <code>In addBonus, score is ...</code> with <code>After bonus: ...</code>. At that moment two variables named <code>score</code> exist. Where does each one live?</p></li><li><p>A method can&#x27;t reach into <code>main()</code>&#x27;s variables, but it can send a value back. That takes a return type other than <code>void</code>, a <code>return</code> statement, and a caller that keeps the result.</p></li><li><p>A variable declared inside braces goes out of scope at the closing brace. Does <code>combo</code> need a block of its own at all?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Could you declare a second <code>int score</code> inside a new block nested in <code>main()</code>? Why can <code>addBonus()</code> use the name <code>score</code> for its parameter without any conflict?</p><div class="answer"><p>No: a nested block lies entirely inside <code>main()</code>&#x27;s block, where the first <code>score</code> is still in scope, so it would be an illegal redeclaration. <code>addBonus()</code> is a different method with its own scope, so its <code>score</code> is a separate variable; the two scopes never overlap.</p></div></li><li><p>The reading advises against creating blocks for no reason. Using this lab, describe a bug an unnecessary block caused or could cause.</p><div class="answer"><p>The extra braces made <code>combo</code> go out of scope before the final line needed it, so the final score couldn&#x27;t use it. Unnecessary blocks hide where a variable lives and invite variables that vanish too early, or duplicates with the same name.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>doubleScore(int score)</code> method for the arcade&#x27;s happy hour that returns twice the score, and apply it before the final line. Predict first: what happens if you call it without <code>score =</code> in front?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

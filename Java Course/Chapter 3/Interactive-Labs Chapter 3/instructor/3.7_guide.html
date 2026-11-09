@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The farmers-market scale</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 3.7</div>
+  <h1>The farmers-market scale</h1>
+<h2>Objectives</h2><ul><li>Recognize a call that matches two overloads equally well, and make it an exact match</li><li>Explain why methods that differ only in return type are illegal</li><li>Explain why a potentially ambiguous pair of methods compiles until an ambiguous call is made</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>main()</code> prints the pineapple line with a call that is an exact match for the by-count <code>printLine()</code>.</li><li><strong>R2</strong> Two methods named <code>lineTotal</code> return each line&#x27;s amount as a <code>double</code>: <code>lineTotal(int quantity, double unitPrice)</code> and <code>lineTotal(double pounds, int centsPerPound)</code>. No <code>printLine()</code> returns a value.</li><li><strong>R3</strong> <code>main()</code> prints <code>Total: $</code> followed by the sum of three <code>lineTotal()</code> calls, and the receipt matches the screen above. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Which <code>printLine()</code> runs for <code>printLine(3, 4.25)</code>, and which for <code>printLine(2.5, 360)</code>? Why is neither call ambiguous?</p><div class="answer"><p><code>printLine(3, 4.25)</code> is an exact match for <code>(int, double)</code>, and <code>printLine(2.5, 360)</code> is an exact match for <code>(double, int)</code>. Each call has exactly one version that fits without promotion, so the compiler knows which to use.</p></div></li><li><p>Explain why <code>printLine(2, 5)</code> does not compile, even though both methods exist and either could take two numbers.</p><div class="answer"><p>No version is an exact match for two <code>int</code> arguments. Promoting the first <code>int</code> fits <code>(double, int)</code>, and promoting the second fits <code>(int, double)</code>, so both match equally well; the compiler can&#x27;t choose and reports the call as ambiguous.</p></div></li></ol>
+<h2>Solution</h2><div class="file">MarketScale.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">MarketScale</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printLine</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">4.25</span><span class="t-p">);</span><span class="t-w">      </span><span class="t-c1">// 3 mangoes at $4.25 each</span>
+<span class="t-w">        </span><span class="t-n">printLine</span><span class="t-p">(</span><span class="t-mf">2.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">360</span><span class="t-p">);</span><span class="t-w">     </span><span class="t-c1">// 2.5 lb of cherries at 360 cents per lb</span>
+<span class="t-w">        </span><span class="t-n">printLine</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-p">);</span><span class="t-w">       </span><span class="t-c1">// 2 pineapples at $5 each</span>
+
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">lineTotal</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">4.25</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lineTotal</span><span class="t-p">(</span><span class="t-mf">2.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">360</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lineTotal</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Sold by count: quantity, and price per item in dollars.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printLine</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">unitPrice</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">quantity</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" x $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">unitPrice</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" = $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lineTotal</span><span class="t-p">(</span><span class="t-n">quantity</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">unitPrice</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Sold by weight: pounds, and price per pound in cents.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printLine</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">pounds</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">centsPerPound</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">pounds</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" lb x "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">centsPerPound</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"c = $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lineTotal</span><span class="t-p">(</span><span class="t-n">pounds</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">centsPerPound</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">lineTotal</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">unitPrice</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">unitPrice</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">lineTotal</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">pounds</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">centsPerPound</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">pounds</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">centsPerPound</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mf">100.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>printLine(2, 5)</code> has no exact match. Promoting the first <code>int</code> fits <code>(double, int)</code> and promoting the second fits <code>(int, double)</code>, so the call is ambiguous and the program does not compile. <code>printLine(2, 5.0)</code> is an exact match for the by-count version. Beware <code>printLine(2.0, 5)</code>: it compiles too, but matches the by-weight version and prints 2 pounds at 5 cents. A <code>double printLine(int, double)</code> next to <code>void printLine(int, double)</code> is illegal: the compiler chooses by arguments, never by return type. Hence a new name, <code>lineTotal</code>, with the same two parameter lists. Having <code>printLine()</code> reuse <code>lineTotal()</code> is optional, but keeps each formula in one place.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestMarketScale.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestMarketScale</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java MarketScale" would.</span>
+<span class="t-w">        </span><span class="t-n">MarketScale</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Check by count: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarketScale</span><span class="t-p">.</span><span class="t-na">lineTotal</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">2.5</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Check by weight: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarketScale</span><span class="t-p">.</span><span class="t-na">lineTotal</span><span class="t-p">(</span><span class="t-mf">1.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">200</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">3 x $4.25 = $12.75
+2.5 lb x 360c = $9.0
+2 x $5.0 = $10.0
+Total: $31.75
+Check by count: 10.0
+Check by weight: 3.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The pineapple call is an exact match for the by-count version<div class="small">in <code>MarketScale.main</code></div></td><td><div><span class="tag">require</span> <code>\bprintLine\s*\(\s*2\s*,\s*(?:5\.0*|5[dD]|\(\s*double\s*\)\s*5)\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>\bprintLine\s*\(\s*2(?:\.0*|[dD])\s*,\s*5\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Two lineTotal() methods return double<div class="small">in <code>MarketScale</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bstatic\s+double\s+lineTotal\s*\(\s*(?:final\s+)?int\s+\w+\s*,\s*(?:final\s+)?double\s+\w+\s*\))(?=[\s\S]*\bstatic\s+double\s+lineTotal\s*\(\s*(?:final\s+)?double\s+\w+\s*,\s*(?:final\s+)?int\s+\w+\s*\))</code></div><div><span class="tag">forbid</span> <code>\b(?:double|int|float|long|String)\s+printLine\s*\(</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The total adds three lineTotal() calls<div class="small">in <code>MarketScale.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=(?:[\s\S]*?\blineTotal\s*\(){3})(?=[\s\S]*\&quot;Total: \$\&quot;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The pineapple call is an exact match for the by-count version</dt><dd><p>Make the pineapple call an exact match for the by-count version: the quantity stays an <code>int</code> 2 and the price becomes a <code>double</code>, written with a decimal point. With two <code>int</code> arguments both versions fit after promotion, so the compiler can&#x27;t choose. (Writing <code>2.0</code> for the quantity instead matches the by-weight version: 2 pounds at 5 cents.)</p></dd><dt>C2 · Two lineTotal() methods return double</dt><dd><p>Write two <code>double</code> methods named <code>lineTotal</code>, with the same two parameter lists as the <code>printLine()</code> versions, each returning its amount. Don&#x27;t give a <code>printLine()</code> a return type: two methods with the same name and parameter list are illegal whatever they return, because the compiler chooses by arguments alone.</p><div class='small'><strong>Hint:</strong></div><p>Copy each <code>printLine()</code> header, then change the return type and the name.</p></dd><dt>C3 · The total adds three lineTotal() calls</dt><dd><p>Add the three line amounts by calling <code>lineTotal()</code> once for each item, and print the sum after <code>Total: $</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Put the two parameter lists side by side. For <code>printLine(2, 5)</code>, can the first <code>int</code> be promoted to <code>double</code>? Can the second? Which versions could then accept the call?</p></li><li><p>An exact match removes the doubt. Keep the quantity an <code>int</code> and write the price so that Java reads it as a <code>double</code> literal.</p></li><li><p>Overloads are told apart by their parameter lists only, so a method that returns the amount needs a name of its own. Its parameter lists can mirror <code>printLine()</code>&#x27;s.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The two <code>printLine()</code> methods compiled fine before you added the pineapple line. When exactly does ambiguity become an error?</p><div class="answer"><p>Overloads with different parameter lists are not ambiguous on their own. The program fails only when it contains a call that matches more than one version equally well; without such a call, the methods coexist.</p></div></li><li><p>Why can&#x27;t the compiler use the return type to tell <code>void printLine(int, double)</code> apart from <code>double printLine(int, double)</code>?</p><div class="answer"><p>The compiler chooses a method from the arguments in the call, and a call need not use a returned value: <code>printLine(3, 4.25);</code> alone on a line would fit both. Methods with the same name and parameter list are therefore illegal, whatever their return types.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>void printLine(int quantity, final double unitPrice)</code> to the class and compile. What does the compiler report, and what does that tell you about <code>final</code> and overloading?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The vet clinic&#x27;s lobby screen</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 3.2</div>
+  <h1>The vet clinic&#x27;s lobby screen</h1>
+<h2>Objectives</h2><ul><li>Name the parts of a method header: access specifier, <code>static</code>, return type, identifier and parentheses</li><li>Explain what <code>public</code> access allows that <code>private</code> does not</li><li>Fill in a stub: a method with a finished header and an empty body</li><li>Call a method in another class with its fully qualified name, <code>ClassName.methodName()</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>displayHours()</code> in <code>VetClinic</code> has <code>public</code> access, so other classes can call it.</li><li><strong>R2</strong> The stub <code>displayEmergencyLine()</code> is completed: its body prints <code>After hours: call (555) 010-0199</code>, and its header stays <code>public static void displayEmergencyLine()</code>.</li><li><strong>R3</strong> <code>LobbyScreen.main()</code> shows the hours and then the emergency line by calling the two <code>VetClinic</code> methods with their fully qualified names, without copying their <code>println()</code> statements.</li><li><strong>R4</strong> Running <code>VetClinic</code> and then <code>LobbyScreen</code> prints exactly what the test program expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Label the parts of the header <code>private static void displayHours()</code>: which word is the access specifier, which the modifier, which the return type, which the identifier, and what do the empty parentheses tell you?</p><div class="answer"><p><code>private</code> is the access specifier; <code>static</code> is the modifier (no object is needed to call the method); <code>void</code> is the return type (it sends nothing back); <code>displayHours</code> is the identifier; the empty parentheses mean the method receives no data.</p></div></li><li><p>Inside <code>VetClinic</code>, <code>main()</code> calls <code>displayHours()</code> with no class name. Why will <code>LobbyScreen</code> need to write more than that?</p><div class="answer"><p>Within its own class, the simple name is enough. From another class, the compiler only recognizes the method by its fully qualified name, <code>VetClinic.displayHours()</code>: the class name works like a family name.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">VetClinic.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">VetClinic</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Harbor Paws Veterinary Clinic"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">displayHours</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): LobbyScreen needs to call this method too.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displayHours</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Mon-Sat   8 am to 7 pm"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sun       10 am to 4 pm"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// A stub: the header is finished, the body is not.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displayEmergencyLine</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): print the after-hours number.</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">LobbyScreen.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">LobbyScreen</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Now showing on the lobby screen:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): show the clinic's hours, then its emergency line.</span>
+<span class="t-w">        </span><span class="t-c1">// Both methods live in the VetClinic class.</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">VetClinic.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">VetClinic</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Harbor Paws Veterinary Clinic"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">displayHours</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displayHours</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Mon-Sat   8 am to 7 pm"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sun       10 am to 4 pm"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displayEmergencyLine</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"After hours: call (555) 010-0199"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">LobbyScreen.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">LobbyScreen</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Now showing on the lobby screen:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">VetClinic</span><span class="t-p">.</span><span class="t-na">displayHours</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">VetClinic</span><span class="t-p">.</span><span class="t-na">displayEmergencyLine</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A <code>private</code> method can be called only from inside its own class, which is why <code>LobbyScreen</code> could not use <code>displayHours()</code>; <code>public</code> opens it to every class. Inside <code>VetClinic</code>, the simple name <code>displayHours()</code> is enough. From <code>LobbyScreen</code>, the compiler finds the method only through its fully qualified name, <code>VetClinic.displayHours()</code>; without the class name it searches <code>LobbyScreen</code> and reports <em>cannot find symbol</em>. The stub needed only a body: its header, the method&#x27;s declaration, was already complete. Keep both files in the same folder so the compiler finds <code>VetClinic</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestLobby.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestLobby</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs both programs, as "java VetClinic" and then "java LobbyScreen" would.</span>
+<span class="t-w">        </span><span class="t-n">VetClinic</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">LobbyScreen</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Harbor Paws Veterinary Clinic
+Mon-Sat   8 am to 7 pm
+Sun       10 am to 4 pm
+
+Now showing on the lobby screen:
+Mon-Sat   8 am to 7 pm
+Sun       10 am to 4 pm
+After hours: call (555) 010-0199
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>displayHours() is public<div class="small">in <code>VetClinic</code> of <code>VetClinic.java</code></div></td><td><div><span class="tag">require</span> <code>\b(?:public\s+static|static\s+public)\s+void\s+displayHours\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\bprivate\s+static\s+void\s+displayHours\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The stub prints the emergency line<div class="small">in <code>VetClinic.displayEmergencyLine</code> of <code>VetClinic.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>println\s*\(\s*\&quot;After hours: call \(555\) 010-0199\&quot;\s*\)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>LobbyScreen calls both VetClinic methods by their full names, in order<div class="small">in <code>LobbyScreen.main</code> of <code>LobbyScreen.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\bVetClinic\s*\.\s*displayHours\s*\(\s*\)\s*;[\s\S]*\bVetClinic\s*\.\s*displayEmergencyLine\s*\(\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>\&quot;(?:Mon-Sat|Sun |After hours)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · displayHours() is public</dt><dd><p>Change <code>private</code> to <code>public</code> in the header of <code>displayHours()</code>. A <code>private</code> method can be called only from inside its own class; <code>public</code> lets <code>LobbyScreen</code> call it too.</p><div class='small'><strong>Hint:</strong></div><p>The access specifier is the first word of the header.</p></dd><dt>C2 · The stub prints the emergency line</dt><dd><p>Fill the stub&#x27;s body with one <code>println()</code> that prints <code>After hours: call (555) 010-0199</code> exactly. Keep the header as it is, and never end a header with a semicolon.</p></dd><dt>C3 · LobbyScreen calls both VetClinic methods by their full names, in order</dt><dd><p>In <code>LobbyScreen.main()</code>, call the hours method and then the emergency-line method, each written as the class name <code>VetClinic</code>, a dot and the method name. Don&#x27;t copy the clinic&#x27;s text: a change to the hours should be made once, in <code>VetClinic</code>.</p><div class='small'><strong>Hint:</strong></div><p>You have already called a method this way: <code>JOptionPane.showMessageDialog()</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Try the call from <code>LobbyScreen</code> first and read the compiler&#x27;s message. It names the problem with <code>displayHours()</code> exactly.</p></li><li><p>Of <code>public</code>, <code>private</code>, <code>static</code>, <code>void</code> and the name, only one word in the header decides which classes may call the method.</p></li><li><p>From inside <code>VetClinic</code> the short name works. From another class, the method&#x27;s full name includes its class, like a surname.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain the difference between a method&#x27;s header (declaration) and its body (implementation), using <code>displayEmergencyLine()</code> as the example.</p><div class="answer"><p>The header, <code>public static void displayEmergencyLine()</code>, tells other code how to use the method: who may call it, that it returns nothing, its name, and that it takes no data. The body between the braces is the implementation, the <code>println()</code> that does the work. As a stub, the method had a header and an empty body.</p></div></li><li><p>Another class in the hospital&#x27;s system also has a method named <code>displayHours()</code>. Could <code>VetClinic.displayHours()</code> in <code>LobbyScreen</code> ever run the wrong one? Explain.</p><div class="answer"><p>No. The fully qualified name includes the class, so <code>VetClinic.displayHours()</code> always means the method in <code>VetClinic</code>. Two classes can each have a method with the same name; they are entirely separate methods.</p></div></li></ol>
+<h2>Extension</h2><p>Add a third program, <code>PhoneMessage</code>, whose <code>main()</code> prints <code>Thank you for calling Harbor Paws.</code> and then reuses <code>VetClinic.displayEmergencyLine()</code>. Which <code>VetClinic</code> methods could it <em>not</em> use if they were <code>private</code>?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

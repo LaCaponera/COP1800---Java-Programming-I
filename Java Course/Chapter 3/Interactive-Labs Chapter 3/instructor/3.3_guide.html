@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The tutoring center&#x27;s pay lines</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 3.3</div>
+  <h1>The tutoring center&#x27;s pay lines</h1>
+<h2>Objectives</h2><ul><li>Declare a method with two parameters, each with its own type and identifier</li><li>Pass arguments that match the parameters in number, type and order</li><li>Explain why an <code>int</code> argument is accepted by a <code>double</code> parameter</li><li>Explain that a parameter holds a copy of the argument, even when the names match</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Add <code>public static void displayPayAtRate(double hours, double rate)</code>: hours first, then rate, each parameter with its own type. It prints a line in the same format as <code>displayPay()</code>, using the rate it receives.</li><li><strong>R2</strong> <code>main()</code> calls <code>displayPayAtRate()</code> for Ana with her 6 hours and her $31.00 rate, in the order the parameters expect.</li><li><strong>R3</strong> The printout matches the screen above, and <code>displayPayAtRate(10, 20.0)</code> prints <code>10.0 hours at $20.0 per hour is $200.0</code>. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>main()</code> has a variable named <code>hours</code>, and <code>displayPay()</code> has a parameter named <code>hours</code>. Are they the same variable? What happens to <code>main()</code>&#x27;s <code>hours</code> if <code>displayPay()</code> changes its parameter?</p><div class="answer"><p>They are different variables, in different memory locations, that happen to share a name. The parameter receives a copy of the argument&#x27;s value, so changing it inside <code>displayPay()</code> has no effect on <code>hours</code> in <code>main()</code>.</p></div></li><li><p><code>displayPay(leoHours)</code> passes an <code>int</code>. Why does it compile, and why does the line show <code>8.0</code> rather than <code>8</code>?</p><div class="answer"><p>An <code>int</code> can be promoted to a <code>double</code>, so a <code>double</code> parameter accepts it. Inside the method, <code>hours</code> is a <code>double</code> holding 8.0, and that is what gets printed.</p></div></li></ol>
+<h2>Solution</h2><div class="file">TutorPay.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TutorPay</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">12.5</span><span class="t-p">;</span><span class="t-w">     </span><span class="t-c1">// Maya</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">leoHours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">8</span><span class="t-p">;</span><span class="t-w">        </span><span class="t-c1">// Leo logs whole hours</span>
+
+<span class="t-w">        </span><span class="t-n">displayPay</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">displayPay</span><span class="t-p">(</span><span class="t-n">leoHours</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Payroll sheet for Ana: rate $31.00, hours 6</span>
+<span class="t-w">        </span><span class="t-n">displayPayAtRate</span><span class="t-p">(</span><span class="t-mi">6</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">31.00</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displayPay</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">STD_RATE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">22.75</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">pay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">STD_RATE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" hours at $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">STD_RATE</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per hour is $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pay</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displayPayAtRate</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">pay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" hours at $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per hour is $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pay</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Each parameter needs its own type, even when both are <code>double</code>: <code>(double hours, rate)</code> does not compile. Arguments are matched to parameters by position, so Ana&#x27;s call lists the hours first although the sheet lists the rate first. <code>displayPayAtRate(31.0, 6)</code> would compile and print <em>31.0 hours at $6.0 per hour is $186.0</em>: a logical error that only the output reveals. The literal 6 is an <code>int</code> promoted to <code>double</code>, which is also why Leo&#x27;s hours print as <code>8.0</code>. The <code>hours</code> in <code>main()</code> and the parameter <code>hours</code> are different variables: the parameter receives a copy and disappears when the method ends.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestTutorPay.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestTutorPay</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java TutorPay" would.</span>
+<span class="t-w">        </span><span class="t-n">TutorPay</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-c1">// Another tutor: 10 hours at $20.00</span>
+<span class="t-w">        </span><span class="t-n">TutorPay</span><span class="t-p">.</span><span class="t-na">displayPayAtRate</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">20.0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">12.5 hours at $22.75 per hour is $284.375
+8.0 hours at $22.75 per hour is $182.0
+6.0 hours at $31.0 per hour is $186.0
+10.0 hours at $20.0 per hour is $200.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>displayPayAtRate has two typed parameters: hours, then rate<div class="small">in <code>TutorPay</code></div></td><td><div><span class="tag">require</span> <code>\b(?:public\s+static|static\s+public)\s+void\s+displayPayAtRate\s*\(\s*(?:final\s+)?double\s+hours\s*,\s*(?:final\s+)?double\s+rate\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The pay uses the rate parameter<div class="small">in <code>TutorPay.displayPayAtRate</code></div></td><td><div><span class="tag">require</span> <code>\bhours\s*\*\s*rate\b|\brate\s*\*\s*hours\b</code></div><div><span class="tag">forbid</span> <code>\bSTD_RATE\b|22\.75</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Ana&#x27;s call passes the hours first, then the rate<div class="small">in <code>TutorPay.main</code></div></td><td><div><span class="tag">require</span> <code>\bdisplayPayAtRate\s*\(\s*(?:6(?:\.0*)?[dD]?|\w*[hH]ours\w*)\s*,\s*(?:31(?:\.0*)?[dD]?|\w*[rR]ate\w*)\s*\)\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · displayPayAtRate has two typed parameters: hours, then rate</dt><dd><p>Declare <code>displayPayAtRate</code> as <code>public static void</code> with two parameters: a <code>double</code> named <code>hours</code>, then a <code>double</code> named <code>rate</code>. Each parameter needs its own type, even when both are <code>double</code>, and the order you choose is the order every call must follow.</p><div class='small'><strong>Hint:</strong></div><p>Compare with <code>displayPay(double hours)</code>: you need two of those type-and-name pairs, separated by a comma.</p></dd><dt>C2 · The pay uses the rate parameter</dt><dd><p>Compute the pay from the two parameters, <code>hours</code> times <code>rate</code>, not from the standard rate. The second parameter exists so that each call can send its own rate.</p></dd><dt>C3 · Ana&#x27;s call passes the hours first, then the rate</dt><dd><p>Call <code>displayPayAtRate</code> with Ana&#x27;s hours first and her rate second, matching the parameter list. The sheet lists the rate first; copying that order still compiles, but prints 31.0 hours at $6.0 per hour: a logical error.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Look at the header of <code>displayPay(double hours)</code>: its parentheses hold a type and a name. A method with two parameters lists two of those, separated by a comma.</p></li><li><p>Arguments are matched to parameters by position, not by name. In which position does <code>displayPayAtRate</code> expect the hours?</p></li><li><p>Ana&#x27;s sheet says rate first. Swap the values when you write the call, then check that the printed line starts with <em>6.0 hours</em>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>What would <code>displayPayAtRate(31.0, 6)</code> do: fail to compile, crash, or something else? Explain why this kind of mistake is dangerous.</p><div class="answer"><p>It compiles and runs, because both values fit <code>double</code> parameters, but it prints 31.0 hours at $6.0 per hour: a logical error. Even the total looks right, so nothing warns you; only checking the output against the data reveals it.</p></div></li><li><p>A client calling <code>displayPayAtRate()</code> only needs its interface. What exactly is that interface, and what is hidden from the caller?</p><div class="answer"><p>The interface is the header: the name, that it returns nothing, and that it takes a <code>double</code> for hours followed by a <code>double</code> for rate. How the pay is computed and printed is hidden in the body; it could change without affecting any call, as long as the header stays the same.</p></div></li></ol>
+<h2>Extension</h2><p>Mark both parameters of <code>displayPayAtRate()</code> as <code>final</code>, then try assigning a new value to <code>rate</code> inside the method and read the compiler&#x27;s message. Why might a team want that protection?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

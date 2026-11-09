@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The outfitter&#x27;s sale tags</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 3.6</div>
+  <h1>The outfitter&#x27;s sale tags</h1>
+<h2>Objectives</h2><ul><li>Overload a method by giving the same name different parameter lists</li><li>Predict which version runs from the types of the arguments in a call</li><li>Divide by <code>100.0</code>, not <code>100</code>, to turn a whole-number percent into a fraction</li><li>Explain when one overloaded name is easier to use than several different names</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Add an overload <code>displaySalePrice(double price, int percent)</code> that treats the <code>int</code> as a whole-number percent, dividing by <code>100.0</code> so the fraction keeps its decimals.</li><li><strong>R2</strong> Add an overload <code>displaySalePrice(double price)</code> that applies the 10% member discount from a named constant <code>MEMBER_PERCENT</code>, and print a member&#x27;s tag for the $80.0 item from <code>main()</code>.</li><li><strong>R3</strong> All three versions share the name <code>displaySalePrice</code> and print the same tag format.</li><li><strong>R4</strong> The tags match the screen above, and so do the test program&#x27;s three tags for a $200.0 item. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Predict the starter&#x27;s tag for <code>displaySalePrice(80.0, 25)</code> and explain how Java arrives at it.</p><div class="answer"><p><code>Sale price of $80.0 is $-1920.0</code>. The <code>int</code> 25 is promoted to 25.0 to fit the <code>double</code> parameter, so the method computes 80 - 80 x 25 = -1920.</p></div></li><li><p>Once both overloads exist, which version runs for each call: <code>displaySalePrice(80.0, 0.25)</code>, <code>displaySalePrice(80.0, 25)</code> and <code>displaySalePrice(80.0)</code>?</p><div class="answer"><p>The first runs <code>(double, double)</code> because 0.25 is a <code>double</code>; the second runs <code>(double, int)</code> because 25 is an <code>int</code> and that version is an exact match; the third runs <code>(double)</code>, the only version with one parameter.</p></div></li></ol>
+<h2>Solution</h2><div class="file">SaleTags.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SaleTags</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">displaySalePrice</span><span class="t-p">(</span><span class="t-mf">80.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.25</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// rate as a fraction</span>
+<span class="t-w">        </span><span class="t-n">displaySalePrice</span><span class="t-p">(</span><span class="t-mf">80.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">25</span><span class="t-p">);</span><span class="t-w">     </span><span class="t-c1">// a manager typed a whole percent</span>
+<span class="t-w">        </span><span class="t-n">displaySalePrice</span><span class="t-p">(</span><span class="t-mf">80.0</span><span class="t-p">);</span><span class="t-w">         </span><span class="t-c1">// a member's tag</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displaySalePrice</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">salePrice</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sale price of $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">salePrice</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displaySalePrice</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">percent</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">percent</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mf">100.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">displaySalePrice</span><span class="t-p">(</span><span class="t-n">price</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">displaySalePrice</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MEMBER_PERCENT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">displaySalePrice</span><span class="t-p">(</span><span class="t-n">price</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">MEMBER_PERCENT</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The compiler picks the version whose parameter list matches the arguments: 0.25 is a <code>double</code>, so <code>(double, double)</code> runs; 25 is an <code>int</code>, and <code>(double, int)</code> is an exact match, so it wins over promoting 25 to <code>double</code>; a single argument can only match <code>(double)</code>. Dividing by <code>100.0</code> matters: <code>25 / 100</code> is integer division and gives 0. The <code>int</code> and one-argument versions hand the work to the <code>(double, double)</code> version, so the formula and the tag format live in one place. Writing each version&#x27;s own arithmetic also passes, as long as the tags match.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSaleTags.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSaleTags</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java SaleTags" would.</span>
+<span class="t-w">        </span><span class="t-n">SaleTags</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-c1">// A $200.0 item: half off as a fraction, half off as a percent, and a member's tag</span>
+<span class="t-w">        </span><span class="t-n">SaleTags</span><span class="t-p">.</span><span class="t-na">displaySalePrice</span><span class="t-p">(</span><span class="t-mf">200.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">SaleTags</span><span class="t-p">.</span><span class="t-na">displaySalePrice</span><span class="t-p">(</span><span class="t-mf">200.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">50</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">SaleTags</span><span class="t-p">.</span><span class="t-na">displaySalePrice</span><span class="t-p">(</span><span class="t-mf">200.0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Sale price of $80.0 is $60.0
+Sale price of $80.0 is $60.0
+Sale price of $80.0 is $72.0
+Sale price of $200.0 is $100.0
+Sale price of $200.0 is $100.0
+Sale price of $200.0 is $180.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>An overload takes (double, int)<div class="small">in <code>SaleTags</code></div></td><td><div><span class="tag">require</span> <code>\bstatic\s+void\s+displaySalePrice\s*\(\s*(?:final\s+)?double\s+\w+\s*,\s*(?:final\s+)?int\s+\w+\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The percent is divided by 100.0<div class="small">in <code>SaleTags</code></div></td><td><div><span class="tag">require</span> <code>/\s*100\.0*\b|/\s*100[dD]\b|\(\s*double\s*\)\s*\w+\s*/\s*100\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>An overload takes only the price<div class="small">in <code>SaleTags</code></div></td><td><div><span class="tag">require</span> <code>\bstatic\s+void\s+displaySalePrice\s*\(\s*(?:final\s+)?double\s+\w+\s*\)</code></div></td></tr><tr><td>C4</td><td>R2</td><td>The member discount is a named constant<div class="small">in <code>SaleTags</code></div></td><td><div><span class="tag">require</span> <code>\bfinal\s+(?:int|double)\s+MEMBER_PERCENT\s*=\s*10(?:\.0*)?\s*;</code></div></td></tr><tr><td>C5</td><td>R2</td><td>main() prints a member&#x27;s tag<div class="small">in <code>SaleTags.main</code></div></td><td><div><span class="tag">require</span> <code>\bdisplaySalePrice\s*\(\s*80(?:\.0*)?[dD]?\s*\)\s*;</code></div></td></tr><tr><td>C6</td><td>R3</td><td>All three versions share one name<div class="small">in <code>SaleTags</code></div></td><td><div><span class="tag">require</span> <code>(?:[\s\S]*?\bvoid\s+displaySalePrice\s*\(){3}</code></div><div><span class="tag">forbid</span> <code>\bvoid\s+(?!displaySalePrice\b|main\b)\w+\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · An overload takes (double, int)</dt><dd><p>Add a second method named <code>displaySalePrice</code> whose parameter list is a <code>double</code> followed by an <code>int</code>. Same name, different parameter types: that is an overload, and the compiler chooses it whenever the second argument is an <code>int</code>.</p></dd><dt>C2 · The percent is divided by 100.0</dt><dd><p>Turn the percent into a fraction by dividing by <code>100.0</code>, not <code>100</code>. Two integers divide to a truncated integer, so 25 / 100 is 0 and the tag would show no discount at all.</p><div class='small'><strong>Hint:</strong></div><p>Try <code>System.out.println(25 / 100);</code> and then <code>System.out.println(25 / 100.0);</code>.</p></dd><dt>C3 · An overload takes only the price</dt><dd><p>Add a third <code>displaySalePrice</code> with a single <code>double</code> parameter for the price. A call with one argument can only match this version.</p></dd><dt>C4 · The member discount is a named constant</dt><dd><p>Declare the member discount as a named constant, <code>MEMBER_PERCENT</code>, holding 10, and use it in the one-argument version.</p></dd><dt>C5 · main() prints a member&#x27;s tag</dt><dd><p>Print the member&#x27;s tag from <code>main()</code> by calling <code>displaySalePrice</code> with the price 80.0 alone.</p></dd><dt>C6 · All three versions share one name</dt><dd><p>Name every version <code>displaySalePrice</code>. Callers then remember one name and pass whatever they have, and the compiler chooses the version from the arguments.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter. The second tag is wrong because 25 was promoted to <code>double</code> and used as if it meant 0.25. What would make Java choose a <em>different</em> method when the second argument is an <code>int</code>?</p></li><li><p>An overload keeps the name and changes the parameter list. The <code>int</code> version can turn the percent into a fraction and hand the rest of the work to the version that already exists.</p></li><li><p>In Java, 25 / 100 is 0. At least one of the two numbers must be a <code>double</code> for the division to keep its decimals.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>You could have named the methods <code>displaySalePriceFraction</code>, <code>displaySalePricePercent</code> and <code>displayMemberPrice</code>. Give one reason overloading is better here, and one situation where separate names would be clearer.</p><div class="answer"><p>Overloading lets callers remember one name for the same task and pass whatever they have; the compiler picks the right version. Separate names are clearer when the methods do genuinely different jobs: overloading suits tasks that are functionally identical apart from the argument types.</p></div></li><li><p>Suppose the <code>int</code> and one-argument versions call the <code>(double, double)</code> version instead of repeating the arithmetic. What is gained if the store later rounds every sale price down to the nearest dollar?</p><div class="answer"><p>The rounding is added in one place, the <code>(double, double)</code> version, and every overload picks it up because they all funnel into it. With three separate formulas, three methods would need the same change and could drift apart.</p></div></li></ol>
+<h2>Extension</h2><p>Add a fourth overload, <code>displaySalePrice(double price, int percent, double couponDollars)</code>, that takes a fixed coupon off after the percent discount. Which existing version can it reuse, and how?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

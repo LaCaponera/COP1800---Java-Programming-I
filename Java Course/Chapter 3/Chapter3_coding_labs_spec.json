@@ -1,0 +1,904 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 3: Using Methods",
+ "collection_intro": "Hands-on labs for each section of Chapter 3 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict, write or fix the program, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "3.1",
+   "title": "The food-truck sign",
+   "subtitle": "Calling a method, and where a method may live in a class",
+   "source": "Ch. 3, section 3.1 (pp. 83–86)",
+   "minutes": 20,
+   "objectives": [
+    "Move a group of statements into a well-named `static void` method",
+    "Place a method inside the class but outside every other method",
+    "Call a method from `main()` as many times as you need",
+    "Explain why the order of the calls, not the order of the methods in the file, decides what runs"
+   ],
+   "scenario": "La Esquina's food truck prints two paper signs every morning: one for the serving window and one for the side door. Both list the opening hours, so the same three `println()` statements appear twice in `main()`. Last week the owner changed Saturday's hours, only one copy was edited, and the two signs disagreed.\n\nSomeone also wrote a `displaySpecial()` method at the top of the class, yet the special never appears on the window sign.\n\nThe printout must read:\n\n```\n=== La Esquina: serving window ===\nToday's special: birria tacos\nMon-Fri   11 am to 9 pm\nSat       noon to 10 pm\nSun       closed\n=== La Esquina: side door ===\nMon-Fri   11 am to 9 pm\nSat       noon to 10 pm\nSun       closed\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "A method `public static void displayHours()` holds the three hours lines. It sits inside the `TruckSign` class but outside `main()`."
+    },
+    {
+     "id": "R2",
+     "text": "`main()` calls `displayHours()` once for each sign, and no hours text is left in `main()`."
+    },
+    {
+     "id": "R3",
+     "text": "`main()` calls `displaySpecial()` so the special appears right under the window header. Leave `displaySpecial()` where it is, above `main()`."
+    },
+    {
+     "id": "R4",
+     "text": "The printout matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "TruckSign.java",
+   "starter_code": "public class TruckSign\n{\n    public static void displaySpecial()\n    {\n        System.out.println(\"Today's special: birria tacos\");\n    }\n\n    public static void main(String[] args)\n    {\n        System.out.println(\"=== La Esquina: serving window ===\");\n        // TODO (R3): the special belongs here, under the window header.\n\n        // TODO (R1, R2): these three lines appear twice. Move them into displayHours().\n        System.out.println(\"Mon-Fri   11 am to 9 pm\");\n        System.out.println(\"Sat       noon to 10 pm\");\n        System.out.println(\"Sun       closed\");\n\n        System.out.println(\"=== La Esquina: side door ===\");\n        System.out.println(\"Mon-Fri   11 am to 9 pm\");\n        System.out.println(\"Sat       noon to 10 pm\");\n        System.out.println(\"Sun       closed\");\n    }\n\n    // TODO (R1): you may place displayHours() here, after main().\n}\n",
+   "solution": "public class TruckSign\n{\n    public static void displaySpecial()\n    {\n        System.out.println(\"Today's special: birria tacos\");\n    }\n\n    public static void main(String[] args)\n    {\n        System.out.println(\"=== La Esquina: serving window ===\");\n        displaySpecial();\n        displayHours();\n\n        System.out.println(\"=== La Esquina: side door ===\");\n        displayHours();\n    }\n\n    public static void displayHours()\n    {\n        System.out.println(\"Mon-Fri   11 am to 9 pm\");\n        System.out.println(\"Sat       noon to 10 pm\");\n        System.out.println(\"Sun       closed\");\n    }\n}\n",
+   "solution_notes": "A method is written inside the class but never inside another method; `displayHours()` could equally go before `main()` or between `displaySpecial()` and `main()`, and the program would behave the same. `displaySpecial()` comes first in the file but did nothing in the starter: only `main()` runs automatically, and every other method runs only when it is called. Now a change to Saturday's hours is made in one place and both signs follow, and `main()` reads like an outline of the printout.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "displayHours() is a public static void method with empty parentheses",
+     "within": "TruckSign",
+     "require": "\\b(?:public\\s+static|static\\s+public)\\s+void\\s+displayHours\\s*\\(\\s*\\)\\s*\\{",
+     "message": "Write a header `public static void displayHours()` followed by a body in braces, inside the class's braces but outside `main()`. A method can sit before or after `main()`, never inside it.",
+     "hint": "Copy the shape of `displaySpecial()`'s header and change the name."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "displayHours() prints the three hours lines",
+     "within": "TruckSign.displayHours",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\\\"Mon-Fri   11 am to 9 pm\\\")(?=[\\s\\S]*\\\"Sat       noon to 10 pm\\\")(?=[\\s\\S]*\\\"Sun       closed\\\")",
+     "message": "Move the three hours `println()` statements, unchanged, into the body of `displayHours()`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "main() calls displayHours() for both signs",
+     "within": "TruckSign.main",
+     "require": "(?:[\\s\\S]*?\\bdisplayHours\\s*\\(\\s*\\)\\s*;){2}",
+     "message": "Call `displayHours()` once after the window header and once after the side-door header. The work is written once; a method can be called as many times as you need."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "No hours text left in main()",
+     "within": "TruckSign.main",
+     "strings": true,
+     "forbid": "\\\"(?:Mon-Fri|Sat|Sun)\\s",
+     "message": "`main()` still prints hours itself. Remove those `println()` statements, so the hours exist in one place only: inside `displayHours()`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "main() calls displaySpecial()",
+     "within": "TruckSign.main",
+     "require": "\\bdisplaySpecial\\s*\\(\\s*\\)\\s*;",
+     "message": "`displaySpecial()` sits in the class but never runs: only `main()` runs automatically. Call it right after the window header."
+    }
+   ],
+   "hints": [
+    "Run the starter first. Which lines appear twice, and which method in the class never shows its output?",
+    "A method needs a header and a body in braces, and it goes inside the class but outside `main()`. `displaySpecial()` shows the exact shape.",
+    "Once the hours live in their own method, each sign needs a single statement for them: the method's name, empty parentheses and a semicolon."
+   ],
+   "test_program": {
+    "file_name": "TestTruckSign.java",
+    "code": "public class TestTruckSign\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java TruckSign\" would.\n        TruckSign.main(new String[0]);\n    }\n}\n",
+    "expected_output": "=== La Esquina: serving window ===\nToday's special: birria tacos\nMon-Fri   11 am to 9 pm\nSat       noon to 10 pm\nSun       closed\n=== La Esquina: side door ===\nMon-Fri   11 am to 9 pm\nSat       noon to 10 pm\nSun       closed\n",
+    "predict": "Before running the starter: does `Today's special: birria tacos` appear anywhere in its output? Write down your answer and the reason, then run it."
+   },
+   "warmup": [
+    {
+     "question": "`displaySpecial()` is the first method in the starter's class. When you run the starter, does its line print first, last or not at all? Explain.",
+     "model_answer": "Not at all. Only `main()` runs automatically when the program starts; any other method runs only when something calls it. Its position in the file changes nothing."
+    },
+    {
+     "question": "The hours appear twice in `main()`. Name the real problem this duplication caused at the truck, and say how a method prevents it.",
+     "model_answer": "When Saturday's hours changed, only one copy was edited, so the two signs disagreed. With the lines in one method there is a single copy to change, and every call shows the new hours."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "You could have placed `displayHours()` before `main()` instead of after it. Would the printout change? What decides the order in which methods run?",
+     "model_answer": "No. The order of the calls inside `main()` decides what runs and when; the physical order of the methods in the class has no effect. `main()` always runs first."
+    },
+    {
+     "question": "Read your new `main()` aloud. How does the name `displayHours` help someone who has never seen the program? Connect your answer to abstraction.",
+     "model_answer": "`main()` now reads like an outline: header, special, hours, next header, hours. The name says what happens without listing the details; using a general name for a group of detailed statements is abstraction."
+    }
+   ],
+   "extension": "Add a `displayPayment()` method that prints `Cash, cards and phone pay accepted`, and show it on the window sign only. Then try writing a method inside `main()` and read the compiler's message.",
+   "worth_knowing": "Calling a reusable block of code and coming back is older than programming languages. In the late 1940s David Wheeler devised the \"Wheeler jump\" for Cambridge's EDSAC computer: before jumping into a subroutine, the program stored where to come back to. Every call you write, such as `displayHours();`, still does that bookkeeping for you.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "3.2",
+   "title": "The vet clinic's lobby screen",
+   "subtitle": "The parts of a method header, public access, stubs and calling a method in another class",
+   "source": "Ch. 3, section 3.2 (pp. 86–90)",
+   "minutes": 25,
+   "objectives": [
+    "Name the parts of a method header: access specifier, `static`, return type, identifier and parentheses",
+    "Explain what `public` access allows that `private` does not",
+    "Fill in a stub: a method with a finished header and an empty body",
+    "Call a method in another class with its fully qualified name, `ClassName.methodName()`"
+   ],
+   "scenario": "Harbor Paws Veterinary Clinic runs two programs. `VetClinic` prints the clinic's notice board. A new `LobbyScreen` program drives the TV in the waiting room, and it should **reuse** the clinic's methods instead of copying their statements.\n\nTwo things stand in the way: `displayHours()` was declared `private`, so no other class may call it, and `displayEmergencyLine()` is a **stub**: its header is written, its body is empty.\n\nThe lobby screen must show:\n\n```\nNow showing on the lobby screen:\nMon-Sat   8 am to 7 pm\nSun       10 am to 4 pm\nAfter hours: call (555) 010-0199\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`displayHours()` in `VetClinic` has `public` access, so other classes can call it."
+    },
+    {
+     "id": "R2",
+     "text": "The stub `displayEmergencyLine()` is completed: its body prints `After hours: call (555) 010-0199`, and its header stays `public static void displayEmergencyLine()`."
+    },
+    {
+     "id": "R3",
+     "text": "`LobbyScreen.main()` shows the hours and then the emergency line by calling the two `VetClinic` methods with their fully qualified names, without copying their `println()` statements."
+    },
+    {
+     "id": "R4",
+     "text": "Running `VetClinic` and then `LobbyScreen` prints exactly what the test program expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "VetClinic.java",
+     "starter": "public class VetClinic\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Harbor Paws Veterinary Clinic\");\n        displayHours();\n    }\n\n    // TODO (R1): LobbyScreen needs to call this method too.\n    private static void displayHours()\n    {\n        System.out.println(\"Mon-Sat   8 am to 7 pm\");\n        System.out.println(\"Sun       10 am to 4 pm\");\n    }\n\n    // A stub: the header is finished, the body is not.\n    public static void displayEmergencyLine()\n    {\n        // TODO (R2): print the after-hours number.\n    }\n}\n",
+     "solution": "public class VetClinic\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Harbor Paws Veterinary Clinic\");\n        displayHours();\n    }\n\n    public static void displayHours()\n    {\n        System.out.println(\"Mon-Sat   8 am to 7 pm\");\n        System.out.println(\"Sun       10 am to 4 pm\");\n    }\n\n    public static void displayEmergencyLine()\n    {\n        System.out.println(\"After hours: call (555) 010-0199\");\n    }\n}\n"
+    },
+    {
+     "name": "LobbyScreen.java",
+     "starter": "public class LobbyScreen\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Now showing on the lobby screen:\");\n        // TODO (R3): show the clinic's hours, then its emergency line.\n        // Both methods live in the VetClinic class.\n    }\n}\n",
+     "solution": "public class LobbyScreen\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Now showing on the lobby screen:\");\n        VetClinic.displayHours();\n        VetClinic.displayEmergencyLine();\n    }\n}\n"
+    }
+   ],
+   "main_file": "VetClinic.java",
+   "solution_notes": "A `private` method can be called only from inside its own class, which is why `LobbyScreen` could not use `displayHours()`; `public` opens it to every class. Inside `VetClinic`, the simple name `displayHours()` is enough. From `LobbyScreen`, the compiler finds the method only through its fully qualified name, `VetClinic.displayHours()`; without the class name it searches `LobbyScreen` and reports *cannot find symbol*. The stub needed only a body: its header, the method's declaration, was already complete. Keep both files in the same folder so the compiler finds `VetClinic`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "displayHours() is public",
+     "file": "VetClinic.java",
+     "within": "VetClinic",
+     "require": "\\b(?:public\\s+static|static\\s+public)\\s+void\\s+displayHours\\s*\\(\\s*\\)",
+     "forbid": "\\bprivate\\s+static\\s+void\\s+displayHours\\b",
+     "message": "Change `private` to `public` in the header of `displayHours()`. A `private` method can be called only from inside its own class; `public` lets `LobbyScreen` call it too.",
+     "hint": "The access specifier is the first word of the header."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The stub prints the emergency line",
+     "file": "VetClinic.java",
+     "within": "VetClinic.displayEmergencyLine",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\\\"After hours: call \\(555\\) 010-0199\\\"\\s*\\)\\s*;",
+     "message": "Fill the stub's body with one `println()` that prints `After hours: call (555) 010-0199` exactly. Keep the header as it is, and never end a header with a semicolon."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "LobbyScreen calls both VetClinic methods by their full names, in order",
+     "file": "LobbyScreen.java",
+     "within": "LobbyScreen.main",
+     "strings": true,
+     "require": "\\bVetClinic\\s*\\.\\s*displayHours\\s*\\(\\s*\\)\\s*;[\\s\\S]*\\bVetClinic\\s*\\.\\s*displayEmergencyLine\\s*\\(\\s*\\)\\s*;",
+     "forbid": "\\\"(?:Mon-Sat|Sun |After hours)",
+     "message": "In `LobbyScreen.main()`, call the hours method and then the emergency-line method, each written as the class name `VetClinic`, a dot and the method name. Don't copy the clinic's text: a change to the hours should be made once, in `VetClinic`.",
+     "hint": "You have already called a method this way: `JOptionPane.showMessageDialog()`."
+    }
+   ],
+   "hints": [
+    "Try the call from `LobbyScreen` first and read the compiler's message. It names the problem with `displayHours()` exactly.",
+    "Of `public`, `private`, `static`, `void` and the name, only one word in the header decides which classes may call the method.",
+    "From inside `VetClinic` the short name works. From another class, the method's full name includes its class, like a surname."
+   ],
+   "test_program": {
+    "file_name": "TestLobby.java",
+    "code": "public class TestLobby\n{\n    public static void main(String[] args)\n    {\n        // Runs both programs, as \"java VetClinic\" and then \"java LobbyScreen\" would.\n        VetClinic.main(new String[0]);\n        System.out.println();\n        LobbyScreen.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Harbor Paws Veterinary Clinic\nMon-Sat   8 am to 7 pm\nSun       10 am to 4 pm\n\nNow showing on the lobby screen:\nMon-Sat   8 am to 7 pm\nSun       10 am to 4 pm\nAfter hours: call (555) 010-0199\n",
+    "how_to_run": "Put `VetClinic.java`, `LobbyScreen.java` and `TestLobby.java` in the same folder, then run `javac *.java` and `java TestLobby`. In an IDE, add all three files to one project and run `TestLobby.java`. If the files are in different folders, the compiler reports *cannot find symbol* for `VetClinic`.",
+    "predict": "Before you change `private`: predict what the compiler says when `LobbyScreen` calls `VetClinic.displayHours()`. Then try it and compare."
+   },
+   "warmup": [
+    {
+     "question": "Label the parts of the header `private static void displayHours()`: which word is the access specifier, which the modifier, which the return type, which the identifier, and what do the empty parentheses tell you?",
+     "model_answer": "`private` is the access specifier; `static` is the modifier (no object is needed to call the method); `void` is the return type (it sends nothing back); `displayHours` is the identifier; the empty parentheses mean the method receives no data."
+    },
+    {
+     "question": "Inside `VetClinic`, `main()` calls `displayHours()` with no class name. Why will `LobbyScreen` need to write more than that?",
+     "model_answer": "Within its own class, the simple name is enough. From another class, the compiler only recognizes the method by its fully qualified name, `VetClinic.displayHours()`: the class name works like a family name."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Explain the difference between a method's header (declaration) and its body (implementation), using `displayEmergencyLine()` as the example.",
+     "model_answer": "The header, `public static void displayEmergencyLine()`, tells other code how to use the method: who may call it, that it returns nothing, its name, and that it takes no data. The body between the braces is the implementation, the `println()` that does the work. As a stub, the method had a header and an empty body."
+    },
+    {
+     "question": "Another class in the hospital's system also has a method named `displayHours()`. Could `VetClinic.displayHours()` in `LobbyScreen` ever run the wrong one? Explain.",
+     "model_answer": "No. The fully qualified name includes the class, so `VetClinic.displayHours()` always means the method in `VetClinic`. Two classes can each have a method with the same name; they are entirely separate methods."
+    }
+   ],
+   "extension": "Add a third program, `PhoneMessage`, whose `main()` prints `Thank you for calling Harbor Paws.` and then reuses `VetClinic.displayEmergencyLine()`. Which `VetClinic` methods could it *not* use if they were `private`?",
+   "worth_knowing": "Java's own library works the way your two classes do. `Math.sqrt(2.0)` and `JOptionPane.showMessageDialog(...)` are `public static` methods called with the class name, a dot and the method name. The Java API documentation shows only their headers; their bodies stay hidden, and you never need them to use the methods.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "3.3",
+   "title": "The tutoring center's pay lines",
+   "subtitle": "Parameters and arguments: types, local copies and argument order",
+   "source": "Ch. 3, section 3.3 (pp. 91–95)",
+   "minutes": 25,
+   "objectives": [
+    "Declare a method with two parameters, each with its own type and identifier",
+    "Pass arguments that match the parameters in number, type and order",
+    "Explain why an `int` argument is accepted by a `double` parameter",
+    "Explain that a parameter holds a copy of the argument, even when the names match"
+   ],
+   "scenario": "Brightpath Tutoring pays most tutors a standard $22.75 an hour, and `displayPay(double hours)` prints their pay lines. Ana tutors calculus at a premium rate, so her line needs the hours **and** a custom rate.\n\nThe payroll sheet lists her as: **rate $31.00, hours 6**. Rate first. The pay is the same whichever way you multiply, but a line saying *31.0 hours at $6.0 per hour* would end up on her pay stub.\n\nThe payroll printout must be:\n\n```\n12.5 hours at $22.75 per hour is $284.375\n8.0 hours at $22.75 per hour is $182.0\n6.0 hours at $31.0 per hour is $186.0\n```\n\n(Money with exactly two decimals comes later in the course.)",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Add `public static void displayPayAtRate(double hours, double rate)`: hours first, then rate, each parameter with its own type. It prints a line in the same format as `displayPay()`, using the rate it receives."
+    },
+    {
+     "id": "R2",
+     "text": "`main()` calls `displayPayAtRate()` for Ana with her 6 hours and her $31.00 rate, in the order the parameters expect."
+    },
+    {
+     "id": "R3",
+     "text": "The printout matches the screen above, and `displayPayAtRate(10, 20.0)` prints `10.0 hours at $20.0 per hour is $200.0`.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "TutorPay.java",
+   "starter_code": "public class TutorPay\n{\n    public static void main(String[] args)\n    {\n        double hours = 12.5;     // Maya\n        int leoHours = 8;        // Leo logs whole hours\n\n        displayPay(hours);\n        displayPay(leoHours);\n\n        // Payroll sheet for Ana: rate $31.00, hours 6\n        // TODO (R2): print Ana's pay line with displayPayAtRate().\n    }\n\n    public static void displayPay(double hours)\n    {\n        final double STD_RATE = 22.75;\n        double pay = hours * STD_RATE;\n        System.out.println(hours + \" hours at $\" + STD_RATE + \" per hour is $\" + pay);\n    }\n\n    // TODO (R1): add displayPayAtRate() here.\n}\n",
+   "solution": "public class TutorPay\n{\n    public static void main(String[] args)\n    {\n        double hours = 12.5;     // Maya\n        int leoHours = 8;        // Leo logs whole hours\n\n        displayPay(hours);\n        displayPay(leoHours);\n\n        // Payroll sheet for Ana: rate $31.00, hours 6\n        displayPayAtRate(6, 31.00);\n    }\n\n    public static void displayPay(double hours)\n    {\n        final double STD_RATE = 22.75;\n        double pay = hours * STD_RATE;\n        System.out.println(hours + \" hours at $\" + STD_RATE + \" per hour is $\" + pay);\n    }\n\n    public static void displayPayAtRate(double hours, double rate)\n    {\n        double pay = hours * rate;\n        System.out.println(hours + \" hours at $\" + rate + \" per hour is $\" + pay);\n    }\n}\n",
+   "solution_notes": "Each parameter needs its own type, even when both are `double`: `(double hours, rate)` does not compile. Arguments are matched to parameters by position, so Ana's call lists the hours first although the sheet lists the rate first. `displayPayAtRate(31.0, 6)` would compile and print *31.0 hours at $6.0 per hour is $186.0*: a logical error that only the output reveals. The literal 6 is an `int` promoted to `double`, which is also why Leo's hours print as `8.0`. The `hours` in `main()` and the parameter `hours` are different variables: the parameter receives a copy and disappears when the method ends.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "displayPayAtRate has two typed parameters: hours, then rate",
+     "within": "TutorPay",
+     "require": "\\b(?:public\\s+static|static\\s+public)\\s+void\\s+displayPayAtRate\\s*\\(\\s*(?:final\\s+)?double\\s+hours\\s*,\\s*(?:final\\s+)?double\\s+rate\\s*\\)",
+     "message": "Declare `displayPayAtRate` as `public static void` with two parameters: a `double` named `hours`, then a `double` named `rate`. Each parameter needs its own type, even when both are `double`, and the order you choose is the order every call must follow.",
+     "hint": "Compare with `displayPay(double hours)`: you need two of those type-and-name pairs, separated by a comma."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The pay uses the rate parameter",
+     "within": "TutorPay.displayPayAtRate",
+     "require": "\\bhours\\s*\\*\\s*rate\\b|\\brate\\s*\\*\\s*hours\\b",
+     "forbid": "\\bSTD_RATE\\b|22\\.75",
+     "message": "Compute the pay from the two parameters, `hours` times `rate`, not from the standard rate. The second parameter exists so that each call can send its own rate."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Ana's call passes the hours first, then the rate",
+     "within": "TutorPay.main",
+     "require": "\\bdisplayPayAtRate\\s*\\(\\s*(?:6(?:\\.0*)?[dD]?|\\w*[hH]ours\\w*)\\s*,\\s*(?:31(?:\\.0*)?[dD]?|\\w*[rR]ate\\w*)\\s*\\)\\s*;",
+     "message": "Call `displayPayAtRate` with Ana's hours first and her rate second, matching the parameter list. The sheet lists the rate first; copying that order still compiles, but prints 31.0 hours at $6.0 per hour: a logical error."
+    }
+   ],
+   "hints": [
+    "Look at the header of `displayPay(double hours)`: its parentheses hold a type and a name. A method with two parameters lists two of those, separated by a comma.",
+    "Arguments are matched to parameters by position, not by name. In which position does `displayPayAtRate` expect the hours?",
+    "Ana's sheet says rate first. Swap the values when you write the call, then check that the printed line starts with *6.0 hours*."
+   ],
+   "test_program": {
+    "file_name": "TestTutorPay.java",
+    "code": "public class TestTutorPay\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java TutorPay\" would.\n        TutorPay.main(new String[0]);\n        // Another tutor: 10 hours at $20.00\n        TutorPay.displayPayAtRate(10, 20.0);\n    }\n}\n",
+    "expected_output": "12.5 hours at $22.75 per hour is $284.375\n8.0 hours at $22.75 per hour is $182.0\n6.0 hours at $31.0 per hour is $186.0\n10.0 hours at $20.0 per hour is $200.0\n",
+    "predict": "Before running: `leoHours` is an `int` holding 8, but `displayPay` expects a `double`. Will the starter compile? If so, exactly how will Leo's hours appear in his line?"
+   },
+   "warmup": [
+    {
+     "question": "`main()` has a variable named `hours`, and `displayPay()` has a parameter named `hours`. Are they the same variable? What happens to `main()`'s `hours` if `displayPay()` changes its parameter?",
+     "model_answer": "They are different variables, in different memory locations, that happen to share a name. The parameter receives a copy of the argument's value, so changing it inside `displayPay()` has no effect on `hours` in `main()`."
+    },
+    {
+     "question": "`displayPay(leoHours)` passes an `int`. Why does it compile, and why does the line show `8.0` rather than `8`?",
+     "model_answer": "An `int` can be promoted to a `double`, so a `double` parameter accepts it. Inside the method, `hours` is a `double` holding 8.0, and that is what gets printed."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "What would `displayPayAtRate(31.0, 6)` do: fail to compile, crash, or something else? Explain why this kind of mistake is dangerous.",
+     "model_answer": "It compiles and runs, because both values fit `double` parameters, but it prints 31.0 hours at $6.0 per hour: a logical error. Even the total looks right, so nothing warns you; only checking the output against the data reveals it."
+    },
+    {
+     "question": "A client calling `displayPayAtRate()` only needs its interface. What exactly is that interface, and what is hidden from the caller?",
+     "model_answer": "The interface is the header: the name, that it returns nothing, and that it takes a `double` for hours followed by a `double` for rate. How the pay is computed and printed is hidden in the body; it could change without affecting any call, as long as the header stays the same."
+    }
+   ],
+   "extension": "Mark both parameters of `displayPayAtRate()` as `final`, then try assigning a new value to `rate` inside the method and read the compiler's message. Why might a team want that protection?",
+   "worth_knowing": "Java always passes arguments by value: the method receives a copy. Some languages let a method change the caller's variable directly, such as C#'s `ref` parameters or C++ references. Java leaves that out, so a call like `displayPay(hours)` can never change `hours` behind your back.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "3.4",
+   "title": "The bike courier's weekly payout",
+   "subtitle": "Methods that return values, and methods that call methods",
+   "source": "Ch. 3, section 3.4 (pp. 95–99)",
+   "minutes": 30,
+   "objectives": [
+    "Give a method a non-`void` return type and end it with a `return` statement",
+    "Use a returned value: store it, print it or calculate with it",
+    "Build a method that calls other methods and treats them as black boxes",
+    "Explain why a statement after `return` is unreachable"
+   ],
+   "scenario": "SwiftSpoke couriers are paid by the hour, and the delivery app keeps a platform fee of 25% of each week's gross. The payout screen needs three numbers, and other screens (the tax summary, the weekly email) will need them too.\n\nRight now `calculateGross()` *prints* the gross and returns nothing, so no other code can use the number. The fee and net methods are **stubs** that return 0.0.\n\nFor Dana's week, 30 hours at $18.50, the payout screen must show:\n\n```\nGross: $555.0\nPlatform fee: $138.75\nNet payout: $416.25\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`calculateGross(double hours, double rate)` returns the gross pay as a `double` and prints nothing."
+    },
+    {
+     "id": "R2",
+     "text": "`calculatePlatformFee(double gross)` returns 25% of the gross, using a named constant `FEE_RATE`."
+    },
+    {
+     "id": "R3",
+     "text": "`calculateNet(double hours, double rate)` gets its numbers by calling `calculateGross()` and `calculatePlatformFee()`, and returns gross minus fee."
+    },
+    {
+     "id": "R4",
+     "text": "`main()` prints the three lines by using the values the methods return. The output, including the test program's checks for another courier, matches.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "CourierPayout.java",
+   "starter_code": "public class CourierPayout\n{\n    public static void main(String[] args)\n    {\n        double hours = 30;\n        double rate = 18.50;\n\n        calculateGross(hours, rate);\n        // TODO (R4): print the three payout lines using the values the methods return.\n    }\n\n    // TODO (R1): return the gross instead of printing it.\n    public static void calculateGross(double hours, double rate)\n    {\n        double gross = hours * rate;\n        System.out.println(\"Gross: $\" + gross);\n    }\n\n    // TODO (R2): the app keeps 25% of the gross.\n    public static double calculatePlatformFee(double gross)\n    {\n        return 0.0;\n    }\n\n    // TODO (R3): net = gross - fee. Reuse the two methods above.\n    public static double calculateNet(double hours, double rate)\n    {\n        return 0.0;\n    }\n}\n",
+   "solution": "public class CourierPayout\n{\n    public static void main(String[] args)\n    {\n        double hours = 30;\n        double rate = 18.50;\n\n        double gross = calculateGross(hours, rate);\n        System.out.println(\"Gross: $\" + gross);\n        System.out.println(\"Platform fee: $\" + calculatePlatformFee(gross));\n        System.out.println(\"Net payout: $\" + calculateNet(hours, rate));\n    }\n\n    public static double calculateGross(double hours, double rate)\n    {\n        double gross = hours * rate;\n        return gross;\n    }\n\n    public static double calculatePlatformFee(double gross)\n    {\n        final double FEE_RATE = 0.25;\n        return gross * FEE_RATE;\n    }\n\n    public static double calculateNet(double hours, double rate)\n    {\n        double gross = calculateGross(hours, rate);\n        double fee = calculatePlatformFee(gross);\n        return gross - fee;\n    }\n}\n",
+   "solution_notes": "A method's type is the type of the value it returns: `calculateGross()` becomes type `double`, and its `return` sends the number back to whoever called it. Returning instead of printing lets each caller decide what to do: `main()` stores the gross, puts the fee call straight inside `println()` (note the two closing parentheses), and `calculateNet()` subtracts. `calculateNet()` treats the other methods as black boxes: it knows only what they take and return. `FEE_RATE` may also be declared at class level; a local `final` constant is what this chapter has used so far.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "calculateGross() is of type double",
+     "within": "CourierPayout",
+     "require": "\\b(?:public\\s+static|static\\s+public)\\s+double\\s+calculateGross\\s*\\(",
+     "message": "Change the return type of `calculateGross()` from `void` to `double`, the type of the value it will send back."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "calculateGross() returns the gross and prints nothing",
+     "within": "CourierPayout.calculateGross",
+     "require": "\\breturn\\s+\\w",
+     "forbid": "\\bSystem\\s*\\.\\s*out\\b",
+     "message": "End `calculateGross()` with a `return` statement that sends the gross back, and remove its `println()`. A method that returns the number lets every caller decide what to do with it: print it, store it or calculate with it."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The fee rate is a named constant of 0.25",
+     "within": "CourierPayout",
+     "require": "\\bfinal\\s+double\\s+FEE_RATE\\s*=\\s*0?\\.25\\s*;",
+     "message": "Declare the 25% as a named constant, `final double FEE_RATE`, holding 0.25. The name tells a reader what 0.25 means, and a change of fee is made in one place."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "calculatePlatformFee() returns gross times FEE_RATE",
+     "within": "CourierPayout.calculatePlatformFee",
+     "require": "\\bgross\\s*\\*\\s*FEE_RATE\\b|\\bFEE_RATE\\s*\\*\\s*gross\\b",
+     "forbid": "\\breturn\\s+0\\.0\\s*;",
+     "message": "Replace the stub's `return 0.0;` with the gross multiplied by `FEE_RATE`, returned to the caller."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "calculateNet() reuses the other two methods",
+     "within": "CourierPayout.calculateNet",
+     "require": "^(?=[\\s\\S]*\\bcalculateGross\\s*\\()(?=[\\s\\S]*\\bcalculatePlatformFee\\s*\\()",
+     "forbid": "\\bhours\\s*\\*|\\*\\s*hours\\b|\\b0?\\.25\\b|\\bFEE_RATE\\b",
+     "message": "Let `calculateNet()` call `calculateGross()` and `calculatePlatformFee()` instead of repeating their arithmetic. It needs to know only what they take and what they return, not how they work."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "main() uses every returned value",
+     "within": "CourierPayout.main",
+     "flags": "m",
+     "require": "^(?=[\\s\\S]*\\bcalculateGross\\s*\\()(?=[\\s\\S]*\\bcalculatePlatformFee\\s*\\()(?=[\\s\\S]*\\bcalculateNet\\s*\\()",
+     "forbid": "^\\s*calculate\\w+\\s*\\([^;]*\\)\\s*;",
+     "message": "In `main()`, use what each method returns: store the result in a variable or put the call inside `println()`. A call alone on its line throws the returned value away."
+    }
+   ],
+   "hints": [
+    "A method's type is the word just before its name. Which word must change so that `calculateGross()` can send back a `double`?",
+    "In `calculateNet()`, ask the other two methods for the numbers: keep what each call returns in a local variable, then return the difference.",
+    "In `main()`, a call that returns a value can go anywhere a `double` variable could, even inside `println()` after the label and a `+`. Count the closing parentheses."
+   ],
+   "test_program": {
+    "file_name": "TestCourierPayout.java",
+    "code": "public class TestCourierPayout\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java CourierPayout\" would.\n        CourierPayout.main(new String[0]);\n        // Another courier: 10 hours at $20.00\n        System.out.println(\"Check gross: \" + CourierPayout.calculateGross(10, 20.0));\n        System.out.println(\"Check fee: \" + CourierPayout.calculatePlatformFee(200.0));\n        System.out.println(\"Check net: \" + CourierPayout.calculateNet(10, 20.0));\n    }\n}\n",
+    "expected_output": "Gross: $555.0\nPlatform fee: $138.75\nNet payout: $416.25\nCheck gross: 200.0\nCheck fee: 50.0\nCheck net: 150.0\n",
+    "predict": "Before running your finished version: the test program calls `calculateNet(10, 20.0)`. Trace it by hand through the methods it calls and write down what it returns."
+   },
+   "warmup": [
+    {
+     "question": "The starter calls `calculateGross(hours, rate);` on a line by itself. What does that call do, and what is lost?",
+     "model_answer": "It computes the gross and prints `Gross: $555.0` from inside the method, but it returns nothing, so `main()` gets no number to work with. No other code can use the gross, for example to compute the fee."
+    },
+    {
+     "question": "The stubs end with `return 0.0;`. Why does the compiler insist on a `return` in a method of type `double`, but not in a `void` method like `displayHours()`?",
+     "model_answer": "Every non-`void` method must return a value of its declared type (or one that can be promoted to it). A `void` method returns nothing, so it needs no `return` statement."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Suppose you add `System.out.println(\"Done\");` after the `return` in `calculateGross()`. What happens, and why?",
+     "model_answer": "The class no longer compiles: the statement is unreachable (dead code). `return` ends the method and sends control back to the caller, so nothing after it could ever run."
+    },
+    {
+     "question": "`calculateNet()` doesn't know how the fee is computed. Why is that a strength? Use this case: the app changes its fee to 20% plus a $1.50 weekly service charge.",
+     "model_answer": "`calculateNet()` treats `calculatePlatformFee()` as a black box: it only relies on it taking a gross and returning a `double`. The new rule changes only the body of `calculatePlatformFee()`; `calculateNet()`, `main()` and every other caller keep working because the interface is unchanged."
+    }
+   ],
+   "extension": "Add `calculateNetPerHour(double hours, double rate)` that returns the net divided by the hours, reusing `calculateNet()`. Print Dana's real hourly earnings next to her advertised $18.5.",
+   "worth_knowing": "A Java method can return only one value. When code needs several results at once, programmers bundle them in an object, which you will build in later chapters. Some languages, such as Go, let a function hand back several values directly; Python returns them packed together in a tuple.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "3.5",
+   "title": "The arcade scoreboard",
+   "subtitle": "Blocks, scope, and why a change inside a method doesn't reach the caller",
+   "source": "Ch. 3, section 3.5 (pp. 99–104)",
+   "minutes": 30,
+   "objectives": [
+    "Identify the block in which a variable is in scope",
+    "Explain why changing a parameter inside a method doesn't change the caller's variable",
+    "Send a new value back with `return`, and store it in the caller",
+    "Remove a block that exists for no reason"
+   ],
+   "scenario": "The Pixel Pier arcade's scoreboard adds a 500-point bonus, then multiplies the score by the player's combo. The line printed inside `addBonus()` shows the right score, yet the board in `main()` keeps showing the old one. And the combo can't be used in the final score: it is trapped inside a block of its own.\n\nThe scoreboard must print:\n\n```\nStart: 1200\nIn addBonus, score is 1700\nAfter bonus: 1700\nCombo x3\nFinal: 5100\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`addBonus()` returns the new score as an `int`, and `main()` stores what it returns."
+    },
+    {
+     "id": "R2",
+     "text": "`combo` is declared in `main()`'s outer block (remove the unnecessary inner block), so the final line can use it."
+    },
+    {
+     "id": "R3",
+     "text": "The final line prints the score times the combo, and the whole printout matches the screen above.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "ScoreBoard.java",
+   "starter_code": "public class ScoreBoard\n{\n    public static void main(String[] args)\n    {\n        int score = 1200;\n        System.out.println(\"Start: \" + score);\n\n        // TODO (R1): the bonus is lost on the way back. Why?\n        addBonus(score);\n        System.out.println(\"After bonus: \" + score);\n\n        // TODO (R2): combo is needed for the final line too.\n        {\n            int combo = 3;\n            System.out.println(\"Combo x\" + combo);\n        }\n\n        // TODO (R3): the final score is the score times the combo.\n        System.out.println(\"Final: \" + score);\n    }\n\n    public static void addBonus(int score)\n    {\n        final int BONUS = 500;\n        score = score + BONUS;\n        System.out.println(\"In addBonus, score is \" + score);\n    }\n}\n",
+   "solution": "public class ScoreBoard\n{\n    public static void main(String[] args)\n    {\n        int score = 1200;\n        System.out.println(\"Start: \" + score);\n\n        score = addBonus(score);\n        System.out.println(\"After bonus: \" + score);\n\n        int combo = 3;\n        System.out.println(\"Combo x\" + combo);\n\n        System.out.println(\"Final: \" + (score * combo));\n    }\n\n    public static int addBonus(int score)\n    {\n        final int BONUS = 500;\n        score = score + BONUS;\n        System.out.println(\"In addBonus, score is \" + score);\n        return score;\n    }\n}\n",
+   "solution_notes": "`addBonus()`'s parameter `score` is a different variable from `main()`'s `score`: it receives a copy of 1200, becomes 1700, and goes out of scope at the method's closing brace. Returning it and assigning the result in `main()` is how the new value gets back. `combo` was declared inside a block that existed for no reason, so it went out of scope at that block's closing brace; declared in `main()`'s outer block it stays in scope until the end of `main()`. The parentheses around `score * combo` are optional (`*` happens before `+`) but make the intent clear.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "addBonus() is of type int",
+     "within": "ScoreBoard",
+     "require": "\\b(?:public\\s+static|static\\s+public)\\s+int\\s+addBonus\\s*\\(\\s*(?:final\\s+)?int\\s+\\w+\\s*\\)",
+     "message": "Change `addBonus()`'s return type from `void` to `int`, so it can send the new score back to its caller."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "addBonus() returns the updated score",
+     "within": "ScoreBoard.addBonus",
+     "require": "\\breturn\\s+\\w",
+     "message": "End `addBonus()` with a `return` statement that sends back the updated score. The parameter is a copy that disappears when the method ends; `return` is the way its value gets out."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "title": "main() stores what addBonus() returns",
+     "within": "ScoreBoard.main",
+     "require": "=\\s*addBonus\\s*\\(\\s*score\\s*\\)\\s*;",
+     "message": "Assign the result of `addBonus(score)` to a variable in `main()`, normally `score` itself. A call alone on its line throws the returned value away."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "No block made for no reason",
+     "within": "ScoreBoard.main",
+     "forbid": ";\\s*\\{",
+     "message": "Remove the extra pair of braces around `combo`. That block has no purpose, and `combo` goes out of scope at its closing brace, so the final line can't see it."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "The final line multiplies by combo",
+     "within": "ScoreBoard.main",
+     "require": "\\bscore\\s*\\*\\s*combo\\b|\\bcombo\\s*\\*\\s*score\\b",
+     "message": "Print the final score as `score` times `combo`. It compiles only once `combo` is in scope on that line."
+    }
+   ],
+   "hints": [
+    "Run the starter and compare `In addBonus, score is ...` with `After bonus: ...`. At that moment two variables named `score` exist. Where does each one live?",
+    "A method can't reach into `main()`'s variables, but it can send a value back. That takes a return type other than `void`, a `return` statement, and a caller that keeps the result.",
+    "A variable declared inside braces goes out of scope at the closing brace. Does `combo` need a block of its own at all?"
+   ],
+   "test_program": {
+    "file_name": "TestScoreBoard.java",
+    "code": "public class TestScoreBoard\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java ScoreBoard\" would.\n        ScoreBoard.main(new String[0]);\n        int result = ScoreBoard.addBonus(100);\n        System.out.println(\"addBonus(100) returned \" + result);\n    }\n}\n",
+    "expected_output": "Start: 1200\nIn addBonus, score is 1700\nAfter bonus: 1700\nCombo x3\nFinal: 5100\nIn addBonus, score is 600\naddBonus(100) returned 600\n",
+    "predict": "Before running the starter: write the five lines you expect it to print. Pay special attention to `After bonus:` and `Final:`."
+   },
+   "warmup": [
+    {
+     "question": "Predict the starter's `After bonus:` line. `addBonus()` clearly prints 1700; explain why `main()` prints something else.",
+     "model_answer": "`main()` prints 1200. It passes a copy of its `score`; inside `addBonus()` the parameter `score` is a different variable in a different memory location, so adding 500 changes only that copy, which goes out of scope when the method ends. `main()`'s `score` is untouched."
+    },
+    {
+     "question": "If you change only the final line to print `score * combo`, what does the compiler report, and why?",
+     "model_answer": "*cannot find symbol* for `combo`. It was declared inside the inner block, so it went out of scope at that block's closing brace; the final line is outside its scope."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Could you declare a second `int score` inside a new block nested in `main()`? Why can `addBonus()` use the name `score` for its parameter without any conflict?",
+     "model_answer": "No: a nested block lies entirely inside `main()`'s block, where the first `score` is still in scope, so it would be an illegal redeclaration. `addBonus()` is a different method with its own scope, so its `score` is a separate variable; the two scopes never overlap."
+    },
+    {
+     "question": "The reading advises against creating blocks for no reason. Using this lab, describe a bug an unnecessary block caused or could cause.",
+     "model_answer": "The extra braces made `combo` go out of scope before the final line needed it, so the final score couldn't use it. Unnecessary blocks hide where a variable lives and invite variables that vanish too early, or duplicates with the same name."
+    }
+   ],
+   "extension": "Add a `doubleScore(int score)` method for the arcade's happy hour that returns twice the score, and apply it before the final line. Predict first: what happens if you call it without `score =` in front?",
+   "worth_knowing": "Early FORTRAN and BASIC had no block scope: a variable was visible throughout its whole program unit. Nested blocks with their own local variables arrived with ALGOL 60, and Java's curly-brace blocks descend from that idea by way of C.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "3.6",
+   "title": "The outfitter's sale tags",
+   "subtitle": "Overloading: one method name, different parameter lists",
+   "source": "Ch. 3, section 3.6 (pp. 104–107)",
+   "minutes": 30,
+   "objectives": [
+    "Overload a method by giving the same name different parameter lists",
+    "Predict which version runs from the types of the arguments in a call",
+    "Divide by `100.0`, not `100`, to turn a whole-number percent into a fraction",
+    "Explain when one overloaded name is easier to use than several different names"
+   ],
+   "scenario": "Tidewater Outfitters prints sale tags with `displaySalePrice(double price, double rate)`, where the rate is a fraction: 0.25 means 25% off. Store managers keep typing whole percents instead, like `25`. Java promotes the `int` to `double`, the method subtracts 25 times the price, and the tag reads **$-1920.0**.\n\nMembers also get a standard 10% discount, and staff want to print a member's tag by passing the price alone.\n\nThe three tags must read:\n\n```\nSale price of $80.0 is $60.0\nSale price of $80.0 is $60.0\nSale price of $80.0 is $72.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Add an overload `displaySalePrice(double price, int percent)` that treats the `int` as a whole-number percent, dividing by `100.0` so the fraction keeps its decimals."
+    },
+    {
+     "id": "R2",
+     "text": "Add an overload `displaySalePrice(double price)` that applies the 10% member discount from a named constant `MEMBER_PERCENT`, and print a member's tag for the $80.0 item from `main()`."
+    },
+    {
+     "id": "R3",
+     "text": "All three versions share the name `displaySalePrice` and print the same tag format."
+    },
+    {
+     "id": "R4",
+     "text": "The tags match the screen above, and so do the test program's three tags for a $200.0 item.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "SaleTags.java",
+   "starter_code": "public class SaleTags\n{\n    public static void main(String[] args)\n    {\n        displaySalePrice(80.0, 0.25);   // rate as a fraction\n        displaySalePrice(80.0, 25);     // a manager typed a whole percent\n        // TODO (R2): a member's tag: the price only, 10% off.\n    }\n\n    public static void displaySalePrice(double price, double rate)\n    {\n        double salePrice = price - price * rate;\n        System.out.println(\"Sale price of $\" + price + \" is $\" + salePrice);\n    }\n\n    // TODO (R1): an overload that takes the percent as an int.\n\n    // TODO (R2): an overload that takes only the price.\n}\n",
+   "solution": "public class SaleTags\n{\n    public static void main(String[] args)\n    {\n        displaySalePrice(80.0, 0.25);   // rate as a fraction\n        displaySalePrice(80.0, 25);     // a manager typed a whole percent\n        displaySalePrice(80.0);         // a member's tag\n    }\n\n    public static void displaySalePrice(double price, double rate)\n    {\n        double salePrice = price - price * rate;\n        System.out.println(\"Sale price of $\" + price + \" is $\" + salePrice);\n    }\n\n    public static void displaySalePrice(double price, int percent)\n    {\n        double rate = percent / 100.0;\n        displaySalePrice(price, rate);\n    }\n\n    public static void displaySalePrice(double price)\n    {\n        final int MEMBER_PERCENT = 10;\n        displaySalePrice(price, MEMBER_PERCENT);\n    }\n}\n",
+   "solution_notes": "The compiler picks the version whose parameter list matches the arguments: 0.25 is a `double`, so `(double, double)` runs; 25 is an `int`, and `(double, int)` is an exact match, so it wins over promoting 25 to `double`; a single argument can only match `(double)`. Dividing by `100.0` matters: `25 / 100` is integer division and gives 0. The `int` and one-argument versions hand the work to the `(double, double)` version, so the formula and the tag format live in one place. Writing each version's own arithmetic also passes, as long as the tags match.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "An overload takes (double, int)",
+     "within": "SaleTags",
+     "require": "\\bstatic\\s+void\\s+displaySalePrice\\s*\\(\\s*(?:final\\s+)?double\\s+\\w+\\s*,\\s*(?:final\\s+)?int\\s+\\w+\\s*\\)",
+     "message": "Add a second method named `displaySalePrice` whose parameter list is a `double` followed by an `int`. Same name, different parameter types: that is an overload, and the compiler chooses it whenever the second argument is an `int`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The percent is divided by 100.0",
+     "within": "SaleTags",
+     "require": "/\\s*100\\.0*\\b|/\\s*100[dD]\\b|\\(\\s*double\\s*\\)\\s*\\w+\\s*/\\s*100\\b",
+     "message": "Turn the percent into a fraction by dividing by `100.0`, not `100`. Two integers divide to a truncated integer, so 25 / 100 is 0 and the tag would show no discount at all.",
+     "hint": "Try `System.out.println(25 / 100);` and then `System.out.println(25 / 100.0);`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "An overload takes only the price",
+     "within": "SaleTags",
+     "require": "\\bstatic\\s+void\\s+displaySalePrice\\s*\\(\\s*(?:final\\s+)?double\\s+\\w+\\s*\\)",
+     "message": "Add a third `displaySalePrice` with a single `double` parameter for the price. A call with one argument can only match this version."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "The member discount is a named constant",
+     "within": "SaleTags",
+     "require": "\\bfinal\\s+(?:int|double)\\s+MEMBER_PERCENT\\s*=\\s*10(?:\\.0*)?\\s*;",
+     "message": "Declare the member discount as a named constant, `MEMBER_PERCENT`, holding 10, and use it in the one-argument version."
+    },
+    {
+     "id": "C5",
+     "requirement": "R2",
+     "title": "main() prints a member's tag",
+     "within": "SaleTags.main",
+     "require": "\\bdisplaySalePrice\\s*\\(\\s*80(?:\\.0*)?[dD]?\\s*\\)\\s*;",
+     "message": "Print the member's tag from `main()` by calling `displaySalePrice` with the price 80.0 alone."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "All three versions share one name",
+     "within": "SaleTags",
+     "require": "(?:[\\s\\S]*?\\bvoid\\s+displaySalePrice\\s*\\(){3}",
+     "forbid": "\\bvoid\\s+(?!displaySalePrice\\b|main\\b)\\w+\\s*\\(",
+     "message": "Name every version `displaySalePrice`. Callers then remember one name and pass whatever they have, and the compiler chooses the version from the arguments."
+    }
+   ],
+   "hints": [
+    "Run the starter. The second tag is wrong because 25 was promoted to `double` and used as if it meant 0.25. What would make Java choose a *different* method when the second argument is an `int`?",
+    "An overload keeps the name and changes the parameter list. The `int` version can turn the percent into a fraction and hand the rest of the work to the version that already exists.",
+    "In Java, 25 / 100 is 0. At least one of the two numbers must be a `double` for the division to keep its decimals."
+   ],
+   "test_program": {
+    "file_name": "TestSaleTags.java",
+    "code": "public class TestSaleTags\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java SaleTags\" would.\n        SaleTags.main(new String[0]);\n        // A $200.0 item: half off as a fraction, half off as a percent, and a member's tag\n        SaleTags.displaySalePrice(200.0, 0.5);\n        SaleTags.displaySalePrice(200.0, 50);\n        SaleTags.displaySalePrice(200.0);\n    }\n}\n",
+    "expected_output": "Sale price of $80.0 is $60.0\nSale price of $80.0 is $60.0\nSale price of $80.0 is $72.0\nSale price of $200.0 is $100.0\nSale price of $200.0 is $100.0\nSale price of $200.0 is $180.0\n",
+    "predict": "Before running the starter: write the exact second tag it prints for `displaySalePrice(80.0, 25)`, and explain the arithmetic."
+   },
+   "warmup": [
+    {
+     "question": "Predict the starter's tag for `displaySalePrice(80.0, 25)` and explain how Java arrives at it.",
+     "model_answer": "`Sale price of $80.0 is $-1920.0`. The `int` 25 is promoted to 25.0 to fit the `double` parameter, so the method computes 80 - 80 x 25 = -1920."
+    },
+    {
+     "question": "Once both overloads exist, which version runs for each call: `displaySalePrice(80.0, 0.25)`, `displaySalePrice(80.0, 25)` and `displaySalePrice(80.0)`?",
+     "model_answer": "The first runs `(double, double)` because 0.25 is a `double`; the second runs `(double, int)` because 25 is an `int` and that version is an exact match; the third runs `(double)`, the only version with one parameter."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "You could have named the methods `displaySalePriceFraction`, `displaySalePricePercent` and `displayMemberPrice`. Give one reason overloading is better here, and one situation where separate names would be clearer.",
+     "model_answer": "Overloading lets callers remember one name for the same task and pass whatever they have; the compiler picks the right version. Separate names are clearer when the methods do genuinely different jobs: overloading suits tasks that are functionally identical apart from the argument types."
+    },
+    {
+     "question": "Suppose the `int` and one-argument versions call the `(double, double)` version instead of repeating the arithmetic. What is gained if the store later rounds every sale price down to the nearest dollar?",
+     "model_answer": "The rounding is added in one place, the `(double, double)` version, and every overload picks it up because they all funnel into it. With three separate formulas, three methods would need the same change and could drift apart."
+    }
+   ],
+   "extension": "Add a fourth overload, `displaySalePrice(double price, int percent, double couponDollars)`, that takes a fixed coupon off after the percent discount. Which existing version can it reuse, and how?",
+   "worth_knowing": "`System.out.println()` is overloaded ten times in Java's `PrintStream` class: one version with no arguments and one each for `boolean`, `char`, `int`, `long`, `float`, `double`, `char[]`, `String` and `Object`. That is why `println(8)` and `println(8.0)` print differently: different methods run.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "3.7",
+   "title": "The farmers-market scale",
+   "subtitle": "Ambiguous calls, and why a return type can't tell overloads apart",
+   "source": "Ch. 3, section 3.7 (pp. 107–108)",
+   "minutes": 25,
+   "objectives": [
+    "Recognize a call that matches two overloads equally well, and make it an exact match",
+    "Explain why methods that differ only in return type are illegal",
+    "Explain why a potentially ambiguous pair of methods compiles until an ambiguous call is made"
+   ],
+   "scenario": "Saltmarsh Farmers Market's register has two `printLine()` versions. Items sold **by count** pass an `int` quantity and a `double` price in dollars. Produce sold **by weight** passes `double` pounds and an `int` price in cents per pound.\n\nTwo jobs are waiting:\n\n- A customer buys 2 pineapples at $5 each. The obvious call, `printLine(2, 5)`, won't compile.\n- The register needs the receipt total. A colleague tried adding `double printLine(...)` versions that return the amount, and the compiler rejected them.\n\nThe receipt must read:\n\n```\n3 x $4.25 = $12.75\n2.5 lb x 360c = $9.0\n2 x $5.0 = $10.0\nTotal: $31.75\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`main()` prints the pineapple line with a call that is an exact match for the by-count `printLine()`."
+    },
+    {
+     "id": "R2",
+     "text": "Two methods named `lineTotal` return each line's amount as a `double`: `lineTotal(int quantity, double unitPrice)` and `lineTotal(double pounds, int centsPerPound)`. No `printLine()` returns a value."
+    },
+    {
+     "id": "R3",
+     "text": "`main()` prints `Total: $` followed by the sum of three `lineTotal()` calls, and the receipt matches the screen above.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "MarketScale.java",
+   "starter_code": "public class MarketScale\n{\n    public static void main(String[] args)\n    {\n        printLine(3, 4.25);      // 3 mangoes at $4.25 each\n        printLine(2.5, 360);     // 2.5 lb of cherries at 360 cents per lb\n\n        // TODO (R1): 2 pineapples at $5 each. printLine(2, 5) won't compile. Why?\n\n        // TODO (R3): print the receipt total.\n    }\n\n    // Sold by count: quantity, and price per item in dollars.\n    public static void printLine(int quantity, double unitPrice)\n    {\n        System.out.println(quantity + \" x $\" + unitPrice + \" = $\" + (quantity * unitPrice));\n    }\n\n    // Sold by weight: pounds, and price per pound in cents.\n    public static void printLine(double pounds, int centsPerPound)\n    {\n        System.out.println(pounds + \" lb x \" + centsPerPound + \"c = $\" + (pounds * centsPerPound / 100.0));\n    }\n\n    // TODO (R2): the register needs these amounts as values, not as text.\n}\n",
+   "solution": "public class MarketScale\n{\n    public static void main(String[] args)\n    {\n        printLine(3, 4.25);      // 3 mangoes at $4.25 each\n        printLine(2.5, 360);     // 2.5 lb of cherries at 360 cents per lb\n        printLine(2, 5.0);       // 2 pineapples at $5 each\n\n        double total = lineTotal(3, 4.25) + lineTotal(2.5, 360) + lineTotal(2, 5.0);\n        System.out.println(\"Total: $\" + total);\n    }\n\n    // Sold by count: quantity, and price per item in dollars.\n    public static void printLine(int quantity, double unitPrice)\n    {\n        System.out.println(quantity + \" x $\" + unitPrice + \" = $\" + lineTotal(quantity, unitPrice));\n    }\n\n    // Sold by weight: pounds, and price per pound in cents.\n    public static void printLine(double pounds, int centsPerPound)\n    {\n        System.out.println(pounds + \" lb x \" + centsPerPound + \"c = $\" + lineTotal(pounds, centsPerPound));\n    }\n\n    public static double lineTotal(int quantity, double unitPrice)\n    {\n        return quantity * unitPrice;\n    }\n\n    public static double lineTotal(double pounds, int centsPerPound)\n    {\n        return pounds * centsPerPound / 100.0;\n    }\n}\n",
+   "solution_notes": "`printLine(2, 5)` has no exact match. Promoting the first `int` fits `(double, int)` and promoting the second fits `(int, double)`, so the call is ambiguous and the program does not compile. `printLine(2, 5.0)` is an exact match for the by-count version. Beware `printLine(2.0, 5)`: it compiles too, but matches the by-weight version and prints 2 pounds at 5 cents. A `double printLine(int, double)` next to `void printLine(int, double)` is illegal: the compiler chooses by arguments, never by return type. Hence a new name, `lineTotal`, with the same two parameter lists. Having `printLine()` reuse `lineTotal()` is optional, but keeps each formula in one place.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The pineapple call is an exact match for the by-count version",
+     "within": "MarketScale.main",
+     "require": "\\bprintLine\\s*\\(\\s*2\\s*,\\s*(?:5\\.0*|5[dD]|\\(\\s*double\\s*\\)\\s*5)\\s*\\)\\s*;",
+     "forbid": "\\bprintLine\\s*\\(\\s*2(?:\\.0*|[dD])\\s*,\\s*5\\s*\\)",
+     "message": "Make the pineapple call an exact match for the by-count version: the quantity stays an `int` 2 and the price becomes a `double`, written with a decimal point. With two `int` arguments both versions fit after promotion, so the compiler can't choose. (Writing `2.0` for the quantity instead matches the by-weight version: 2 pounds at 5 cents.)"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Two lineTotal() methods return double",
+     "within": "MarketScale",
+     "require": "^(?=[\\s\\S]*\\bstatic\\s+double\\s+lineTotal\\s*\\(\\s*(?:final\\s+)?int\\s+\\w+\\s*,\\s*(?:final\\s+)?double\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bstatic\\s+double\\s+lineTotal\\s*\\(\\s*(?:final\\s+)?double\\s+\\w+\\s*,\\s*(?:final\\s+)?int\\s+\\w+\\s*\\))",
+     "forbid": "\\b(?:double|int|float|long|String)\\s+printLine\\s*\\(",
+     "message": "Write two `double` methods named `lineTotal`, with the same two parameter lists as the `printLine()` versions, each returning its amount. Don't give a `printLine()` a return type: two methods with the same name and parameter list are illegal whatever they return, because the compiler chooses by arguments alone.",
+     "hint": "Copy each `printLine()` header, then change the return type and the name."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The total adds three lineTotal() calls",
+     "within": "MarketScale.main",
+     "strings": true,
+     "require": "^(?=(?:[\\s\\S]*?\\blineTotal\\s*\\(){3})(?=[\\s\\S]*\\\"Total: \\$\\\")",
+     "message": "Add the three line amounts by calling `lineTotal()` once for each item, and print the sum after `Total: $`."
+    }
+   ],
+   "hints": [
+    "Put the two parameter lists side by side. For `printLine(2, 5)`, can the first `int` be promoted to `double`? Can the second? Which versions could then accept the call?",
+    "An exact match removes the doubt. Keep the quantity an `int` and write the price so that Java reads it as a `double` literal.",
+    "Overloads are told apart by their parameter lists only, so a method that returns the amount needs a name of its own. Its parameter lists can mirror `printLine()`'s."
+   ],
+   "test_program": {
+    "file_name": "TestMarketScale.java",
+    "code": "public class TestMarketScale\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java MarketScale\" would.\n        MarketScale.main(new String[0]);\n        System.out.println(\"Check by count: \" + MarketScale.lineTotal(4, 2.5));\n        System.out.println(\"Check by weight: \" + MarketScale.lineTotal(1.5, 200));\n    }\n}\n",
+    "expected_output": "3 x $4.25 = $12.75\n2.5 lb x 360c = $9.0\n2 x $5.0 = $10.0\nTotal: $31.75\nCheck by count: 10.0\nCheck by weight: 3.0\n",
+    "predict": "Before compiling: of `printLine(2, 5)`, `printLine(2, 5.0)` and `printLine(2.0, 5)`, which compile, and what would each one print?"
+   },
+   "warmup": [
+    {
+     "question": "Which `printLine()` runs for `printLine(3, 4.25)`, and which for `printLine(2.5, 360)`? Why is neither call ambiguous?",
+     "model_answer": "`printLine(3, 4.25)` is an exact match for `(int, double)`, and `printLine(2.5, 360)` is an exact match for `(double, int)`. Each call has exactly one version that fits without promotion, so the compiler knows which to use."
+    },
+    {
+     "question": "Explain why `printLine(2, 5)` does not compile, even though both methods exist and either could take two numbers.",
+     "model_answer": "No version is an exact match for two `int` arguments. Promoting the first `int` fits `(double, int)`, and promoting the second fits `(int, double)`, so both match equally well; the compiler can't choose and reports the call as ambiguous."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The two `printLine()` methods compiled fine before you added the pineapple line. When exactly does ambiguity become an error?",
+     "model_answer": "Overloads with different parameter lists are not ambiguous on their own. The program fails only when it contains a call that matches more than one version equally well; without such a call, the methods coexist."
+    },
+    {
+     "question": "Why can't the compiler use the return type to tell `void printLine(int, double)` apart from `double printLine(int, double)`?",
+     "model_answer": "The compiler chooses a method from the arguments in the call, and a call need not use a returned value: `printLine(3, 4.25);` alone on a line would fit both. Methods with the same name and parameter list are therefore illegal, whatever their return types."
+    }
+   ],
+   "extension": "Add `void printLine(int quantity, final double unitPrice)` to the class and compile. What does the compiler report, and what does that tell you about `final` and overloading?",
+   "worth_knowing": "Inside a compiled class file, the Java Virtual Machine does record each method's return type, so two methods differing only in return type can exist in bytecode, and the compiler itself generates such \"bridge methods\" for generics. The Java language forbids writing them, because a call couldn't say which one it means.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; method names start with a verb in camel case; named constants in all capitals."
+    }
+   ]
+  }
+ ]
+}
