@@ -1,0 +1,1373 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 3: Using Methods",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 3 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "3.1",
+   "title": "Understanding Method Calls and Placement",
+   "subtitle": "Calling and called methods, where a method may live, and why call order beats file order",
+   "source": "Ch. 3, section 3.1 (pp. 83–86)",
+   "intro": "A student moves a method above `main()` and expects its output to appear first. Five questions on what a method call really does.",
+   "takeaways": [
+    "A method runs only when it is called. `main()` runs first, and the order of the calls, not the order of the methods in the file, decides what happens.",
+    "A method goes inside a class but outside every other method: methods never nest or overlap."
+   ],
+   "questions": [
+    {
+     "id": "call-order",
+     "concept": "Call order versus placement order",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Greeter\n{\n    public static void showFooter()\n    {\n        System.out.println(\"Bye\");\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(\"Hi\");\n        showBody();\n        showFooter();\n    }\n    public static void showBody()\n    {\n        System.out.println(\"Body\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "Hi Body Bye"
+      }
+     },
+     "options": [
+      {
+       "text": "`Hi`, then `Body`, then `Bye`",
+       "feedback": "`main()` runs first and prints `Hi`; then each call runs its method in the order the calls appear: `showBody()`, then `showFooter()`.",
+       "correct": true
+      },
+      {
+       "text": "`Bye`, then `Hi`, then `Body`",
+       "feedback": "This follows the order the methods appear in the file. Placement has no effect on execution; only the order of the calls in `main()` does."
+      },
+      {
+       "text": "`Bye`, `Hi`, `Body`, then `Bye` again",
+       "feedback": "This assumes `showFooter()` runs once because it is written before `main()` and again when called. A method runs only when it is called."
+      },
+      {
+       "text": "Compile error: `showBody()` is called before it is defined",
+       "feedback": "Java reads the whole class before running it, so a method can be called from a line above the one where it is written."
+      }
+     ],
+     "hint": "Which method runs first in every Java application, and what makes any other method run?",
+     "explanation": "Execution starts in `main()`, wherever it sits in the class. Every other method runs only when a call reaches it, so the sequence of calls determines the output.",
+     "aside": "C traditionally needs a function to be declared before the line that first calls it. Java has no such rule because the compiler reads the entire class first, which is why your helper methods can live below `main()`.",
+     "ref": "Ch. 3.1, order of methods and Figure 3-5 (p. 85)"
+    },
+    {
+     "id": "placement",
+     "concept": "Where a method may be placed",
+     "level": "understand",
+     "stem": "You want to add a `displayHours()` method to this class. At which marked spots may its definition go?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class CompanyInfo\n{\n    // Spot A\n    public static void main(String[] args)\n    {\n        System.out.println(\"Smart Electronics\");\n        // Spot B\n        displayHours();\n    }\n    // Spot C\n}",
+      "verify": {
+       "expect": "skip",
+       "reason": "Placement diagram: the method being placed is not written yet, so the class cannot compile as shown."
+      }
+     },
+     "options": [
+      {
+       "text": "Spot A or Spot C",
+       "feedback": "Both are inside the class's braces but outside `main()`, which is exactly where a method definition belongs.",
+       "correct": true
+      },
+      {
+       "text": "Spot B only, next to the call",
+       "feedback": "Spot B is inside `main()`. A method can't be written inside another method, even next to the line that calls it."
+      },
+      {
+       "text": "Spot C only, after the code that calls it",
+       "feedback": "A method may come before or after `main()`; Java doesn't need it defined below its call."
+      },
+      {
+       "text": "Any of the three spots",
+       "feedback": "Spot B is inside the body of `main()`, and methods can never be placed within other methods."
+      }
+     ],
+     "hint": "Is each spot inside the class, inside a method, or both?",
+     "explanation": "A method is placed within a class but outside any other method, either before or after them. Methods are separate units that never overlap.",
+     "ref": "Ch. 3.1, Figure 3-4 (p. 84)"
+    },
+    {
+     "id": "uncalled-method",
+     "concept": "Methods run only when called",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Kiosk\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Welcome\");\n    }\n    public static void showMenu()\n    {\n        System.out.println(\"Menu\");\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`Welcome`",
+       "feedback": "Only `main()` runs automatically. Nothing calls `showMenu()`, so its statement never executes.",
+       "correct": true
+      },
+      {
+       "text": "`Welcome`, then `Menu`",
+       "feedback": "This assumes every method in the class runs in turn. Placing a method in a class doesn't run it; it must be called."
+      },
+      {
+       "text": "`Menu`, then `Welcome`",
+       "feedback": "This mixes up order and execution: `showMenu()` isn't called at all, so `Menu` never appears."
+      },
+      {
+       "text": "Compile error: `showMenu()` is never called",
+       "feedback": "An unused method is perfectly legal, like a microwave's defrost button you never press."
+      }
+     ],
+     "hint": "Which statement, if any, calls `showMenu()`?",
+     "explanation": "A class may contain methods that a particular application never calls. They compile normally and simply never execute.",
+     "ref": "Ch. 3.1, methods must be called (p. 85)"
+    },
+    {
+     "id": "why-methods",
+     "concept": "Advantages of methods",
+     "level": "evaluate",
+     "stem": "A teammate says: \"Moving the three hours-of-operation `println()` statements into `displayHours()` doesn't change the output, so it's pointless.\" Which reply best reflects the reading?",
+     "options": [
+      {
+       "text": "The output matches, but `main()` stays short, the name shows intent, and it can be reused.",
+       "feedback": "These are the three advantages the reading lists: a short `main()`, a well-named method that reveals intent, and reuse in any program that needs it.",
+       "correct": true
+      },
+      {
+       "text": "It is required, because Java limits how many output statements `main()` may contain.",
+       "feedback": "Java sets no such limit; Figure 3-2 puts all four statements in `main()` and compiles fine."
+      },
+      {
+       "text": "It changes nothing visible, but the program runs faster because method calls are optimized.",
+       "feedback": "Speed isn't the reason the reading gives. Methods are about organizing, naming and reusing work."
+      },
+      {
+       "text": "It lets the three statements run at the same time instead of one after another.",
+       "feedback": "A called method's statements still run one at a time, in order, and `main()` waits until the method finishes."
+      }
+     ],
+     "hint": "Who benefits from the change: the computer, or the people reading and reusing the code?",
+     "explanation": "Methods don't change what a program can do; they change how easy it is to read, understand and reuse. Do the work once in a well-named method, then call it as often as needed.",
+     "ref": "Ch. 3.1, advantages of a separate method (p. 84)"
+    },
+    {
+     "id": "abstraction",
+     "concept": "Abstraction",
+     "level": "remember",
+     "stem": "Writing `displayHours();` in `main()` instead of listing every detailed statement is an example of which idea?",
+     "options": [
+      {
+       "text": "Abstraction",
+       "feedback": "A general method name captures the essence of a task while hiding its details, like abstract art capturing an object without its details.",
+       "correct": true
+      },
+      {
+       "text": "Overloading",
+       "feedback": "Overloading means several methods share one name with different parameter lists; here there is only one `displayHours()`."
+      },
+      {
+       "text": "Nesting",
+       "feedback": "Nesting describes a block contained inside another block. The method isn't inside `main()`; only a call to it is."
+      },
+      {
+       "text": "A stub",
+       "feedback": "A stub is an empty placeholder method. `displayHours()` contains real statements."
+      }
+     ],
+     "hint": "What does the name `displayHours` let a reader skip?",
+     "explanation": "Abstraction means using a general name for a group of detailed actions. Readers of `main()` see what happens without wading through how it happens.",
+     "ref": "Ch. 3.1, Note on abstraction (p. 85)"
+    }
+   ]
+  },
+  {
+   "id": "3.2",
+   "title": "Understanding Method Construction",
+   "subtitle": "Header and body, access specifiers, static, return type and fully qualified names",
+   "source": "Ch. 3, section 3.2 (pp. 86–90)",
+   "intro": "`TestInfo` won't compile because it can't find `displayInfo()`. Five questions on the parts of a method and how other classes reach it.",
+   "takeaways": [
+    "Every method has a header (its declaration) and a body (its implementation). The header holds optional access specifiers, an optional `static`, a return type, an identifier and parentheses.",
+    "Inside its own class a method's simple name is enough; from another class you need the fully qualified name, `ClassName.methodName()`, and the method must be accessible to that class."
+   ],
+   "questions": [
+    {
+     "id": "header-void",
+     "concept": "Return type in the header",
+     "level": "understand",
+     "stem": "In the header `public static void displayHours()`, which part tells you the method sends no data back to its caller?",
+     "options": [
+      {
+       "text": "`void`",
+       "feedback": "The return type comes right before the name. `void` means the method returns nothing.",
+       "correct": true
+      },
+      {
+       "text": "`static`",
+       "feedback": "`static` means the method can be used without creating an object. It says nothing about returned data."
+      },
+      {
+       "text": "The empty parentheses",
+       "feedback": "Parentheses hold data going *into* the method. Empty ones mean it needs no outside data, not that it returns none."
+      },
+      {
+       "text": "`public`",
+       "feedback": "`public` is an access specifier: it controls which classes may call the method, not what comes back."
+      }
+     ],
+     "hint": "Which part of the header sits directly in front of the method's name?",
+     "explanation": "Each header part has one job: the access specifier says who may call it, `static` says no object is needed, the return type says what comes back, and the parentheses list what goes in.",
+     "ref": "Ch. 3.2, Return Type and Figure 3-8 (p. 87)"
+    },
+    {
+     "id": "declaration-implementation",
+     "concept": "Declaration and implementation",
+     "level": "remember",
+     "stem": "A method's header is also called its ____, and its body is called its ____.",
+     "options": [
+      {
+       "text": "declaration; implementation",
+       "feedback": "The header declares how other methods can interact with it; the body implements the work.",
+       "correct": true
+      },
+      {
+       "text": "implementation; declaration",
+       "feedback": "This swaps the terms. The body, between the braces, is the implementation."
+      },
+      {
+       "text": "fully qualified name; stub",
+       "feedback": "A fully qualified name is the class name, a dot and the method name, and a stub is an *empty* method. Neither names the header and body."
+      },
+      {
+       "text": "interface; declaration",
+       "feedback": "The interface is what a client sees, which is close to the header, but the body is the implementation, not a declaration."
+      }
+     ],
+     "hint": "Which part carries out the work: the first line, or the statements in the braces?",
+     "explanation": "The header (declaration) tells callers how to use a method; the body (implementation) is the code that does the work. An empty body is called a stub.",
+     "ref": "Ch. 3.2, method header and method body (p. 86)"
+    },
+    {
+     "id": "other-class-call",
+     "concept": "Fully qualified identifiers",
+     "level": "apply",
+     "stem": "`displayInfo()` lives in `ParadiseInfo`. What happens when you compile this file?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class TestInfo\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Calling method from another class:\");\n        displayInfo();\n    }\n}\nclass ParadiseInfo\n{\n    public static void displayInfo()\n    {\n        System.out.println(\"Paradise Day Spa wants to pamper you.\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: cannot find symbol `displayInfo()` in `TestInfo`",
+       "feedback": "From another class, the compiler recognizes the method only by its full name, `ParadiseInfo.displayInfo()`. On its own, the name is looked up in `TestInfo`, where it doesn't exist.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints both lines; Java searches every class",
+       "feedback": "Java doesn't search other classes for a simple method name. Outside its class, a method needs its class name, a dot, and its name."
+      },
+      {
+       "text": "It compiles, but crashes when the call is reached",
+       "feedback": "The problem is found by the compiler, before the program ever runs."
+      },
+      {
+       "text": "Compile error: `displayInfo()` must not be `static`",
+       "feedback": "`static` is fine; it is what lets you call the method through its class name without an object."
+      }
+     ],
+     "hint": "Inside `TestInfo`, where does the compiler look for a method named only `displayInfo`?",
+     "explanation": "A method's simple name works only inside its own class. Elsewhere, use the fully qualified identifier: the class name, a dot, and the method name, as in `ParadiseInfo.displayInfo()`.",
+     "ref": "Ch. 3.2, fully qualified identifiers (p. 88)"
+    },
+    {
+     "id": "qualified-call",
+     "concept": "Calling a method in another class",
+     "level": "apply",
+     "stem": "`computeSum()` is a `public static` method in `ClassA`. Which statement calls it from inside `ClassB`?",
+     "options": [
+      {
+       "text": "`ClassA.computeSum();`",
+       "feedback": "Class name, dot, method name: the fully qualified identifier works from any class that can access the method.",
+       "correct": true
+      },
+      {
+       "text": "`ClassB.computeSum();`",
+       "feedback": "This names the calling class, not the class where the method lives. `ClassB` has no `computeSum()`."
+      },
+      {
+       "text": "`computeSum(ClassA);`",
+       "feedback": "Parentheses hold arguments, data sent to the method. A class name doesn't go there."
+      },
+      {
+       "text": "`ClassA(computeSum());`",
+       "feedback": "This treats `ClassA` as if it were a method that receives the call's result."
+      }
+     ],
+     "hint": "How did `TestInfo` call `displayInfo()` in the reading's You Do It?",
+     "explanation": "To use a method that belongs to another class, prefix it with that class's name and a dot. You already do this with `JOptionPane.showMessageDialog()`.",
+     "ref": "Ch. 3.2, fully qualified identifiers (p. 88) and You Do It (p. 90)"
+    },
+    {
+     "id": "private-access",
+     "concept": "Access specifiers",
+     "level": "analyze",
+     "stem": "The author of `ParadiseInfo` makes `displayInfo()` `private`. What happens when `TestInfo` is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class TestInfo\n{\n    public static void main(String[] args)\n    {\n        ParadiseInfo.displayInfo();\n    }\n}\nclass ParadiseInfo\n{\n    private static void displayInfo()\n    {\n        System.out.println(\"Paradise Day Spa wants to pamper you.\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "private access"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `displayInfo()` has private access in `ParadiseInfo`",
+       "feedback": "`private` restricts a method to its own class, so even the correct fully qualified call is refused.",
+       "correct": true
+      },
+      {
+       "text": "It compiles: a `static` method can always be called through its class name",
+       "feedback": "`static` removes the need for an object, but access specifiers still decide which classes may call it."
+      },
+      {
+       "text": "It compiles, but the call is silently skipped at run time",
+       "feedback": "Access is checked by the compiler. A call that isn't allowed never makes it into a running program."
+      },
+      {
+       "text": "Compile error: `main()` must also be `private` to call it",
+       "feedback": "`main()` must be `public` in an application. Making it `private` wouldn't grant access to another class's method."
+      }
+     ],
+     "hint": "What does `public` allow that `private` doesn't?",
+     "explanation": "A `public` method can be used by any other class, not just its own. Access specifiers are enforced at compile time: a call the specifier forbids won't compile, however it is written.",
+     "aside": "Leaving the access specifier out entirely gives *package* access: any class in the same package can call the method, including classes saved in the same folder with no `package` statement. Only `private` shuts out every other class.",
+     "ref": "Ch. 3.2, Access Specifiers (p. 86) and You Do It (p. 90)"
+    }
+   ]
+  },
+  {
+   "id": "3.3",
+   "title": "Adding Parameters to Methods",
+   "subtitle": "Arguments and parameters, promotion, copies of values, argument order and implementation hiding",
+   "source": "Ch. 3, section 3.3 (pp. 91–95)",
+   "intro": "A payroll call reports 20 hours at $10 when the employee worked 10 hours at $20. Six questions on sending data into a method.",
+   "takeaways": [
+    "Arguments are matched to parameters by position, in number and type; a value can be passed to a parameter of a wider type (an `int` to a `double`) but not a narrower one.",
+    "A parameter is a local variable that holds a *copy* of the argument, so changing it never changes the caller's variable, even when the names are the same.",
+    "Callers depend only on a method's interface (name, parameters, return type), so its implementation can change without breaking them."
+   ],
+   "questions": [
+    {
+     "id": "arg-vs-param",
+     "concept": "Arguments and parameters",
+     "level": "understand",
+     "stem": "In the call `calculateGross(myHours);` and the header `public static void calculateGross(double hours)`, what are `myHours` and `hours`?",
+     "options": [
+      {
+       "text": "`myHours` is an argument; `hours` is a parameter",
+       "feedback": "Data items used in a call are arguments; the variable in the method header that receives the value is a parameter.",
+       "correct": true
+      },
+      {
+       "text": "`myHours` is a parameter; `hours` is an argument",
+       "feedback": "This swaps the terms. Arguments appear in the call; parameters appear in the method declaration."
+      },
+      {
+       "text": "`myHours` is the formal parameter; `hours` is the actual parameter",
+       "feedback": "These terms also come in reverse: the argument is the *actual* parameter, and the variable in the header is the *formal* parameter."
+      },
+      {
+       "text": "Both are arguments, since both hold the hours value",
+       "feedback": "They hold the same value, but they play different roles: one is sent, the other receives a copy."
+      }
+     ],
+     "hint": "Which one appears in the call, and which in the method's header?",
+     "explanation": "An argument is the value written in a method call (the actual parameter). A parameter is the variable declared in the method header to receive it (the formal parameter).",
+     "ref": "Ch. 3.3, arguments and parameters (p. 91) and Note (p. 94)"
+    },
+    {
+     "id": "narrowing-arg",
+     "concept": "Arguments must fit the parameter type",
+     "level": "apply",
+     "stem": "What happens when you compile and run this?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Stock\n{\n    public static void main(String[] args)\n    {\n        showCount(12.0);\n    }\n    public static void showCount(int count)\n    {\n        System.out.println(\"Count: \" + count);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "lossy conversion from double to int"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: a `double` can't be passed to an `int` parameter",
+       "feedback": "A `double` can't be promoted to an `int`: the conversion could lose data, so the compiler rejects the call.",
+       "correct": true
+      },
+      {
+       "text": "It prints `Count: 12`; the `double` is converted to an `int`",
+       "feedback": "Promotion only goes toward the wider type. Java won't silently narrow `12.0` to `12`, even when no data would be lost."
+      },
+      {
+       "text": "It prints `Count: 12.0`; the parameter becomes a `double`",
+       "feedback": "A parameter's type is fixed by the header. Arguments must fit it; it never adjusts to fit them."
+      },
+      {
+       "text": "It compiles with a warning, then prints `Count: 12`",
+       "feedback": "This isn't a warning. Passing a `double` to an `int` parameter is a syntax error, and the program doesn't compile."
+      }
+     ],
+     "hint": "Can every `double` value fit in an `int` without losing anything?",
+     "explanation": "An argument can be promoted to a wider parameter type (`int` to `double`), but not narrowed. Passing a `double` to an `int` parameter is a compile-time error.",
+     "ref": "Ch. 3.3, arguments in the wrong order or type (p. 94)"
+    },
+    {
+     "id": "valid-calls",
+     "concept": "Promotion of arguments",
+     "level": "apply",
+     "stem": "A method is declared `public static void calculateGross(double hours)`. Which call does **NOT** compile?",
+     "options": [
+      {
+       "text": "`calculateGross(10, 20);`",
+       "feedback": "The method has one parameter, so a call must send exactly one argument. Two arguments don't match its signature.",
+       "correct": true
+      },
+      {
+       "text": "`calculateGross(10);`",
+       "feedback": "`10` is an `int`, which is promoted to a `double`, so this call is valid."
+      },
+      {
+       "text": "`calculateGross(12L);`",
+       "feedback": "`12L` is a `long`. A `long` can be promoted to a `double`, so this call compiles."
+      },
+      {
+       "text": "`calculateGross(7.5 * 5);`",
+       "feedback": "An expression is fine as an argument; this one produces the `double` 37.5."
+      }
+     ],
+     "hint": "Count the parameters, then check whether each argument's type can be promoted to `double`.",
+     "explanation": "A parameter of type `double` accepts any `double`, `float`, `long`, `int`, `short` or `byte` value, whether a literal, variable, constant, expression or returned value. The number of arguments, though, must match exactly.",
+     "ref": "Ch. 3.3, Creating a Method That Receives a Single Parameter (p. 92)"
+    },
+    {
+     "id": "copy-of-value",
+     "concept": "Parameters hold copies",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Overtime\n{\n    public static void main(String[] args)\n    {\n        double hours = 25;\n        addOvertime(hours);\n        System.out.println(hours);\n    }\n    public static void addOvertime(double hours)\n    {\n        hours = hours + 5;\n        System.out.println(hours);\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "30.0 25.0"
+      }
+     },
+     "options": [
+      {
+       "text": "`30.0`, then `25.0`",
+       "feedback": "The parameter `hours` holds a copy of 25.0 and changes to 30.0. The `hours` in `main()` is a separate variable that still holds 25.0.",
+       "correct": true
+      },
+      {
+       "text": "`30.0`, then `30.0`",
+       "feedback": "Same name doesn't mean same variable. The parameter has its own memory location, released when the method ends."
+      },
+      {
+       "text": "`30`, then `25`",
+       "feedback": "Both variables are `double`, and Java displays a `double` with a decimal point: 30.0 and 25.0."
+      },
+      {
+       "text": "`25.0`, then `25.0`",
+       "feedback": "The assignment inside `addOvertime()` does change the parameter, so the method's own `println()` shows 30.0."
+      }
+     ],
+     "hint": "Is the `hours` inside `addOvertime()` the same memory location as the `hours` in `main()`?",
+     "explanation": "Each call creates a new local parameter that holds a copy of the argument's value. Changing the parameter affects nothing in the caller, even if the two variables share a name.",
+     "aside": "Java always passes arguments by value: the method gets a copy. Later you'll pass objects, where the copy is of a *reference* to the object, so a method can change the object's contents but still can't make the caller's variable point somewhere else.",
+     "ref": "Ch. 3.3, the parameter is a local variable (pp. 93–94)"
+    },
+    {
+     "id": "argument-order",
+     "concept": "Arguments match by position",
+     "level": "analyze",
+     "stem": "An employee worked 10 hours at $20 per hour. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void calculateGross(double hours, double rate)\n{\n    double gross = hours * rate;\n    System.out.println(hours + \" hours at $\" + rate +\n        \" per hour is $\" + gross);\n}\n// in main()\ndouble rate = 20, hours = 10;\ncalculateGross(rate, hours);",
+      "verify": {
+       "expect": "output",
+       "program": "public class GrossOrder\n{\n    public static void calculateGross(double hours, double rate)\n    {\n        double gross = hours * rate;\n        System.out.println(hours + \" hours at $\" + rate +\n            \" per hour is $\" + gross);\n    }\n    public static void main(String[] args)\n    {\n        double rate = 20, hours = 10;\n        calculateGross(rate, hours);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`20.0 hours at $10.0 per hour is $200.0`",
+       "feedback": "Arguments are matched by position, not by name: `rate` (20.0) goes to the first parameter, `hours`, and `hours` (10.0) goes to `rate`.",
+       "correct": true
+      },
+      {
+       "text": "`10.0 hours at $20.0 per hour is $200.0`",
+       "feedback": "This assumes Java matches arguments to parameters with the same names. It only uses their order."
+      },
+      {
+       "text": "Compile error: the arguments are in the wrong order",
+       "feedback": "Both arguments are `double`, so the method can accept them in either order. The result is a logical error, not a syntax error."
+      },
+      {
+       "text": "`20 hours at $10 per hour is $200`",
+       "feedback": "The order is right here, but the values are `double`, which Java displays with a decimal point."
+      }
+     ],
+     "hint": "Ignore the variable names in the call. Which value lands in the first parameter?",
+     "explanation": "Arguments must match the parameters in order, number and type. If they arrive in the wrong order but still fit, the program compiles and runs with a logical error; if they don't fit, it doesn't compile.",
+     "ref": "Ch. 3.3, Creating a Method That Requires Multiple Parameters (p. 94)"
+    },
+    {
+     "id": "implementation-hiding",
+     "concept": "Implementation hiding",
+     "level": "evaluate",
+     "stem": "`calculateWithholding(double gross)` is rewritten to use a new tax table, but its header stays the same. What must change in `calculateNetPay()`, which calls it?",
+     "options": [
+      {
+       "text": "Nothing: callers rely only on the method's interface, which didn't change",
+       "feedback": "This is implementation hiding. A caller needs to know only the name, what to send and what comes back, so a new implementation behind the same interface needs no changes elsewhere.",
+       "correct": true
+      },
+      {
+       "text": "The call must be rewritten to match the method's new statements",
+       "feedback": "A call never refers to the statements inside a method, only to its name and arguments."
+      },
+      {
+       "text": "The new tax table must be passed as an extra argument in every call",
+       "feedback": "The header is unchanged, so the method still takes exactly one `double`. Adding an argument would break the call."
+      },
+      {
+       "text": "Its variables must be renamed to match the new method's variables",
+       "feedback": "Names inside one method are local to it; the caller's names are never required to match them."
+      }
+     ],
+     "hint": "What part of `calculateWithholding()` does its caller actually see?",
+     "explanation": "A method's interface is the only part its client sees. As long as the interface stays the same, the implementation can be replaced without touching any method that calls it.",
+     "aside": "The Java API documentation you looked at in the You Do It is built on this idea: it shows each method's interface, while the code behind it can be improved from one Java release to the next without breaking your programs.",
+     "ref": "Ch. 3.3, implementation hiding (p. 91) and Ch. 3.4, black box (p. 97)"
+    }
+   ]
+  },
+  {
+   "id": "3.4",
+   "title": "Creating Methods That Return Values",
+   "subtitle": "Return types, compatible return values, unreachable statements and using a method's value",
+   "source": "Ch. 3, section 3.4 (pp. 95–99)",
+   "intro": "A pay method computes the right number, yet `main()` still prints `0.0`. Five questions on getting a value back out of a method.",
+   "takeaways": [
+    "A method's declared return type is its type: a non-`void` method must return a value of that type, or one that can be promoted to it.",
+    "A returned value is lost unless the caller stores it or uses it directly in an expression, an argument or a `println()`.",
+    "A `return` statement ends the method, so any statement after it is unreachable, and the compiler rejects it."
+   ],
+   "questions": [
+    {
+     "id": "ignored-return",
+     "concept": "Using a returned value",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Pay\n{\n    public static void main(String[] args)\n    {\n        double myPay = 0;\n        calculateGross(10, 20);\n        System.out.println(myPay);\n    }\n    public static double calculateGross(double hours, double rate)\n    {\n        double gross = hours * rate;\n        return gross;\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`0.0`",
+       "feedback": "`calculateGross()` returns 200.0, but `main()` neither stores nor uses it, so `myPay` keeps its value of 0.0.",
+       "correct": true
+      },
+      {
+       "text": "`200.0`",
+       "feedback": "A returned value doesn't go anywhere by itself. It would reach `myPay` only with `myPay = calculateGross(10, 20);`."
+      },
+      {
+       "text": "`0`",
+       "feedback": "`myPay` is a `double`, so it displays as `0.0`."
+      },
+      {
+       "text": "Compile error: the returned value must be used",
+       "feedback": "You normally use a method's returned value, but you are not required to. Ignoring it compiles."
+      }
+     ],
+     "hint": "Which statement assigns anything to `myPay` after its declaration?",
+     "explanation": "A method's returned value must be captured by the caller, by assigning it or using it directly in an expression. If the call stands alone, the value is discarded.",
+     "ref": "Ch. 3.4, using a returned value (pp. 96–97)"
+    },
+    {
+     "id": "compatible-return",
+     "concept": "Return value must match the return type",
+     "level": "apply",
+     "stem": "Which statement could be the last line of a method declared `public static int getVal(double sum)`?",
+     "options": [
+      {
+       "text": "`return 77;`",
+       "feedback": "`77` is an `int`, which matches the declared return type exactly.",
+       "correct": true
+      },
+      {
+       "text": "`return 2.3;`",
+       "feedback": "`2.3` is a `double`, and a `double` can't be promoted to an `int`, so the class won't compile."
+      },
+      {
+       "text": "`return sum;`",
+       "feedback": "`sum` is a `double` parameter. Returning it from an `int` method would need a narrowing conversion, which Java won't do automatically."
+      },
+      {
+       "text": "`return;`",
+       "feedback": "A bare `return;` is allowed only in a `void` method. An `int` method must send back an `int` value."
+      }
+     ],
+     "hint": "Which value can be stored in an `int` without a cast?",
+     "explanation": "The value in a `return` statement must match the method's return type or be promotable to it. Returning an `int` from a `double` method is fine; returning a `double` from an `int` method is not.",
+     "ref": "Ch. 3.4, return type compatibility (p. 96)"
+    },
+    {
+     "id": "unreachable",
+     "concept": "Unreachable statements",
+     "level": "apply",
+     "stem": "What happens when this class is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static double computeDiscount(double price, double rate)\n{\n    double savings = price * rate / 100;\n    return savings;\n    System.out.println(\"Savings computed\");\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "unreachable statement"
+       ],
+       "program": "public class Discount\n{\n    public static double computeDiscount(double price, double rate)\n    {\n        double savings = price * rate / 100;\n        return savings;\n        System.out.println(\"Savings computed\");\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(computeDiscount(80, 10));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the `println()` statement is unreachable",
+       "feedback": "The logic leaves the method at `return`, so the statement after it can never execute. Java treats that dead code as an error.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; the `println()` runs just before the value is returned",
+       "feedback": "Statements run in order, and `return` ends the method immediately. Nothing after it gets a turn."
+      },
+      {
+       "text": "It compiles; the `println()` is simply never executed",
+       "feedback": "It is true that the statement could never run, but Java doesn't quietly accept it: unreachable statements cause a compiler error."
+      },
+      {
+       "text": "Compile error: a `double` method can't display output",
+       "feedback": "A method can display output and return a value. The problem is only where the `println()` sits."
+      }
+     ],
+     "hint": "After `return savings;` runs, where does the program's logic go?",
+     "explanation": "A `return` statement ends a method and sends control back to the caller. Statements placed after the last `return` are unreachable statements (dead code), and they cause a compile error.",
+     "aside": "The rule is written into the Java Language Specification itself (section 14.22, Unreachable Statements). C and C++ compilers, by contrast, accept the same dead code and simply never run it.",
+     "ref": "Ch. 3.4, unreachable statements (p. 96)"
+    },
+    {
+     "id": "promoted-return",
+     "concept": "A returned value is promoted after it is computed",
+     "level": "analyze",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static double half(int n)\n{\n    return n / 2;\n}\n// in main()\nSystem.out.println(half(7));",
+      "verify": {
+       "expect": "output",
+       "program": "public class Half\n{\n    public static double half(int n)\n    {\n        return n / 2;\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(half(7));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`3.0`",
+       "feedback": "`n / 2` divides two integers, giving 3. Only then is that `int` promoted to the `double` return type: 3.0.",
+       "correct": true
+      },
+      {
+       "text": "`3.5`",
+       "feedback": "The `double` return type doesn't change how `n / 2` is computed. Both operands are integers, so the fraction is already gone."
+      },
+      {
+       "text": "`3`",
+       "feedback": "The method's type is `double`, so the returned 3 is promoted, and Java displays it as `3.0`."
+      },
+      {
+       "text": "Compile error: an `int` expression can't be returned from a `double` method",
+       "feedback": "An `int` can be promoted to a `double`, so it is a compatible return value."
+      }
+     ],
+     "hint": "First work out `n / 2` with `n` equal to 7. What type is that result, and what happens to it on the way out?",
+     "explanation": "The expression in a `return` statement is evaluated by the usual rules first; only its finished value is promoted to the method's return type.",
+     "ref": "Ch. 3.4, return values promotable to the return type (p. 96)"
+    },
+    {
+     "id": "nested-calls",
+     "concept": "Method calls as values",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Net\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Net: \" + calculateNet(getHours(), 20));\n    }\n    public static double getHours()\n    {\n        return 10;\n    }\n    public static double calculateNet(double hours, double rate)\n    {\n        return hours * rate - 50;\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`Net: 150.0`",
+       "feedback": "`getHours()` returns 10.0 (the `int` 10 is promoted), so `calculateNet(10.0, 20)` returns 10.0 × 20 − 50 = 150.0, which is concatenated and displayed.",
+       "correct": true
+      },
+      {
+       "text": "`Net: 150`",
+       "feedback": "`calculateNet()` returns a `double`, and Java always shows a `double` with a decimal point."
+      },
+      {
+       "text": "Compile error: `getHours()` must be stored in a variable first",
+       "feedback": "A method's returned value can be used anywhere a value of its type can, including as an argument to another method."
+      },
+      {
+       "text": "Compile error: `return 10;` doesn't match the `double` return type",
+       "feedback": "`10` is an `int`, which is promoted to `double`, so it is a compatible return value."
+      }
+     ],
+     "hint": "Replace each method call with the value it returns, innermost first.",
+     "explanation": "You can use a method's returned value exactly as you would a value of the same type: in an expression, inside `println()`, or as an argument to another call. Nested calls run from the inside out.",
+     "ref": "Ch. 3.4, nesting method calls (p. 97)"
+    }
+   ]
+  },
+  {
+   "id": "3.5",
+   "title": "Understanding Blocks and Scope",
+   "subtitle": "Nested blocks, coming into and going out of scope, redeclaration and same-named variables",
+   "source": "Ch. 3, section 3.5 (pp. 99–104)",
+   "intro": "Two methods each declare a variable named `aNumber`, and a student is sure one will overwrite the other. Six questions on where a variable lives.",
+   "takeaways": [
+    "A variable comes into scope where it is declared and goes out of scope at the end of the block that declares it.",
+    "A name can be reused in separate, non-overlapping blocks or in different methods, but it can't be redeclared while it is still in scope, including inside a nested block.",
+    "Variables with the same name in different methods are different memory locations; changing one never touches another."
+   ],
+   "questions": [
+    {
+     "id": "out-of-scope",
+     "concept": "Going out of scope",
+     "level": "apply",
+     "stem": "What happens when you compile and run this?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Scope\n{\n    public static void main(String[] args)\n    {\n        int aNumber = 10;\n        {\n            int anotherNumber = 512;\n            System.out.println(aNumber + anotherNumber);\n        }\n        System.out.println(anotherNumber);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `anotherNumber` is out of scope on the last line",
+       "feedback": "`anotherNumber` exists only from its declaration to the end of the inner block, so the last `println()` refers to a variable that no longer exists.",
+       "correct": true
+      },
+      {
+       "text": "It prints `522`, then `512`; it lasts until `main()` ends",
+       "feedback": "This assumes a variable lives until the method ends. It actually ends with the block that declares it."
+      },
+      {
+       "text": "It prints `522`, then `0`; the variable resets when its block ends",
+       "feedback": "A variable that has gone out of scope doesn't keep a default value; it doesn't exist at all, so the line can't compile."
+      },
+      {
+       "text": "Compile error: `aNumber` can't be used inside the inner block",
+       "feedback": "`aNumber` is declared in the outer block, which contains the inner block, so it is in scope there."
+      }
+     ],
+     "hint": "Where does the block that declares `anotherNumber` end?",
+     "explanation": "A variable's scope is its block: it comes into scope at its declaration and goes out of scope at the closing brace of the block where it was declared. Outer variables remain visible inside nested blocks, not the other way round.",
+     "ref": "Ch. 3.5, Figure 3-20 and scope (pp. 99–100)"
+    },
+    {
+     "id": "legal-lines",
+     "concept": "Using a variable only while it is in scope",
+     "level": "analyze",
+     "stem": "Which numbered lines in this method are legal?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void demo()\n{\n    count = 5;          // line 1\n    int count = 0;      // line 2\n    {\n        count = 8;      // line 3\n        int total = 1;  // line 4\n    }\n    total = 9;          // line 5\n}",
+      "verify": {
+       "expect": "skip",
+       "reason": "Line-by-line legality question: the method deliberately contains illegal lines 1 and 5."
+      }
+     },
+     "options": [
+      {
+       "text": "Lines 2, 3 and 4 only",
+       "feedback": "Line 1 uses `count` before it is declared, and line 5 uses `total` after its block has ended. Lines 2 to 4 are all inside the right scopes.",
+       "correct": true
+      },
+      {
+       "text": "Lines 2 and 4 only",
+       "feedback": "`count` is declared in the outer block, so it is still in scope inside the nested block on line 3."
+      },
+      {
+       "text": "Lines 2, 3, 4 and 5",
+       "feedback": "`total` was declared in the inner block and went out of scope at its closing brace, so line 5 can't use it."
+      },
+      {
+       "text": "All five lines",
+       "feedback": "A variable comes into scope at its declaration, not at the top of the method, so line 1 is too early."
+      }
+     ],
+     "hint": "For each line, has the variable been declared yet, and is its block still open?",
+     "explanation": "You can use a variable only between its declaration and the end of its block. Using it before its declaration, or after its block closes, is a compile error.",
+     "ref": "Ch. 3.5, Figure 3-22 (p. 100)",
+     "lock_order": true
+    },
+    {
+     "id": "separate-blocks",
+     "concept": "Reusing a name in separate blocks",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class TwoBlocks\n{\n    public static void main(String[] args)\n    {\n        {\n            int someVar = 7;\n            System.out.println(someVar);\n        }\n        {\n            int someVar = 845;\n            System.out.println(someVar);\n        }\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "7 845"
+      }
+     },
+     "options": [
+      {
+       "text": "`7`, then `845`",
+       "feedback": "The first `someVar` goes out of scope at the end of the first block, so the second block can declare a brand-new `someVar`.",
+       "correct": true
+      },
+      {
+       "text": "Compile error: `someVar` is declared twice in the same method",
+       "feedback": "Declaring the same name twice is legal when each declaration is in its own non-overlapping block."
+      },
+      {
+       "text": "`845`, then `845`",
+       "feedback": "The two variables are completely separate. The second declaration can't affect a value printed before it existed."
+      },
+      {
+       "text": "`7`, then `7`",
+       "feedback": "The second declaration creates a new variable with its own value; it doesn't reuse the first one."
+      }
+     ],
+     "hint": "Is the first `someVar` still in scope when the second one is declared?",
+     "explanation": "Within a method you may declare the same name more than once, as long as each declaration is in its own non-overlapping block. Many programmers still avoid it, because it makes code harder to follow.",
+     "ref": "Ch. 3.5, Figure 3-23 (p. 101)"
+    },
+    {
+     "id": "nested-redeclare",
+     "concept": "Redeclaring a variable in a nested block",
+     "level": "apply",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Redeclare\n{\n    public static void main(String[] args)\n    {\n        int aValue = 35;\n        {\n            int aValue = 10;\n            System.out.println(aValue);\n        }\n        System.out.println(aValue);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "already defined"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `aValue` is already defined in `main()`",
+       "feedback": "The inner block is inside the outer block, where the first `aValue` is still in scope, so the second declaration is an illegal redeclaration.",
+       "correct": true
+      },
+      {
+       "text": "It prints `10`, then `35`; the inner `aValue` hides the outer one",
+       "feedback": "Some languages allow an inner variable to hide an outer one, but Java does not: the outer `aValue` hasn't gone out of scope."
+      },
+      {
+       "text": "It prints `10`, then `10`",
+       "feedback": "This treats the second declaration as an assignment to the same variable. A declaration with a type always tries to create a new one."
+      },
+      {
+       "text": "Compile error: a block can't be nested inside `main()`",
+       "feedback": "Blocks can be nested anywhere in a method. The problem is the repeated name."
+      }
+     ],
+     "hint": "When the inner block starts, has the first `aValue` gone out of scope?",
+     "explanation": "You can't declare a name again in a block where it is already in scope, even inside a nested block. The nested block is entirely within the outer one, so the outer variable is still alive there.",
+     "aside": "C and C++ allow exactly this: an inner block's variable may *shadow* an outer one with the same name. Java's designers made it a compile error to remove a classic source of confusing bugs.",
+     "ref": "Ch. 3.5, Figure 3-24 (p. 101)"
+    },
+    {
+     "id": "masking",
+     "concept": "Same name, different methods",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class MaskingVariable\n{\n    public static void main(String[] args)\n    {\n        int aNumber = 10;\n        firstMethod();\n        secondMethod(aNumber);\n        System.out.println(aNumber);\n    }\n    public static void firstMethod()\n    {\n        int aNumber = 77;\n        System.out.println(aNumber);\n    }\n    public static void secondMethod(int aNumber)\n    {\n        aNumber = 862;\n        System.out.println(aNumber);\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "77 862 10"
+      }
+     },
+     "options": [
+      {
+       "text": "`77`, `862`, then `10`",
+       "feedback": "Each method's `aNumber` is a separate memory location. `firstMethod()` uses its own, and `secondMethod()` changes only its copy, so `main()` still has 10.",
+       "correct": true
+      },
+      {
+       "text": "`77`, `862`, then `862`",
+       "feedback": "`secondMethod()` received a copy of 10 in its own parameter; assigning 862 to it can't reach `main()`'s variable."
+      },
+      {
+       "text": "`77`, `862`, then `77`",
+       "feedback": "`firstMethod()` declares its own local `aNumber`; it never touches the one in `main()`."
+      },
+      {
+       "text": "Compile error: `aNumber` is already defined in `main()`",
+       "feedback": "The redeclaration rule applies within a block. Different methods can each declare their own variable with the same name."
+      }
+     ],
+     "hint": "Trace only the `aNumber` that belongs to `main()`. Which statements actually change it?",
+     "explanation": "A variable declared in a method, including a parameter, is local to that method and masks any same-named variable elsewhere. Same names in different scopes are different memory locations.",
+     "ref": "Ch. 3.5, Figure 3-25 MaskingVariable (pp. 101–102)"
+    },
+    {
+     "id": "same-name-claim",
+     "concept": "Local variables have their own memory",
+     "level": "evaluate",
+     "stem": "A student argues: \"Naming a variable `total` in both `main()` and `computeTax()` is a bug, because the two methods will share it and overwrite each other.\" What is the flaw in the argument?",
+     "options": [
+      {
+       "text": "Each `total` is a separate local variable with its own memory location",
+       "feedback": "A variable declared inside a method exists only in that method. The two `total`s just happen to share a name.",
+       "correct": true
+      },
+      {
+       "text": "There is no flaw: the later assignment overwrites the earlier one",
+       "feedback": "That would be true only if they were one variable. Variables declared in different methods never share memory."
+      },
+      {
+       "text": "They are separate only if one of them is declared `final`",
+       "feedback": "`final` stops a variable from changing; it doesn't decide whether two variables are the same one."
+      },
+      {
+       "text": "They are separate only if the two methods are in different classes",
+       "feedback": "Even within one class, each method's local variables are its own."
+      }
+     ],
+     "hint": "Where is each `total` declared, and where does its scope end?",
+     "explanation": "You can't declare the same name twice within one block, but you can in different methods. Each method's variable resides in its own location in memory.",
+     "ref": "Ch. 3.5, same names in different methods (p. 101)"
+    }
+   ]
+  },
+  {
+   "id": "3.6",
+   "title": "Overloading a Method",
+   "subtitle": "One name, several parameter lists, and how the compiler picks a version",
+   "source": "Ch. 3, section 3.6 (pp. 104–107)",
+   "intro": "Some users type `4` for a 4% rate, and their interest comes out 100 times too high. Five questions on giving one method name several versions.",
+   "takeaways": [
+    "Overloaded methods share a name but differ in the number of parameters or the order of their types; parameter names, return types and access specifiers don't count.",
+    "The compiler chooses a version from the arguments in the call, so one well-chosen name can serve every argument type a caller is likely to use."
+   ],
+   "questions": [
+    {
+     "id": "int-promoted",
+     "concept": "Why the int rate goes wrong",
+     "level": "apply",
+     "stem": "This is the only `calculateInterest()` in the class. What does the call print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void calculateInterest(double bal, double rate)\n{\n    double interest;\n    interest = bal * rate;\n    System.out.println(\"Simple interest on $\" + bal +\n        \" at \" + rate + \"% rate is \" + interest);\n}\n// in main()\ncalculateInterest(1000.00, 4);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Interest\n{\n    public static void calculateInterest(double bal, double rate)\n    {\n        double interest;\n        interest = bal * rate;\n        System.out.println(\"Simple interest on $\" + bal +\n            \" at \" + rate + \"% rate is \" + interest);\n    }\n    public static void main(String[] args)\n    {\n        calculateInterest(1000.00, 4);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Simple interest on $1000.0 at 4.0% rate is 4000.0`",
+       "feedback": "The `int` 4 is promoted to the `double` 4.0, and the method multiplies by it directly: 1000.0 × 4.0 = 4000.0, 100 times too high.",
+       "correct": true
+      },
+      {
+       "text": "`Simple interest on $1000.0 at 4.0% rate is 40.0`",
+       "feedback": "The method has no way to know that 4 means 4 percent. It simply multiplies the balance by whatever rate arrives."
+      },
+      {
+       "text": "`Simple interest on $1000.0 at 4% rate is 40.0`",
+       "feedback": "The parameter `rate` is a `double`, so the promoted value displays as `4.0`, and the multiplication uses it as is."
+      },
+      {
+       "text": "Compile error: `4` is an `int` but `rate` is a `double`",
+       "feedback": "An `int` argument can be promoted to a `double` parameter, so the call compiles. That is exactly why the bug is easy to miss."
+      }
+     ],
+     "hint": "What does the `int` 4 become when it arrives in a `double` parameter, and what does the method do with it?",
+     "explanation": "Promotion lets the call compile, but it can't change what the method's code means. When callers may send values in different forms, a separate version per form (an overload) can treat each correctly.",
+     "ref": "Ch. 3.6, Figure 3-28 and the 4 versus 0.04 problem (pp. 104–105)"
+    },
+    {
+     "id": "which-version",
+     "concept": "The compiler picks the matching version",
+     "level": "apply",
+     "stem": "Both versions are in the class. What does the program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class InterestDemo\n{\n    public static void main(String[] args)\n    {\n        calculateInterest(1000.00, 0.04);\n        calculateInterest(1000.00, 4);\n    }\n    public static void calculateInterest(double bal, double rate)\n    {\n        System.out.println(\"double version: \" + bal * rate);\n    }\n    public static void calculateInterest(double bal, int rate)\n    {\n        System.out.println(\"int version: \" + bal * (rate / 100.0));\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "double version: 40.0 int version: 40.0"
+      }
+     },
+     "options": [
+      {
+       "text": "`double version: 40.0`, then `int version: 40.0`",
+       "feedback": "The call with `0.04` matches `(double, double)` exactly; the call with `4` matches `(double, int)` exactly, and that version divides the rate by 100.0.",
+       "correct": true
+      },
+      {
+       "text": "`double version: 40.0`, then `double version: 4000.0`",
+       "feedback": "An `int` *can* be promoted to a `double`, but the compiler prefers the version whose parameters match the arguments exactly."
+      },
+      {
+       "text": "Compile error: two methods can't share the name `calculateInterest`",
+       "feedback": "They can, as long as their parameter lists differ. Here the second parameter is a `double` in one and an `int` in the other."
+      },
+      {
+       "text": "Compile error: the call with `4` is ambiguous",
+       "feedback": "There is nothing to choose between: `(double, int)` matches `(1000.00, 4)` exactly, so the compiler picks it."
+      }
+     ],
+     "hint": "For each call, list the argument types. Which header matches them exactly?",
+     "explanation": "When methods are overloaded, the compiler uses the arguments in each call to pick a version, and an exact match wins over one that needs promotion.",
+     "ref": "Ch. 3.6, Figure 3-29 (p. 105)"
+    },
+    {
+     "id": "legal-overload",
+     "concept": "What makes a legal overload",
+     "level": "understand",
+     "stem": "A class already contains `public static void displayDate(int mm, int dd)`. Which method can be added as a legal overload?",
+     "options": [
+      {
+       "text": "`public static void displayDate(int mm, int dd, int yy)`",
+       "feedback": "It has a different number of parameters, which is one of the two ways parameter lists can differ.",
+       "correct": true
+      },
+      {
+       "text": "`public static void displayDate(int month, int dayOfMonth)`",
+       "feedback": "Only the parameter names changed. The list is still two `int`s, so this duplicates the existing method."
+      },
+      {
+       "text": "`public static int displayDate(int mm, int dd)`",
+       "feedback": "A different return type doesn't create a new parameter list, so the two methods can't coexist."
+      },
+      {
+       "text": "`private static void displayDate(int mm, int dd)`",
+       "feedback": "Changing the access specifier doesn't change the parameter list either; this is still a duplicate."
+      }
+     ],
+     "hint": "Which option changes the parameter list itself: its count or its types?",
+     "explanation": "To overload a method, give the versions different parameter lists: a different number of parameters, or parameter types in a different order. Changing only names, the return type or the access specifier doesn't count.",
+     "aside": "Java has no default parameter values (C++, C# and Python do), so writing overloads such as `displayDate(mm)`, `displayDate(mm, dd)` and `displayDate(mm, dd, yy)` is the usual Java way to make arguments optional.",
+     "ref": "Ch. 3.6, conditions for overloading (p. 104) and You Do It: Overloading Methods (p. 106)"
+    },
+    {
+     "id": "overload-vs-names",
+     "concept": "Why overload instead of unique names",
+     "level": "evaluate",
+     "stem": "A teammate proposes `calculateInterestUsingDouble()` and `calculateInterestUsingInt()` instead of two overloaded `calculateInterest()` methods. What does the reading say?",
+     "options": [
+      {
+       "text": "Both work, but one name for identical tasks is easier for callers to remember.",
+       "feedback": "Unique names would compute correctly too. Overloading is preferred because callers remember one reasonable name and the compiler picks the right version.",
+       "correct": true
+      },
+      {
+       "text": "Unique names are better, because the compiler can't tell overloads apart.",
+       "feedback": "The compiler tells overloaded versions apart by their parameter lists, using the arguments in each call."
+      },
+      {
+       "text": "Only overloading works, because Java rejects names that differ only by a suffix.",
+       "feedback": "Any legal identifier is allowed, and these two names are different identifiers."
+      },
+      {
+       "text": "Unique names are better, because overloading forces every caller to pass an `int`.",
+       "feedback": "Each overloaded version declares its own parameter types; callers pass whichever kind of value they have."
+      }
+     ],
+     "hint": "Who has to remember the method names, and how many names would they need?",
+     "explanation": "Overloading lets one reasonable name stand for tasks that are functionally identical except for the argument types. It is a convenience for the programmers who call your methods.",
+     "ref": "Ch. 3.6, unique names versus overloading (p. 105)"
+    },
+    {
+     "id": "println-overloads",
+     "concept": "Overloading in the Java library",
+     "level": "understand",
+     "stem": "`System.out.println()` works with no arguments, a `String`, an `int` or a `double`. What makes this possible?",
+     "options": [
+      {
+       "text": "`PrintStream` has several `println()` methods with different parameter lists",
+       "feedback": "Each version is written for a specific set of arguments, and the compiler picks the one that matches each call.",
+       "correct": true
+      },
+      {
+       "text": "`println()` has an optional parameter that defaults to printing an empty line",
+       "feedback": "Java methods don't have optional or default parameters. A call with no arguments uses a separate version with an empty parameter list."
+      },
+      {
+       "text": "The compiler rewrites every call to `println(String)` before compiling it",
+       "feedback": "The compiler doesn't rewrite calls. It chooses among versions that already exist."
+      },
+      {
+       "text": "A single `println()` method accepts any type and checks it at run time",
+       "feedback": "There isn't one all-purpose method: there is a separate version for each parameter list."
+      }
+     ],
+     "hint": "How can one method name be called with different argument lists?",
+     "explanation": "Prewritten classes use overloading heavily. Calling `println()` with different arguments works only because multiple versions of the method have been written, each with its own parameter list.",
+     "aside": "`PrintStream` has ten `println()` versions: no arguments, `boolean`, `char`, `int`, `long`, `float`, `double`, `char[]`, `String` and `Object`. There is no `byte` or `short` version; those arguments are promoted to `int`.",
+     "ref": "Ch. 3.3, Note on println() (p. 95) and You Do It: Examining Prewritten Overloaded Methods (p. 107)"
+    }
+   ]
+  },
+  {
+   "id": "3.7",
+   "title": "Learning about Ambiguity",
+   "subtitle": "Ambiguous calls, differences that don't count, and final parameters",
+   "source": "Ch. 3, section 3.7 (pp. 107–108)",
+   "intro": "A class with two `calculateInterest()` versions compiled yesterday; today a single new call breaks the build. Five questions on when the compiler can't choose.",
+   "takeaways": [
+    "A call is ambiguous when no version matches exactly and promotion makes two or more versions equally good; the class then fails to compile.",
+    "Potentially ambiguous overloads are legal until an ambiguous call is written.",
+    "Versions that differ only in return type, parameter names or `final` are not overloads; they are duplicate, illegal methods."
+   ],
+   "questions": [
+    {
+     "id": "ambiguous-call",
+     "concept": "An ambiguous call",
+     "level": "apply",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Ambiguity\n{\n    public static void main(String[] args)\n    {\n        calculateInterest(300, 6);\n    }\n    public static void calculateInterest(int bal, double rate)\n    {\n        System.out.println(\"int, double\");\n    }\n    public static void calculateInterest(double bal, int rate)\n    {\n        System.out.println(\"double, int\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "ambiguous"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the call matches both versions equally well",
+       "feedback": "No version takes two `int`s. Promoting the first argument matches one version, promoting the second matches the other, and neither is better.",
+       "correct": true
+      },
+      {
+       "text": "It prints `int, double`; the version written first wins",
+       "feedback": "Order in the file never decides which version runs. The compiler compares the arguments to the parameter lists only."
+      },
+      {
+       "text": "It prints `double, int`; the version with fewer promotions wins",
+       "feedback": "Each version needs exactly one promotion here, so neither is a better fit."
+      },
+      {
+       "text": "It compiles, but crashes at run time with an ambiguity error",
+       "feedback": "Choosing a version is the compiler's job, so an ambiguous call is caught before the program can run."
+      }
+     ],
+     "hint": "Is there a version that takes two `int`s? If not, how many versions can the call reach through promotion?",
+     "explanation": "Overloaded methods are fine until a call matches more than one version and none is an exact match. Then the compiler can't decide, and the program doesn't compile.",
+     "aside": "The Java Language Specification resolves overloads by choosing the *most specific* applicable method. `(int, double)` and `(double, int)` are each more specific in one position, so neither wins, and javac reports `reference to calculateInterest is ambiguous`.",
+     "ref": "Ch. 3.7, ambiguous calculateInterest() calls (p. 107)"
+    },
+    {
+     "id": "potential-ambiguity",
+     "concept": "Ambiguity needs an ambiguous call",
+     "level": "analyze",
+     "stem": "Same two versions, different calls. What happens now?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class NoAmbiguity\n{\n    public static void main(String[] args)\n    {\n        calculateInterest(300, 0.06);\n        calculateInterest(300.0, 6);\n    }\n    public static void calculateInterest(int bal, double rate)\n    {\n        System.out.println(\"int, double\");\n    }\n    public static void calculateInterest(double bal, int rate)\n    {\n        System.out.println(\"double, int\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "int, double double, int"
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `int, double`, then `double, int`",
+       "feedback": "Each call has an exact match, so the compiler has no choice to make. The pair is only *potentially* ambiguous.",
+       "correct": true
+      },
+      {
+       "text": "Compile error: the two versions are ambiguous even without a bad call",
+       "feedback": "Two versions with different parameter lists are legal on their own. They cause trouble only when a call matches both."
+      },
+      {
+       "text": "Compile error: only the second call is ambiguous",
+       "feedback": "`(300.0, 6)` is a `double` then an `int`, an exact match for the second version."
+      },
+      {
+       "text": "It prints `int, double` twice",
+       "feedback": "The second call's arguments are a `double` then an `int`, which matches `(double bal, int rate)`."
+      }
+     ],
+     "hint": "Does each call have an exact match?",
+     "explanation": "An overloaded method with different parameter lists is not ambiguous by itself. It becomes a problem only when a specific call matches more than one version with no exact match.",
+     "ref": "Ch. 3.7, potentially ambiguous situations (p. 107)"
+    },
+    {
+     "id": "return-type-only",
+     "concept": "Return type is not part of overloading",
+     "level": "apply",
+     "stem": "What happens when this class is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Square\n{\n    public static int area(int side)\n    {\n        return side * side;\n    }\n    public static double area(int side)\n    {\n        return side * side * 1.0;\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "already defined"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `area(int)` is already defined in the class",
+       "feedback": "Both methods have the parameter list `(int side)`. A different return type doesn't make them overloads, so the second is a duplicate.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; the call's version is chosen by where the result is stored",
+       "feedback": "The compiler chooses a version from the arguments only; it never considers the return type."
+      },
+      {
+       "text": "It compiles; whichever version is written first is used",
+       "feedback": "Two methods with identical parameter lists are illegal, so the class doesn't compile at all."
+      },
+      {
+       "text": "It compiles, as long as no code ever calls `area()`",
+       "feedback": "Unlike a potentially ambiguous pair, duplicate methods are illegal by themselves, whether or not they are called."
+      }
+     ],
+     "hint": "Compare the two parameter lists, ignoring everything before the method names.",
+     "explanation": "Methods with the same name and identical parameter lists are illegal even if their return types differ, because the compiler picks a version only from the arguments in a call.",
+     "ref": "Ch. 3.7, different return types (p. 107) and Don't Do It (p. 108)"
+    },
+    {
+     "id": "final-param",
+     "concept": "final is ignored when comparing parameter lists",
+     "level": "understand",
+     "stem": "Can these two methods coexist in one class?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class FinalParam\n{\n    public static void show(int x)\n    {\n        System.out.println(x);\n    }\n    public static void show(final int x)\n    {\n        System.out.println(x + 1);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "already defined"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "No: `final` doesn't change the parameter list, so they are duplicates",
+       "feedback": "When the compiler compares parameter lists, `final` is ignored, leaving two identical `show(int)` methods.",
+       "correct": true
+      },
+      {
+       "text": "Yes: a call with a constant argument uses the `final` version",
+       "feedback": "`final` only stops the parameter from being changed inside the method; it plays no part in choosing a version."
+      },
+      {
+       "text": "Yes: `final int` and `int` count as different parameter types",
+       "feedback": "`final` isn't part of the type. Both parameters are plain `int`s as far as overloading is concerned."
+      },
+      {
+       "text": "Yes, but only until a call such as `show(5)` is written",
+       "feedback": "These aren't merely potentially ambiguous: with identical parameter lists, the class fails to compile even with no calls."
+      }
+     ],
+     "hint": "Once `final` is ignored, how do the two headers compare?",
+     "explanation": "If `final` appears in a parameter list, it is ignored when deciding whether two methods are distinct. A parameter that must not change is declared `final`, but that doesn't create a new version of the method.",
+     "ref": "Ch. 3.7, Note on final parameters (p. 108)"
+    },
+    {
+     "id": "which-header",
+     "concept": "Spotting duplicates and legal overloads",
+     "level": "analyze",
+     "stem": "A class already has `void myMethod(int age, String name)`. Which method can be added without the class failing to compile?",
+     "options": [
+      {
+       "text": "`void myMethod(String name, int age)`",
+       "feedback": "The types appear in a different order, `String` then `int`, so this is a legal overload, and no call can match both.",
+       "correct": true
+      },
+      {
+       "text": "`void myMethod(int x, String y)`",
+       "feedback": "Renaming the parameters doesn't change the list: it is still an `int` followed by a `String`."
+      },
+      {
+       "text": "`String myMethod(int zipCode, String address)`",
+       "feedback": "The return type and names differ, but the parameter list is still `(int, String)`, so this duplicates the existing method."
+      },
+      {
+       "text": "`void myMethod(final int age, String name)`",
+       "feedback": "`final` is ignored when comparing parameter lists, so this is the same `(int, String)` method."
+      }
+     ],
+     "hint": "Write each candidate as just its list of parameter types.",
+     "explanation": "Reduce each header to its name and its ordered list of parameter types. If that matches an existing method, the new method is illegal, whatever its return type, parameter names or modifiers.",
+     "ref": "Ch. 3.7, Two Truths & a Lie (p. 108)"
+    }
+   ]
+  }
+ ]
+}
