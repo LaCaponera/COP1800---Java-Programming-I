@@ -1,0 +1,1854 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 4: Using Classes and Objects",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 4 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "4.1",
+   "title": "Learning About Classes and Objects",
+   "subtitle": "Classes versus objects, is-a relationships, shared methods with different arguments, and class clients",
+   "source": "Ch. 4, section 4.1 (pp. 115–117)",
+   "intro": "A classmate defines a fish as \"a goldfish named Moby.\" Five questions on what a class is, what an object is, and how the two relate.",
+   "takeaways": [
+    "A class is the general description (the attributes and methods every member has); an object is one concrete instance of it. Read *is-a* from object to class: \"Moby is a `Fish`,\" never the reverse.",
+    "Every object of a class has the same methods, but each object keeps its own attribute values and receives its own arguments when you call those methods."
+   ],
+   "questions": [
+    {
+     "id": "is-a-direction",
+     "concept": "The is-a relationship",
+     "level": "understand",
+     "stem": "Your goldfish is named Moby, and a program has a `Fish` class. Which sentence describes their relationship correctly?",
+     "options": [
+      {
+       "text": "Moby is an instance of the `Fish` class.",
+       "feedback": "An object is one concrete example of a class, so the is-a statement runs from the specific object (Moby) to the general class (`Fish`).",
+       "correct": true
+      },
+      {
+       "text": "The `Fish` class is an instance of Moby.",
+       "feedback": "This reverses the relationship. The class is the general description; Moby is one tangible example of it."
+      },
+      {
+       "text": "Moby is a `Fish`, so `Fish` describes only goldfish.",
+       "feedback": "A class is more general than any one member. Your goldfish, a guppy and a shark are all instances of `Fish`, so one object can't define the class."
+      },
+      {
+       "text": "Moby and `Fish` are both classes, since both have attributes.",
+       "feedback": "Having attributes doesn't make something a class. Moby is a single object; `Fish` is the class that gives Moby its attributes."
+      }
+     ],
+     "hint": "Which of the two is general, and which is one tangible example?",
+     "explanation": "A class is abstract and general; an object is concrete and specific. An is-a statement is correct only in the order object → class: \"my oak desk is a `Desk`,\" not \"a `Desk` is my oak desk.\"",
+     "aside": "Classes and objects were first introduced in Simula 67, a language created in Norway by Ole-Johan Dahl and Kristen Nygaard to write simulations. Java's object model descends from that idea, by way of Smalltalk and C++.",
+     "ref": "Ch. 4.1, the is-a relationship (p. 116)"
+    },
+    {
+     "id": "lie-instantiation",
+     "concept": "Objects instantiate classes",
+     "level": "evaluate",
+     "stem": "A student writes: \"A class is an instantiation of many objects.\" What is wrong with the statement?",
+     "options": [
+      {
+       "text": "It reverses the idea: an object is one instantiation of a class.",
+       "feedback": "Instantiation produces objects *from* a class. The class comes first, as the description, and each object is one instance of it.",
+       "correct": true
+      },
+      {
+       "text": "Nothing: a class is assembled from the objects that are created from it.",
+       "feedback": "Objects don't build their class. Objects gain their attributes and methods *from* the class."
+      },
+      {
+       "text": "A class can be an instantiation of one object only, not many.",
+       "feedback": "This keeps the backward direction and only changes the count. A class isn't an instantiation of objects at all."
+      },
+      {
+       "text": "The word should be inheritance: a class inherits many objects.",
+       "feedback": "Inheritance relates one class to another (a goldfish is also a `Vertebrate`), not a class to its objects."
+      }
+     ],
+     "hint": "Which comes first, the class or the objects made from it?",
+     "explanation": "A class is the blueprint and each object is one instantiation of it. Many objects can be instantiated from one class, and each gets its attributes and methods from that class.",
+     "ref": "Ch. 4.1, Two Truths & a Lie (p. 117)"
+    },
+    {
+     "id": "same-method-own-args",
+     "concept": "Same methods, different arguments",
+     "level": "apply",
+     "stem": "`Party` has a `setDate()` method that stores a date and a `getDate()` method that returns it. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// Party has setDate() and getDate()\nParty mine = new Party();\nParty yours = new Party();\nmine.setDate(\"May 12\");\nyours.setDate(\"June 3\");\nSystem.out.println(mine.getDate() + \" / \" + yours.getDate());",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Party\n{\n    private String date;\n    public void setDate(String d)\n    {\n        date = d;\n    }\n    public String getDate()\n    {\n        return date;\n    }\n}\npublic class PartyDemo\n{\n    public static void main(String[] args)\n    {\n        Party mine = new Party();\n        Party yours = new Party();\n        mine.setDate(\"May 12\");\n        yours.setDate(\"June 3\");\n        System.out.println(mine.getDate() + \" / \" + yours.getDate());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`May 12 / June 3`",
+       "feedback": "Both objects use the same `setDate()` method, but each call sends its own argument, and each object keeps its own date.",
+       "correct": true
+      },
+      {
+       "text": "`June 3 / June 3`",
+       "feedback": "This treats the date as one value shared by every `Party`. Each object has its own date, so setting `yours` doesn't touch `mine`."
+      },
+      {
+       "text": "`May 12 / May 12`",
+       "feedback": "This assumes the first date set becomes the date for the whole class. Each object receives its own argument."
+      },
+      {
+       "text": "Compile error: two objects can't share one `setDate()` method",
+       "feedback": "Every object of a class is assumed to possess the same methods; that sharing is the point of a class."
+      }
+     ],
+     "hint": "When you send a message to `yours`, which object's date changes?",
+     "explanation": "All instances of a class have the same methods, but calling a method on one object affects that object. The arguments you send to one object's methods can differ from those you send to another's.",
+     "ref": "Ch. 4.1, sending messages to objects (p. 116)"
+    },
+    {
+     "id": "class-client",
+     "concept": "Class clients",
+     "level": "remember",
+     "stem": "A veterinary clinic's program creates objects from a `Dog` class that another programmer wrote. What does the reading call the clinic's program?",
+     "options": [
+      {
+       "text": "A class client of `Dog`",
+       "feedback": "An application or class that instantiates objects of another class is a class client, or class user.",
+       "correct": true
+      },
+      {
+       "text": "An instance of `Dog`",
+       "feedback": "Instances are the objects created from `Dog`. The clinic's program creates them; it isn't one of them."
+      },
+      {
+       "text": "An extension of the `Dog` class",
+       "feedback": "Extending a class means building a new class on top of it through inheritance. Creating `Dog` objects is just using the class."
+      },
+      {
+       "text": "A constructor of `Dog`",
+       "feedback": "A constructor is a special method inside a class that builds its objects. The clinic's program calls it but isn't one."
+      }
+     ],
+     "hint": "What do you call a program that *uses* a class someone else wrote?",
+     "explanation": "You don't have to write every class you use. A program that instantiates objects of a class written elsewhere is that class's client.",
+     "ref": "Ch. 4.1, class client or class user (p. 117)"
+    },
+    {
+     "id": "app-vs-model",
+     "concept": "Classes that run versus classes that model",
+     "level": "understand",
+     "stem": "`Employee` has fields and get/set methods but no `main()`. `Payroll` creates `Employee` objects inside its `main()`. Which statement is accurate?",
+     "options": [
+      {
+       "text": "`Payroll` is an application; `Employee` exists for other classes to use.",
+       "feedback": "A class with `public static void main()` is an application. `Employee` is written so that classes like `Payroll` can instantiate it.",
+       "correct": true
+      },
+      {
+       "text": "Both can be run as programs, because every Java class is an application.",
+       "feedback": "Only a class with a `main()` method is a starting point you can run. `Employee` compiles but can't be executed."
+      },
+      {
+       "text": "Neither can run until `Employee` also gets a `main()` method.",
+       "feedback": "`Employee` doesn't need its own `main()`; `Payroll`'s `main()` is the starting point and uses `Employee` objects."
+      },
+      {
+       "text": "`Employee` is the application, because `Payroll` depends on it.",
+       "feedback": "Depending on a class doesn't make that class the application. The class with `main()` is where execution starts."
+      }
+     ],
+     "hint": "Where does execution start in a Java application?",
+     "explanation": "Some classes are applications that run, some describe objects for other classes to instantiate, and some do both. Only a class with `main()` can be executed.",
+     "ref": "Ch. 4.1, Notes on classes with main() (p. 117)"
+    }
+   ]
+  },
+  {
+   "id": "4.2",
+   "title": "Creating a Class",
+   "subtitle": "Class headers, data fields, instance variables versus static fields, and private data with public methods",
+   "source": "Ch. 4, section 4.2 (pp. 117–119)",
+   "intro": "Two `Ticket` objects seem to overwrite each other's data, but only some of it. Five questions on what goes inside a class and who owns each field.",
+   "takeaways": [
+    "A class header is an optional access specifier, the keyword `class` and an identifier. Data fields are variables declared inside the class but outside every method.",
+    "Without `static`, every object gets its own copy of a field (an instance variable). With `static`, one copy exists for the whole class and every object shares it.",
+    "Fields are usually `private` and methods usually `public`, so other classes can reach the data only through the class's own methods (information hiding)."
+   ],
+   "questions": [
+    {
+     "id": "class-header",
+     "concept": "Parts of a class header",
+     "level": "remember",
+     "stem": "Which is a legal class header that follows Java conventions?",
+     "options": [
+      {
+       "text": "`public class Employee`",
+       "feedback": "An optional access specifier, then the keyword `class`, then an identifier that starts with an uppercase letter.",
+       "correct": true
+      },
+      {
+       "text": "`public Employee class`",
+       "feedback": "The keyword `class` must come before the identifier, not after it."
+      },
+      {
+       "text": "`public class Employee()`",
+       "feedback": "Parentheses belong to method and constructor headers. A class header ends with the identifier."
+      },
+      {
+       "text": "`public void class Employee`",
+       "feedback": "`void` is a method return type. A class has no return type."
+      }
+     ],
+     "hint": "What three parts make up a class header, and in what order?",
+     "explanation": "A class header has an optional access specifier, the keyword `class` and a legal identifier, conventionally starting with an uppercase letter. The body, between braces, holds the fields and methods.",
+     "ref": "Ch. 4.2, class header (p. 117)"
+    },
+    {
+     "id": "which-are-fields",
+     "concept": "What counts as a data field",
+     "level": "understand",
+     "stem": "Which variables in this class are data fields?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Spa\n{\n    private double price;\n    public void setPrice(double p)\n    {\n        double tax = 0.07;\n        price = p + p * tax;\n    }\n    private String name;\n}",
+      "verify": {
+       "expect": "compiles"
+      }
+     },
+     "options": [
+      {
+       "text": "`price` and `name`",
+       "feedback": "Both are declared inside the class but outside any method. Their position before or after the method doesn't matter.",
+       "correct": true
+      },
+      {
+       "text": "`price` only, because fields must come before the methods",
+       "feedback": "Fields are conventionally listed first, but Java lets you place fields and methods in any order. `name` is still a field."
+      },
+      {
+       "text": "`price`, `tax` and `name`",
+       "feedback": "`tax` is declared inside `setPrice()`, so it is a local variable of that method, not a field of the class."
+      },
+      {
+       "text": "`price`, `p`, `tax` and `name`",
+       "feedback": "`p` is a parameter and `tax` a local variable. Both exist only while `setPrice()` runs."
+      }
+     ],
+     "hint": "For each variable, is it declared inside a method or directly in the class body?",
+     "explanation": "Data fields are variables declared within a class but outside of any method. Variables declared inside a method, including its parameters, belong to that method only.",
+     "ref": "Ch. 4.2, data fields and Figure 4-1 (p. 118)"
+    },
+    {
+     "id": "static-vs-instance",
+     "concept": "Static fields versus instance variables",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Ticket\n{\n    private static int shared;\n    private int own;\n    public void set(int v)\n    {\n        shared = v;\n        own = v;\n    }\n    public void show()\n    {\n        System.out.println(shared + \" \" + own);\n    }\n}\n// in main()\nTicket a = new Ticket();\nTicket b = new Ticket();\na.set(5);\nb.set(9);\na.show();",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Ticket\n{\n    private static int shared;\n    private int own;\n    public void set(int v)\n    {\n        shared = v;\n        own = v;\n    }\n    public void show()\n    {\n        System.out.println(shared + \" \" + own);\n    }\n}\npublic class TicketDemo\n{\n    public static void main(String[] args)\n    {\n        Ticket a = new Ticket();\n        Ticket b = new Ticket();\n        a.set(5);\n        b.set(9);\n        a.show();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`9 5`",
+       "feedback": "`shared` is `static`, so one copy exists and `b.set(9)` overwrites it. `own` is an instance variable, so `a` keeps its own 5.",
+       "correct": true
+      },
+      {
+       "text": "`5 5`",
+       "feedback": "This treats both fields as belonging to `a` alone. A `static` field is one value for the whole class, so `b`'s call changed it."
+      },
+      {
+       "text": "`9 9`",
+       "feedback": "This treats both fields as shared. Without `static`, each object gets its own copy of `own`."
+      },
+      {
+       "text": "`5 9`",
+       "feedback": "This swaps the two fields' behavior. The `static` one is shared and changed by `b`; the nonstatic one belongs to `a`."
+      }
+     ],
+     "hint": "How many copies of `shared` exist after two `Ticket` objects are created? How many of `own`?",
+     "explanation": "Each object gets its own copy of every nonstatic field, which is why those are called instance variables. A `static` field occurs once per class, and all objects share its single value.",
+     "aside": "Java lets you reach a `static` field through an object, as in `a.shared`, which hides the fact that it's shared; `javac -Xlint` warns about it. C# refuses outright (error CS0176) and makes you write the class name instead.",
+     "ref": "Ch. 4.2, static versus nonstatic fields (p. 118)"
+    },
+    {
+     "id": "private-public",
+     "concept": "Information hiding",
+     "level": "understand",
+     "stem": "Why are a class's fields usually `private` while its methods are usually `public`?",
+     "options": [
+      {
+       "text": "Outside classes can reach the data only through methods that control it.",
+       "feedback": "Like a receptionist in front of a private office, the public methods decide what goes in and what comes out of the private data.",
+       "correct": true
+      },
+      {
+       "text": "Private fields use less memory, and public methods run faster.",
+       "feedback": "Access specifiers don't change memory use or speed. They control which classes may use a member."
+      },
+      {
+       "text": "Private fields can't be changed by anything, so the data stays fixed.",
+       "feedback": "That describes `final`. A class's own methods can still change its private fields."
+      },
+      {
+       "text": "Java requires it: a public field causes a compile error.",
+       "feedback": "A field may be public (`Math.PI` is). Private fields are a design choice that protects the data."
+      }
+     ],
+     "hint": "Who is allowed to touch a `private` field, and who controls what they can do with it?",
+     "explanation": "Private access means only the class's own methods can set, get or use a field. Pairing private data with public methods is information hiding: clients go through methods that can check and shape every request.",
+     "aside": "Python has no `private` keyword. A leading underscore (`_balance`) is only a convention meaning \"internal, please don't touch,\" and the language doesn't enforce it. In Java the compiler rejects outside access to a `private` field.",
+     "ref": "Ch. 4.2, private data and public methods (p. 118)"
+    },
+    {
+     "id": "public-static-final",
+     "concept": "Fields that are public, static and final",
+     "level": "apply",
+     "stem": "You want a sales-tax rate that any program can read without creating an object, and that can never change. Which declaration fits?",
+     "options": [
+      {
+       "text": "`public static final double RATE = 0.07;`",
+       "feedback": "`public` lets any class read it, `static` means no object is needed, and `final` stops it from changing, just like `Math.PI`.",
+       "correct": true
+      },
+      {
+       "text": "`public static double RATE = 0.07;`",
+       "feedback": "This can be read without an object, but without `final` any class could assign it a new value."
+      },
+      {
+       "text": "`public final double RATE = 0.07;`",
+       "feedback": "This can't change, but without `static` each object has its own copy, so you'd need an object to read it."
+      },
+      {
+       "text": "`private static final double RATE = 0.07;`",
+       "feedback": "This is shared and fixed, but `private` hides it from every other class."
+      }
+     ],
+     "hint": "Which keyword removes the need for an object, and which one prevents changes?",
+     "explanation": "Occasionally a field should be public. When a value must be usable without an object and must never change, declare it `static` and `final` as well, as Java does for `Math.PI`.",
+     "ref": "Ch. 4.2, public static final fields (p. 118)"
+    }
+   ]
+  },
+  {
+   "id": "4.3",
+   "title": "Creating Instance Methods in a Class",
+   "subtitle": "Getters and setters, instance methods versus class methods, and which calls another class may make",
+   "source": "Ch. 4, section 4.3 (pp. 119–124)",
+   "intro": "`Counter.addOne();` refuses to compile, and the error mentions a \"static context.\" Six questions on the methods that belong to objects.",
+   "takeaways": [
+    "Setters (mutator methods) change field values and usually return `void`; getters (accessor methods) return a field's value. The `set` and `get` prefixes are a convention, not a rule.",
+    "Methods that work with one object's fields are instance methods: no `static`, and they must be called with an object. `static` methods are class methods.",
+    "From another class, a `private` member can't be used at all, and a nonstatic method also needs an object. Inside its own class, a method uses the fields directly."
+   ],
+   "questions": [
+    {
+     "id": "getter-setter-headers",
+     "concept": "Accessor and mutator headers",
+     "level": "apply",
+     "stem": "A class has a `private double price;` field. Which pair of headers is right for its getter and setter?",
+     "options": [
+      {
+       "text": "`public double getPrice()` and `public void setPrice(double p)`",
+       "feedback": "The getter returns the field's type and needs no input; the setter receives the new value and returns nothing.",
+       "correct": true
+      },
+      {
+       "text": "`public void getPrice()` and `public double setPrice(double p)`",
+       "feedback": "The return types are swapped. A getter must return the value it retrieves, so it can't be `void`."
+      },
+      {
+       "text": "`public static double getPrice()` and `public static void setPrice(double p)`",
+       "feedback": "Each object has its own `price`, so its getter and setter must be instance methods, without `static`."
+      },
+      {
+       "text": "`public double getPrice(double p)` and `public void setPrice()`",
+       "feedback": "The parameters are swapped. The setter is the one that needs the new value as input."
+      }
+     ],
+     "hint": "Which method needs a value coming in, and which one sends a value back?",
+     "explanation": "A mutator (setter) takes the new value as a parameter and usually returns `void`. An accessor (getter) takes nothing and returns the field's type. Neither is `static` when each object has its own field.",
+     "aside": "Many Java tools rely on these names. By the JavaBeans convention, a `boolean` field's getter may also be named with `is`, as in `isActive()`, and frameworks discover an object's properties by looking for `get`, `set` and `is` methods.",
+     "ref": "Ch. 4.3, mutator and accessor methods and Figure 4-2 (p. 119)"
+    },
+    {
+     "id": "legal-calls",
+     "concept": "Calls another class may make",
+     "level": "analyze",
+     "stem": "Another class has `MyClass obj = new MyClass();`. In which list do **all three** calls compile?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class MyClass\n{\n    public static void pubStat() { }\n    private static void privStat() { }\n    public void pubInst() { }\n    private void privInst() { }\n}",
+      "verify": {
+       "expect": "compiles"
+      }
+     },
+     "options": [
+      {
+       "text": "`obj.pubInst();`, `obj.pubStat();`, `MyClass.pubStat();`",
+       "feedback": "All three methods are public. The nonstatic one is called with an object, and a static method can be called with an object or with the class name.",
+       "correct": true
+      },
+      {
+       "text": "`obj.pubInst();`, `MyClass.pubStat();`, `MyClass.pubInst();`",
+       "feedback": "`MyClass.pubInst()` uses the class name for a nonstatic method. Instance methods need an object."
+      },
+      {
+       "text": "`obj.pubInst();`, `obj.privInst();`, `MyClass.pubStat();`",
+       "feedback": "`obj.privInst()` fails: a private method can't be called from outside its class, even through an object."
+      },
+      {
+       "text": "`obj.pubStat();`, `MyClass.pubStat();`, `MyClass.privStat();`",
+       "feedback": "`MyClass.privStat()` fails. Being static removes the need for an object, but private still hides it."
+      }
+     ],
+     "hint": "Ask two questions of each call: is the method visible from outside, and does it need an object?",
+     "explanation": "From another class, only public members are usable. A static method can be called through the class name or an object; a nonstatic method requires an object.",
+     "ref": "Ch. 4.3, Figure 4-3 (p. 121)"
+    },
+    {
+     "id": "static-context",
+     "concept": "Instance methods need an object",
+     "level": "apply",
+     "stem": "What happens when you compile `CounterApp`?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Counter\n{\n    private int count;\n    public void addOne()\n    {\n        count = count + 1;\n    }\n}\npublic class CounterApp\n{\n    public static void main(String[] args)\n    {\n        Counter.addOne();\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "non-static method addOne()"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `addOne()` needs a `Counter` object",
+       "feedback": "Calling through the class name works only for `static` methods. An instance method must be called through an object, such as `c.addOne()`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the call sets `count` to 1",
+       "feedback": "No `Counter` object exists, so there is no `count` to change. The compiler rejects the call."
+      },
+      {
+       "text": "Compile error: `count` is used before it has a value",
+       "feedback": "Fields get automatic starting values (0 for an `int`), so `count + 1` is legal inside the class."
+      },
+      {
+       "text": "It compiles, but the call does nothing because no object exists",
+       "feedback": "Java doesn't let this reach run time. The compiler checks that nonstatic methods are called with an object."
+      }
+     ],
+     "hint": "Is `addOne()` declared `static`? What must sit in front of the dot to call it?",
+     "explanation": "You can't use a nonstatic method without an object. Methods that belong to objects are instance methods; only `static` (class) methods can be called through the class name.",
+     "ref": "Ch. 4.3, instance methods (p. 119)"
+    },
+    {
+     "id": "method-copies",
+     "concept": "One copy of each method",
+     "level": "understand",
+     "stem": "You create 100 `Employee` objects. How many copies of the nonstatic `getEmpNum()` method exist in memory?",
+     "options": [
+      {
+       "text": "One, shared by every `Employee` object",
+       "feedback": "Nonstatic fields are copied for each object, but methods are not. Each call is told which object is using it.",
+       "correct": true
+      },
+      {
+       "text": "100, one per object, since each returns its own number",
+       "feedback": "Each object has its own `empNum`, but storing 100 identical copies of the method's code would waste memory."
+      },
+      {
+       "text": "None until the method is called for the first time",
+       "feedback": "The method's code is part of the class. It isn't created or copied when it's called."
+      },
+      {
+       "text": "101: one for the class plus one for each object",
+       "feedback": "Only fields are allocated per object. The class's single copy of the method serves every object."
+      }
+     ],
+     "hint": "What differs from object to object: the method's code or the data it reads?",
+     "explanation": "Memory for nonstatic fields is allocated once per object, but only one copy of each method exists, static or not. A nonstatic method still behaves uniquely for each object because each call tells it which object to work with.",
+     "ref": "Ch. 4.3, Table 4-1 (p. 120)"
+    },
+    {
+     "id": "instance-vs-class-methods",
+     "concept": "Instance methods versus class methods",
+     "level": "evaluate",
+     "stem": "A teammate says: \"Methods without `static` are class methods, because they're written in the class.\" Which correction is accurate?",
+     "options": [
+      {
+       "text": "Nonstatic methods are instance methods; `static` ones are class methods.",
+       "feedback": "The terms follow ownership: methods used with object instantiations are instance methods, and classwide (`static`) methods are class methods.",
+       "correct": true
+      },
+      {
+       "text": "The teammate is right: any method written in a class is a class method.",
+       "feedback": "Every method is written in a class, so that can't be what the term means. It names the `static` ones."
+      },
+      {
+       "text": "Nonstatic methods are accessor methods, and static ones are mutators.",
+       "feedback": "Accessor and mutator describe whether a method gets or sets a value. Either kind can be static or not."
+      },
+      {
+       "text": "Only methods whose names start with `get` or `set` are instance methods.",
+       "feedback": "The prefixes are a naming convention. Any method without `static` is an instance method."
+      }
+     ],
+     "hint": "Does the method belong to individual objects, or to the class as a whole?",
+     "explanation": "`static` marks classwide methods (class methods). Methods without it belong to objects and are called instance methods; there is no `nonstatic` keyword, because nonstatic is the default.",
+     "ref": "Ch. 4.3, Two Truths & a Lie and Table 4-1 (pp. 120, 123)"
+    },
+    {
+     "id": "no-field-parameter",
+     "concept": "Methods reach fields directly",
+     "level": "evaluate",
+     "stem": "A student writes `public double getPrice(double price)` and explains: \"The getter needs the field passed in so it can return it.\" What's the flaw?",
+     "options": [
+      {
+       "text": "Every method in the class already sees `price`; no parameter is needed.",
+       "feedback": "When a class contains fields and methods, each method has direct access to every field, so the getter just returns it.",
+       "correct": true
+      },
+      {
+       "text": "There is none: a getter must receive the field it returns.",
+       "feedback": "A getter's caller usually doesn't know the value; that's why it calls the getter. Requiring it as input defeats the purpose."
+      },
+      {
+       "text": "The getter should be `static` so that it can see the field directly.",
+       "feedback": "It's the reverse: a `static` method can't use an instance field directly. A getter for each object's `price` must be nonstatic."
+      },
+      {
+       "text": "The return type should be `void`, because the value is passed in.",
+       "feedback": "A getter's whole job is to return the value, so it needs a return type that matches the field."
+      }
+     ],
+     "hint": "Inside a class, what can a method see without being handed anything?",
+     "explanation": "A class's methods don't need to receive the class's own fields as parameters or return values to its own fields. Every method in the class has direct access to every field.",
+     "ref": "Ch. 4.3, Figure 4-6 (pp. 122–123), and Don't Do It (p. 153)"
+    }
+   ]
+  },
+  {
+   "id": "4.4",
+   "title": "Declaring Objects and Using Their Methods",
+   "subtitle": "Declaring a reference, allocating with new, constructors, and data hiding with set and get",
+   "source": "Ch. 4, section 4.4 (pp. 124–128)",
+   "intro": "`clerk.empNum = 789;` looks harmless, yet it won't compile. Five questions on creating objects and reaching their data.",
+   "takeaways": [
+    "`Employee e;` only declares a reference. `new Employee()` allocates the object and calls its constructor, and the reference then holds the object's memory address.",
+    "Other classes reach private fields only through public methods. A setter can reject invalid values and a getter can control what is returned, which is why encapsulation beats a public field."
+   ],
+   "questions": [
+    {
+     "id": "declare-only",
+     "concept": "Declaring is not allocating",
+     "level": "understand",
+     "stem": "After the statement `Employee someEmployee;` runs, what exists?",
+     "options": [
+      {
+       "text": "Only a name known to refer to an `Employee`; no object yet",
+       "feedback": "For a class type, the declaration only announces the identifier. Memory for the object is set aside when `new` runs.",
+       "correct": true
+      },
+      {
+       "text": "An `Employee` object whose fields hold their default values",
+       "feedback": "Default values are given when an object is constructed. Without `new`, nothing has been constructed."
+      },
+      {
+       "text": "An `Employee` object built by the automatic constructor",
+       "feedback": "The constructor runs only as part of `new Employee()`, which this statement doesn't contain."
+      },
+      {
+       "text": "Memory for the `Employee` object, but not yet for its fields",
+       "feedback": "Memory is reserved automatically only for primitive variables. An object's memory, fields included, comes from `new`."
+      }
+     ],
+     "hint": "Which part of the two-step process creates the object?",
+     "explanation": "Creating an object takes two steps: declare a type and identifier, then allocate memory with `new`. Unlike `int someValue;`, declaring an object reserves no memory for the object itself.",
+     "aside": "Printing an object whose class doesn't define `toString()` shows something like `Employee@1b6d3586`. The part after `@` is a hash code in hexadecimal, not the actual memory address; Java never lets you see or do arithmetic on the addresses its references hold.",
+     "ref": "Ch. 4.4, the two-step process (pp. 124–125)"
+    },
+    {
+     "id": "private-access",
+     "concept": "Data hiding",
+     "level": "apply",
+     "stem": "`Employee` declares `private int empNum;` and public `setEmpNum()` and `getEmpNum()` methods. What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class DeclareTwoEmployees\n{\n    public static void main(String[] args)\n    {\n        Employee clerk = new Employee();\n        clerk.empNum = 789;\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "empNum has private access in Employee"
+       ],
+       "program": "\npublic class DeclareTwoEmployees\n{\n    public static void main(String[] args)\n    {\n        Employee clerk = new Employee();\n        clerk.empNum = 789;\n    }\n}\nclass Employee\n{\n    private int empNum;\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n    public void setEmpNum(int emp)\n    {\n        empNum = emp;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `empNum` has private access in `Employee`",
+       "feedback": "Only `Employee`'s own methods may use its private field. A client must call `clerk.setEmpNum(789)`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the clerk's number becomes 789",
+       "feedback": "That would work only if `empNum` were public. Private fields can't be assigned from another class."
+      },
+      {
+       "text": "It compiles, but the value is ignored at run time",
+       "feedback": "The compiler enforces private access, so the program never gets to run."
+      },
+      {
+       "text": "Compile error: `clerk` must call `getEmpNum()` before setting a value",
+       "feedback": "Methods can be called in any order. The problem is reaching the field directly."
+      }
+     ],
+     "hint": "Which classes are allowed to use a `private` field?",
+     "explanation": "A client can't access a private field directly; it must use the class's public methods. That is data hiding, an important principle of object-oriented programming.",
+     "ref": "Ch. 4.4, Understanding Data Hiding (p. 126)"
+    },
+    {
+     "id": "what-is-constructor",
+     "concept": "The constructor call",
+     "level": "remember",
+     "stem": "In `Employee someEmployee = new Employee();`, what is `Employee()` after `new`?",
+     "options": [
+      {
+       "text": "A constructor that creates and initializes the object",
+       "feedback": "It looks like a method call because it is one: a special method that constructs objects, always named after its class.",
+       "correct": true
+      },
+      {
+       "text": "A getter that returns the class's fields",
+       "feedback": "Getters are ordinary methods called on an existing object. Here no object exists until this call builds it."
+      },
+      {
+       "text": "The identifier that will name the new object",
+       "feedback": "The identifier is `someEmployee`. `Employee()` is what builds the object the identifier will refer to."
+      },
+      {
+       "text": "A cast that converts the newly allocated memory to an `Employee`",
+       "feedback": "A cast looks like `(Employee)`, with the type inside parentheses. This is a method call with empty parentheses."
+      }
+     ],
+     "hint": "What special method always has the same name as its class?",
+     "explanation": "A constructor is a special method that creates and initializes objects, and its name always matches its class. If you write none, Java supplies one.",
+     "ref": "Ch. 4.4, constructors (p. 125)"
+    },
+    {
+     "id": "why-setter",
+     "concept": "Why encapsulate",
+     "level": "evaluate",
+     "stem": "A student asks: \"If a public method can set `empNum` anyway, what does keeping the field private add?\" Which answer reflects the reading?",
+     "options": [
+      {
+       "text": "A setter can reject invalid IDs; a getter can control what's returned.",
+       "feedback": "The public methods are where rules live: \"at least five digits,\" \"starts with a 9,\" or adding a company code before returning an ID.",
+       "correct": true
+      },
+      {
+       "text": "There's no real difference; `private` is only a style convention in Java.",
+       "feedback": "The compiler enforces `private`, and the methods give the class a place to validate and control its data."
+      },
+      {
+       "text": "A public field can be read by other classes but not assigned.",
+       "feedback": "A public field can be both read and assigned by any class. That's why it offers no protection."
+      },
+      {
+       "text": "A public field would be shared by every `Employee` object.",
+       "feedback": "Sharing comes from `static`, not `public`. A public instance field is still one per object."
+      }
+     ],
+     "hint": "What could a set method do with the value before storing it?",
+     "explanation": "Private data with public methods lets a class enforce rules on what is stored and how it's retrieved. Even when there are no rules yet, the methods make adding them later easy.",
+     "aside": "C# builds this pattern into the language with properties: `public int EmpNum { get; set; }` reads like a field to clients but runs get and set code, so validation can be added later without changing any client.",
+     "ref": "Ch. 4.4, Understanding Data Hiding (p. 126)"
+    },
+    {
+     "id": "separate-objects",
+     "concept": "Each object holds its own values",
+     "level": "apply",
+     "stem": "`SpaService` has a `private double price;` field with `setPrice()` and `getPrice()`. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "SpaService first = new SpaService();\nSpaService second = new SpaService();\nfirst.setPrice(30.0);\nsecond.setPrice(first.getPrice() + 15);\nfirst.setPrice(20.0);\nSystem.out.println(first.getPrice() + \" \" + second.getPrice());",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass SpaService\n{\n    private double price;\n    public void setPrice(double servicePrice)\n    {\n        price = servicePrice;\n    }\n    public double getPrice()\n    {\n        return price;\n    }\n}\npublic class CreateSpaServices\n{\n    public static void main(String[] args)\n    {\n        SpaService first = new SpaService();\n        SpaService second = new SpaService();\n        first.setPrice(30.0);\n        second.setPrice(first.getPrice() + 15);\n        first.setPrice(20.0);\n        System.out.println(first.getPrice() + \" \" + second.getPrice());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`20.0 45.0`",
+       "feedback": "`second` received 30.0 + 15 = 45.0 when its setter ran. Changing `first` later doesn't reach back into `second`.",
+       "correct": true
+      },
+      {
+       "text": "`20.0 35.0`",
+       "feedback": "This assumes `second`'s price stays linked to `first`'s. The getter returned a number, and `second` stored a copy of that number."
+      },
+      {
+       "text": "`30.0 45.0`",
+       "feedback": "This forgets that `first.setPrice(20.0)` replaced the first value. A field holds its most recent value."
+      },
+      {
+       "text": "`20 45`",
+       "feedback": "The prices are `double` values, which Java displays with a decimal point."
+      }
+     ],
+     "hint": "What value did `second` store at the moment its `setPrice()` ran?",
+     "explanation": "Each object keeps its own field values, changed only through its own methods. Passing one object's getter result to another object's setter copies a value; it doesn't connect the objects.",
+     "ref": "Ch. 4.4, You Do It: Declaring and Using Objects (pp. 127–128)"
+    }
+   ]
+  },
+  {
+   "id": "4.5",
+   "title": "Understanding That Classes Are Data Types",
+   "subtitle": "Abstract and composite data types, and passing objects into and out of methods",
+   "source": "Ch. 4, section 4.5 (pp. 128–131)",
+   "intro": "`main()` declares an `Employee` but never uses `new`, and the program still works. Five questions on classes as types you invent.",
+   "takeaways": [
+    "A class you write is a programmer-defined, composite data type: it is built from smaller parts, and as an abstract data type its implementation is hidden behind public methods.",
+    "Objects can be declared, passed to methods, returned from methods and assigned, just like primitive values. What travels is the reference, so a method that receives an object can change that same object."
+   ],
+   "questions": [
+    {
+     "id": "adt-meaning",
+     "concept": "Abstract data types",
+     "level": "understand",
+     "stem": "Why can a class you create be called an abstract data type (ADT)?",
+     "options": [
+      {
+       "text": "Its implementation is hidden; clients use it through its public methods.",
+       "feedback": "That is the reading's definition: clients work with the type through its public interface without seeing how it's built.",
+       "correct": true
+      },
+      {
+       "text": "It can't be used to create objects until some other class extends it first.",
+       "feedback": "That describes Java's `abstract` keyword, a different idea. Your `Employee` class is an ADT and can be instantiated."
+      },
+      {
+       "text": "It has methods but no fields, so it contains no actual data.",
+       "feedback": "An ADT normally has fields; they're just hidden from clients behind its methods."
+      },
+      {
+       "text": "It is one of the built-in types that Java's creators defined.",
+       "feedback": "Built-in types like `int` are primitive. A class you create is a programmer-defined type."
+      }
+     ],
+     "hint": "What does a client of your class see, and what does it not see?",
+     "explanation": "An abstract data type is a type whose implementation is hidden and accessed through its public methods. A class you write is also a programmer-defined type, because it isn't built into the language.",
+     "ref": "Ch. 4.5, abstract data type (p. 128)"
+    },
+    {
+     "id": "composite-scalar",
+     "concept": "Composite versus scalar types",
+     "level": "understand",
+     "stem": "Why is `Employee` called a composite type while `int` is called a scalar type?",
+     "options": [
+      {
+       "text": "`Employee` is built from smaller parts, its fields; an `int` has no parts.",
+       "feedback": "A composite type is composed of smaller pieces. An `int` is a single whole-number value.",
+       "correct": true
+      },
+      {
+       "text": "An `int` takes four bytes of memory, while composite types always take eight.",
+       "feedback": "An `int` is four bytes, but an object's size depends on its fields. Size isn't what composite means."
+      },
+      {
+       "text": "An `int` can be passed to methods, but a composite type can't.",
+       "feedback": "Objects can be passed to and returned from methods just like primitives."
+      },
+      {
+       "text": "Java defines `int`, and anything a programmer defines is scalar.",
+       "feedback": "It's the other way around: the built-in primitives are the scalar types, and your classes are composite."
+      }
+     ],
+     "hint": "What is an `Employee` made of?",
+     "explanation": "Primitive types such as `int` and `double` are scalar: single values the language already defines. A class is composite: it is composed of fields and methods you choose.",
+     "ref": "Ch. 4.5, composite and scalar types (p. 128)"
+    },
+    {
+     "id": "return-object",
+     "concept": "Returning an object from a method",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static Employee makeEmployee(int id)\n{\n    Employee temp = new Employee();\n    temp.setEmpNum(id);\n    return temp;\n}\n// in main()\nEmployee worker = makeEmployee(77);\nSystem.out.println(\"ID \" + worker.getEmpNum());",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Employee\n{\n    private int empNum;\n    private double empSalary;\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n    public void setEmpNum(int emp)\n    {\n        empNum = emp;\n    }\n    public double getEmpSalary()\n    {\n        return empSalary;\n    }\n    public void setEmpSalary(double sal)\n    {\n        empSalary = sal;\n    }\n}\n\npublic class ReturnEmployee\n{\n    public static Employee makeEmployee(int id)\n    {\n        Employee temp = new Employee();\n        temp.setEmpNum(id);\n        return temp;\n    }\n    public static void main(String[] args)\n    {\n        Employee worker = makeEmployee(77);\n        System.out.println(\"ID \" + worker.getEmpNum());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`ID 77`",
+       "feedback": "`makeEmployee()` builds an object, sets its number and returns it; `main()` assigns the returned object to `worker`.",
+       "correct": true
+      },
+      {
+       "text": "`ID 0`",
+       "feedback": "This assumes `temp`'s object disappears when the method ends. The object survives because its reference is returned."
+      },
+      {
+       "text": "Compile error: a method can't return an object",
+       "feedback": "A method's return type can be a class. `Employee` is used here exactly like `int` would be."
+      },
+      {
+       "text": "Compile error: `worker` must be created with `new` first",
+       "feedback": "`worker` receives an object that was already created inside `makeEmployee()`."
+      }
+     ],
+     "hint": "Where is the `Employee` constructed, and how does it get to `main()`?",
+     "explanation": "A class is a data type, so a method can declare it as its return type. The object constructed inside the method is handed back, and the caller can assign it to a reference of the same type.",
+     "ref": "Ch. 4.5, Figure 4-10 (p. 129)"
+    },
+    {
+     "id": "pass-object",
+     "concept": "Passing an object to a method",
+     "level": "analyze",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void raise(Employee e)\n{\n    e.setEmpSalary(e.getEmpSalary() + 100);\n}\n// in main()\nEmployee emp = new Employee();\nemp.setEmpSalary(500);\nraise(emp);\nSystem.out.println(emp.getEmpSalary());",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Employee\n{\n    private int empNum;\n    private double empSalary;\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n    public void setEmpNum(int emp)\n    {\n        empNum = emp;\n    }\n    public double getEmpSalary()\n    {\n        return empSalary;\n    }\n    public void setEmpSalary(double sal)\n    {\n        empSalary = sal;\n    }\n}\n\npublic class RaiseDemo\n{\n    public static void raise(Employee e)\n    {\n        e.setEmpSalary(e.getEmpSalary() + 100);\n    }\n    public static void main(String[] args)\n    {\n        Employee emp = new Employee();\n        emp.setEmpSalary(500);\n        raise(emp);\n        System.out.println(emp.getEmpSalary());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`600.0`",
+       "feedback": "`raise()` receives a reference to the same object `emp` refers to, so its setter changes that object's salary.",
+       "correct": true
+      },
+      {
+       "text": "`500.0`",
+       "feedback": "This applies the primitive rule from Chapter 3, where a method gets a copy of the value. Here the copy is a reference to the same object."
+      },
+      {
+       "text": "`600`",
+       "feedback": "The salary is a `double`, so Java prints it with a decimal point."
+      },
+      {
+       "text": "Compile error: `raise()` must return the changed `Employee`",
+       "feedback": "Returning the object is allowed but not needed: the method already changed the object `emp` refers to."
+      }
+     ],
+     "hint": "When `emp` is passed, does `raise()` get a new `Employee` or a way to reach the same one?",
+     "explanation": "An object name is a reference that holds a memory address. Passing an object passes that reference, so a method can use the object's methods to change the very object the caller has.",
+     "aside": "Java always passes arguments by value; for an object, the value copied is the reference. So `raise()` can change the object, but writing `e = new Employee();` inside it would only redirect its own copy and leave `emp` untouched.",
+     "ref": "Ch. 4.5, passing objects to methods (pp. 129–131)"
+    },
+    {
+     "id": "declared-not-constructed",
+     "concept": "Where the object is constructed",
+     "level": "understand",
+     "stem": "In Figure 4-10, `main()` declares `Employee myEmployee;` and never calls `new`, yet `displayEmployee(myEmployee)` works. Why?",
+     "options": [
+      {
+       "text": "`getEmployeeData()` constructs one and returns it to `myEmployee`.",
+       "feedback": "`myEmployee = getEmployeeData();` assigns the returned object, so the reference points to a real `Employee`.",
+       "correct": true
+      },
+      {
+       "text": "Java automatically constructs an object for every reference you declare.",
+       "feedback": "Declaring a reference never creates an object; `new` must run somewhere."
+      },
+      {
+       "text": "`displayEmployee()` constructs it when the object is passed in.",
+       "feedback": "A method that receives an object uses it. Nothing in `displayEmployee()` calls `new`."
+      },
+      {
+       "text": "It works only because the fields default to 0 and `null`.",
+       "feedback": "Default values belong to an object that exists. Here the object exists because a method built and returned it."
+      }
+     ],
+     "hint": "Which method in the program contains `new Employee()`?",
+     "explanation": "An object doesn't have to be constructed in the method that declares its reference. It can be constructed elsewhere and returned; constructing it in `main()` too would only be overwritten.",
+     "ref": "Ch. 4.5, note after Figure 4-11 (p. 130)"
+    }
+   ]
+  },
+  {
+   "id": "4.6",
+   "title": "Creating and Using Constructors",
+   "subtitle": "Automatic default values, writing constructors, parameters, and overloading",
+   "source": "Ch. 4, section 4.6 (pp. 131–134)",
+   "intro": "A class sets its price to 50 in its \"constructor,\" yet every new object reports 0.0. Five questions on how objects get their first values.",
+   "takeaways": [
+    "A constructor has exactly the class's name and no return type, not even `void`. Any constructor with no parameters is a default constructor, whether you write it or Java supplies it.",
+    "Java supplies a default constructor only when you write none. It leaves numeric fields 0, `char` fields `'\\u0000'`, `boolean` fields `false` and references `null`.",
+    "Once you write any constructor, `new X()` with no arguments works only if you also write a parameterless one. Overloaded constructors must differ in their parameter lists."
+   ],
+   "questions": [
+    {
+     "id": "default-values",
+     "concept": "Automatic default values",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Gadget\n{\n    private int count;\n    private boolean on;\n    private String label;\n    public void show()\n    {\n        System.out.println(count + \" \" + on + \" \" + label);\n    }\n}\n// in main()\nGadget g = new Gadget();\ng.show();",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Gadget\n{\n    private int count;\n    private boolean on;\n    private String label;\n    public void show()\n    {\n        System.out.println(count + \" \" + on + \" \" + label);\n    }\n}\npublic class GadgetDemo\n{\n    public static void main(String[] args)\n    {\n        Gadget g = new Gadget();\n        g.show();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0 false null`",
+       "feedback": "No constructor was written, so the automatic one sets the `int` to 0, the `boolean` to `false` and the `String` reference to `null`.",
+       "correct": true
+      },
+      {
+       "text": "`0 false`",
+       "feedback": "This assumes an unset `String` is empty. A reference field that refers to no object holds `null`, and printing it shows the word `null`."
+      },
+      {
+       "text": "`0 true null`",
+       "feedback": "A `boolean` field starts as `false`, not `true`."
+      },
+      {
+       "text": "Compile error: the fields are used before they are assigned",
+       "feedback": "That rule applies to local variables. Fields always receive automatic starting values."
+      }
+     ],
+     "hint": "What starting value does Java give a numeric field, a `boolean` field and a reference field?",
+     "explanation": "When you write no constructor, Java supplies one that sets numeric fields to 0, character fields to `'\\u0000'`, boolean fields to `false` and object references to `null`.",
+     "ref": "Ch. 4.6, default constructor values (p. 131)"
+    },
+    {
+     "id": "lost-default",
+     "concept": "Losing the automatic constructor",
+     "level": "apply",
+     "stem": "What happens when this code is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Employee\n{\n    private int empNum;\n    Employee(int num)\n    {\n        empNum = num;\n    }\n}\n// in main()\nEmployee temp = new Employee();",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "constructor Employee in class Employee cannot be applied to given types"
+       ],
+       "program": "\nclass Employee\n{\n    private int empNum;\n    Employee(int num)\n    {\n        empNum = num;\n    }\n}\npublic class TestEmployee\n{\n    public static void main(String[] args)\n    {\n        Employee temp = new Employee();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the only constructor requires an `int` argument",
+       "feedback": "Once you write a constructor, Java stops supplying the automatic one, so `new Employee()` matches nothing.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and `empNum` is 0 from the automatic constructor",
+       "feedback": "The automatic constructor exists only in classes with no constructor at all. This class has one."
+      },
+      {
+       "text": "It compiles, and Java passes 0 for the missing argument",
+       "feedback": "Java never fills in missing arguments. A call must match a constructor's parameter list."
+      },
+      {
+       "text": "It compiles, but fails when `temp` is first used",
+       "feedback": "The mismatch is caught by the compiler, so the program never runs."
+      }
+     ],
+     "hint": "Which constructors does `Employee` have, and which one does `new Employee()` need?",
+     "explanation": "After you write a constructor, you no longer receive the automatic default constructor. If the class's only constructor requires an argument, every object must be created with one; add a parameterless constructor if you need both.",
+     "ref": "Ch. 4.6, Creating Constructors with Parameters (p. 132)"
+    },
+    {
+     "id": "void-constructor",
+     "concept": "No return type, not even void",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Spa\n{\n    private double price;\n    public void Spa()\n    {\n        price = 50.0;\n    }\n    public double getPrice()\n    {\n        return price;\n    }\n}\n// in main()\nSpa s = new Spa();\nSystem.out.println(s.getPrice());",
+      "verify": {
+       "expect": "output",
+       "program": "\npublic class Spa\n{\n    private double price;\n    public void Spa()\n    {\n        price = 50.0;\n    }\n    public double getPrice()\n    {\n        return price;\n    }\n}\nclass SpaApp\n{\n    public static void main(String[] args)\n    {\n        Spa s = new Spa();\n        System.out.println(s.getPrice());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0.0`",
+       "feedback": "`public void Spa()` has a return type, so it's an ordinary method that nobody calls. Java supplies the automatic constructor, which leaves `price` at 0.0.",
+       "correct": true
+      },
+      {
+       "text": "`50.0`",
+       "feedback": "This assumes `Spa()` is the constructor. A constructor can't have a return type; adding `void` turned it into a method."
+      },
+      {
+       "text": "Compile error: a constructor can't have a return type",
+       "feedback": "Java doesn't see a constructor here at all. A method that happens to share the class's name is legal."
+      },
+      {
+       "text": "Compile error: a method can't have the same name as its class",
+       "feedback": "Java allows it, which is exactly why this mistake compiles silently."
+      }
+     ],
+     "hint": "Is `public void Spa()` a constructor or a method?",
+     "explanation": "A constructor must have the same name as its class and cannot have a return type, not even `void`. With a return type, the compiler treats it as an ordinary method, and the class gets the automatic constructor instead.",
+     "aside": "C# refuses to compile this: a member can't have the same name as its enclosing type (error CS0542). Java permits it, so in Java the stray `void` turns a constructor into a method without any error.",
+     "ref": "Ch. 4.6, rules for constructors (p. 131)"
+    },
+    {
+     "id": "overloaded-constructors",
+     "concept": "Overloaded constructors",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Employee\n{\n    private int empNum;\n    Employee(int num)\n    {\n        empNum = num;\n    }\n    Employee()\n    {\n        empNum = 999;\n    }\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n}\n// in main()\nEmployee a = new Employee();\nEmployee b = new Employee(7677);\nSystem.out.println(a.getEmpNum() + \" \" + b.getEmpNum());",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Employee\n{\n    private int empNum;\n    Employee(int num)\n    {\n        empNum = num;\n    }\n    Employee()\n    {\n        empNum = 999;\n    }\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n}\npublic class TwoConstructors\n{\n    public static void main(String[] args)\n    {\n        Employee a = new Employee();\n        Employee b = new Employee(7677);\n        System.out.println(a.getEmpNum() + \" \" + b.getEmpNum());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`999 7677`",
+       "feedback": "`new Employee()` matches the parameterless constructor, which assigns 999; `new Employee(7677)` matches the one that takes an `int`.",
+       "correct": true
+      },
+      {
+       "text": "`0 7677`",
+       "feedback": "This assumes the no-argument call gets Java's automatic values. Here you wrote a parameterless constructor, and it assigns 999."
+      },
+      {
+       "text": "`999 999`",
+       "feedback": "This assumes the constructor written last always runs. Java picks the constructor whose parameter list matches the arguments."
+      },
+      {
+       "text": "Compile error: two constructors can't share a name",
+       "feedback": "Constructors can be overloaded like methods, as long as their parameter lists differ."
+      }
+     ],
+     "hint": "For each `new`, which constructor's parameter list matches the arguments?",
+     "explanation": "Overloaded constructors let you create objects with different initializing arguments, or none. Java chooses the version whose parameter list matches the call.",
+     "ref": "Ch. 4.6, Figure 4-15 (p. 133)"
+    },
+    {
+     "id": "default-definition",
+     "concept": "What \"default constructor\" means",
+     "level": "evaluate",
+     "stem": "You write `Employee()`, which takes no arguments and sets `empNum` to 999. A classmate says it isn't a default constructor, \"because default constructors are the ones Java creates.\" Which reply is accurate?",
+     "options": [
+      {
+       "text": "Any constructor that takes no arguments is a default constructor.",
+       "feedback": "The term describes the parameter list. Java's automatic constructor is one default constructor; a parameterless one you write is another.",
+       "correct": true
+      },
+      {
+       "text": "The classmate is right: only Java's automatic version counts.",
+       "feedback": "This is the misunderstanding the reading warns about. A constructor you write with no parameters is also a default constructor."
+      },
+      {
+       "text": "A default constructor is any one that sets fields to default values.",
+       "feedback": "Your `Employee()` assigns 999, not a default value, and it's still a default constructor because it takes no arguments."
+      },
+      {
+       "text": "The default constructor is whichever constructor is written first.",
+       "feedback": "Order in the class doesn't matter. The term depends only on whether the constructor has parameters."
+      }
+     ],
+     "hint": "What do Java's automatic constructor and your `Employee()` have in common?",
+     "explanation": "A default constructor is one that requires no arguments. The one Java creates when you write none is a default constructor, and so is a parameterless constructor you write yourself.",
+     "ref": "Ch. 4.6, Two Truths & a Lie (p. 133), and Don't Do It (p. 153)"
+    }
+   ]
+  },
+  {
+   "id": "4.7",
+   "title": "Learning About the this Reference",
+   "subtitle": "The implicit this reference, shadowed fields, and calling one constructor from another",
+   "source": "Ch. 4, section 4.7 (pp. 134–139)",
+   "intro": "A `Student` built with ID 111 and a 3.5 GPA reports `#0` and `0.0`. Five questions on the reference every instance method quietly receives.",
+   "takeaways": [
+    "Only one copy of each method exists. Every call to a nonstatic method passes the calling object's address as the implicit `this` reference, which is how the method reaches the right object's fields.",
+    "A parameter or local variable with the same name as a field shadows the field inside that method; write `this.field` to reach the field.",
+    "`this(...)` calls another constructor of the same class to avoid repeated code. The reading's rule: only inside a constructor, and only as its first statement."
+   ],
+   "questions": [
+    {
+     "id": "shadowing",
+     "concept": "Shadowed fields",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Student\n{\n    private int stuNum;\n    private double gpa;\n    public Student(int stuNum, double gpa)\n    {\n        stuNum = stuNum;\n        gpa = gpa;\n    }\n    public void showStudent()\n    {\n        System.out.println(\"Student #\" + stuNum + \" gpa is \" + gpa);\n    }\n}\n// in main()\nStudent s = new Student(111, 3.5);\ns.showStudent();",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Student\n{\n    private int stuNum;\n    private double gpa;\n    public Student(int stuNum, double gpa)\n    {\n        stuNum = stuNum;\n        gpa = gpa;\n    }\n    public void showStudent()\n    {\n        System.out.println(\"Student #\" + stuNum + \" gpa is \" + gpa);\n    }\n}\npublic class TestStudent\n{\n    public static void main(String[] args)\n    {\n        Student s = new Student(111, 3.5);\n        s.showStudent();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Student #0 gpa is 0.0`",
+       "feedback": "Inside the constructor, `stuNum` and `gpa` mean the parameters, so each line assigns a parameter to itself. The fields keep their default values.",
+       "correct": true
+      },
+      {
+       "text": "`Student #111 gpa is 3.5`",
+       "feedback": "This assumes the left side of `stuNum = stuNum` means the field. The closer, local name hides the field on both sides."
+      },
+      {
+       "text": "Compile error: a variable can't be assigned to itself",
+       "feedback": "Self-assignment is legal Java. It compiles and simply accomplishes nothing."
+      },
+      {
+       "text": "Compile error: parameters can't share a field's name",
+       "feedback": "Java allows it. The parameter just shadows the field inside the constructor."
+      }
+     ],
+     "hint": "Inside the constructor, which `stuNum` is closer in scope: the field or the parameter?",
+     "explanation": "When a local variable or parameter has the same name as a field, it shadows the field within that method. Unless you write `this.`, every use of the name refers to the local version.",
+     "ref": "Ch. 4.7, Figures 4-19 to 4-21 (pp. 135–136)"
+    },
+    {
+     "id": "this-fix",
+     "concept": "Fixing shadowing with this",
+     "level": "apply",
+     "stem": "Keeping the parameter names `stuNum` and `gpa`, which body should replace the two lines in this constructor so the fields get the values?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public Student(int stuNum, double gpa)\n{\n    stuNum = stuNum;\n    gpa = gpa;\n}",
+      "verify": {
+       "expect": "compiles",
+       "program": "\nclass Student\n{\n    private int stuNum;\n    private double gpa;\n    public Student(int stuNum, double gpa)\n    {\n        stuNum = stuNum;\n        gpa = gpa;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`this.stuNum = stuNum; this.gpa = gpa;`",
+       "feedback": "`this.stuNum` names the field of the object being built; the plain `stuNum` is the parameter holding 111.",
+       "correct": true
+      },
+      {
+       "text": "`stuNum = this.stuNum; gpa = this.gpa;`",
+       "feedback": "This copies the fields (still 0) into the parameters, which is the reverse of what's needed."
+      },
+      {
+       "text": "`this(stuNum, gpa);`",
+       "feedback": "`this(...)` calls a constructor, here the very one it's in, so the compiler rejects it. It doesn't name the fields."
+      },
+      {
+       "text": "`Student.stuNum = stuNum; Student.gpa = gpa;`",
+       "feedback": "The class name reaches `static` fields. These fields are per-object, so they need `this`."
+      }
+     ],
+     "hint": "Which prefix means \"the field of the object being constructed\"?",
+     "explanation": "When parameters share the fields' names, `this.field` identifies the class's field, while the plain name still means the local parameter.",
+     "ref": "Ch. 4.7, Figure 4-22 (p. 136)"
+    },
+    {
+     "id": "implicit-this",
+     "concept": "The implicit this reference",
+     "level": "understand",
+     "stem": "Only one copy of `getEmpNum()` exists. When you call `aWorker.getEmpNum()`, how does it know to return `aWorker`'s number?",
+     "options": [
+      {
+       "text": "The call passes `aWorker`'s address to the method as `this`.",
+       "feedback": "Every nonstatic method automatically receives a reference to the object used to call it, and `empNum` means `this.empNum`.",
+       "correct": true
+      },
+      {
+       "text": "Each object stores its own copy of `getEmpNum()`.",
+       "feedback": "Copying identical code for every object would waste memory. One copy serves all objects."
+      },
+      {
+       "text": "It returns the `empNum` of the object created most recently.",
+       "feedback": "The method doesn't look at creation order. It works on whichever object it was called with."
+      },
+      {
+       "text": "It returns a shared `empNum` that all objects have in common.",
+       "feedback": "That would be true of a `static` field. `empNum` is an instance variable, one per object."
+      }
+     ],
+     "hint": "What does every nonstatic method receive without you writing it?",
+     "explanation": "Each nonstatic method implicitly receives the memory address of the object that called it, the `this` reference. That's how one copy of the method can work with many objects' fields.",
+     "ref": "Ch. 4.7, the this reference and Figure 4-18 (p. 135)"
+    },
+    {
+     "id": "this-chaining",
+     "concept": "Calling another constructor",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Student\n{\n    private int stuNum;\n    private double gpa;\n    Student(int num, double avg)\n    {\n        stuNum = num;\n        gpa = avg;\n    }\n    Student(double avg)\n    {\n        this(999, avg);\n    }\n    public void show()\n    {\n        System.out.println(stuNum + \" \" + gpa);\n    }\n}\n\n// in main()\nStudent s = new Student(3.2);\ns.show();",
+      "verify": {
+       "expect": "output",
+       "program": "\nclass Student\n{\n    private int stuNum;\n    private double gpa;\n    Student(int num, double avg)\n    {\n        stuNum = num;\n        gpa = avg;\n    }\n    Student(double avg)\n    {\n        this(999, avg);\n    }\n    public void show()\n    {\n        System.out.println(stuNum + \" \" + gpa);\n    }\n}\n\npublic class ChainDemo\n{\n    public static void main(String[] args)\n    {\n        Student s = new Student(3.2);\n        s.show();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`999 3.2`",
+       "feedback": "`new Student(3.2)` runs the one-parameter constructor, whose `this(999, avg)` hands both values to the two-parameter version.",
+       "correct": true
+      },
+      {
+       "text": "`0 3.2`",
+       "feedback": "This assumes `this(...)` passes along only the argument it received. It calls the master constructor with 999 as well."
+      },
+      {
+       "text": "`999 0.0`",
+       "feedback": "This mixes in the parameterless defaults. The 3.2 you passed is forwarded as `avg`."
+      },
+      {
+       "text": "Compile error: `this` can't be used before the object exists",
+       "feedback": "Inside a constructor, `this(...)` is allowed: it calls another constructor of the same class."
+      }
+     ],
+     "hint": "Which constructor does `this(999, avg)` call, and with what values?",
+     "explanation": "Writing each constructor to call one master constructor with `this(...)` saves code and reduces errors. Any later rule, such as a GPA limit, is written once in the master version.",
+     "ref": "Ch. 4.7, Figure 4-25 (p. 138)"
+    },
+    {
+     "id": "this-call-rules",
+     "concept": "Where this() may appear",
+     "level": "analyze",
+     "stem": "Where does the reading allow the call `this(999, 0.0);`?",
+     "options": [
+      {
+       "text": "As the first statement in another constructor of the same class",
+       "feedback": "`this()` may be called only from a constructor, and the reading requires it to be the constructor's first statement.",
+       "correct": true
+      },
+      {
+       "text": "Anywhere in a constructor, as long as no field is used before it",
+       "feedback": "The reading's rule is stricter: if a constructor calls `this()`, that call comes first."
+      },
+      {
+       "text": "In any instance method, to reset the object to its defaults",
+       "feedback": "`this.field` works in any instance method, but `this()` can be called only from constructors."
+      },
+      {
+       "text": "In `main()`, to create a `Student` without writing `new`",
+       "feedback": "`main()` is `static` and has no `this`. Objects are still created with `new`."
+      }
+     ],
+     "hint": "Can an ordinary method call a constructor with `this()`?",
+     "explanation": "You can use `this` with field names in any instance method, but you can call `this()` only from constructors, as the first statement.",
+     "aside": "Java 25 relaxed this rule (JEP 513, flexible constructor bodies): statements that don't touch the object under construction, such as checking an argument, may now come before `this(...)` or `super(...)`. On earlier versions, including the one your textbook describes, the call must be first.",
+     "ref": "Ch. 4.7, rules for this() (p. 138)"
+    }
+   ]
+  },
+  {
+   "id": "4.8",
+   "title": "Using static Fields",
+   "subtitle": "Class variables shared by every object, static methods without this, and static versus final",
+   "source": "Ch. 4, section 4.8 (pp. 139–143)",
+   "intro": "A player created first suddenly reports a different team size. Five questions on the data that belongs to the class instead of the object.",
+   "takeaways": [
+    "A `static` field (class variable) exists once per class, and every object reads and changes that one copy. Nonstatic fields exist once per object.",
+    "`static` methods have no `this`, so they can't use instance variables directly. Instance methods can use both static and instance fields.",
+    "`final` means unchangeable once assigned. A `static final` field must get its value where it's declared; a nonstatic `final` field can be set in the constructor, giving each object its own fixed value."
+   ],
+   "questions": [
+    {
+     "id": "static-counter",
+     "concept": "A shared class variable",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Player\n{\n    private static int count = 0;\n    private int number;\n    public Player(int id)\n    {\n        number = id;\n        count = count + 1;\n    }\n    public void show()\n    {\n        System.out.println(\"#\" + number + \" of \" + count);\n    }\n}\n\n// in main()\nPlayer a = new Player(12);\na.show();\nPlayer b = new Player(31);\nb.show();\na.show();",
+      "verify": {
+       "expect": "output",
+       "output": "#12 of 1 #31 of 2 #12 of 2",
+       "program": "\nclass Player\n{\n    private static int count = 0;\n    private int number;\n    public Player(int id)\n    {\n        number = id;\n        count = count + 1;\n    }\n    public void show()\n    {\n        System.out.println(\"#\" + number + \" of \" + count);\n    }\n}\n\npublic class TestPlayer\n{\n    public static void main(String[] args)\n    {\n        Player a = new Player(12);\n        a.show();\n        Player b = new Player(31);\n        b.show();\n        a.show();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`#12 of 1`, then `#31 of 2`, then `#12 of 2`",
+       "feedback": "`count` is one shared field. When `b` is constructed it becomes 2, and `a` reads that same field the next time it displays.",
+       "correct": true
+      },
+      {
+       "text": "`#12 of 1`, then `#31 of 2`, then `#12 of 1`",
+       "feedback": "This treats `a`'s count as a snapshot taken when `a` was created. All objects read the single current value."
+      },
+      {
+       "text": "`#12 of 1`, then `#31 of 1`, then `#12 of 1`",
+       "feedback": "This gives each object its own count. With `static`, there's only one `count` for the class."
+      },
+      {
+       "text": "`#12 of 2`, then `#31 of 2`, then `#12 of 2`",
+       "feedback": "When `a.show()` first runs, only one `Player` has been constructed, so `count` is still 1."
+      }
+     ],
+     "hint": "How many `count` fields exist, and what is it when each `show()` runs?",
+     "explanation": "A static field is shared by every instantiation of a class: each object refers to the single memory location. Incrementing it in the constructor makes it a running count of objects created.",
+     "ref": "Ch. 4.8, Figures 4-26 to 4-28 (pp. 139–140)"
+    },
+    {
+     "id": "static-method-instance-field",
+     "concept": "Static methods have no this",
+     "level": "apply",
+     "stem": "What happens when you compile this class?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Player\n{\n    private int number;\n    public static void showNumber()\n    {\n        System.out.println(number);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "non-static variable number cannot be referenced from a static context"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: a `static` method can't use the field `number`",
+       "feedback": "A static method isn't called with an object, so it has no `this` and no particular player's `number` to use.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the method prints the default value 0",
+       "feedback": "0 would be some object's value, but a static method has no object to read it from."
+      },
+      {
+       "text": "It compiles and prints the most recent `Player`'s number",
+       "feedback": "Java doesn't track a \"most recent\" object for static methods. The compiler rejects the access."
+      },
+      {
+       "text": "Compile error: `number` is private, so the method can't see it",
+       "feedback": "`showNumber()` is inside `Player`, so it may use private fields. The problem is `static`."
+      }
+     ],
+     "hint": "When `Player.showNumber()` runs, which object's `number` would it use?",
+     "explanation": "Static methods have no `this` reference because no object is associated with them; that's why they're called class methods. They can't access instance variables, but instance methods can use both kinds of field.",
+     "aside": "That's why `main()` is `static`: the JVM calls it before any object exists. To use instance methods from `main()`, you first create an object and call them through it.",
+     "ref": "Ch. 4.8, static methods (pp. 139–140)"
+    },
+    {
+     "id": "static-or-final",
+     "concept": "Choosing static and final",
+     "level": "analyze",
+     "stem": "Each dog's number of events is set once by its constructor, never changes, and can differ from dog to dog. Which declaration fits?",
+     "options": [
+      {
+       "text": "`private final int NUM_EVENTS;`",
+       "feedback": "`final` keeps the value from changing after construction; leaving out `static` gives each dog its own value.",
+       "correct": true
+      },
+      {
+       "text": "`private static final int NUM_EVENTS = 3;`",
+       "feedback": "`static final` is one fixed value shared by every dog. It can't differ from dog to dog."
+      },
+      {
+       "text": "`private static int numEvents;`",
+       "feedback": "`static` makes it one value shared by all dogs, and without `final` it can still change."
+      },
+      {
+       "text": "`private int numEvents;`",
+       "feedback": "Each dog gets its own value, but without `final` any method could change it later."
+      }
+     ],
+     "hint": "Should the value be one per class or one per object? Should it ever change?",
+     "explanation": "Static and final answer different questions. Shared but changeable: `static`. Per object but unchangeable: `final`. One shared, unchangeable value: `static final`.",
+     "ref": "Ch. 4.8, static versus final summary (p. 141)"
+    },
+    {
+     "id": "static-final-init",
+     "concept": "Initializing a static final field",
+     "level": "apply",
+     "stem": "What happens when you compile this class?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Student\n{\n    private static final int SCHOOL_ID;\n    private int stuNum;\n    public Student(int num)\n    {\n        stuNum = num;\n        SCHOOL_ID = 12345;\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "SCHOOL_ID"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: a `static final` field must be set where it's declared",
+       "feedback": "One copy is shared by every object, so a constructor that runs for each new object can't be where it's set.",
+       "correct": true
+      },
+      {
+       "text": "It compiles: each `Student` sets `SCHOOL_ID` once, which `final` allows",
+       "feedback": "That's allowed for a *nonstatic* `final` field. A `static final` field isn't set during object construction."
+      },
+      {
+       "text": "It compiles, but only the first `Student`'s assignment counts",
+       "feedback": "Java doesn't let the assignment run even once. The compiler rejects it."
+      },
+      {
+       "text": "Compile error: `final` fields aren't allowed to be `private`",
+       "feedback": "`private` and `final` combine freely. The problem is where the value is assigned."
+      }
+     ],
+     "hint": "How many `SCHOOL_ID` fields exist, and how many times would the constructor run?",
+     "explanation": "A nonstatic `final` field can be assigned in a constructor. A `static final` field's value must be set at declaration (or in a static initialization block), since resetting the shared value for every object would make no sense.",
+     "ref": "Ch. 4.8, Using Constant Fields (pp. 140–141)"
+    },
+    {
+     "id": "remove-static",
+     "concept": "What static changes",
+     "level": "analyze",
+     "stem": "In `DogTriathlonParticipant`, each constructor adds the dog's total to `totalCumulativeScore`. What happens if you remove `static` from that field?",
+     "options": [
+      {
+       "text": "Each dog's cumulative score shows only that dog's own total.",
+       "feedback": "Without `static`, each object gets its own copy starting at 0, so each dog adds only its own total to it.",
+       "correct": true
+      },
+      {
+       "text": "Nothing changes, since every constructor still adds its total.",
+       "feedback": "The constructors still add, but now each adds to a different field: its own object's copy."
+      },
+      {
+       "text": "It no longer compiles, since constructors can't change the field.",
+       "feedback": "Constructors can change instance fields; it compiles and runs."
+      },
+      {
+       "text": "Every dog shows the combined total of all dogs created.",
+       "feedback": "That's what `static` provides. Removing it ends the sharing."
+      }
+     ],
+     "hint": "After removing `static`, how many copies of the field exist, and what does each start at?",
+     "explanation": "A running total across all objects needs one shared field. Remove `static` and the class silently gives every object its own copy, so the total stops being cumulative.",
+     "ref": "Ch. 4.8, You Do It: Using Static and Nonstatic final Fields (pp. 141–143)"
+    }
+   ]
+  },
+  {
+   "id": "4.9",
+   "title": "Using Imported, Prewritten Constants and Methods",
+   "subtitle": "java.lang, the Math class, import statements and wildcards, and LocalDate",
+   "source": "Ch. 4, section 4.9 (pp. 143–150)",
+   "intro": "Delivery two weeks after December 25 should land in a new year. Six questions on the classes Java has already written for you.",
+   "takeaways": [
+    "Only `java.lang` (home of `System` and `Math`) is imported automatically. For any other class, use its full path, import the class, or import its whole package with `*`.",
+    "`import` copies no code. A wildcard imports the classes in one package but not its subpackages, and `import java.*;` isn't allowed.",
+    "Every `Math` member is `static`, so you call `Math.max(a, b)` and never create a `Math` object. `LocalDate` objects come from static methods such as `now()` and `of()`, not from `new`."
+   ],
+   "questions": [
+    {
+     "id": "math-results",
+     "concept": "Math method results",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class MathDemo\n{\n    public static void main(String[] args)\n    {\n        System.out.println(Math.max(3, 8));\n        System.out.println(Math.pow(2, 3));\n        System.out.println(Math.floor(-2.5));\n        System.out.println(Math.round(2.5));\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "8 8.0 -3.0 3"
+      }
+     },
+     "options": [
+      {
+       "text": "`8`, `8.0`, `-3.0`, `3`",
+       "feedback": "`max` of two `int`s is an `int`; `pow` always returns a `double`; `floor` goes down to -3.0; `round(2.5)` gives 3, a `long`.",
+       "correct": true
+      },
+      {
+       "text": "`8`, `8`, `-2.0`, `3`",
+       "feedback": "`pow` returns a `double` even for whole numbers, and `floor` moves toward negative infinity, not toward zero."
+      },
+      {
+       "text": "`8`, `8.0`, `-2.0`, `3.0`",
+       "feedback": "`floor(-2.5)` is the largest whole value not greater than -2.5, which is -3.0. `round` returns a whole-number type, not a `double`."
+      },
+      {
+       "text": "`8.0`, `8.0`, `-3.0`, `2`",
+       "feedback": "`max` returns the type of its arguments, here `int`. `round(2.5)` rounds up to 3."
+      }
+     ],
+     "hint": "For each method, what type does it return, and which way does it round?",
+     "explanation": "`Math` methods return specific types: `pow` and `floor` return `double`, `round` returns a whole-number type, and `max` matches its arguments. `floor` always moves down, so it's not the same as dropping the fraction.",
+     "aside": "`Math.round(2.5)` is 3, but `Math.rint(2.5)` is 2.0: on an exact tie, `rint` picks the even neighbor (\"banker's rounding\"), so `rint(3.5)` is 4.0. Over many values, ties then round up and down equally often.",
+     "ref": "Ch. 4.9, Table 4-2 (pp. 144–145)"
+    },
+    {
+     "id": "math-object",
+     "concept": "Math has a private constructor",
+     "level": "apply",
+     "stem": "What happens when you compile this program?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Roots\n{\n    public static void main(String[] args)\n    {\n        Math m = new Math();\n        System.out.println(m.sqrt(25));\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "Math() has private access in Math"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `Math`'s constructor is private",
+       "feedback": "All of `Math`'s members are static, so you never need an object. Its private constructor makes sure you can't create one.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `5.0`",
+       "feedback": "Calling a static method through an object would work, but the object can't be created in the first place."
+      },
+      {
+       "text": "Compile error: `Math` must be imported first",
+       "feedback": "`Math` is in `java.lang`, which every program imports automatically."
+      },
+      {
+       "text": "It compiles, but fails at run time on `new Math()`",
+       "feedback": "Access to a private constructor is checked by the compiler, before the program can run."
+      }
+     ],
+     "hint": "Would you ever need a `Math` object? What stops you from making one?",
+     "explanation": "Because every constant and method in `Math` is classwide, there's no need for an instance, and you can't make one: its constructor is private. Call members through the class: `Math.sqrt(25)`.",
+     "ref": "Ch. 4.9, The Math Class (p. 145)"
+    },
+    {
+     "id": "minimal-imports",
+     "concept": "What needs importing",
+     "level": "understand",
+     "stem": "A program uses `Scanner`, `LocalDate` and `Math`. Which is the **smallest** set of `import` statements that lets it compile?",
+     "options": [
+      {
+       "text": "`import java.util.Scanner;` and `import java.time.LocalDate;`",
+       "feedback": "`Scanner` lives in `java.util` and `LocalDate` in `java.time`. `Math` is in `java.lang`, which is always available.",
+       "correct": true
+      },
+      {
+       "text": "`import java.util.Scanner;`, `import java.time.LocalDate;` and `import java.lang.Math;`",
+       "feedback": "This compiles, but the third line is unnecessary: `java.lang` is imported into every program automatically."
+      },
+      {
+       "text": "`import java.util.Scanner;` only, since `LocalDate` is in `java.lang`",
+       "feedback": "`LocalDate` is in the `java.time` package, which must be imported. Only `java.lang` comes automatically."
+      },
+      {
+       "text": "`import java.*;`, which covers every class in Java",
+       "feedback": "A wildcard works only with a specific package. `import java.*;` doesn't compile."
+      }
+     ],
+     "hint": "Which of the three classes is in the one package Java imports for you?",
+     "explanation": "`java.lang` is the only automatically imported named package. Every other class needs its full path, an import of the class, or an import of its package.",
+     "ref": "Ch. 4.9, packages and importing classes (pp. 143–146)"
+    },
+    {
+     "id": "wildcard-claims",
+     "concept": "What a wildcard import does",
+     "level": "analyze",
+     "stem": "Which statement about `import java.time.*;` is accurate?",
+     "options": [
+      {
+       "text": "It lets you use any `java.time` class by its short name, but copies no code.",
+       "feedback": "`import` only tells the compiler which names you'll use. With `*`, that's every class in `java.time`.",
+       "correct": true
+      },
+      {
+       "text": "It copies every `java.time` class into your program, making it larger.",
+       "feedback": "Despite its name, `import` moves nothing into your program, and a wildcard has no performance cost."
+      },
+      {
+       "text": "It also imports `java.time.format`, since that package is inside it.",
+       "feedback": "A wildcard imports the classes in one package, not other packages nested inside it."
+      },
+      {
+       "text": "It's a style error that must become `import java.time.LocalDate;`.",
+       "feedback": "Wildcards are common in professional code. Naming each class is an alternative that documents what you use."
+      }
+     ],
+     "hint": "Does `import` move code into your file, or just make names available?",
+     "explanation": "The import statement notifies the program which names it will use; it doesn't copy classes. A wildcard covers one package's classes only, and it can cause conflicts if two packages share a class name.",
+     "ref": "Ch. 4.9, Importing Classes That Are Not Imported Automatically (p. 146)"
+    },
+    {
+     "id": "localdate-plusweeks",
+     "concept": "LocalDate arithmetic",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import java.time.*;\npublic class Delivery\n{\n    public static void main(String[] args)\n    {\n        LocalDate order = LocalDate.of(2024, 12, 25);\n        System.out.println(order.plusWeeks(2));\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`2025-01-08`",
+       "feedback": "`plusWeeks(2)` adds 14 days. `LocalDate` rolls past the end of December into January of the next year for you.",
+       "correct": true
+      },
+      {
+       "text": "`2024-12-39`",
+       "feedback": "This adds 14 to the day number without rolling over. `LocalDate` always produces a valid date."
+      },
+      {
+       "text": "`2025-01-25`",
+       "feedback": "This moves forward a month instead of two weeks. Two weeks is 14 days."
+      },
+      {
+       "text": "Compile error: use `new LocalDate(2024, 12, 25)` instead",
+       "feedback": "`LocalDate`'s constructors aren't public. You create dates with static methods such as `of()` and `now()`."
+      }
+     ],
+     "hint": "How many days do two weeks add, and what does `LocalDate` do at the end of a month?",
+     "explanation": "`LocalDate` objects come from static methods like `LocalDate.of(year, month, day)`, and methods such as `plusWeeks()` handle month and year rollovers that would otherwise need complicated decisions.",
+     "aside": "`LocalDate` objects are immutable: `plusWeeks()` returns a new date and leaves `order` unchanged. A statement like `order.plusWeeks(2);` on its own line does nothing useful; you must print or store the result.",
+     "ref": "Ch. 4.9, Using the LocalDate Class and Figure 4-33 (pp. 146–148)"
+    },
+    {
+     "id": "static-factory",
+     "concept": "Telling static from instance calls",
+     "level": "analyze",
+     "stem": "In `LocalDate today = LocalDate.now();` followed by `int d = today.getDayOfMonth();`, which method is `static`?",
+     "options": [
+      {
+       "text": "`now()`, because it's called with the class name and no object",
+       "feedback": "`now()` is used before any `LocalDate` exists, so it must be classwide. `getDayOfMonth()` needs a particular date.",
+       "correct": true
+      },
+      {
+       "text": "`getDayOfMonth()`, because it returns an `int` instead of an object",
+       "feedback": "Return type doesn't decide static. `getDayOfMonth()` is called through `today`, an object."
+      },
+      {
+       "text": "Both, because `LocalDate` objects can't be made with `new`",
+       "feedback": "Not having a public constructor only means objects come from methods like `now()`. The objects' own methods are instance methods."
+      },
+      {
+       "text": "Neither: `now()` is a constructor, since it creates the object",
+       "feedback": "Constructors are called with `new` and share the class's name. `now()` is a static method that returns a `LocalDate`."
+      }
+     ],
+     "hint": "What sits in front of the dot in each call?",
+     "explanation": "A method called with the class name and no object is static. `now()` and `of()` are static methods that return `LocalDate` objects; methods such as `getDayOfMonth()` work on one particular date.",
+     "ref": "Ch. 4.9, Using the LocalDate Class (p. 147)"
+    }
+   ]
+  },
+  {
+   "id": "4.10",
+   "title": "Understanding Composition and Nested Classes",
+   "subtitle": "Has-a relationships, constructing contained objects, and inner helper classes",
+   "source": "Ch. 4, section 4.10 (pp. 150–152)",
+   "intro": "A `School` object compiles fine, then crashes the first time it displays its address. Five questions on classes built from other classes.",
+   "takeaways": [
+    "Composition is a has-a relationship: an object of one class is a field of another. The containing class must construct that object, supplying arguments when it has no default constructor.",
+    "A nested class lives inside a top-level class, usually as a private helper. Inner and outer classes can use each other's private members, but a nested helper can't be reused by other classes the way a separate class can."
+   ],
+   "questions": [
+    {
+     "id": "has-a",
+     "concept": "Composition is has-a",
+     "level": "understand",
+     "stem": "Which statement describes a composition relationship?",
+     "options": [
+      {
+       "text": "A `School` has a `NameAndAddress` as one of its fields.",
+       "feedback": "When an object of one class is a data field of another class, the classes are related by composition: has-a.",
+       "correct": true
+      },
+      {
+       "text": "A goldfish named Moby is a `Fish`.",
+       "feedback": "That's an is-a relationship between an object and its class, from section 4.1."
+      },
+      {
+       "text": "A `School` is a `NameAndAddress` with an enrollment added.",
+       "feedback": "A school isn't a kind of address record; it *contains* one. Composition is has-a, not is-a."
+      },
+      {
+       "text": "A `NameAndAddress` object is an instance of `NameAndAddress`.",
+       "feedback": "Every object is an instance of its class. That's instantiation, not one class containing another."
+      }
+     ],
+     "hint": "Does one class *contain* the other, or is one a kind of the other?",
+     "explanation": "Composition describes the relationship when an object of one class is a data field within another class, often called a has-a relationship. Any class with a `String` field already uses it.",
+     "ref": "Ch. 4.10, Composition (pp. 150–151)"
+    },
+    {
+     "id": "composition-trace",
+     "concept": "Calling through a contained object",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class NameAndAddress\n{\n    private String name;\n    private int zipCode;\n    public NameAndAddress(String nm, int zip)\n    {\n        name = nm;\n        zipCode = zip;\n    }\n    public void display()\n    {\n        System.out.println(name + \" \" + zipCode);\n    }\n}\n\nclass School\n{\n    private NameAndAddress nameAdd;\n    private int enrollment;\n    public School(String name, int zip, int enrolled)\n    {\n        nameAdd = new NameAndAddress(name, zip);\n        enrollment = enrolled;\n    }\n    public void display()\n    {\n        System.out.println(\"Enrollment \" + enrollment);\n        nameAdd.display();\n    }\n}\n\n// in main()\nSchool s = new School(\"Audubon\", 60618, 350);\ns.display();",
+      "verify": {
+       "expect": "output",
+       "output": "Enrollment 350 Audubon 60618",
+       "program": "\nclass NameAndAddress\n{\n    private String name;\n    private int zipCode;\n    public NameAndAddress(String nm, int zip)\n    {\n        name = nm;\n        zipCode = zip;\n    }\n    public void display()\n    {\n        System.out.println(name + \" \" + zipCode);\n    }\n}\n\nclass School\n{\n    private NameAndAddress nameAdd;\n    private int enrollment;\n    public School(String name, int zip, int enrolled)\n    {\n        nameAdd = new NameAndAddress(name, zip);\n        enrollment = enrolled;\n    }\n    public void display()\n    {\n        System.out.println(\"Enrollment \" + enrollment);\n        nameAdd.display();\n    }\n}\n\npublic class SchoolDemo\n{\n    public static void main(String[] args)\n    {\n        School s = new School(\"Audubon\", 60618, 350);\n        s.display();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Enrollment 350`, then `Audubon 60618`",
+       "feedback": "`School`'s `display()` prints the enrollment first, then asks its `NameAndAddress` object to display itself.",
+       "correct": true
+      },
+      {
+       "text": "`Audubon 60618`, then `Enrollment 350`",
+       "feedback": "This follows the order the fields are declared. Output follows the order of the statements in `display()`."
+      },
+      {
+       "text": "`Enrollment 350` only",
+       "feedback": "`nameAdd.display();` is a real call: `School` uses the contained object's public method."
+      },
+      {
+       "text": "Compile error: `School` can't call another class's `display()`",
+       "feedback": "`display()` in `NameAndAddress` is public, so `School` may call it through its `nameAdd` object."
+      }
+     ],
+     "hint": "In `School`'s `display()`, which statement runs first?",
+     "explanation": "A class that contains an object can use that object's public methods. The containing class's constructor builds the contained object, and its methods can delegate work to it.",
+     "ref": "Ch. 4.10, Figures 4-37 to 4-39 (p. 151)"
+    },
+    {
+     "id": "unconstructed-member",
+     "concept": "Constructing the contained object",
+     "level": "analyze",
+     "stem": "This `School` constructor forgets to build its `NameAndAddress`. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class School\n{\n    private NameAndAddress nameAdd;\n    private int enrollment;\n    public School(int enrolled)\n    {\n        enrollment = enrolled;\n    }\n    public void display()\n    {\n        nameAdd.display();\n    }\n}\n\n// in main()\nSchool s = new School(350);\ns.display();",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "NullPointerException"
+       ],
+       "program": "\nclass NameAndAddress\n{\n    private String name;\n    private int zipCode;\n    public NameAndAddress(String nm, int zip)\n    {\n        name = nm;\n        zipCode = zip;\n    }\n    public void display()\n    {\n        System.out.println(name + \" \" + zipCode);\n    }\n}\n\nclass School\n{\n    private NameAndAddress nameAdd;\n    private int enrollment;\n    public School(int enrolled)\n    {\n        enrollment = enrolled;\n    }\n    public void display()\n    {\n        nameAdd.display();\n    }\n}\n\npublic class SchoolDemo\n{\n    public static void main(String[] args)\n    {\n        School s = new School(350);\n        s.display();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "It compiles, then a `NullPointerException` stops it in `display()`",
+       "feedback": "`nameAdd` is an object reference with no object, so it holds `null`. Calling a method through `null` fails at run time.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints a blank name and a zip code of 0",
+       "feedback": "That would need a `NameAndAddress` object with default fields. No such object was ever constructed."
+      },
+      {
+       "text": "Compile error: every field must be assigned a value in the constructor",
+       "feedback": "Java doesn't require this. The field simply keeps its default value, `null`."
+      },
+      {
+       "text": "Java constructs the `NameAndAddress` automatically",
+       "feedback": "Java never calls `new` for you, and `NameAndAddress` has no default constructor to call anyway."
+      }
+     ],
+     "hint": "What value does an object-reference field hold if no object is ever assigned to it?",
+     "explanation": "A contained object isn't created by declaring the field. The containing class must construct it, supplying values if it has no default constructor; otherwise the field stays `null`.",
+     "ref": "Ch. 4.10, Composition (p. 150), and default values in 4.6 (p. 131)"
+    },
+    {
+     "id": "inner-private-access",
+     "concept": "Inner class access",
+     "level": "understand",
+     "stem": "`HouseData`'s field `streetAddress` is `private`, yet `display()` in `RealEstateListing` reads `houseData.streetAddress`. Why does this compile?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class RealEstateListing\n{\n    private int listingNumber;\n    private HouseData houseData;\n    public RealEstateListing(int num, String address, int sqFt)\n    {\n        listingNumber = num;\n        houseData = new HouseData(address, sqFt);\n    }\n    public void display()\n    {\n        System.out.println(\"#\" + listingNumber + \" \" +\n            houseData.streetAddress);\n    }\n    private class HouseData\n    {\n        private String streetAddress;\n        private int squareFeet;\n        public HouseData(String address, int sqFt)\n        {\n            streetAddress = address;\n            squareFeet = sqFt;\n        }\n    }\n}",
+      "verify": {
+       "expect": "compiles"
+      }
+     },
+     "options": [
+      {
+       "text": "An outer class can use its inner class's members, even private ones.",
+       "feedback": "Nested classes are packaged together, and they share access both ways: inner can use outer's members, and outer can use inner's.",
+       "correct": true
+      },
+      {
+       "text": "`streetAddress` is a `String`, and any class is allowed to read a `String`.",
+       "feedback": "The type of a field doesn't change its access. A private `String` is as hidden as a private `int`."
+      },
+      {
+       "text": "It doesn't; private members are visible only inside `HouseData`.",
+       "feedback": "That would be true of a separate class. An inner class's private members are visible to its top-level class."
+      },
+      {
+       "text": "Declaring `HouseData` private made all its members public.",
+       "feedback": "A private inner class hides itself from outside classes. It doesn't make its members public."
+      }
+     ],
+     "hint": "Where does `HouseData` live relative to `RealEstateListing`?",
+     "explanation": "An inner class can access its top-level class's fields and methods, even private ones, and an outer class can access its inner class's members. Making the inner class private hides it from every other class.",
+     "ref": "Ch. 4.10, Nested Classes and Figure 4-40 (pp. 151–152)"
+    },
+    {
+     "id": "nest-or-not",
+     "concept": "When to nest a class",
+     "level": "evaluate",
+     "stem": "New `MortgageLoan` and `Appraisal` classes also need street address and square-foot data. Should `HouseData` stay a private inner class of `RealEstateListing`?",
+     "options": [
+      {
+       "text": "No: a regular class in its own file could be reused through composition.",
+       "feedback": "An inner class is usable only in the class where it resides. A separate `HouseData` could be a field of all three classes.",
+       "correct": true
+      },
+      {
+       "text": "Yes: inner classes are the reading's preferred way to share data.",
+       "feedback": "The reading says you usually won't want inner classes; their purpose is a helper used by one class only."
+      },
+      {
+       "text": "Yes: other classes can still reach it through `RealEstateListing.HouseData`.",
+       "feedback": "A `private` nested class is hidden from every class except its top-level class."
+      },
+      {
+       "text": "No: inner classes can't have constructors, so it must move.",
+       "feedback": "`HouseData` already has a constructor. Inner classes can have them."
+      }
+     ],
+     "hint": "How many classes need `HouseData`, and how many can use a private inner class?",
+     "explanation": "The most common reason to nest a class is that only the top-level class uses it. Once other classes need it too, a regular class used through composition is the better design.",
+     "aside": "You'll find nested classes inside Java's own library: `java.util.HashMap` stores each key-value pair in a static nested class named `Node`, a helper that no outside code ever needs to use directly.",
+     "ref": "Ch. 4.10, Nested Classes (pp. 151–152)"
+    }
+   ]
+  }
+ ]
+}
