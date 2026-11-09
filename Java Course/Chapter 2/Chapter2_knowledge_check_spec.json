@@ -1,0 +1,1685 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 2: Using Data",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 2 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "2.1",
+   "title": "Declaring and Using Constants and Variables",
+   "subtitle": "Initialization, uninitialized variables, named constants, scope, concatenation and one value at a time",
+   "source": "Ch. 2, section 2.1 (pp. 39–47)",
+   "intro": "A program compiles fine until one new line prints a variable nobody gave a value. Six questions on declaring, naming, scoping and printing data; four of them are code traces.",
+   "takeaways": [
+    "Java will not compile code that reads a local variable before it has been assigned, and a `final` named constant can be assigned only once.",
+    "A variable is usable only from its declaration to the end of the block (the curly braces) that contains it.",
+    "A variable holds exactly one value at a time: assigning a new value destroys the old one, so swapping two values needs a temporary variable."
+   ],
+   "questions": [
+    {
+     "id": "uninitialized",
+     "concept": "Uninitialized variables",
+     "level": "apply",
+     "stem": "A student removes the initial value from the declaration in `DataDemo`. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class DataDemo\n{\n    public static void main(String[] args)\n    {\n        int aWholeNumber;\n        System.out.print(\"The number is \");\n        System.out.println(aWholeNumber);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "might not have been initialized"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `aWholeNumber` might not have been initialized",
+       "feedback": "The declaration itself is legal, but the `println()` line reads a variable that was never given a value. Java refuses to compile code that could display a garbage value.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `The number is 0`, the default value",
+       "feedback": "Only variables declared in a class, outside any method, are filled in automatically. A variable declared inside `main()` gets no default value."
+      },
+      {
+       "text": "It compiles and prints whatever garbage value is in that memory",
+       "feedback": "An uninitialized variable does hold an unknown garbage value, but Java protects you from it: the compiler stops before the program can ever run."
+      },
+      {
+       "text": "Compile error: the declaration `int aWholeNumber;` is illegal",
+       "feedback": "Declaring a variable without a value is allowed. The error points at the line that tries to *use* the variable, not at the declaration."
+      }
+     ],
+     "hint": "Which line is the problem: the one that declares the variable, or the one that reads it?",
+     "explanation": "You may declare a variable without a value, but you must assign one before you use it. The compiler checks this and reports \"variable might not have been initialized\" instead of letting a garbage value reach your output.",
+     "ref": "Ch. 2.1, Declaring Variables (p. 41) and You Do It: Trying to Use an Uninitialized Variable (p. 46)"
+    },
+    {
+     "id": "magic-number",
+     "concept": "Named constants versus magic numbers",
+     "level": "evaluate",
+     "stem": "A payroll program uses the literal `20` in eleven places to mean the number of departments. Which change best follows the reading's advice?",
+     "options": [
+      {
+       "text": "Declare `final int NUMBER_OF_DEPTS = 20;` and use it everywhere",
+       "feedback": "The name explains what 20 means, the value changes in one place if the company grows, and the compiler catches a misspelled name, which it cannot do for a mistyped `200`.",
+       "correct": true
+      },
+      {
+       "text": "Declare `int numberOfDepts = 20;` and use that variable everywhere",
+       "feedback": "Naming the value helps, but without `final` any statement could change it by accident. A value that must not change during the run belongs in a named constant."
+      },
+      {
+       "text": "Keep the literal and add a comment next to each of the eleven uses",
+       "feedback": "Comments help a reader, but you would still have to edit eleven places if the number changes, and nothing stops a typo such as `10` from compiling."
+      },
+      {
+       "text": "Declare `final int TWENTY = 20;` and use that constant everywhere",
+       "feedback": "This names the number, not its purpose. If the company grows to 25 departments, `TWENTY = 25` would be absurd, and the meaning is still hidden."
+      }
+     ],
+     "hint": "A good constant answers \"what is this number for?\" and can never be changed by accident.",
+     "explanation": "A literal with no obvious meaning is a magic number. Replacing it with a conventionally named constant (`final`, all uppercase, underscores between words) makes the code self-documenting, lets you change the value in one place, and turns typos into compiler errors.",
+     "aside": "Java's own library follows this advice: `Math.PI` and `Integer.MAX_VALUE` are named constants declared `static final`, so you never have to type 3.141592653589793 or 2147483647 yourself.",
+     "ref": "Ch. 2.1, Declaring Named Constants (p. 42)"
+    },
+    {
+     "id": "final-reassign",
+     "concept": "A named constant is assigned once",
+     "level": "apply",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "final double TAX_RATE = 0.015;\nTAX_RATE = 0.02;\nSystem.out.println(TAX_RATE);",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot assign a value to final variable"
+       ],
+       "program": "public class TaxDemo\n{\n    public static void main(String[] args)\n    {\n        final double TAX_RATE = 0.015;\n        TAX_RATE = 0.02;\n        System.out.println(TAX_RATE);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: a `final` variable cannot be assigned again",
+       "feedback": "Once a named constant has its value, it can only be read (an rvalue). The second assignment is rejected at compile time.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `0.02`; the last assignment wins",
+       "feedback": "That is how an ordinary variable behaves. The keyword `final` is exactly what forbids a second assignment."
+      },
+      {
+       "text": "It compiles and prints `0.015`; the second assignment is ignored",
+       "feedback": "Java never silently ignores a statement. Assigning to a constant is an error the compiler reports."
+      },
+      {
+       "text": "Compile error: constants must be declared outside `main()`",
+       "feedback": "A named constant can be declared inside a method, as the reading's `STATES_IN_US` example shows. The problem is the second assignment."
+      }
+     ],
+     "hint": "What does the keyword `final` promise about the value after it is first assigned?",
+     "explanation": "A `final` named constant can receive a value only once. After that it may appear anywhere a value is read, but never on the left side of another assignment.",
+     "ref": "Ch. 2.1, Declaring Named Constants (p. 42)"
+    },
+    {
+     "id": "scope",
+     "concept": "Scope of a variable",
+     "level": "analyze",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class ScopeDemo\n{\n    public static void main(String[] args)\n    {\n        int total = 10;\n        {\n            int bonus = 5;\n            total = total + bonus;\n        }\n        System.out.println(total + bonus);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `bonus` is out of scope on the last line",
+       "feedback": "`bonus` exists only from its declaration to the closing brace of the inner block. The last line is outside that block, so the name is unknown there.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `20`, adding the bonus again",
+       "feedback": "That is what you'd get if `bonus` were still visible (15 + 5). But a variable's scope ends with the block that declares it."
+      },
+      {
+       "text": "It prints `15`, because `bonus` counts as 0 outside its block",
+       "feedback": "Out of scope doesn't mean zero. Outside its block the name `bonus` doesn't exist at all, so the compiler reports an error."
+      },
+      {
+       "text": "Compile error: variables can't be declared inside extra braces",
+       "feedback": "Declaring a variable inside an inner block is legal. The problem is using it after that block has closed."
+      }
+     ],
+     "hint": "According to the reading, where does a variable's scope end?",
+     "explanation": "A variable or constant is in scope from its declaration to the end of the block (the pair of curly braces) that contains it. Outside that block its simple name can't be used.",
+     "ref": "Ch. 2.1, The Scope of Variables and Constants (p. 43)"
+    },
+    {
+     "id": "concatenation",
+     "concept": "Concatenating strings and numbers",
+     "level": "apply",
+     "stem": "What do these two lines print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int billingDate = 5;\nSystem.out.println(\"Day \" + billingDate + 1);\nSystem.out.println(\"Day \" + (billingDate + 1));",
+      "verify": {
+       "expect": "output",
+       "output": "Day 51 Day 6",
+       "program": "public class BillingDay\n{\n    public static void main(String[] args)\n    {\n        int billingDate = 5;\n        System.out.println(\"Day \" + billingDate + 1);\n        System.out.println(\"Day \" + (billingDate + 1));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Day 51`, then `Day 6`",
+       "feedback": "In the first line `\"Day \" + billingDate` is already a String, so `+ 1` appends a 1. In the second, the parentheses make Java add 5 + 1 first.",
+       "correct": true
+      },
+      {
+       "text": "`Day 6`, then `Day 6`",
+       "feedback": "This assumes Java adds the two numbers first. Without parentheses, `+` runs left to right, and once a String is involved every later `+` concatenates."
+      },
+      {
+       "text": "`Day 51`, then `Day 51`",
+       "feedback": "This misses what the parentheses do: they make `billingDate + 1` an addition of two numbers before anything is joined to the String."
+      },
+      {
+       "text": "Compile error: `+` can't join a `String` and an `int`",
+       "feedback": "Joining a String and a number with `+` is legal and common. The number is converted to text and the whole expression becomes a String."
+      }
+     ],
+     "hint": "Work left to right. After `\"Day \" + billingDate`, is the result a number or a String?",
+     "explanation": "The plus sign is polymorphic: it adds numbers but concatenates when a String is on either side. Evaluated left to right, `\"A\" + 3 + 4` is `\"A34\"`; parentheses, as in `\"A\" + (3 + 4)`, force the arithmetic first and give `\"A7\"`.",
+     "ref": "Ch. 2.1, Concatenating Strings to Variables and Constants (pp. 43–44)"
+    },
+    {
+     "id": "swap",
+     "concept": "A variable holds one value at a time",
+     "level": "analyze",
+     "stem": "A student tries to swap `x` and `y`. What does the last line print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int x = 2, y = 10;\nx = y;\ny = x;\nSystem.out.println(x + \" \" + y);",
+      "verify": {
+       "expect": "output",
+       "program": "public class SwapDemo\n{\n    public static void main(String[] args)\n    {\n        int x = 2, y = 10;\n        x = y;\n        y = x;\n        System.out.println(x + \" \" + y);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`10 10`",
+       "feedback": "`x = y` puts 10 in `x`, and the 2 is gone. Then `y = x` copies that 10 back into `y`. Both now hold 10.",
+       "correct": true
+      },
+      {
+       "text": "`10 2`",
+       "feedback": "That is the swap the student wanted, but it needs a third variable to hold the 2 before `x` is overwritten."
+      },
+      {
+       "text": "`2 2`",
+       "feedback": "This reads the assignments as copying from left to right. In Java the value on the right is stored into the variable on the left."
+      },
+      {
+       "text": "`2 10`",
+       "feedback": "This assumes the two assignments cancel out. Each assignment replaces the old value permanently, so the original 2 can't come back."
+      }
+     ],
+     "hint": "After `x = y;` runs, where is the original 2 stored?",
+     "explanation": "Assigning a value to a variable erases whatever it held before. To exchange two values, first copy one into a temporary variable: `z = x; x = y; y = z;`.",
+     "aside": "Some languages hide the temporary variable. In Python, `x, y = y, x` swaps two values in one statement. Java has no such syntax, so the three-step swap is the standard idiom.",
+     "ref": "Ch. 2.1, Pitfall: Forgetting That a Variable Holds One Value at a Time (p. 45)"
+    }
+   ]
+  },
+  {
+   "id": "2.2",
+   "title": "Learning About Integer Data Types",
+   "subtitle": "byte, short, int and long: ranges, the L suffix, lossy conversion and overflow",
+   "source": "Ch. 2, section 2.2 (pp. 47–50)",
+   "intro": "In 1989 a hospital system in Washington, D.C., failed on the 32,768th day it had counted. Five questions on choosing integer types and what happens at their limits.",
+   "takeaways": [
+    "`byte`, `short`, `int` and `long` hold whole numbers in 1, 2, 4 and 8 bytes, and Java fixes these sizes on every platform.",
+    "An integer literal is an `int` unless it ends in `L`, so a literal beyond about 2.1 billion needs the `L` even when it is being stored in a `long`.",
+    "When `int` arithmetic exceeds the `int` range, Java doesn't stop: the result silently wraps around, so an impossible sign is a clue to overflow."
+   ],
+   "questions": [
+    {
+     "id": "choose-type",
+     "concept": "Choosing an integer type",
+     "level": "apply",
+     "stem": "A personnel app stores an employee's number of dependents, hours worked in a month, and annual salary. Which choice uses the smallest type that safely holds each value?",
+     "options": [
+      {
+       "text": "`byte`, `short`, `int`",
+       "feedback": "Dependents never approach 127, monthly hours easily exceed 127 but not 32,767, and salaries can exceed 32,767, which needs an `int`.",
+       "correct": true
+      },
+      {
+       "text": "`int`, `int`, `int`",
+       "feedback": "All three would work, and the course's examples usually use `int`. But the question asks for the smallest safe type, and `int` is larger than needed for two of them."
+      },
+      {
+       "text": "`byte`, `byte`, `short`",
+       "feedback": "Too small twice: a full-time month is around 160 hours (more than a `byte`'s 127), and many salaries exceed a `short`'s 32,767."
+      },
+      {
+       "text": "`short`, `int`, `long`",
+       "feedback": "Each value would fit, but each type is one size larger than needed. Choosing a larger type than necessary wastes memory."
+      }
+     ],
+     "hint": "Compare each value with the limits: a `byte` tops out at 127, a `short` at 32,767.",
+     "explanation": "Choose a type by the largest value the variable must ever hold. Too small and the compiler rejects your literal (or arithmetic silently overflows); too large and you waste memory, which matters most on small devices.",
+     "aside": "Why does a `byte` stop at 127 and not 128? Its 256 bit patterns cover −128 to 127: zero takes one of the non-negative patterns, so the positives get one fewer than the negatives.",
+     "ref": "Ch. 2.2, Table 2-2 and the personnel example (pp. 47–48)"
+    },
+    {
+     "id": "long-literal",
+     "concept": "The L suffix for long literals",
+     "level": "apply",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "long aLong = 1234567890987654321;\nSystem.out.println(aLong);",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "integer number too large"
+       ],
+       "program": "public class LongDemo\n{\n    public static void main(String[] args)\n    {\n        long aLong = 1234567890987654321;\n        System.out.println(aLong);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the literal is too large to be an `int`",
+       "feedback": "Without an `L`, Java treats the literal as an `int` and checks it *before* storing it, and it is far larger than 2,147,483,647. Writing `1234567890987654321L` fixes it.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because the value fits easily in a `long`",
+       "feedback": "The value does fit in a `long`, but the literal is evaluated as an `int` first. The variable's type doesn't change the literal's type."
+      },
+      {
+       "text": "Compile error: the value is too large even for a `long`",
+       "feedback": "A `long` can hold up to about 9.2 quintillion (9,223,372,036,854,775,807), and this value is about 1.2 quintillion. The problem is the literal's type."
+      },
+      {
+       "text": "It compiles, but the stored value wraps around to a negative number",
+       "feedback": "Wraparound happens with arithmetic at run time. An oversized literal is caught by the compiler, so the program never runs."
+      }
+     ],
+     "hint": "What type does Java give a literal integer such as `932` by default?",
+     "explanation": "Integer literals are `int` by default. A literal outside the `int` range must end in `L` (uppercase preferred, since a lowercase l looks like a 1) to be a `long` literal, even when it is assigned to a `long` variable.",
+     "ref": "Ch. 2.2, long literals (p. 48) and You Do It steps 10–11 (p. 50)"
+    },
+    {
+     "id": "lossy",
+     "concept": "Values too large for the type",
+     "level": "apply",
+     "stem": "Which of these declarations does **NOT** compile?",
+     "options": [
+      {
+       "text": "`short aShort = 123456;`",
+       "feedback": "123456 is above a `short`'s maximum of 32,767. The compiler reports *possible lossy conversion from int to short*.",
+       "correct": true
+      },
+      {
+       "text": "`byte aByte = 127;`",
+       "feedback": "127 is exactly the largest `byte` value, so it fits. 128 would be rejected."
+      },
+      {
+       "text": "`long aLong = 12;`",
+       "feedback": "Small literals need no `L`. The `int` 12 is promoted to a `long` with no loss, so this compiles."
+      },
+      {
+       "text": "`int budget = 8_435_000;`",
+       "feedback": "Java allows underscores between digits to make long numbers readable. This is the reading's own example and it compiles."
+      }
+     ],
+     "hint": "Check each value against Table 2-2's minimum and maximum for its type.",
+     "explanation": "Assigning a literal that is too large for the variable's type is a compile-time error: Java won't make a lossy conversion (one where data would be lost) without being told to. A value that fits converts losslessly.",
+     "ref": "Ch. 2.2, Table 2-2 (p. 47) and You Do It steps 6–8 (pp. 49–50)"
+    },
+    {
+     "id": "overflow",
+     "concept": "Arithmetic overflow",
+     "level": "analyze",
+     "stem": "Both 1234 and 10000000 are legal `int` values. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int anInt = 1234;\nint anotherInt = anInt * 10000000;\nSystem.out.println(\"Another int is \" + anotherInt);",
+      "verify": {
+       "expect": "output",
+       "program": "public class OverflowDemo\n{\n    public static void main(String[] args)\n    {\n        int anInt = 1234;\n        int anotherInt = anInt * 10000000;\n        System.out.println(\"Another int is \" + anotherInt);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Another int is -544901888`",
+       "feedback": "The true product, 12,340,000,000, doesn't fit in an `int`. Java keeps only the low 32 bits, which happen to represent a negative number. Even the sign is lost.",
+       "correct": true
+      },
+      {
+       "text": "`Another int is 12340000000`",
+       "feedback": "That is the mathematically correct product, but Java doesn't widen an `int` result to make room. `int` times `int` gives an `int`."
+      },
+      {
+       "text": "A compile error: *possible lossy conversion*",
+       "feedback": "The compiler checks literals against the type, not the results of arithmetic. This code compiles; the problem only shows when it runs."
+      },
+      {
+       "text": "A runtime error reporting integer overflow",
+       "feedback": "Java does not detect `int` overflow. The program keeps running with a wrong value, which makes the bug easy to miss."
+      }
+     ],
+     "hint": "Is 12,340,000,000 within the `int` range of about ±2.1 billion, and does Java check that at run time?",
+     "explanation": "Values that are fine on their own can produce results out of range. `int` arithmetic that overflows silently wraps around, so an unreasonable result (such as a negative product of positives) means you need a larger type such as `long`.",
+     "aside": "If you would rather fail loudly, `Math.multiplyExact(anInt, 10000000)` (added in Java 8) throws an `ArithmeticException` on overflow instead of returning a wrapped value.",
+     "ref": "Ch. 2.2, You Do It steps 12–13 and Figure 2-13 (p. 50)"
+    },
+    {
+     "id": "fixed-sizes",
+     "concept": "Java fixes the size of primitive types",
+     "level": "understand",
+     "stem": "A student worries that an `int` might be smaller on someone else's computer. What does the reading say?",
+     "options": [
+      {
+       "text": "Java fixes each type's size and format on every platform",
+       "feedback": "Unlike some languages, Java defines an `int` as 4 bytes everywhere, so the same program has the same limits on every machine.",
+       "correct": true
+      },
+      {
+       "text": "The JVM picks each type's size to suit the computer's hardware",
+       "feedback": "That is how some other languages behave. Java deliberately avoids it so a program behaves the same on every platform."
+      },
+      {
+       "text": "An `int` grows automatically when a value needs more room",
+       "feedback": "No Java primitive grows. An `int` is always 4 bytes, which is why arithmetic can overflow."
+      },
+      {
+       "text": "Java programs run only on 64-bit computers with 4-byte integers",
+       "feedback": "Java runs on many kinds of devices. The size is the same because Java's specification fixes it, not because the hardware is identical."
+      }
+     ],
+     "hint": "Think back to Chapter 1: what promise does Java make about running the same program everywhere?",
+     "explanation": "Java consistently specifies the size and format of its primitive types: `byte` 1, `short` 2, `int` 4, `long` 8 bytes. That fixed definition is part of what lets compiled Java run unchanged on any platform.",
+     "ref": "Ch. 2.2, sizes of integer types (p. 47)"
+    }
+   ]
+  },
+  {
+   "id": "2.3",
+   "title": "Using the boolean Data Type",
+   "subtitle": "true and false, the six relational operators, and = versus ==",
+   "source": "Ch. 2, section 2.3 (pp. 51–52)",
+   "intro": "A payroll check flags everyone for overtime, even part-timers. Four questions on true/false values and the six comparison operators.",
+   "takeaways": [
+    "A `boolean` holds only `true` or `false`, and every expression built with a relational operator has one of those two values.",
+    "`=` assigns and `==` compares; the two-symbol operators `==`, `<=`, `>=` and `!=` take no space between the symbols and a fixed order."
+   ],
+   "questions": [
+    {
+     "id": "relational-trace",
+     "concept": "Relational operators produce boolean values",
+     "level": "apply",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int hours = 38;\nboolean isOvertimePay = (hours > 40);\nboolean isFullTime = (hours >= 38);\nSystem.out.println(isOvertimePay + \" \" + isFullTime);",
+      "verify": {
+       "expect": "output",
+       "program": "public class OvertimeDemo\n{\n    public static void main(String[] args)\n    {\n        int hours = 38;\n        boolean isOvertimePay = (hours > 40);\n        boolean isFullTime = (hours >= 38);\n        System.out.println(isOvertimePay + \" \" + isFullTime);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`false true`",
+       "feedback": "38 is not greater than 40, so the first comparison is `false`. 38 is greater than *or equal to* 38, so the second is `true`.",
+       "correct": true
+      },
+      {
+       "text": "`true true`",
+       "feedback": "The first comparison asks whether 38 is greater than 40, and it isn't. A comparison can be false."
+      },
+      {
+       "text": "`false false`",
+       "feedback": "`>=` is satisfied when the two sides are equal. Reading it as a strict \"greater than\" gives `false` here."
+      },
+      {
+       "text": "`0 1`",
+       "feedback": "Some languages store true and false as numbers, but Java's `boolean` values are the words `true` and `false`, and that is what `println` shows."
+      }
+     ],
+     "hint": "Evaluate each comparison on its own. Does `>=` include the case where both sides are equal?",
+     "explanation": "Each relational expression evaluates to `true` or `false`, and that value can be stored in a `boolean` variable. `>` is strict; `>=` also accepts equality.",
+     "ref": "Ch. 2.3, Table 2-3 and the comparison examples (p. 51)"
+    },
+    {
+     "id": "assign-vs-compare",
+     "concept": "= versus ==",
+     "level": "analyze",
+     "stem": "A student wants `isTie` to record whether the two scores are equal. What happens when this compiles?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int score1 = 90, score2 = 85;\nboolean isTie = (score1 = score2);",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "int cannot be converted to boolean"
+       ],
+       "program": "public class TieDemo\n{\n    public static void main(String[] args)\n    {\n        int score1 = 90, score2 = 85;\n        boolean isTie = (score1 = score2);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `=` assigns an `int`, which can't be stored in a `boolean`",
+       "feedback": "A single `=` is the assignment operator, so `(score1 = score2)` stores 85 in `score1` and has the `int` value 85. A `boolean` can't hold an `int`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and `isTie` is `false` because 90 isn't 85",
+       "feedback": "That would be true with `==`. A single `=` doesn't compare anything; it assigns."
+      },
+      {
+       "text": "It compiles, and `isTie` is `true` because the assignment worked",
+       "feedback": "Java never treats a successful assignment as `true`. The expression's value is the number assigned, and numbers can't be booleans."
+      },
+      {
+       "text": "Compile error: a `boolean` can only be assigned `true` or `false` directly",
+       "feedback": "A `boolean` can also receive the result of a comparison, as in `isOvertimePay = (hours > 40)`. The problem is the missing second `=`."
+      }
+     ],
+     "hint": "Which operator compares for equality in Java, and which one assigns?",
+     "explanation": "Equality is tested with `==` (two equal signs); a single `=` assigns. Because Java's `boolean` is not a number, mixing them up usually produces a compile error rather than a silent bug.",
+     "aside": "In C, `if (x = 5)` compiles and is always true, a classic bug. Java rejects it because an `int` can never be used where a `boolean` is required.",
+     "ref": "Ch. 2.3, relational operators (p. 51) and Don't Do It (p. 76)"
+    },
+    {
+     "id": "operator-spelling",
+     "concept": "Writing two-symbol operators",
+     "level": "remember",
+     "stem": "Which comparison is written correctly?",
+     "options": [
+      {
+       "text": "`total != 0`",
+       "feedback": "Not equal is written with the exclamation point first and no space: `!=`.",
+       "correct": true
+      },
+      {
+       "text": "`total =! 0`",
+       "feedback": "The symbols are reversed. Java's operator is `!=`; `=!` is not an operator."
+      },
+      {
+       "text": "`total < = 100`",
+       "feedback": "No whitespace is allowed between the two symbols of `<=`."
+      },
+      {
+       "text": "`total => 0`",
+       "feedback": "The equal sign comes second: `>=`. Reversing the symbols makes an invalid operator."
+      }
+     ],
+     "hint": "In every two-symbol relational operator, which symbol comes last?",
+     "explanation": "The six relational operators are `<`, `>`, `==`, `<=`, `>=` and `!=`. For the two-symbol ones, the equal sign always comes second and nothing may separate the symbols.",
+     "ref": "Ch. 2.3, Table 2-3 and the note on two-symbol operators (p. 51)"
+    },
+    {
+     "id": "string-true",
+     "concept": "boolean literals",
+     "level": "apply",
+     "stem": "Why doesn't this declaration compile?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "boolean isItPayday = \"true\";",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "String cannot be converted to boolean"
+       ],
+       "program": "public class PaydayDemo\n{\n    public static void main(String[] args)\n    {\n        boolean isItPayday = \"true\";\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`\"true\"` is a `String`; the `boolean` literal has no quotes",
+       "feedback": "Double quotes make a String literal. The boolean literals are the keywords `true` and `false`, written without quotes.",
+       "correct": true
+      },
+      {
+       "text": "The value must be written `True`, with a capital T",
+       "feedback": "Java's boolean literals are lowercase: `true` and `false`. `True` would be treated as an unknown name."
+      },
+      {
+       "text": "A `boolean` variable's name must start with `is` or `are`",
+       "feedback": "Names such as `isItPayday` are a helpful convention, not a rule. Any legal identifier works."
+      },
+      {
+       "text": "A `boolean` can only be assigned the result of a comparison",
+       "feedback": "Assigning a literal is fine: `boolean areYouBroke = true;` appears in the reading."
+      }
+     ],
+     "hint": "What kind of literal do double quotation marks create?",
+     "explanation": "`true` and `false` are Java keywords and the only two `boolean` values. Anything in double quotes is a String, a different type that can't be stored in a `boolean`.",
+     "ref": "Ch. 2.3, declaring Boolean variables (p. 51)"
+    }
+   ]
+  },
+  {
+   "id": "2.4",
+   "title": "Learning About Floating-Point Data Types",
+   "subtitle": "float and double, significant digits, the F suffix and scientific notation",
+   "source": "Ch. 2, section 2.4 (pp. 52–53)",
+   "intro": "A pocket-change tracker won't compile because of one missing letter. Four questions on `float`, `double` and how precise each one is.",
+   "takeaways": [
+    "A floating-point literal such as `4.87` is a `double`; storing it in a `float` requires the `F` suffix (`4.87F`).",
+    "A `float` keeps about 6–7 significant digits in 4 bytes and a `double` about 14–15 in 8 bytes; choose `double` when accuracy matters more than memory."
+   ],
+   "questions": [
+    {
+     "id": "f-suffix",
+     "concept": "Floating-point literals are double by default",
+     "level": "apply",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "float pocketChange = 4.87;\nSystem.out.println(pocketChange);",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "possible lossy conversion from double to float"
+       ],
+       "program": "public class ChangeDemo\n{\n    public static void main(String[] args)\n    {\n        float pocketChange = 4.87;\n        System.out.println(pocketChange);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `4.87` is a `double`, not a `float`",
+       "feedback": "Floating-point literals are `double` by default, and Java won't narrow a `double` into a `float` silently. Writing `4.87F` makes it a `float` literal.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because 4.87 is well within a `float`'s range",
+       "feedback": "Range isn't the issue. The literal's *type* is `double`, and storing a `double` in a `float` is a lossy conversion."
+      },
+      {
+       "text": "It compiles, but stores `4.0` because the fraction is dropped",
+       "feedback": "A `float` keeps fractions. Dropping the fraction is what happens when a floating-point value is cast to an integer type."
+      },
+      {
+       "text": "Compile error: a `float` literal needs a `D` after the digits",
+       "feedback": "`D` marks a `double` literal, which is the default anyway. A `float` literal takes `F`."
+      }
+     ],
+     "hint": "Just as `18` is an `int` by default, what type is `18.23` by default?",
+     "explanation": "A floating-point constant is a `double` unless you mark it with `F` (or `f`). The same rule as integers applies: Java converts automatically only when no data can be lost.",
+     "ref": "Ch. 2.4, float literals (pp. 52–53) and Don't Do It (p. 76)"
+    },
+    {
+     "id": "significant-digits",
+     "concept": "Significant digits in float and double",
+     "level": "analyze",
+     "stem": "The same nine-digit value is stored in a `float` and in a `double`. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "float f = 0.324616777F;\ndouble d = 0.324616777;\nSystem.out.println(f);\nSystem.out.println(d);",
+      "verify": {
+       "expect": "output",
+       "output": "0.3246168 0.324616777",
+       "program": "public class PrecisionDemo\n{\n    public static void main(String[] args)\n    {\n        float f = 0.324616777F;\n        double d = 0.324616777;\n        System.out.println(f);\n        System.out.println(d);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0.3246168`, then `0.324616777`",
+       "feedback": "The `float` keeps only about 7 significant digits, so its value is rounded; the `double`, with 14–15 digits of accuracy, keeps all nine.",
+       "correct": true
+      },
+      {
+       "text": "`0.324616777`, then `0.324616777`",
+       "feedback": "This assumes a `float` stores every digit you type. Its 4 bytes hold only about 6–7 significant digits."
+      },
+      {
+       "text": "`0.3246168`, then `0.3246168`",
+       "feedback": "This treats the two types as equally precise. A `double` uses twice the memory and keeps roughly twice as many digits."
+      },
+      {
+       "text": "Compile error: the literal has too many digits for a `float`",
+       "feedback": "Extra digits don't cause an error; they are rounded away. The `F` suffix already makes the literal a legal `float`."
+      }
+     ],
+     "hint": "How many significant digits can each type keep, according to the reading?",
+     "explanation": "Significant digits measure a value's accuracy. A `float` is accurate to about 6–7 of them and a `double` to about 14–15, so extra digits stored in a `float` are rounded away. (The reading shows this `float` as 0.324617; Java's `println` actually shows the shortest form that identifies the stored value, `0.3246168`.)",
+     "ref": "Ch. 2.4, significant digits (p. 52)"
+    },
+    {
+     "id": "choose-double",
+     "concept": "Choosing float or double",
+     "level": "evaluate",
+     "stem": "Graphics software needs highly accurate fractional values, and memory is plentiful. Which type should it use, and why?",
+     "options": [
+      {
+       "text": "`double`: it keeps about 14–15 significant digits",
+       "feedback": "When accuracy matters more than memory, `double`'s extra precision is worth its 8 bytes.",
+       "correct": true
+      },
+      {
+       "text": "`float`: single precision means its values are exact",
+       "feedback": "\"Single\" refers to the size (4 bytes), not to exactness. A `float` is the *less* precise of the two."
+      },
+      {
+       "text": "`float`: it uses less memory and so runs faster",
+       "feedback": "Saving memory is the reason to pick `float`, but this program needs accuracy and has memory to spare."
+      },
+      {
+       "text": "`long`: whole numbers never need any rounding",
+       "feedback": "Integer types can't hold fractional values at all, so they can't represent the values this program needs."
+      }
+     ],
+     "hint": "Which matters here: saving memory or keeping accuracy?",
+     "explanation": "Pick `float` to save memory when lower accuracy is acceptable; pick `double` (double precision, 8 bytes) when accuracy matters. Floating-point literals are `double` by default, so `double` is also the more convenient choice.",
+     "aside": "A `double` follows the IEEE 754 standard: 1 sign bit, 11 exponent bits and 52 fraction bits. Those 52 bits (plus an implied leading 1) give the roughly 15–16 decimal digits of precision.",
+     "ref": "Ch. 2.4, float versus double (p. 52)"
+    },
+    {
+     "id": "scientific-notation",
+     "concept": "Scientific notation",
+     "level": "understand",
+     "stem": "A program displays a `float` as `3.2461677E8`. About what value is that?",
+     "options": [
+      {
+       "text": "About 324,616,770",
+       "feedback": "`E8` means \"times 10 to the 8th power\": move the decimal point eight places to the right.",
+       "correct": true
+      },
+      {
+       "text": "About 0.000000032461677",
+       "feedback": "That reads the exponent as negative. A negative number after the E would move the decimal point to the left; here the 8 is positive."
+      },
+      {
+       "text": "About 25.97, since 3.2461677 × 8",
+       "feedback": "The E doesn't mean multiply by 8. It stands for *exponent*: multiply by 10 raised to the 8th power."
+      },
+      {
+       "text": "About 3,246,167, eight digits in all",
+       "feedback": "The 8 counts how many places the decimal point moves, not how many digits the number has."
+      }
+     ],
+     "hint": "The `e` stands for exponent. Which way, and how far, does the true decimal point move?",
+     "explanation": "In scientific notation the part before the E is at least 1 and less than 10, and the number after the E tells how many places the true decimal point is to the right (positive) or left (negative).",
+     "aside": "You can type scientific notation in Java code too: `double distance = 3.2461677E8;` is a legal `double` literal.",
+     "ref": "Ch. 2.4, note on scientific notation (p. 52)"
+    }
+   ]
+  },
+  {
+   "id": "2.5",
+   "title": "Using the char Data Type",
+   "subtitle": "Single characters, Unicode values, escape sequences and text blocks",
+   "source": "Ch. 2, section 2.5 (pp. 53–57)",
+   "intro": "A program prints 57 when everyone expected a 9. Five questions on single characters, Unicode and escape sequences.",
+   "takeaways": [
+    "A `char` holds one character, written in single quotes; Java stores it as a Unicode number, so `'9'` is 57 and `'A'` is 65.",
+    "Strings go in double quotes. An escape sequence is a backslash plus a character that together stand for one character: `\\n`, `\\t`, `\\\"`, `\\\\`.",
+    "A text block (between `\"\"\"` lines) writes a multiline string without any `\\n` escapes."
+   ],
+   "questions": [
+    {
+     "id": "char-unicode",
+     "concept": "Characters are stored as Unicode numbers",
+     "level": "analyze",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int aNumValue = '9';\nSystem.out.println(aNumValue);\nSystem.out.println(aNumValue + 1);",
+      "verify": {
+       "expect": "output",
+       "output": "57 58",
+       "program": "public class UnicodeDemo\n{\n    public static void main(String[] args)\n    {\n        int aNumValue = '9';\n        System.out.println(aNumValue);\n        System.out.println(aNumValue + 1);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`57`, then `58`",
+       "feedback": "The character `'9'` is stored as its Unicode value, 57. Stored in an `int`, it is just the number 57, and 57 + 1 is 58.",
+       "correct": true
+      },
+      {
+       "text": "`9`, then `10`",
+       "feedback": "This assumes the character `'9'` means the number 9. A digit character and a numeric value are stored differently."
+      },
+      {
+       "text": "`9`, then `91`",
+       "feedback": "This treats the value as text being concatenated. `aNumValue` is an `int`, so `+ 1` is ordinary addition."
+      },
+      {
+       "text": "Compile error: a `char` can't be stored in an `int`",
+       "feedback": "It is legal: every character already is a number, so a `char` fits in an `int` without loss."
+      }
+     ],
+     "hint": "Every character is stored as a number. Which number does Table 2-5 give for the character 9?",
+     "explanation": "Each character has a unique Unicode value (A is 65, the digit character 9 is 57). Only a numeric variable such as `int aNumValue = 9;` represents the value nine in arithmetic.",
+     "aside": "Unicode's first 128 values are the same as ASCII, the 1960s code for teleprinters. That's why the table's low values include control characters such as `bel`, which once rang a real bell on the machine.",
+     "ref": "Ch. 2.5, character values and Table 2-5 (pp. 53–54)"
+    },
+    {
+     "id": "char-vs-string",
+     "concept": "char versus String",
+     "level": "apply",
+     "stem": "Which declaration compiles?",
+     "options": [
+      {
+       "text": "`char middleInitial = 'M';`",
+       "feedback": "One character in single quotes is exactly what a `char` holds.",
+       "correct": true
+      },
+      {
+       "text": "`char firstName = 'Guadalupe';`",
+       "feedback": "A `char` holds only one character. A name needs a `String`: `String firstName = \"Guadalupe\";`."
+      },
+      {
+       "text": "`char grade = \"A\";`",
+       "feedback": "Double quotes make a String, even with one character inside. A `char` literal uses single quotes: `'A'`."
+      },
+      {
+       "text": "`String name = 'Ana';`",
+       "feedback": "Single quotes are for single characters. String literals go between double quotation marks."
+      }
+     ],
+     "hint": "Single quotes and double quotes create two different kinds of literal. Which is which?",
+     "explanation": "A `char` stores one character, written in single quotes. A `String` stores a sequence of characters, written in double quotes. Mixing the quote styles, or putting several characters in a `char`, doesn't compile.",
+     "ref": "Ch. 2.5, char declarations (p. 53) and Strings (p. 54)"
+    },
+    {
+     "id": "escape-path",
+     "concept": "Escape sequences",
+     "level": "apply",
+     "stem": "A student wants to display a Windows folder path. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "System.out.println(\"C:\\\\temp\\\\new\");",
+      "verify": {
+       "expect": "output",
+       "output": "C:\\temp\\new",
+       "program": "public class PathDemo\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"C:\\\\temp\\\\new\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`C:\\temp\\new`",
+       "feedback": "Each `\\\\` is one escape sequence that displays a single backslash, so the `t` and `n` that follow are ordinary letters.",
+       "correct": true
+      },
+      {
+       "text": "`C:\\\\temp\\\\new`",
+       "feedback": "This prints the source code literally. Inside a String, the pair `\\\\` stands for just one backslash."
+      },
+      {
+       "text": "`C:` then a tab, `emp`, a new line and `ew`",
+       "feedback": "That would happen with single backslashes (`\\t` and `\\n`). Here each backslash is itself escaped, so no tab or newline is produced."
+      },
+      {
+       "text": "Compile error: a String can't contain backslashes",
+       "feedback": "Backslashes are allowed; you just write each one as `\\\\` so Java doesn't read it as the start of another escape sequence."
+      }
+     ],
+     "hint": "In Table 2-6, which escape sequence displays a backslash?",
+     "explanation": "An escape sequence is a backslash followed by a character, and the pair represents one character. Because the backslash starts every escape, displaying a real backslash takes `\\\\`.",
+     "ref": "Ch. 2.5, escape sequences and Table 2-6 (p. 55)"
+    },
+    {
+     "id": "escape-one-char",
+     "concept": "An escape sequence is one character",
+     "level": "understand",
+     "stem": "Which statement about `char aTabChar = '\\t';` is accurate?",
+     "options": [
+      {
+       "text": "It stores one character: the tab",
+       "feedback": "The backslash and the t together form a single escape sequence, which represents one character.",
+       "correct": true
+      },
+      {
+       "text": "It stores two characters: a backslash and a t",
+       "feedback": "A `char` can hold only one character, and this declaration compiles. The two symbols together mean one character."
+      },
+      {
+       "text": "It doesn't compile, because there are two symbols in the quotes",
+       "feedback": "Escape sequences are the exception: `'\\t'`, `'\\n'` and `'\\\\'` are each one character and are legal `char` literals."
+      },
+      {
+       "text": "It stores the letter t; the backslash is ignored",
+       "feedback": "The backslash changes the meaning of the t. The value is the tab character, different from the plain character `'t'`."
+      }
+     ],
+     "hint": "In an escape sequence, what does the backslash do to the character after it?",
+     "explanation": "An escape sequence always begins with a backslash, and the backslash-plus-character pair represents a single, often nonprinting, character such as a tab or newline.",
+     "ref": "Ch. 2.5, escape sequences (p. 55)"
+    },
+    {
+     "id": "text-block",
+     "concept": "Text blocks",
+     "level": "apply",
+     "stem": "What does this display?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "String block = \"\"\"\n    Hello\n    there\n    \"\"\";\nSystem.out.print(block);",
+      "verify": {
+       "expect": "output",
+       "output": "Hello there",
+       "program": "public class TextBlockDemo\n{\n    public static void main(String[] args)\n    {\n        String block = \"\"\"\n            Hello\n            there\n            \"\"\";\n        System.out.print(block);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Hello` and `there` on two separate lines",
+       "feedback": "A text block keeps its line breaks, so no `\\n` is needed. The common indentation and the `\"\"\"` lines are not part of the text.",
+       "correct": true
+      },
+      {
+       "text": "`Hello there` on one line",
+       "feedback": "This assumes line breaks inside the literal are ignored. Keeping them is the whole point of a text block."
+      },
+      {
+       "text": "The words with `\"\"\"` above and below them",
+       "feedback": "The triple quotes mark where the text block starts and ends; they are not displayed."
+      },
+      {
+       "text": "Compile error: a string literal can't span several lines",
+       "feedback": "That's true of an ordinary `\"...\"` literal. A text block is the multiline literal added to Java for exactly this purpose."
+      }
+     ],
+     "hint": "What was the text block designed to avoid, according to the reading?",
+     "explanation": "A text block is a multiline string literal that starts and ends with three double quotes. It reproduces line breaks without escape sequences, so it is one of three ways (with `\\n` or several `println()` calls) to display multiline output.",
+     "aside": "Text blocks were previewed in Java 13 and became a permanent, standard feature in Java 15.",
+     "ref": "Ch. 2.5, multiline output and Figure 2-16 (pp. 55–56)"
+    }
+   ]
+  },
+  {
+   "id": "2.6",
+   "title": "Using the Scanner Class to Accept Keyboard Input",
+   "subtitle": "System.in, tokens, Scanner methods and the leftover Enter key",
+   "source": "Ch. 2, section 2.6 (pp. 57–63)",
+   "intro": "A sign-up program asks for an age, then rushes straight past the name prompt. Five questions on reading keyboard input with `Scanner`.",
+   "takeaways": [
+    "`System.in` reads only bytes; a `Scanner` wraps it and turns each token into a typed value with `nextInt()`, `nextDouble()`, `next()` or `nextLine()`.",
+    "`nextInt()`, `nextDouble()` and `next()` stop at whitespace and leave the Enter key in the keyboard buffer; `nextLine()` reads everything up to the Enter.",
+    "After numeric input, call `nextLine()` once to consume the leftover Enter before reading a line of text."
+   ],
+   "questions": [
+    {
+     "id": "leftover-enter",
+     "concept": "nextLine() after nextInt()",
+     "level": "analyze",
+     "stem": "The user types `28`, presses Enter, then types `Amina` and presses Enter. What does the program print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "Scanner input = new Scanner(System.in);\nint age = input.nextInt();\nString name = input.nextLine();\nSystem.out.println(\"[\" + name + \"] is \" + age);",
+      "verify": {
+       "expect": "output",
+       "stdin": "28\nAmina\n",
+       "program": "import java.util.Scanner;\n\npublic class BufferDemo\n{\n    public static void main(String[] args)\n    {\n        Scanner input = new Scanner(System.in);\n        int age = input.nextInt();\n        String name = input.nextLine();\n        System.out.println(\"[\" + name + \"] is \" + age);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[] is 28`",
+       "feedback": "`nextInt()` takes 28 but leaves the Enter in the buffer. `nextLine()` immediately reads up to that Enter, so `name` is an empty String.",
+       "correct": true
+      },
+      {
+       "text": "`[Amina] is 28`",
+       "feedback": "That's what the programmer intended, but `nextLine()` never waits for the name: an Enter is already waiting in the buffer."
+      },
+      {
+       "text": "`[28] is 28`",
+       "feedback": "`nextInt()` has already removed 28 from the buffer. `nextLine()` reads only what is left: the Enter key."
+      },
+      {
+       "text": "A runtime error: `nextLine()` can't follow `nextInt()`",
+       "feedback": "Nothing crashes; that's what makes this bug sneaky. The program runs, but `name` is empty."
+      }
+     ],
+     "hint": "After `nextInt()` takes the 28, what is still sitting in the keyboard buffer?",
+     "explanation": "All keystrokes, including Enter, go into the keyboard buffer. `nextInt()`, `nextDouble()` and `next()` stop before whitespace, while `nextLine()` reads up to the Enter. A `nextLine()` right after numeric input therefore returns the leftover empty line.",
+     "ref": "Ch. 2.6, Pitfall: Using nextLine() Following One of the Other Scanner Input Methods (pp. 59–61)"
+    },
+    {
+     "id": "fix-buffer",
+     "concept": "Consuming the Enter key",
+     "level": "apply",
+     "stem": "Which change makes the program in the previous question read the name correctly?",
+     "options": [
+      {
+       "text": "Add `input.nextLine();` right after the `nextInt()` call",
+       "feedback": "The extra call consumes the abandoned Enter, so the next `nextLine()` waits for the user's name. Its result doesn't need to be stored.",
+       "correct": true
+      },
+      {
+       "text": "Add `input.nextLine();` right before the `nextInt()` call",
+       "feedback": "Before `nextInt()` there is nothing to consume yet; the program would wait for a whole extra line. The Enter is left behind *after* the number."
+      },
+      {
+       "text": "Read the name with `next()` instead of `nextLine()`",
+       "feedback": "`next()` skips the leftover Enter, but it stops at the first space, so a name such as `Ana María` would be cut short. It swaps one bug for another."
+      },
+      {
+       "text": "Read the age with `nextLine()` as well, so both reads match",
+       "feedback": "`nextLine()` returns a String, which can't be stored in the `int` age without a conversion, so this doesn't compile as written."
+      }
+     ],
+     "hint": "The problem is one stray Enter key press. Where is it, and what could remove it?",
+     "explanation": "After any `next()`, `nextInt()` or `nextDouble()` call that is followed by `nextLine()`, add one extra `nextLine()` call. It consumes the abandoned Enter so the following input works as expected.",
+     "ref": "Ch. 2.6, Figure 2-22 GetUserInfo3 (p. 61)"
+    },
+    {
+     "id": "why-scanner",
+     "concept": "System.in and Scanner",
+     "level": "understand",
+     "stem": "Why does Java need the `Scanner` class when `System.in` already exists?",
+     "options": [
+      {
+       "text": "`System.in` reads only bytes; `Scanner` converts them to typed values",
+       "feedback": "`System.in` is the standard input device, but it is designed to read bytes. `Scanner` makes it flexible enough to return typed values.",
+       "correct": true
+      },
+      {
+       "text": "`System.in` reads from files, while `Scanner` is what reads the keyboard",
+       "feedback": "`System.in` refers to the keyboard (the standard input device). `Scanner` is connected to it with `new Scanner(System.in)`."
+      },
+      {
+       "text": "`System.in` reads every type, but only one value in each program",
+       "feedback": "The reading says the opposite: `System.in` is *less* flexible than `System.out` because it reads only bytes."
+      },
+      {
+       "text": "`Scanner` skips the keyboard buffer, so input arrives faster",
+       "feedback": "`Scanner` still reads from the keyboard buffer, which is exactly why a leftover Enter can cause trouble."
+      }
+     ],
+     "hint": "What kind of data is `System.in` designed to read, according to the reading?",
+     "explanation": "`System.out` can display many types, but `System.in` reads only bytes. A `Scanner` object connected to `System.in` provides methods such as `nextInt()` and `nextLine()` that return the next token as the type you need.",
+     "ref": "Ch. 2.6, opening discussion and Table 2-7 (pp. 57–58)"
+    },
+    {
+     "id": "input-mismatch",
+     "concept": "Tokens must match the method's type",
+     "level": "apply",
+     "stem": "Asked for an age, the user types `19.5` and presses Enter. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "Scanner input = new Scanner(System.in);\nint age = input.nextInt();\nSystem.out.println(\"Age: \" + age);",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "InputMismatchException"
+       ],
+       "stdin": "19.5\n",
+       "program": "import java.util.Scanner;\n\npublic class AgeDemo\n{\n    public static void main(String[] args)\n    {\n        Scanner input = new Scanner(System.in);\n        int age = input.nextInt();\n        System.out.println(\"Age: \" + age);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "It stops with an error: `19.5` isn't an `int` token",
+       "feedback": "`nextInt()` can only return an `int`. When the next token can't be converted, the program stops with an `InputMismatchException`.",
+       "correct": true
+      },
+      {
+       "text": "It prints `Age: 19`, silently dropping the fraction",
+       "feedback": "Dropping the fraction is what a cast to `int` does. `nextInt()` doesn't convert; it rejects a token that isn't an integer."
+      },
+      {
+       "text": "It prints `Age: 20`, rounding to the nearest whole number",
+       "feedback": "No method in this program rounds. The token simply isn't an `int`, so `nextInt()` fails."
+      },
+      {
+       "text": "It prints `Age: 19.5`, echoing the value as typed",
+       "feedback": "The variable is an `int`, so it could never hold 19.5. The error happens before anything is printed."
+      }
+     ],
+     "hint": "Can the token `19.5` be converted to the type that `nextInt()` returns?",
+     "explanation": "Each `Scanner` method returns the next token only if it can be converted to that method's type. A mismatch, such as a decimal or a word where an integer is expected, stops the program with an error (you will learn to handle these later).",
+     "ref": "Ch. 2.6, Scanner errors (p. 59)"
+    },
+    {
+     "id": "missing-import",
+     "concept": "Importing Scanner",
+     "level": "apply",
+     "stem": "This file has no `import` statement. What happens when you compile it?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class GetAge\n{\n    public static void main(String[] args)\n    {\n        Scanner input = new Scanner(System.in);\n        int age = input.nextInt();\n        System.out.println(age);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `Scanner` is unknown without an `import`",
+       "feedback": "`Scanner` lives in the `java.util` package, and the compiler can't find it unless the file starts with `import java.util.Scanner;`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because `Scanner` is built in like `System`",
+       "feedback": "`System` needs no import because it is in `java.lang`, which every program gets automatically. `Scanner` is in `java.util`."
+      },
+      {
+       "text": "It compiles, but crashes as soon as `nextInt()` runs",
+       "feedback": "The program never gets that far. A missing class is a compile-time problem."
+      },
+      {
+       "text": "Compile error: `System.in` must be imported from `java.io`",
+       "feedback": "`System.in` is available without an import. The unknown name is `Scanner`."
+      }
+     ],
+     "hint": "Which package holds `Scanner`, and is that package available automatically?",
+     "explanation": "A program that uses `Scanner` needs `import java.util.Scanner;` at the top. Classes in `java.lang`, such as `System`, `String`, `Integer` and `Double`, are the only ones available without an import.",
+     "aside": "The compiler reports two errors here, one for each `Scanner` on that line (the type and the constructor), even though a single missing import causes both.",
+     "ref": "Ch. 2.6, Figure 2-18 (p. 59) and Don't Do It (p. 76)"
+    }
+   ]
+  },
+  {
+   "id": "2.7",
+   "title": "Using the JOptionPane Class to Accept GUI Input",
+   "subtitle": "Input dialogs return Strings, parsing with type-wrapper classes, and confirm dialogs",
+   "source": "Ch. 2, section 2.7 (pp. 64–67)",
+   "intro": "A dialog asks for an hourly wage, and the line that multiplies the answer won't compile. Four questions on getting input through dialog boxes.",
+   "takeaways": [
+    "`showInputDialog()` always returns a `String`, even when the user types only digits.",
+    "To calculate with that answer, convert it with a type-wrapper method such as `Integer.parseInt()` or `Double.parseDouble()`; a cast can't convert a String.",
+    "`showConfirmDialog()` returns an `int`, which you compare with `JOptionPane.YES_OPTION`, `NO_OPTION` or `CANCEL_OPTION`."
+   ],
+   "questions": [
+    {
+     "id": "dialog-string",
+     "concept": "showInputDialog() returns a String",
+     "level": "analyze",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "String wageString =\n    JOptionPane.showInputDialog(null, \"Hourly wage?\");\ndouble weeklyPay = wageString * 37.5;",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "bad operand types"
+       ],
+       "program": "import javax.swing.JOptionPane;\n\npublic class WageDemo\n{\n    public static void main(String[] args)\n    {\n        String wageString =\n            JOptionPane.showInputDialog(null, \"Hourly wage?\");\n        double weeklyPay = wageString * 37.5;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: you can't multiply a `String` by a number",
+       "feedback": "The dialog's answer is a String even if the user will type digits. You can't multiply a String; it must be parsed into a number first.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; Java converts the typed digits into a number",
+       "feedback": "Java never parses a String automatically. `\"25\"` and `25` are different types."
+      },
+      {
+       "text": "It compiles, but crashes if the user types letters",
+       "feedback": "That describes `Double.parseDouble()` given letters. This code doesn't even compile, because it never converts the String."
+      },
+      {
+       "text": "Compile error: the result must be stored in a `String`",
+       "feedback": "Storing the result isn't the problem; the multiplication itself is illegal because one operand is a String."
+      }
+     ],
+     "hint": "What type does `showInputDialog()` return?",
+     "explanation": "An input dialog returns the user's keystrokes as a `String`. Before using the answer in arithmetic, convert it to a numeric type with a type-wrapper method.",
+     "ref": "Ch. 2.7, Using Input Dialog Boxes (pp. 64–65)"
+    },
+    {
+     "id": "parse",
+     "concept": "Type-wrapper parse methods",
+     "level": "apply",
+     "stem": "`dependentsString` holds a dialog's answer, such as `\"3\"`. Which statement correctly stores it as a number?",
+     "options": [
+      {
+       "text": "`int dependents = Integer.parseInt(dependentsString);`",
+       "feedback": "`parseInt()` from the type-wrapper class `Integer` converts a String of digits into an `int`.",
+       "correct": true
+      },
+      {
+       "text": "`int dependents = (int) dependentsString;`",
+       "feedback": "Casts convert between primitive types only. A `String` is a reference type, so this cast doesn't compile."
+      },
+      {
+       "text": "`int dependents = dependentsString.nextInt();`",
+       "feedback": "`nextInt()` is a `Scanner` method. A `String` has no `nextInt()` method."
+      },
+      {
+       "text": "`int dependents = Double.parseDouble(dependentsString);`",
+       "feedback": "`parseDouble()` returns a `double`, and storing a `double` in an `int` is a lossy conversion the compiler rejects."
+      }
+     ],
+     "hint": "Which class's method turns a String into an `int`, and what type does each parse method return?",
+     "explanation": "Every primitive type has a type-wrapper class in `java.lang`. `Integer.parseInt()` and `Double.parseDouble()` are static methods that convert a String to an `int` or a `double`; casting can't do this.",
+     "aside": "Only two wrapper classes are named differently from their primitive types: `Integer` for `int` and `Character` for `char`. The rest just capitalize: `Double`, `Boolean`, `Long`, `Short`, `Byte`, `Float`.",
+     "ref": "Ch. 2.7, type-wrapper classes and Figure 2-31 (pp. 65–66)"
+    },
+    {
+     "id": "confirm-dialog",
+     "concept": "Confirm dialogs return an int",
+     "level": "apply",
+     "stem": "The user clicks **No** in the confirm dialog. What does the message box say?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int selection;\nboolean isYes;\nselection = JOptionPane.showConfirmDialog(null,\n    \"Do you want to upgrade to first class?\");\nisYes = (selection == JOptionPane.YES_OPTION);\nJOptionPane.showMessageDialog(null,\n    \"You responded \" + isYes);",
+      "verify": {
+       "expect": "skip",
+       "reason": "Needs a GUI to click the dialog's buttons."
+      }
+     },
+     "options": [
+      {
+       "text": "`You responded false`",
+       "feedback": "Clicking No returns `JOptionPane.NO_OPTION`, which isn't equal to `YES_OPTION`, so `isYes` is `false`, and that is what is concatenated.",
+       "correct": true
+      },
+      {
+       "text": "`You responded NO_OPTION`",
+       "feedback": "The dialog returns an `int` code, not a constant's name, and the message displays the `boolean` `isYes`, not `selection`."
+      },
+      {
+       "text": "`You responded 1`",
+       "feedback": "`selection` does hold an `int` code, but the message displays `isYes`, the result of comparing that code with `YES_OPTION`."
+      },
+      {
+       "text": "`You responded true`",
+       "feedback": "`isYes` is `true` only when the comparison with `YES_OPTION` is true. Clicking any button is not enough."
+      }
+     ],
+     "hint": "Which variable is concatenated into the message, and how is its value set?",
+     "explanation": "`showConfirmDialog()` returns one of three `int` values: `YES_OPTION`, `NO_OPTION` or `CANCEL_OPTION`. Comparing the result with `==` gives a `boolean` you can use later in decisions.",
+     "ref": "Ch. 2.7, Using Confirm Dialog Boxes and Figure 2-33 (pp. 66–67)"
+    },
+    {
+     "id": "dialog-args",
+     "concept": "Dialog arguments",
+     "level": "understand",
+     "stem": "In `JOptionPane.showInputDialog(null, \"What is your area code?\", \"Area code information\", JOptionPane.QUESTION_MESSAGE)`, what does the first argument, `null`, do?",
+     "options": [
+      {
+       "text": "It means no parent component, so the box is centered",
+       "feedback": "The first argument is the parent component the dialog appears in front of. `null` means none, so the dialog appears in the center of the screen.",
+       "correct": true
+      },
+      {
+       "text": "It leaves the text field empty when the dialog opens",
+       "feedback": "The text field starts empty regardless. The first argument controls where the dialog appears."
+      },
+      {
+       "text": "It removes the title bar from the dialog box",
+       "feedback": "The title bar text is the third argument, `\"Area code information\"`."
+      },
+      {
+       "text": "It lets the user close the box without typing anything",
+       "feedback": "Every input dialog can be closed or cancelled. `null` concerns the parent component."
+      }
+     ],
+     "hint": "The reading lists the four arguments in order. What is the first one?",
+     "explanation": "The four-argument `showInputDialog()` takes a parent component (`null` centers the box), the message, the title-bar text, and a field such as `QUESTION_MESSAGE` that chooses the icon.",
+     "ref": "Ch. 2.7, four-argument showInputDialog() (p. 65)"
+    }
+   ]
+  },
+  {
+   "id": "2.8",
+   "title": "Performing Arithmetic Using Variables and Constants",
+   "subtitle": "Integer and floating-point division, remainder, precedence, associativity and imprecision",
+   "source": "Ch. 2, section 2.8 (pp. 68–72)",
+   "intro": "A grade program says the average of 90 and 80 is 130. Six questions on Java's arithmetic operators and the order in which they run.",
+   "takeaways": [
+    "When both operands are integers, `/` discards the fraction (`45 / 2` is 22); one floating-point operand gives floating-point division (`45 / 2.0` is 22.5).",
+    "`*`, `/` and `%` run before `+` and `-`, and operators of equal precedence run left to right; parentheses override both.",
+    "Floating-point values are often approximations, so `2.20 - 2.00 == 0.20` is `false`."
+   ],
+   "questions": [
+    {
+     "id": "integer-division",
+     "concept": "Integer versus floating-point division",
+     "level": "apply",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int a = 45;\nSystem.out.println(a / 2);\nSystem.out.println(a / 2.0);",
+      "verify": {
+       "expect": "output",
+       "output": "22 22.5",
+       "program": "public class DivisionDemo\n{\n    public static void main(String[] args)\n    {\n        int a = 45;\n        System.out.println(a / 2);\n        System.out.println(a / 2.0);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`22`, then `22.5`",
+       "feedback": "45 / 2 divides two integers, so the fraction is dropped. In 45 / 2.0 one operand is floating-point, so the result keeps its .5.",
+       "correct": true
+      },
+      {
+       "text": "`22.5`, then `22.5`",
+       "feedback": "Java doesn't switch to floating-point just because the answer has a fraction. With two integer operands, the fraction is lost."
+      },
+      {
+       "text": "`23`, then `22.5`",
+       "feedback": "Integer division doesn't round; it discards the fractional part. 22.5 becomes 22, not 23."
+      },
+      {
+       "text": "`22`, then `22`",
+       "feedback": "The second division has a `double` operand, 2.0, so it is floating-point division and keeps the fraction."
+      }
+     ],
+     "hint": "For each line, are both operands integers?",
+     "explanation": "Integer division happens when both operands are integers: the result is an integer and any fractional part is lost (not rounded). If either operand is floating-point, the division is floating-point.",
+     "ref": "Ch. 2.8, the / operator and Table 2-8 (p. 68)"
+    },
+    {
+     "id": "remainder",
+     "concept": "The remainder operator",
+     "level": "apply",
+     "stem": "A video lasts 135 minutes. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int totalMinutes = 135;\nSystem.out.println(totalMinutes / 60);\nSystem.out.println(totalMinutes % 60);",
+      "verify": {
+       "expect": "output",
+       "output": "2 15",
+       "program": "public class MinutesDemo\n{\n    public static void main(String[] args)\n    {\n        int totalMinutes = 135;\n        System.out.println(totalMinutes / 60);\n        System.out.println(totalMinutes % 60);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`2`, then `15`",
+       "feedback": "60 goes into 135 two whole times (integer division), and 15 minutes are left over (the remainder).",
+       "correct": true
+      },
+      {
+       "text": "`2.25`, then `15`",
+       "feedback": "Both operands of `/` are integers, so the result is an integer. The .25 is discarded."
+      },
+      {
+       "text": "`2`, then `0.25`",
+       "feedback": "`%` doesn't give a fraction of the divisor. It gives the whole amount left over after division: 15."
+      },
+      {
+       "text": "`2`, then `2`",
+       "feedback": "This treats `%` as another way to write division. `%` returns the remainder, not the quotient."
+      }
+     ],
+     "hint": "How many whole hours fit in 135 minutes, and how many minutes are left?",
+     "explanation": "With integers, `/` gives how many whole times one number goes into another and `%` gives what is left over. Together they split a quantity into units, such as hours and minutes. `%` works on its own: you don't need to divide first.",
+     "aside": "In Java the remainder takes the sign of the left operand: `-7 % 3` is `-1`, not 2. That is why mathematicians prefer the name remainder over modulus.",
+     "ref": "Ch. 2.8, the remainder operator (p. 68)"
+    },
+    {
+     "id": "precedence-average",
+     "concept": "Operator precedence",
+     "level": "analyze",
+     "stem": "One of these lines is meant to average the two scores. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int score1 = 90, score2 = 80;\nSystem.out.println(score1 + score2 / 2);\nSystem.out.println((score1 + score2) / 2);",
+      "verify": {
+       "expect": "output",
+       "output": "130 85",
+       "program": "public class AverageDemo\n{\n    public static void main(String[] args)\n    {\n        int score1 = 90, score2 = 80;\n        System.out.println(score1 + score2 / 2);\n        System.out.println((score1 + score2) / 2);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`130`, then `85`",
+       "feedback": "Division runs before addition, so the first line adds half of `score2` to `score1` (90 + 40). The parentheses in the second line make the addition run first.",
+       "correct": true
+      },
+      {
+       "text": "`85`, then `85`",
+       "feedback": "This reads the first line left to right as written. Without parentheses, `/` takes precedence over `+`."
+      },
+      {
+       "text": "`130`, then `130`",
+       "feedback": "Parentheses override precedence: in the second line, the sum 170 is computed first and then divided by 2."
+      },
+      {
+       "text": "`85`, then `130`",
+       "feedback": "This reverses the effect of the parentheses. They force the operation inside them to happen first."
+      }
+     ],
+     "hint": "Which runs first without parentheses: `+` or `/`?",
+     "explanation": "Multiplication, division and remainder have higher precedence than addition and subtraction. `score1 + score2 / 2` adds half of `score2`; the average needs `(score1 + score2) / 2`.",
+     "ref": "Ch. 2.8, Associativity and Precedence (p. 69) and Don't Do It (p. 76)"
+    },
+    {
+     "id": "left-to-right",
+     "concept": "Equal precedence runs left to right",
+     "level": "apply",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "System.out.println(25 / 8 * 3);",
+      "verify": {
+       "expect": "output",
+       "program": "public class OrderDemo\n{\n    public static void main(String[] args)\n    {\n        System.out.println(25 / 8 * 3);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`9`",
+       "feedback": "`/` and `*` have equal precedence, so they run left to right: 25 / 8 is 3 (integer division), then 3 * 3 is 9.",
+       "correct": true
+      },
+      {
+       "text": "`1`",
+       "feedback": "This does the multiplication first (8 * 3 = 24, then 25 / 24 = 1). Multiplication doesn't outrank division; they are equal."
+      },
+      {
+       "text": "`9.375`",
+       "feedback": "That is the result with real-number arithmetic. All three values are integers, so 25 / 8 drops its fraction first."
+      },
+      {
+       "text": "`9.0`",
+       "feedback": "Every operand is an `int`, so the result is an `int`. Java prints it without a decimal point."
+      }
+     ],
+     "hint": "`*` and `/` share a precedence level. In what order do operators of equal precedence run?",
+     "explanation": "`*`, `/` and `%` have the same precedence and associate left to right, regardless of which appears first. With integers, each division also drops its fraction before the next step.",
+     "ref": "Ch. 2.8, Associativity and Precedence (p. 69)"
+    },
+    {
+     "id": "imprecision",
+     "concept": "Floating-point imprecision",
+     "level": "understand",
+     "stem": "What does this print, and why?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class ImprecisionDemo\n{\n    public static void main(String[] args)\n    {\n        double answer = 2.20 - 2.00;\n        boolean isEqual = answer == 0.20;\n        System.out.println(\"isEqual is \" + isEqual);\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "isEqual is false"
+      }
+     },
+     "options": [
+      {
+       "text": "`isEqual is false`: `answer` is slightly more than 0.20",
+       "feedback": "0.20 and 2.20 can't be stored exactly in binary, so `answer` comes out as 0.20000000000000018, which isn't equal to the stored 0.20.",
+       "correct": true
+      },
+      {
+       "text": "`isEqual is true`: 2.20 - 2.00 is exactly 0.20 in Java",
+       "feedback": "Mathematically yes, but floating-point numbers are often approximations, and these two are slightly different."
+      },
+      {
+       "text": "`isEqual is false`: `==` can't compare `double` values",
+       "feedback": "`==` compiles with doubles and compares them exactly. That exactness is the problem when values are approximations."
+      },
+      {
+       "text": "`isEqual is true`: Java rounds results to two decimals",
+       "feedback": "Java doesn't round arithmetic results to the number of decimals you typed. Rounding is something you ask for explicitly."
+      }
+     ],
+     "hint": "Can a value such as 0.1 be represented exactly in the binary format computers use?",
+     "explanation": "Integer values are exact, but floating-point values are often approximations: even 0.1 has no exact binary form. Imprecision can make output look odd and comparisons with `==` come out unexpectedly false.",
+     "aside": "`0.1 + 0.2` gives 0.30000000000000004 in Java, JavaScript and Python alike: all three use the same IEEE 754 double format.",
+     "ref": "Ch. 2.8, Pitfall: Not Understanding Imprecision in Floating-Point Numbers (p. 70)"
+    },
+    {
+     "id": "efficiency",
+     "concept": "Writing arithmetic statements efficiently",
+     "level": "evaluate",
+     "stem": "Two statements compute `hours * rate * STATE_RATE` and `hours * rate * FED_RATE`. Which rewrite does the reading recommend?",
+     "options": [
+      {
+       "text": "Compute `grossPay = hours * rate;` once, then multiply `grossPay` by each rate",
+       "feedback": "The repeated multiplication `hours * rate` is done once and reused, which avoids duplicated work.",
+       "correct": true
+      },
+      {
+       "text": "Make `hours` and `rate` named constants so Java computes them once",
+       "feedback": "`hours` and `rate` change from employee to employee, so they can't be constants, and `final` wouldn't remove the repeated multiplication anyway."
+      },
+      {
+       "text": "Write `hours * (rate * STATE_RATE)` so the parentheses run first",
+       "feedback": "Parentheses change the order, but `hours` and `rate` are still multiplied separately in two statements. The duplication remains."
+      },
+      {
+       "text": "Combine both taxes into one statement: `hours * rate * (STATE_RATE + FED_RATE)`",
+       "feedback": "That computes the total tax, but the program needs the state and federal amounts separately."
+      }
+     ],
+     "hint": "Which part of the two statements is computed twice?",
+     "explanation": "Avoid repeating the same arithmetic: compute a shared intermediate result once, store it in a variable, and reuse it. The saving is small here but grows with complex or frequently repeated calculations.",
+     "ref": "Ch. 2.8, Writing Arithmetic Statements Efficiently (pp. 69–70)"
+    }
+   ]
+  },
+  {
+   "id": "2.9",
+   "title": "Understanding Type Conversion",
+   "subtitle": "Unifying types, implicit promotion, explicit casts and where the parentheses go",
+   "source": "Ch. 2, section 2.9 (pp. 72–76)",
+   "intro": "A student changes `average` to a `double` and the average of 20 and 19 still comes out as 19.0. Five questions on how Java converts between types.",
+   "takeaways": [
+    "In mixed arithmetic Java promotes the lower operand to the higher type (`double` > `float` > `long` > `int`), and `byte`, `short` and `char` become `int`.",
+    "Java won't narrow silently: storing a `double` result in an `int` needs an explicit cast, which drops the fraction.",
+    "A cast applies to the operand right after it: `(double) sum / 2` keeps the fraction, but `(double) (sum / 2)` casts after integer division has already lost it."
+   ],
+   "questions": [
+    {
+     "id": "cast-placement",
+     "concept": "Where the cast goes",
+     "level": "analyze",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int sum = 39;\ndouble average;\naverage = (double) sum / 2;\nSystem.out.println(average);\naverage = (double) (sum / 2);\nSystem.out.println(average);",
+      "verify": {
+       "expect": "output",
+       "output": "19.5 19.0",
+       "program": "public class AverageCast\n{\n    public static void main(String[] args)\n    {\n        int sum = 39;\n        double average;\n        average = (double) sum / 2;\n        System.out.println(average);\n        average = (double) (sum / 2);\n        System.out.println(average);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`19.5`, then `19.0`",
+       "feedback": "In the first line `sum` becomes a `double` before dividing, so the division keeps the fraction. In the second, `sum / 2` is integer division (19) and the cast comes too late.",
+       "correct": true
+      },
+      {
+       "text": "`19.5`, then `19.5`",
+       "feedback": "This assumes any cast in front of the expression rescues the fraction. The parentheses make Java finish `sum / 2` with integers first."
+      },
+      {
+       "text": "`19.0`, then `19.0`",
+       "feedback": "In the first line the cast applies to `sum` alone, so the division is `double` / `int`, which is floating-point division."
+      },
+      {
+       "text": "`19.0`, then `19.5`",
+       "feedback": "This reverses the two lines. Extra parentheses delay the cast until after the integer division."
+      }
+     ],
+     "hint": "In each line, is the division done with integers or with a `double`?",
+     "explanation": "The cast operator applies to the operand that follows it. Cast an operand *before* dividing to get floating-point division; casting the result of integer division only converts an already-truncated value. `sum / 2.0` is another fix.",
+     "ref": "Ch. 2.9, You Do It: Implicit and Explicit Casting (pp. 75–76)"
+    },
+    {
+     "id": "narrowing",
+     "concept": "Java won't narrow without a cast",
+     "level": "apply",
+     "stem": "What happens when you compile this?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int hoursWorked = 37;\ndouble payRate = 16.73;\nint grossPay = hoursWorked * payRate;",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "possible lossy conversion from double to int"
+       ],
+       "program": "public class PayDemo\n{\n    public static void main(String[] args)\n    {\n        int hoursWorked = 37;\n        double payRate = 16.73;\n        int grossPay = hoursWorked * payRate;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: storing a `double` in an `int` needs a cast",
+       "feedback": "`int` times `double` is promoted to `double` (619.01). Storing it in an `int` would lose the fraction, and Java requires you to ask for that.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and `grossPay` holds 619, the cents dropped",
+       "feedback": "That is what `(int) (hoursWorked * payRate)` would do. Without the cast, Java refuses the lossy conversion."
+      },
+      {
+       "text": "It compiles, and `grossPay` holds 619 after rounding",
+       "feedback": "Java never rounds automatically here, and it doesn't compile without a cast. Even a cast truncates rather than rounds."
+      },
+      {
+       "text": "Compile error: an `int` and a `double` can't be multiplied",
+       "feedback": "Mixing them is fine: Java promotes the `int` to a `double`. The problem is where the `double` result is stored."
+      }
+     ],
+     "hint": "What type is `hoursWorked * payRate`, and what type is `grossPay`?",
+     "explanation": "Java converts automatically to a higher type (a promotion) but never to a lower one, because that could lose data. To store a `double` result in an `int`, cast it explicitly, accepting that the fraction is lost.",
+     "aside": "Even rounding needs a cast: `Math.round(619.01)` returns a `long`, so you would write `(int) Math.round(hoursWorked * payRate)`.",
+     "ref": "Ch. 2.9, Automatic Type Conversion (p. 73)"
+    },
+    {
+     "id": "byte-promotion",
+     "concept": "byte, short and char promote to int",
+     "level": "analyze",
+     "stem": "Why doesn't this compile, even though 30 fits easily in a `byte`?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "byte b1 = 10, b2 = 20;\nbyte total = b1 + b2;",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "possible lossy conversion from int to byte"
+       ],
+       "program": "public class ByteSum\n{\n    public static void main(String[] args)\n    {\n        byte b1 = 10, b2 = 20;\n        byte total = b1 + b2;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "The sum `b1 + b2` has type `int`, not `byte`",
+       "feedback": "In arithmetic, `byte`, `short` and `char` are promoted to `int`. So the sum is an `int`, and narrowing it to a `byte` needs a cast.",
+       "correct": true
+      },
+      {
+       "text": "30 is larger than the largest value a `byte` can hold",
+       "feedback": "A `byte` holds up to 127, so 30 fits. The compiler objects to the sum's *type*, not its value."
+      },
+      {
+       "text": "Two `byte` values can't be added; only `int`s can",
+       "feedback": "They can be added; Java converts them to `int` first. The result is just not a `byte`."
+      },
+      {
+       "text": "The sum is a `long`, because Java widens to be safe",
+       "feedback": "The unifying type for `byte` operands is `int`, the lowest type in Figure 2-41, not `long`."
+      }
+     ],
+     "hint": "What happens to `byte` values when they are used in arithmetic?",
+     "explanation": "`char`, `short` and `byte` are all promoted to `int` in expressions, so adding two bytes produces an `int`. Storing it back in a `byte` is a narrowing conversion that requires a cast.",
+     "aside": "The same rule explains a classic puzzle: `'A' + 1` is the `int` 66, and you need `(char) ('A' + 1)` to get the character `'B'`.",
+     "ref": "Ch. 2.9, Automatic Type Conversion and Figure 2-41 (p. 73)"
+    },
+    {
+     "id": "lossy-cast",
+     "concept": "Casting can distort values",
+     "level": "analyze",
+     "stem": "What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java · inside main()",
+      "text": "int anOkayInt = 200;\nbyte aBadByte = (byte) anOkayInt;\nSystem.out.println(aBadByte);",
+      "verify": {
+       "expect": "output",
+       "program": "public class BadByte\n{\n    public static void main(String[] args)\n    {\n        int anOkayInt = 200;\n        byte aBadByte = (byte) anOkayInt;\n        System.out.println(aBadByte);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`-56`",
+       "feedback": "200 doesn't fit in a `byte` (max 127). The cast keeps only the low 8 bits, where the leading 1 marks a negative number: 200 − 256 = −56.",
+       "correct": true
+      },
+      {
+       "text": "`200`",
+       "feedback": "A `byte` can never hold 200. A cast doesn't make room; it forces the value into the smaller type."
+      },
+      {
+       "text": "`127`",
+       "feedback": "Java doesn't clamp to the largest legal value. It keeps the low 8 bits, which wrap around to a negative number."
+      },
+      {
+       "text": "Compile error: *possible lossy conversion from int to byte*",
+       "feedback": "That error appears *without* a cast. The cast tells the compiler you accept the possible loss, so the code compiles."
+      }
+     ],
+     "hint": "A cast keeps the value's low 8 bits. What do 8 bits mean when the first one is 1?",
+     "explanation": "An explicit cast always compiles, even when the value doesn't fit, so you are responsible for the result. Narrowing an out-of-range value gives a distorted number. (The reading's note says −72; running the code shows −56, because 200 − 256 = −56.)",
+     "ref": "Ch. 2.9, note on lossy casts (p. 74)"
+    },
+    {
+     "id": "unifying-type",
+     "concept": "The unifying type",
+     "level": "apply",
+     "stem": "Given `int i`, `long l`, `float f` and `double d`, which expression's result is a `float`?",
+     "options": [
+      {
+       "text": "`f - l`",
+       "feedback": "`float` ranks above `long` in Figure 2-41, so the `long` is promoted and the result is a `float`.",
+       "correct": true
+      },
+      {
+       "text": "`i * d`",
+       "feedback": "`double` is the highest type, so mixing it with an `int` gives a `double`."
+      },
+      {
+       "text": "`i + l`",
+       "feedback": "`long` ranks above `int`, so this result is a `long`. Neither operand is floating-point."
+      },
+      {
+       "text": "`f + d`",
+       "feedback": "When a `float` meets a `double`, the `float` is promoted to `double`, the higher type."
+      }
+     ],
+     "hint": "Rank the types from Figure 2-41: which operand is higher in each expression?",
+     "explanation": "In an expression with unlike types, Java converts the lower-ranked operand to the higher one: `double`, then `float`, then `long`, then `int`. The result has that unifying type.",
+     "ref": "Ch. 2.9, Figure 2-41 (p. 73)"
+    }
+   ]
+  }
+ ]
+}
