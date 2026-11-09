@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The taco pickup kiosk</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.6</div>
+  <h1>The taco pickup kiosk</h1>
+<h2>Objectives</h2><ul><li>Read an <code>int</code>, a line and a token with <code>nextInt()</code>, <code>nextLine()</code> and <code>next()</code></li><li>Explain how the keyboard buffer keeps the Enter key after <code>nextInt()</code></li><li>Consume the leftover Enter with an extra <code>nextLine()</code> call</li><li>Write one clear prompt for each value the user enters</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> After <code>nextInt()</code> reads the quantity, a <code>nextLine()</code> call whose result isn&#x27;t stored consumes the leftover Enter, before the name is read with <code>nextLine()</code>.</li><li><strong>R2</strong> The kiosk prompts <code>Pickup time &gt;&gt; </code> with <code>print()</code> and reads the time into <code>pickupTime</code>.</li><li><strong>R3</strong> The ticket starts with a blank line from <code>println()</code>, then the header, the quantity and name, and <code>Pickup at</code> with the time.</li><li><strong>R4</strong> With the input 3, Dana Cruz and 18:45, the output matches the test program&#x27;s expected output. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The customer types 3 and presses Enter. What does <code>nextInt()</code> take from the keyboard buffer, and what does it leave there?</p><div class="answer"><p><code>nextInt()</code> takes the token 3 and stops at the whitespace after it, so the Enter key press is left in the buffer.</p></div></li><li><p>Why does the starter&#x27;s name prompt appear but never wait for an answer?</p><div class="answer"><p><code>nextLine()</code> reads everything up to the next Enter. The Enter left by <code>nextInt()</code> is already waiting, so <code>nextLine()</code> returns immediately with an empty string, and the program moves on without letting the customer type.</p></div></li></ol>
+<h2>Solution</h2><div class="file">TacoKiosk.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TacoKiosk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">customerName</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">pickupTime</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">in</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Number of tacos &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quantity</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextInt</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Name for the order &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">customerName</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextLine</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Pickup time &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">pickupTime</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">next</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"--- Order ticket ---"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">quantity</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" tacos for "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">customerName</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Pickup at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pickupTime</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>nextInt()</code> reads the token 3 and leaves the Enter key that followed it in the keyboard buffer. The next <code>nextLine()</code> reads everything up to the next Enter, which is already waiting, so it returns an empty string without pausing. A <code>nextLine()</code> call that isn&#x27;t stored consumes that Enter. <code>nextLine()</code> is needed for the name because it contains a space (<code>next()</code> would return only &quot;Dana&quot;); the pickup time is a single token, so <code>next()</code> works (and <code>nextLine()</code> would too).</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestTacoKiosk.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.ByteArrayInputStream</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestTacoKiosk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Types the answers for you: 3, Enter, Dana Cruz, Enter, 18:45, Enter.</span>
+<span class="t-w">        </span><span class="t-c1">// (System.setIn swaps the keyboard for this text, so you won't type anything.)</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">setIn</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ByteArrayInputStream</span><span class="t-p">(</span><span class="t-s">"3\nDana Cruz\n18:45\n"</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">()));</span>
+<span class="t-w">        </span><span class="t-n">TacoKiosk</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Number of tacos &gt;&gt; Name for the order &gt;&gt; Pickup time &gt;&gt; 
+--- Order ticket ---
+3 tacos for Dana Cruz
+Pickup at 18:45
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The leftover Enter is consumed before the name is read<div class="small">in <code>TacoKiosk.main</code></div></td><td><div><span class="tag">require</span> <code>quantity\s*=\s*input\s*\.\s*nextInt\s*\(\s*\)\s*;(?:\s*System\s*\.\s*out\s*\.\s*print\s*\([^;]*\)\s*;)?\s*input\s*\.\s*nextLine\s*\(\s*\)\s*;(?:\s*System\s*\.\s*out\s*\.\s*print\s*\([^;]*\)\s*;)?\s*customerName\s*=\s*input\s*\.\s*nextLine\s*\(\s*\)\s*;</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The full name is read with nextLine()<div class="small">in <code>TacoKiosk.main</code></div></td><td><div><span class="tag">require</span> <code>customerName\s*=\s*input\s*\.\s*nextLine\s*\(</code></div><div><span class="tag">forbid</span> <code>customerName\s*=\s*input\s*\.\s*next\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The pickup time has its own prompt and input<div class="small">in <code>TacoKiosk.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>print\s*\(\s*\&quot;Pickup time &gt;&gt; \&quot;\s*\)\s*;\s*pickupTime\s*=\s*input\s*\.\s*(?:next|nextLine)\s*\(\s*\)\s*;</code></div></td></tr><tr><td>C4</td><td>R3</td><td>The ticket starts with a blank line and ends with the pickup time<div class="small">in <code>TacoKiosk.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*println\s*\(\s*\)\s*;\s*System\s*\.\s*out\s*\.\s*println\s*\(\s*\&quot;--- Order ticket ---\&quot;\s*\))(?=[\s\S]*println\s*\(\s*\&quot;Pickup at \&quot;\s*\+\s*pickupTime\s*\)\s*;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The leftover Enter is consumed before the name is read</dt><dd><p>Between <code>quantity = input.nextInt();</code> and the line that reads the name, add a call to <code>nextLine()</code> on the Scanner without storing the result. It removes the Enter that <code>nextInt()</code> left behind, so the name&#x27;s <code>nextLine()</code> waits for the customer.</p><div class='small'><strong>Hint:</strong></div><p>The extra call doesn&#x27;t need a variable or an <code>=</code>: its only job is to throw away what&#x27;s in the buffer.</p></dd><dt>C2 · The full name is read with nextLine()</dt><dd><p>Keep <code>nextLine()</code> for the name: <code>next()</code> stops at the first space, so &quot;Dana Cruz&quot; would become &quot;Dana&quot; and &quot;Cruz&quot; would be read as the pickup time.</p></dd><dt>C3 · The pickup time has its own prompt and input</dt><dd><p>Print the prompt <code>Pickup time &gt;&gt; </code> with <code>print()</code> (so the answer goes on the same line), then read the answer into <code>pickupTime</code> on the next line.</p></dd><dt>C4 · The ticket starts with a blank line and ends with the pickup time</dt><dd><p>Call <code>println()</code> with no argument right before the header line, and add a last line that prints <code>Pickup at </code> followed by <code>pickupTime</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter and watch the prompts: which one doesn&#x27;t wait? Ask yourself what <code>nextInt()</code> takes from the buffer, and what it leaves.</p></li><li><p>The reading&#x27;s fix in Figure 2-22 adds one statement. It calls a Scanner method but doesn&#x27;t assign its result to anything.</p></li><li><p>The name contains a space, so it needs the method that reads a whole line. The pickup time is a single token.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your fix calls <code>nextLine()</code> without storing what it returns. Explain what that call does in this program and why nothing needs to be stored.</p><div class="answer"><p>It consumes the Enter key that <code>nextInt()</code> left in the keyboard buffer. The Enter carries no information we need, so it&#x27;s read and thrown away; that clears the buffer, and the following <code>nextLine()</code> waits for the name.</p></div></li><li><p>Why does the name need <code>nextLine()</code> while the pickup time could use <code>next()</code>? What would happen with <code>next()</code> for the name?</p><div class="answer"><p><code>next()</code> returns one token, stopping at whitespace; <code>nextLine()</code> returns the whole line. &quot;Dana Cruz&quot; has a space, so <code>next()</code> would return only &quot;Dana&quot; and leave &quot;Cruz&quot; to be read as the pickup time. &quot;18:45&quot; has no spaces, so one token is enough.</p></div></li></ol>
+<h2>Extension</h2><p>Ask for the quantity <em>last</em>, after the name and the pickup time. Which <code>nextLine()</code> calls are still needed, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

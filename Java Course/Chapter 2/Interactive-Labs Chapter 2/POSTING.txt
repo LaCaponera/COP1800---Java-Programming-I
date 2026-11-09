@@ -1,0 +1,56 @@
+POSTING CHECKLIST
+=================
+
+  Lab 2.1: The shift trade
+    students : 2.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.1_guide.html
+
+  Lab 2.2: The router's data meter
+    students : 2.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.2_guide.html
+
+  Lab 2.3: The ride gate
+    students : 2.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.3_guide.html
+
+  Lab 2.4: The drone drop-off
+    students : 2.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.4_guide.html
+
+  Lab 2.5: The boarding pass
+    students : 2.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.5_guide.html
+
+  Lab 2.6: The taco pickup kiosk
+    students : 2.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.6_guide.html
+
+  Lab 2.7: The ticket order dialogs
+    students : 2.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.7_guide.html
+
+  Lab 2.8: The episode-length converter
+    students : 2.8.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.8_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.8_guide.html
+
+  Lab 2.9: The muffin batch scaler
+    students : 2.9.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/2.9_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/2.9_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

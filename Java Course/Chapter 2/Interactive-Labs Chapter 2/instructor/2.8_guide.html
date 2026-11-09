@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The episode-length converter</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.8</div>
+  <h1>The episode-length converter</h1>
+<h2>Objectives</h2><ul><li>Use integer division to count whole hours and minutes</li><li>Use the remainder operator <code>%</code> to find what&#x27;s left over</li><li>Predict results from precedence and left-to-right associativity</li><li>Use parentheses to make an addition happen before a division</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>SECONDS_PER_HOUR</code> (3600) and <code>SECONDS_PER_MINUTE</code> (60) are named constants, and no calculation uses the numbers 3600 or 60 directly.</li><li><strong>R2</strong> Each episode is broken into whole hours, the remaining whole minutes and the remaining seconds with <code>/</code> and <code>%</code>, reusing <code>hours</code>, <code>minutes</code> and <code>seconds</code>.</li><li><strong>R3</strong> The average adds both lengths <em>before</em> dividing by 2.</li><li><strong>R4</strong> With the input 7385 and 5415, the output matches the test program&#x27;s expected output. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Compute by hand: <code>7385 / 3600</code> and <code>7385 % 3600</code>. What does each result mean for the episode?</p><div class="answer"><p><code>7385 / 3600</code> is 2 (integer division drops the fraction): the episode has 2 whole hours. <code>7385 % 3600</code> is 185: the seconds left over after those 2 hours.</p></div></li><li><p>The starter computes <code>firstSeconds + secondSeconds / 2</code>. What does it give for 7385 and 5415, and why?</p><div class="answer"><ol><li>Division has higher precedence than addition, so <code>secondSeconds / 2</code> (2707) is computed first and then added to 7385, instead of averaging the two lengths.</li></ol></div></li></ol>
+<h2>Solution</h2><div class="file">EpisodeLength.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">EpisodeLength</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_HOUR</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3600</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_MINUTE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">firstSeconds</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">secondSeconds</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seconds</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">averageSeconds</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">in</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Episode 1 length in seconds &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">firstSeconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextInt</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Episode 2 length in seconds &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">secondSeconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextInt</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">firstSeconds</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_HOUR</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">firstSeconds</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_HOUR</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_MINUTE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">firstSeconds</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_MINUTE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Episode 1: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" h "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min "</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" s"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">secondSeconds</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_HOUR</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">secondSeconds</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_HOUR</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_MINUTE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">secondSeconds</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-n">SECONDS_PER_MINUTE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Episode 2: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" h "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min "</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" s"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">averageSeconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">firstSeconds</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">secondSeconds</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Average length: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">averageSeconds</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" s"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Both operands are <code>int</code>, so <code>/</code> is integer division and drops the fraction: 7385 / 3600 is 2 whole hours. <code>7385 % 3600</code> is the 185 seconds left over, and since <code>%</code> and <code>/</code> have the same precedence and run left to right, <code>7385 % 3600 / 60</code> is <code>185 / 60</code>, 3 minutes. <code>7385 % 60</code> gives the 5 seconds that don&#x27;t fill a minute. In the starter&#x27;s average, <code>/</code> runs before <code>+</code>, so it computed 7385 + 2707 = 10092; parentheses make the addition happen first: 12800 / 2 = 6400.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestEpisodeLength.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.ByteArrayInputStream</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestEpisodeLength</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Types the answers for you: 7385, Enter, 5415, Enter.</span>
+<span class="t-w">        </span><span class="t-c1">// (System.setIn swaps the keyboard for this text, so you won't type anything.)</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">setIn</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ByteArrayInputStream</span><span class="t-p">(</span><span class="t-s">"7385\n5415\n"</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">()));</span>
+<span class="t-w">        </span><span class="t-n">EpisodeLength</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Episode 1 length in seconds &gt;&gt; Episode 2 length in seconds &gt;&gt; 
+Episode 1: 2 h 3 min 5 s
+Episode 2: 1 h 30 min 15 s
+Average length: 6400 s
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Both conversion factors are named constants<div class="small">in <code>EpisodeLength.main</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bfinal\s+int\s+SECONDS_PER_HOUR\s*=\s*3_?600\s*;)(?=[\s\S]*\bfinal\s+int\s+SECONDS_PER_MINUTE\s*=\s*60\s*;)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>No calculation uses 3600 or 60 directly<div class="small">in <code>EpisodeLength.main</code></div></td><td><div><span class="tag">require</span> <code>/\s*SECONDS_PER_HOUR</code></div><div><span class="tag">forbid</span> <code>[/%*]\s*(?:3_?600|60)\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Minutes and seconds use % and /, for both episodes<div class="small">in <code>EpisodeLength.main</code></div></td><td><div><span class="tag">require</span> <code>^(?=(?:[\s\S]*?\bminutes\s*=\s*(?=[^;]*%)(?=[^;]*/)[^;]*;){2})(?=(?:[\s\S]*?\bseconds\s*=\s*\w+\s*%\s*SECONDS_PER_MINUTE\s*;){2})</code></div><div><span class="tag">forbid</span> <code>\bminutes\s*=\s*0\s*;</code></div></td></tr><tr><td>C4</td><td>R2</td><td>Episode 2 is converted and printed<div class="small">in <code>EpisodeLength.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bhours\s*=\s*secondSeconds\s*/\s*SECONDS_PER_HOUR\s*;)(?=[\s\S]*println\s*\(\s*\&quot;Episode 2: \&quot;\s*\+\s*hours)</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The average adds before it divides<div class="small">in <code>EpisodeLength.main</code></div></td><td><div><span class="tag">require</span> <code>averageSeconds\s*=\s*\(\s*(?:firstSeconds\s*\+\s*secondSeconds|secondSeconds\s*\+\s*firstSeconds)\s*\)\s*/\s*2\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Both conversion factors are named constants</dt><dd><p>Declare <code>final int SECONDS_PER_HOUR = 3600;</code> and <code>final int SECONDS_PER_MINUTE = 60;</code> at the start of <code>main()</code>. The names say what the numbers mean.</p></dd><dt>C2 · No calculation uses 3600 or 60 directly</dt><dd><p>Replace each <code>3600</code> or <code>60</code> in a calculation with its constant, including the starter&#x27;s <code>firstSeconds / 3600</code>.</p></dd><dt>C3 · Minutes and seconds use % and /, for both episodes</dt><dd><p>For each episode: the remaining minutes need both operators (the remainder after whole hours, divided by the seconds in a minute), and the remaining seconds are the remainder after dividing by <code>SECONDS_PER_MINUTE</code>.</p><div class='small'><strong>Hint:</strong></div><p>Work 7385 through by hand: how many seconds are left after the 2 whole hours? How many whole minutes is that?</p></dd><dt>C4 · Episode 2 is converted and printed</dt><dd><p>Repeat the three calculations with <code>secondSeconds</code>, assigning them to the same <code>hours</code>, <code>minutes</code> and <code>seconds</code> variables, then print the <code>Episode 2: </code> line in the same format.</p></dd><dt>C5 · The average adds before it divides</dt><dd><p>Division has higher precedence than addition, so the starter divides only <code>secondSeconds</code> by 2. Put the sum in parentheses so it&#x27;s computed first, then divide by 2.</p><div class='small'><strong>Hint:</strong></div><p>Compute the starter&#x27;s version by hand with 7385 and 5415. Which operation ran first?</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Work through 7385 seconds by hand: whole hours first, then what&#x27;s left over, then whole minutes in what&#x27;s left, then what&#x27;s left after that.</p></li><li><p><code>/</code> with two integers gives the whole number of times one fits into the other; <code>%</code> gives what&#x27;s left over. You need both for the minutes.</p></li><li><p><code>*</code>, <code>/</code> and <code>%</code> run before <code>+</code> and <code>-</code>. When you need an addition to happen first, give it parentheses.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain how <code>firstSeconds % SECONDS_PER_HOUR / SECONDS_PER_MINUTE</code> is evaluated, step by step, for 7385. Which rule decides the order?</p><div class="answer"><p><code>%</code> and <code>/</code> have the same precedence and associate left to right, so <code>7385 % 3600</code> runs first, giving 185, and then <code>185 / 60</code> gives 3 whole minutes.</p></div></li><li><p>If the two episodes were 7385 and 5416 seconds, the true average is 6400.5. What does your program print, and why?</p><div class="answer"><ol><li><code>(7385 + 5416) / 2</code> divides two integers, so Java performs integer division and drops the .5. To keep it, at least one operand would need to be a floating-point value.</li></ol></div></li></ol>
+<h2>Extension</h2><p>Add a third line that shows the <em>total</em> length of both episodes in hours, minutes and seconds. Can you reuse the same three variables again?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

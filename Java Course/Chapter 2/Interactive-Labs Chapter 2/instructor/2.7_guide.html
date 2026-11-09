@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The ticket order dialogs</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.7</div>
+  <h1>The ticket order dialogs</h1>
+<h2>Objectives</h2><ul><li>Accept input with <code>JOptionPane.showInputDialog()</code>, in its one-argument and four-argument versions</li><li>Convert a <code>String</code> to a number with <code>Double.parseDouble()</code> and <code>Integer.parseInt()</code></li><li>Ask a yes-or-no question with <code>showConfirmDialog()</code> and compare its result with <code>JOptionPane.YES_OPTION</code></li><li>Explain why a dialog&#x27;s answer can&#x27;t be used in arithmetic until it&#x27;s converted</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The price typed in the first dialog is converted from <code>String</code> to <code>double</code> with <code>Double.parseDouble()</code>.</li><li><strong>R2</strong> The number of tickets comes from a four-argument input dialog (message <code>How many tickets?</code>, title <code>Ticket order</code>, <code>QUESTION_MESSAGE</code>) and is converted with <code>Integer.parseInt()</code>.</li><li><strong>R3</strong> The parking question uses a five-argument confirm dialog (message <code>Add a parking pass?</code>, title <code>Parking</code>, <code>YES_NO_OPTION</code>, <code>QUESTION_MESSAGE</code>), and <code>wantsParking</code> stores whether the result equals <code>JOptionPane.YES_OPTION</code>.</li><li><strong>R4</strong> Running the test program produces exactly its expected output. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, <code>priceString</code> holds what the customer typed, for example &quot;27.25&quot;. Why can&#x27;t the program simply write <code>price = priceString;</code> or <code>total = priceString * tickets;</code>?</p><div class="answer"><p><code>priceString</code> is a <code>String</code>, text that happens to contain digits. A <code>String</code> can&#x27;t be stored in a <code>double</code> or used in arithmetic, so it must first be converted to a number, with <code>Double.parseDouble()</code>.</p></div></li><li><p><code>Double.parseDouble(priceString)</code> is called on the class name <code>Double</code>, not on an object. What does that tell you about the method?</p><div class="answer"><p>It is a <code>static</code> method: it belongs to the class and can be used without creating any object of that class.</p></div></li></ol>
+<h2>Solution</h2><div class="file">TicketOrder.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.JOptionPane</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TicketOrder</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">priceString</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">ticketsString</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">parkingChoice</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">wantsParking</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">priceString</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showInputDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Price per ticket?"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Double</span><span class="t-p">.</span><span class="t-na">parseDouble</span><span class="t-p">(</span><span class="t-n">priceString</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">ticketsString</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showInputDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"How many tickets?"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Ticket order"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">QUESTION_MESSAGE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tickets</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">ticketsString</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">parkingChoice</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showConfirmDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Add a parking pass?"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Parking"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">YES_NO_OPTION</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">QUESTION_MESSAGE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">wantsParking</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">parkingChoice</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">YES_OPTION</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tickets: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" at $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Parking pass: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">wantsParking</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">showMessageDialog</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Your total is $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-s">"\nParking pass: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">wantsParking</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>showInputDialog()</code> always returns a <code>String</code>, even when the user types digits, and a <code>String</code> can&#x27;t be multiplied. The type-wrapper classes <code>Double</code> and <code>Integer</code> provide static <code>parse</code> methods that convert the text to a number. A cast can&#x27;t do this: casts work only between primitive types, and <code>String</code> is a reference type. <code>showConfirmDialog()</code> returns an <code>int</code> naming the button clicked, so comparing it with <code>JOptionPane.YES_OPTION</code> produces the <code>boolean</code>. 27.25 × 4 is 109.0, which Java prints with one decimal place.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestTicketOrder.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.Component</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.Container</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.Window</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.JDialog</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.JOptionPane</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.Timer</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestTicketOrder</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// A customer's answers, in order: the price, the number of tickets,</span>
+<span class="t-w">    </span><span class="t-c1">// Yes to the parking pass, and OK on the total.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-n">Object</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">ANSWERS</span><span class="t-w"> </span><span class="t-o">=</span>
+<span class="t-w">        </span><span class="t-p">{</span><span class="t-w"> </span><span class="t-s">"27.25"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"4"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">YES_OPTION</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">OK_OPTION</span><span class="t-w"> </span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">nextAnswer</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"TicketOrder starts; the test answers each dialog"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-c1">// Every 0.7 seconds, answer whichever dialog is open.</span>
+<span class="t-w">        </span><span class="t-c1">// You'll see each one appear and close.</span>
+<span class="t-w">        </span><span class="t-n">Timer</span><span class="t-w"> </span><span class="t-n">helper</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Timer</span><span class="t-p">(</span><span class="t-mi">700</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-w"> </span><span class="t-o">-&gt;</span><span class="t-w"> </span><span class="t-n">answerOpenDialog</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">helper</span><span class="t-p">.</span><span class="t-na">start</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">TicketOrder</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">helper</span><span class="t-p">.</span><span class="t-na">stop</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"TicketOrder finished"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// You don't need to follow the rest yet: it finds the open dialog and answers it.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">answerOpenDialog</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Window</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">Window</span><span class="t-p">.</span><span class="t-na">getWindows</span><span class="t-p">())</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">window</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">JDialog</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">isShowing</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">JOptionPane</span><span class="t-w"> </span><span class="t-n">pane</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">findPane</span><span class="t-p">(((</span><span class="t-n">JDialog</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">).</span><span class="t-na">getContentPane</span><span class="t-p">());</span>
+<span class="t-w">                </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">pane</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-p">{</span>
+<span class="t-w">                    </span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">answer</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">OK_OPTION</span><span class="t-p">;</span>
+<span class="t-w">                    </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">nextAnswer</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">ANSWERS</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">)</span>
+<span class="t-w">                    </span><span class="t-p">{</span>
+<span class="t-w">                        </span><span class="t-n">answer</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ANSWERS</span><span class="t-o">[</span><span class="t-n">nextAnswer</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">                    </span><span class="t-p">}</span>
+<span class="t-w">                    </span><span class="t-n">nextAnswer</span><span class="t-o">++</span><span class="t-p">;</span>
+<span class="t-w">                    </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">pane</span><span class="t-p">.</span><span class="t-na">getWantsInput</span><span class="t-p">())</span>
+<span class="t-w">                    </span><span class="t-p">{</span>
+<span class="t-w">                        </span><span class="t-n">pane</span><span class="t-p">.</span><span class="t-na">setInputValue</span><span class="t-p">(</span><span class="t-n">answer</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">());</span>
+<span class="t-w">                        </span><span class="t-n">pane</span><span class="t-p">.</span><span class="t-na">setValue</span><span class="t-p">(</span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">OK_OPTION</span><span class="t-p">);</span>
+<span class="t-w">                    </span><span class="t-p">}</span>
+<span class="t-w">                    </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">answer</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">)</span>
+<span class="t-w">                    </span><span class="t-p">{</span>
+<span class="t-w">                        </span><span class="t-n">pane</span><span class="t-p">.</span><span class="t-na">setValue</span><span class="t-p">(</span><span class="t-n">answer</span><span class="t-p">);</span>
+<span class="t-w">                    </span><span class="t-p">}</span>
+<span class="t-w">                    </span><span class="t-k">else</span>
+<span class="t-w">                    </span><span class="t-p">{</span>
+<span class="t-w">                        </span><span class="t-n">pane</span><span class="t-p">.</span><span class="t-na">setValue</span><span class="t-p">(</span><span class="t-n">JOptionPane</span><span class="t-p">.</span><span class="t-na">OK_OPTION</span><span class="t-p">);</span>
+<span class="t-w">                    </span><span class="t-p">}</span>
+<span class="t-w">                    </span><span class="t-k">return</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-w"> </span><span class="t-nf">findPane</span><span class="t-p">(</span><span class="t-n">Container</span><span class="t-w"> </span><span class="t-n">container</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Component</span><span class="t-w"> </span><span class="t-n">child</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">container</span><span class="t-p">.</span><span class="t-na">getComponents</span><span class="t-p">())</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">child</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">JOptionPane</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">JOptionPane</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">child</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">child</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Container</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">JOptionPane</span><span class="t-w"> </span><span class="t-n">found</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">findPane</span><span class="t-p">((</span><span class="t-n">Container</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">child</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">found</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-p">{</span>
+<span class="t-w">                    </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">found</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">TicketOrder starts; the test answers each dialog
+Tickets: 4 at $27.25
+Total: $109.0
+Parking pass: true
+TicketOrder finished
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The price is parsed with Double.parseDouble()<div class="small">in <code>TicketOrder.main</code></div></td><td><div><span class="tag">require</span> <code>price\s*=\s*Double\s*\.\s*parseDouble\s*\(\s*priceString\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>price\s*=\s*0\s*;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The tickets dialog has a title and a question icon<div class="small">in <code>TicketOrder.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>ticketsString\s*=\s*JOptionPane\s*\.\s*showInputDialog\s*\(\s*null\s*,\s*\&quot;How many tickets\?\&quot;\s*,\s*\&quot;Ticket order\&quot;\s*,\s*JOptionPane\s*\.\s*QUESTION_MESSAGE\s*\)\s*;</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The number of tickets is parsed with Integer.parseInt()<div class="small">in <code>TicketOrder.main</code></div></td><td><div><span class="tag">require</span> <code>tickets\s*=\s*Integer\s*\.\s*parseInt\s*\(\s*ticketsString\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>tickets\s*=\s*0\s*;</code></div></td></tr><tr><td>C4</td><td>R3</td><td>The parking dialog offers only Yes and No<div class="small">in <code>TicketOrder.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>parkingChoice\s*=\s*JOptionPane\s*\.\s*showConfirmDialog\s*\(\s*null\s*,\s*\&quot;Add a parking pass\?\&quot;\s*,\s*\&quot;Parking\&quot;\s*,\s*JOptionPane\s*\.\s*YES_NO_OPTION\s*,\s*JOptionPane\s*\.\s*QUESTION_MESSAGE\s*\)\s*;</code></div></td></tr><tr><td>C5</td><td>R3</td><td>wantsParking compares the choice with YES_OPTION<div class="small">in <code>TicketOrder.main</code></div></td><td><div><span class="tag">require</span> <code>wantsParking\s*=\s*\(?\s*(?:parkingChoice\s*==\s*JOptionPane\s*\.\s*YES_OPTION|JOptionPane\s*\.\s*YES_OPTION\s*==\s*parkingChoice)\s*\)?\s*;</code></div><div><span class="tag">forbid</span> <code>wantsParking\s*=\s*false\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The price is parsed with Double.parseDouble()</dt><dd><p>Replace <code>price = 0;</code> with a call to <code>Double.parseDouble()</code> that receives <code>priceString</code>. The dialog returns text, and the wrapper class <code>Double</code> converts text to a <code>double</code>.</p><div class='small'><strong>Hint:</strong></div><p>Figure 2-31 converts a wage the same way.</p></dd><dt>C2 · The tickets dialog has a title and a question icon</dt><dd><p>Use the four-argument version and store the result in <code>ticketsString</code>: <code>null</code>, the message <code>How many tickets?</code>, the title <code>Ticket order</code>, and <code>JOptionPane.QUESTION_MESSAGE</code>, separated by commas.</p><div class='small'><strong>Hint:</strong></div><p>The order of the arguments is: parent, message, title, kind of dialog.</p></dd><dt>C3 · The number of tickets is parsed with Integer.parseInt()</dt><dd><p>Convert <code>ticketsString</code> with <code>Integer.parseInt()</code> and store the result in <code>tickets</code>. Tickets are whole numbers, so the <code>int</code> wrapper class is the right one.</p></dd><dt>C4 · The parking dialog offers only Yes and No</dt><dd><p>Use the five-argument <code>showConfirmDialog()</code> and store its result in <code>parkingChoice</code>: <code>null</code>, the question, the title <code>Parking</code>, <code>JOptionPane.YES_NO_OPTION</code> (no Cancel button), and <code>JOptionPane.QUESTION_MESSAGE</code>.</p></dd><dt>C5 · wantsParking compares the choice with YES_OPTION</dt><dd><p>The dialog returns an <code>int</code> that identifies the button. Compare <code>parkingChoice</code> with <code>JOptionPane.YES_OPTION</code> using <code>==</code>, and store the <code>true</code>/<code>false</code> result in <code>wantsParking</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Whatever the customer types, an input dialog gives you a <code>String</code>. Which classes did the reading use to turn a <code>String</code> into a number?</p></li><li><p>The longer <code>showInputDialog()</code> takes four arguments and the longer <code>showConfirmDialog()</code> takes five. The extra ones are the title, the buttons and the icon.</p></li><li><p>A confirm dialog doesn&#x27;t return true or false: it returns a number for the button. Compare that number with the constant for Yes.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>You can cast a <code>double</code> to an <code>int</code> with <code>(int)</code>. Why can&#x27;t you convert the dialog&#x27;s <code>String</code> with a cast such as <code>(double) priceString</code>?</p><div class="answer"><p>Casts convert only between primitive types such as <code>int</code> and <code>double</code>. A <code>String</code> is an object, a reference type, so a cast can&#x27;t turn it into a number; the type-wrapper classes&#x27; parse methods are needed.</p></div></li><li><p>What would <code>wantsParking</code> be if the customer chose No, and what number does the confirm dialog return in that case?</p><div class="answer"><p><code>wantsParking</code> would be <code>false</code>, because the dialog returns <code>JOptionPane.NO_OPTION</code>, which is not equal to <code>JOptionPane.YES_OPTION</code>. The constants are <code>int</code> values identifying the button.</p></div></li></ol>
+<h2>Extension</h2><p>Run <code>TicketOrder</code> yourself and type <code>four</code> in the tickets dialog. What happens, and which statement causes it? (You&#x27;ll learn to handle this later in the course.)</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

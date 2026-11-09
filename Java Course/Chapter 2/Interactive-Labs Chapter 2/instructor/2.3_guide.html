@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The ride gate</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.3</div>
+  <h1>The ride gate</h1>
+<h2>Objectives</h2><ul><li>Store the result of a comparison in a <code>boolean</code> variable</li><li>Choose between <code>&gt;</code> and <code>&gt;=</code>, <code>&lt;</code> and <code>&lt;=</code> from the wording of a rule</li><li>Use <code>==</code> to compare for equality, not <code>=</code></li><li>Reassign variables to evaluate a second case with the same statements</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>isTallEnough</code> is true when the height is <strong>at least</strong> <code>MIN_HEIGHT_CM</code>, including exactly 122.</li><li><strong>R2</strong> <code>isWithinWeightLimit</code> is true when the weight is <strong>up to</strong> <code>MAX_WEIGHT_KG</code>, including exactly 136.</li><li><strong>R3</strong> Rider 2&#x27;s values are assigned to the same variables, and all three results are computed and printed again.</li><li><strong>R4</strong> Every comparison uses the named constants, never the numbers 122, 136 or 14.</li><li><strong>R5</strong> The output matches the screen above exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Rider 1 is exactly 122 cm. What does the starter&#x27;s <code>(heightCm &gt; MIN_HEIGHT_CM)</code> store in <code>isTallEnough</code>, and does that follow the rule &quot;at least 122 cm&quot;?</p><div class="answer"><p>It stores <code>false</code>, because 122 is not greater than 122. That breaks the rule: &quot;at least 122&quot; includes 122, so she should be allowed on.</p></div></li><li><p>A teammate writes <code>isWristbandValid = (wristbandDay = TODAY);</code>. Why doesn&#x27;t it compile?</p><div class="answer"><p>A single <code>=</code> is assignment, not comparison: it stores <code>TODAY</code> in <code>wristbandDay</code>, and the result is an <code>int</code>, which can&#x27;t be stored in a <code>boolean</code>. The equality operator is <code>==</code>.</p></div></li></ol>
+<h2>Solution</h2><div class="file">RideGate.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RideGate</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MIN_HEIGHT_CM</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">122</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_WEIGHT_KG</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">136</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">TODAY</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">14</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">heightCm</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">wristbandDay</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">isTallEnough</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">isWithinWeightLimit</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">isWristbandValid</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">heightCm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">122</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">136</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">wristbandDay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">14</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">isTallEnough</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">heightCm</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_HEIGHT_CM</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">isWithinWeightLimit</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_WEIGHT_KG</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">isWristbandValid</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">wristbandDay</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">TODAY</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Rider 1: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">heightCm</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cm, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-s">" kg, wristband day "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">wristbandDay</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tall enough: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isTallEnough</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Within weight limit: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isWithinWeightLimit</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Wristband valid: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isWristbandValid</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">heightCm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">121</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">137</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">wristbandDay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">13</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">isTallEnough</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">heightCm</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_HEIGHT_CM</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">isWithinWeightLimit</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_WEIGHT_KG</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">isWristbandValid</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">wristbandDay</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">TODAY</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Rider 2: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">heightCm</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cm, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-s">" kg, wristband day "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">wristbandDay</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tall enough: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isTallEnough</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Within weight limit: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isWithinWeightLimit</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Wristband valid: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isWristbandValid</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>&quot;At least 122&quot; includes 122, so the comparison is <code>&gt;=</code>; &quot;up to 136&quot; includes 136, so it is <code>&lt;=</code>. With <code>&gt;</code> and <code>&lt;</code> the two riders who sit exactly on a limit are wrongly refused. Each comparison produces <code>true</code> or <code>false</code>, which is stored in a <code>boolean</code>. For rider 2 the same variables receive new values (each holds one value at a time) and the results must be computed again: a <code>boolean</code> stores the result of the comparison when it ran, it doesn&#x27;t watch the variables afterwards.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRideGate.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRideGate</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java RideGate" would.</span>
+<span class="t-w">        </span><span class="t-n">RideGate</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Rider 1: 122 cm, 136 kg, wristband day 14
+Tall enough: true
+Within weight limit: true
+Wristband valid: true
+Rider 2: 121 cm, 137 kg, wristband day 13
+Tall enough: false
+Within weight limit: false
+Wristband valid: false
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Height uses &gt;= with MIN_HEIGHT_CM, for both riders<div class="small">in <code>RideGate.main</code></div></td><td><div><span class="tag">require</span> <code>(?:[\s\S]*?isTallEnough\s*=\s*\(?\s*(?:heightCm\s*&gt;=\s*MIN_HEIGHT_CM|MIN_HEIGHT_CM\s*&lt;=\s*heightCm)\s*\)?\s*;){2}</code></div><div><span class="tag">forbid</span> <code>heightCm\s*&gt;\s*MIN_HEIGHT_CM|MIN_HEIGHT_CM\s*&lt;\s*heightCm</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Weight uses &lt;= with MAX_WEIGHT_KG, for both riders<div class="small">in <code>RideGate.main</code></div></td><td><div><span class="tag">require</span> <code>(?:[\s\S]*?isWithinWeightLimit\s*=\s*\(?\s*(?:weightKg\s*&lt;=\s*MAX_WEIGHT_KG|MAX_WEIGHT_KG\s*&gt;=\s*weightKg)\s*\)?\s*;){2}</code></div><div><span class="tag">forbid</span> <code>weightKg\s*&lt;\s*MAX_WEIGHT_KG|MAX_WEIGHT_KG\s*&gt;\s*weightKg</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Rider 2 reuses the variables and recomputes every result<div class="small">in <code>RideGate.main</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*;\s*heightCm\s*=\s*121\s*;)(?=[\s\S]*;\s*weightKg\s*=\s*137\s*;)(?=[\s\S]*;\s*wristbandDay\s*=\s*13\s*;)(?=(?:[\s\S]*?isWristbandValid\s*=\s*\(?\s*(?:wristbandDay\s*==\s*TODAY|TODAY\s*==\s*wristbandDay)\s*\)?\s*;){2})</code></div></td></tr><tr><td>C4</td><td>R4</td><td>Comparisons use the named constants<div class="small">in <code>RideGate.main</code></div></td><td><div><span class="tag">require</span> <code>MIN_HEIGHT_CM[\s\S]*MAX_WEIGHT_KG</code></div><div><span class="tag">forbid</span> <code>(?:&gt;=|&lt;=|==|!=|&lt;|&gt;)\s*(?:122|136|14)\b|\b(?:122|136|14)\s*(?:&gt;=|&lt;=|==|!=|&lt;|&gt;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Height uses &gt;= with MIN_HEIGHT_CM, for both riders</dt><dd><p>&quot;At least 122 cm&quot; includes 122 itself, so use &quot;greater than or equal to&quot;, <code>&gt;=</code>, in both height comparisons. <code>&gt;</code> leaves out the rider who is exactly at the limit.</p><div class='small'><strong>Hint:</strong></div><p>Read the rule aloud with each operator: is 122 &quot;greater than 122&quot;? Is it &quot;greater than or equal to 122&quot;?</p></dd><dt>C2 · Weight uses &lt;= with MAX_WEIGHT_KG, for both riders</dt><dd><p>&quot;Up to 136 kg&quot; includes 136, so use <code>&lt;=</code> in both weight comparisons. The two symbols go in that order, with no space between them.</p></dd><dt>C3 · Rider 2 reuses the variables and recomputes every result</dt><dd><p>For rider 2, assign 121, 137 and 13 to the <em>existing</em> variables (no new declarations), then repeat all three comparisons, including <code>isWristbandValid</code> with <code>==</code>. A boolean keeps the result from when it was computed; it doesn&#x27;t update when the variables change.</p></dd><dt>C4 · Comparisons use the named constants</dt><dd><p>Compare against <code>MIN_HEIGHT_CM</code>, <code>MAX_WEIGHT_KG</code> and <code>TODAY</code>, not the numbers. If the park changes a rule, only the constant&#x27;s declaration changes.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Rider 1 sits exactly on both limits. For each comparison in the starter, substitute 122 or 136 and decide whether the result is true or false.</p></li><li><p>Of the six relational operators, two include the equal case. Which one matches &quot;at least&quot;, and which matches &quot;up to&quot;?</p></li><li><p>Rider 2&#x27;s block looks like rider 1&#x27;s: three assignments without <code>int</code> in front, three comparisons, four output lines.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why did this lab test riders who are <em>exactly</em> at the limits? What kind of mistake do those values catch that 150 cm or 100 kg wouldn&#x27;t?</p><div class="answer"><p>Values at the boundary are the only ones where <code>&gt;</code> and <code>&gt;=</code> (or <code>&lt;</code> and <code>&lt;=</code>) give different answers. A rider well above or below the limit gets the same result with either operator, so only boundary values reveal an operator that excludes the limit itself.</p></div></li><li><p>After rider 2&#x27;s values are assigned, what would <code>isTallEnough</code> hold if you forgot to recompute it? Explain.</p><div class="answer"><p>It would still hold <code>true</code>, rider 1&#x27;s result. The comparison ran once, when rider 1&#x27;s height was 122, and the boolean stored that answer; changing <code>heightCm</code> later doesn&#x27;t change it. The comparison has to run again.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>boolean isAllowedOn</code> that is true only when all three results are true. You haven&#x27;t met the operator for &quot;and&quot; yet: how far can you get with what you know, and what&#x27;s missing?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

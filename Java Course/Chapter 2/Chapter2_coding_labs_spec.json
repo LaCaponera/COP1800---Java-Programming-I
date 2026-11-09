@@ -1,0 +1,1195 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 2: Using Data",
+ "collection_intro": "Hands-on labs for each section of Chapter 2 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict, write or fix the program, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "2.1",
+   "title": "The shift trade",
+   "subtitle": "One value at a time: swap two variables safely, and give a magic number a name",
+   "source": "Ch. 2, section 2.1 (pp. 39–47)",
+   "minutes": 25,
+   "objectives": [
+    "Declare a named constant with `final` and a conventional all-capitals name",
+    "Concatenate a constant's value into a string with `+`",
+    "Explain why a variable holds only one value at a time",
+    "Swap the values of two variables using a third, temporary variable"
+   ],
+   "scenario": "St. Brigid's ward prints a shift board every morning. Nurse Ortiz starts at 7:00 and Nurse Lee at 19:00, and today they have agreed to **trade** start times. The board must show the times before and after the trade:\n\n```\nBefore the trade\nOrtiz starts at 7:00 (12-hour shift)\nLee starts at 19:00 (12-hour shift)\nAfter the trade\nOrtiz starts at 19:00 (12-hour shift)\nLee starts at 7:00 (12-hour shift)\n```\n\nThe program a colleague started has two problems. After the \"trade\" both nurses start at 19:00, so someone is missing from the night shift. And the shift length, 12, is typed into four separate strings: the ward is piloting 8-hour shifts next month, and every copy would have to be found and changed by hand.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The shift length is a named constant, `SHIFT_HOURS`, declared once with `final` and the value 12."
+    },
+    {
+     "id": "R2",
+     "text": "All four board lines show the shift length by concatenating `SHIFT_HOURS`: no `12` typed inside a string."
+    },
+    {
+     "id": "R3",
+     "text": "The trade swaps the two start times through a third variable, without retyping 7 or 19."
+    },
+    {
+     "id": "R4",
+     "text": "The board matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "ShiftTrade.java",
+   "starter_code": "public class ShiftTrade\n{\n    public static void main(String[] args)\n    {\n        // TODO (R1): declare the shift length once, as a named constant.\n        int ortizStart = 7;\n        int leeStart = 19;\n\n        System.out.println(\"Before the trade\");\n        // TODO (R2): the 12 below is a magic number typed into a string.\n        System.out.println(\"Ortiz starts at \" + ortizStart + \":00 (12-hour shift)\");\n        System.out.println(\"Lee starts at \" + leeStart + \":00 (12-hour shift)\");\n\n        // TODO (R3): Ortiz and Lee trade start times. Trace it: a value is lost.\n        ortizStart = leeStart;\n        leeStart = ortizStart;\n\n        System.out.println(\"After the trade\");\n        System.out.println(\"Ortiz starts at \" + ortizStart + \":00 (12-hour shift)\");\n        System.out.println(\"Lee starts at \" + leeStart + \":00 (12-hour shift)\");\n    }\n}\n",
+   "solution": "public class ShiftTrade\n{\n    public static void main(String[] args)\n    {\n        final int SHIFT_HOURS = 12;\n        int ortizStart = 7;\n        int leeStart = 19;\n        int temp;\n\n        System.out.println(\"Before the trade\");\n        System.out.println(\"Ortiz starts at \" + ortizStart + \":00 (\" +\n            SHIFT_HOURS + \"-hour shift)\");\n        System.out.println(\"Lee starts at \" + leeStart + \":00 (\" + SHIFT_HOURS +\n            \"-hour shift)\");\n\n        temp = ortizStart;\n        ortizStart = leeStart;\n        leeStart = temp;\n\n        System.out.println(\"After the trade\");\n        System.out.println(\"Ortiz starts at \" + ortizStart + \":00 (\" +\n            SHIFT_HOURS + \"-hour shift)\");\n        System.out.println(\"Lee starts at \" + leeStart + \":00 (\" + SHIFT_HOURS +\n            \"-hour shift)\");\n    }\n}\n",
+   "solution_notes": "A variable holds one value at a time: `ortizStart = leeStart;` overwrites the 7, so the next line can only copy 19 back. Parking the 7 in `temp` first keeps it alive until `leeStart` receives it. `SHIFT_HOURS` is declared once with `final`, so a change to 8-hour shifts is one edit, and the compiler rejects any later attempt to assign it. To place its value in a sentence, the string is closed, `+ SHIFT_HOURS +` is concatenated, and a new string continues.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "SHIFT_HOURS is a final int set to 12",
+     "within": "ShiftTrade.main",
+     "require": "final\\s+int\\s+SHIFT_HOURS\\s*=\\s*12\\s*;",
+     "message": "Declare the constant with the keyword `final` before the type: `final`, `int`, the name `SHIFT_HOURS`, `= 12` and a semicolon. `final` is what stops the value from ever being reassigned.",
+     "hint": "The reading's examples, such as `NUMBER_OF_DEPTS`, show the order of the words."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Every board line concatenates SHIFT_HOURS",
+     "within": "ShiftTrade.main",
+     "strings": true,
+     "forbid": "12-hour",
+     "require": "(?:[\\s\\S]*?\\+\\s*SHIFT_HOURS\\s*\\+\\s*\\\"-hour shift\\)\\\"){4}",
+     "message": "In all four board lines, end the string after `:00 (`, add `+ SHIFT_HOURS +`, then start a new string with `-hour shift)`. A `12` inside quotation marks is text the compiler can't connect to your constant.",
+     "hint": "Count the lines that still contain `12-hour`. Each one needs the same change."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The swap goes through a temporary variable",
+     "within": "ShiftTrade.main",
+     "require": [
+      "(?:int\\s+)?(\\w+)\\s*=\\s*ortizStart\\s*;\\s*ortizStart\\s*=\\s*leeStart\\s*;\\s*leeStart\\s*=\\s*\\1\\s*;",
+      "(?:int\\s+)?(\\w+)\\s*=\\s*leeStart\\s*;\\s*leeStart\\s*=\\s*ortizStart\\s*;\\s*ortizStart\\s*=\\s*\\1\\s*;"
+     ],
+     "message": "Use three assignments in a row: copy one start time into a third variable, overwrite that start time with the other one, then give the other one the saved value. The third variable is the only place the first value survives.",
+     "hint": "Which value disappears on the starter's first trade line? Save that one before the line runs."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "No value is lost or retyped",
+     "within": "ShiftTrade.main",
+     "forbid": [
+      "ortizStart\\s*=\\s*leeStart\\s*;\\s*leeStart\\s*=\\s*ortizStart\\s*;",
+      "leeStart\\s*=\\s*ortizStart\\s*;\\s*ortizStart\\s*=\\s*leeStart\\s*;",
+      ";\\s*(?:ortizStart|leeStart)\\s*=\\s*(?:7|19)\\s*;"
+     ],
+     "message": "Remove the two-line attempt (`ortizStart = leeStart;` followed by `leeStart = ortizStart;`): after its first line both variables hold 19. And don't assign 7 or 19 directly: the program must trade whatever times the nurses had, not the ones you know today."
+    }
+   ],
+   "hints": [
+    "Trace the starter's two trade lines with real numbers: after the first line, what does `ortizStart` hold? What is left for the second line to copy?",
+    "Before you overwrite a variable, store its current value in a variable nobody else changes. The reading calls it a temporary holding spot.",
+    "To put a constant inside a sentence, close the string, concatenate the constant with `+` on both sides, and open a new string."
+   ],
+   "test_program": {
+    "file_name": "TestShiftTrade.java",
+    "code": "public class TestShiftTrade\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java ShiftTrade\" would.\n        ShiftTrade.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Before the trade\nOrtiz starts at 7:00 (12-hour shift)\nLee starts at 19:00 (12-hour shift)\nAfter the trade\nOrtiz starts at 19:00 (12-hour shift)\nLee starts at 7:00 (12-hour shift)\n",
+    "predict": "Before running: write the two \"after\" lines the starter prints, then the two your version prints. Which nurse did the starter lose, and at which line?"
+   },
+   "warmup": [
+    {
+     "question": "Trace the starter's trade with `ortizStart` = 7 and `leeStart` = 19. What does each variable hold after `ortizStart = leeStart;`, and after `leeStart = ortizStart;`?",
+     "model_answer": "After the first line both hold 19: the 7 in `ortizStart` is overwritten and gone. The second line copies 19 into `leeStart`, which already held 19, so both nurses end up starting at 19:00."
+    },
+    {
+     "question": "The starter types `12` inside four strings. If the ward switches to 8-hour shifts, what would you have to do, and what could go wrong?",
+     "model_answer": "Find and edit all four strings by hand. It's easy to miss one, or to change a 12 that means something else, and the compiler can't help because the numbers are just text inside strings."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Explain in your own words why the swap needs a third variable. Use the words \"one value at a time\".",
+     "model_answer": "A variable holds one value at a time, so assigning a new value destroys the old one. To swap, one of the original values has to be copied into a third variable before it is overwritten; then it can be given to the other variable."
+    },
+    {
+     "question": "Name two benefits of `SHIFT_HOURS` over typing 12, and say what the compiler does if a later line tries `SHIFT_HOURS = 8;`.",
+     "model_answer": "The name says what the number means, and a change happens in one place instead of four; the compiler also catches a misspelled name, which it can't do for a mistyped 12. Because the constant is `final`, `SHIFT_HOURS = 8;` is a compiler error: a final variable can't be assigned again."
+    }
+   ],
+   "extension": "Add a third nurse, Park, who starts at 15:00, and rotate the times: Ortiz takes Lee's time, Lee takes Park's, and Park takes Ortiz's. How many extra variables do you need?",
+   "worth_knowing": "Java reserves the word `const` but gives it no meaning: writing it is a compiler error. Java's designers kept it reserved so programmers from C and C++ would get a clear error, and they used `final` for constants instead. `goto` is reserved and unused for the same reason.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.2",
+   "title": "The router's data meter",
+   "subtitle": "byte, short, int and long: pick each type by its largest value, and stop an int from overflowing",
+   "source": "Ch. 2, section 2.2 (pp. 47–50)",
+   "minutes": 25,
+   "objectives": [
+    "Choose `byte`, `short`, `int` or `long` from a variable's largest possible value",
+    "Recognize integer overflow when a product is too large for an `int`",
+    "Write a `long` literal with the uppercase `L` suffix",
+    "Explain the compiler's \"possible lossy conversion\" and \"integer number too large\" messages"
+   ],
+   "scenario": "A home router runs a small Java program that tells the family how much data they have used this month. The router has very little memory, so the firmware team's rule is: **every variable uses the smallest integer type that can hold its largest possible value.**\n\n- At most **32** devices can join the network.\n- A billing cycle is at most **31** days.\n- The router caps a single day at **30,000 MB**.\n- The plan cap is **1.2 trillion bytes** (1,200,000,000,000).\n\nLast month the meter told one family they had used *minus* 1.4 billion bytes. The screen must read:\n\n```\nDevices on network: 7\nBilling cycle: 30 days\nAverage per day: 28500 MB\nMonth so far: 855000 MB\nMonth so far: 855000000000 bytes\nPlan cap: 1200000000000 bytes\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`devices` and `daysInCycle` use the smallest type that holds 32 and 31."
+    },
+    {
+     "id": "R2",
+     "text": "`dailyMegabytes` uses the smallest type that holds 30,000; `monthlyMegabytes` (up to 31 × 30,000) stays an `int`."
+    },
+    {
+     "id": "R3",
+     "text": "`monthlyBytes` is a `long`, and the multiplication that produces it is done with a `long` operand, so it can't overflow."
+    },
+    {
+     "id": "R4",
+     "text": "`planCapBytes` is a `long` initialized with a literal ending in an uppercase `L`, and it is printed as the last line."
+    },
+    {
+     "id": "R5",
+     "text": "The meter matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "DataMeter.java",
+   "starter_code": "public class DataMeter\n{\n    public static void main(String[] args)\n    {\n        // TODO (R1, R2): the router's memory is scarce. Give each variable the\n        // smallest integer type that holds its largest possible value.\n        int devices = 7;               // at most 32 devices\n        int daysInCycle = 30;          // at most 31 days\n        int dailyMegabytes = 28500;    // at most 30,000 MB a day\n        int monthlyMegabytes = dailyMegabytes * daysInCycle;\n\n        // TODO (R3): predict what this prints before you change it.\n        int monthlyBytes = monthlyMegabytes * 1000000;\n\n        // TODO (R4): the plan cap is 1,200,000,000,000 bytes.\n\n        System.out.println(\"Devices on network: \" + devices);\n        System.out.println(\"Billing cycle: \" + daysInCycle + \" days\");\n        System.out.println(\"Average per day: \" + dailyMegabytes + \" MB\");\n        System.out.println(\"Month so far: \" + monthlyMegabytes + \" MB\");\n        System.out.println(\"Month so far: \" + monthlyBytes + \" bytes\");\n        // TODO (R4): print the plan cap.\n    }\n}\n",
+   "solution": "public class DataMeter\n{\n    public static void main(String[] args)\n    {\n        byte devices = 7;\n        byte daysInCycle = 30;\n        short dailyMegabytes = 28500;\n        int monthlyMegabytes = dailyMegabytes * daysInCycle;\n\n        long monthlyBytes = monthlyMegabytes * 1_000_000L;\n\n        long planCapBytes = 1_200_000_000_000L;\n\n        System.out.println(\"Devices on network: \" + devices);\n        System.out.println(\"Billing cycle: \" + daysInCycle + \" days\");\n        System.out.println(\"Average per day: \" + dailyMegabytes + \" MB\");\n        System.out.println(\"Month so far: \" + monthlyMegabytes + \" MB\");\n        System.out.println(\"Month so far: \" + monthlyBytes + \" bytes\");\n        System.out.println(\"Plan cap: \" + planCapBytes + \" bytes\");\n    }\n}\n",
+   "solution_notes": "32 and 31 fit in a `byte` (up to 127) and 30,000 fits in a `short` (up to 32,767), but 31 × 30,000 = 930,000 needs an `int`. `855000 * 1000000` is 855 billion, far past the `int` limit of 2,147,483,647, so with two `int` operands the product wraps around and even the sign is lost. Declaring the result `long` is not enough on its own: the multiplication must already be done in `long`, which the `L` on `1_000_000L` guarantees. The plan cap needs `L` because a literal without it is an `int`, and 1.2 trillion is too large to be one.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "devices and daysInCycle are bytes",
+     "within": "DataMeter.main",
+     "require": "^(?=[\\s\\S]*\\bbyte\\s+devices\\s*=\\s*7\\s*;)(?=[\\s\\S]*\\bbyte\\s+daysInCycle\\s*=\\s*30\\s*;)",
+     "message": "Both maximums (32 devices, 31 days) are below 127, so `byte` is the smallest type that holds them. Change `int` to `byte` in both declarations.",
+     "hint": "Table 2-2 lists the largest value of each integer type."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "dailyMegabytes is a short; monthlyMegabytes stays an int",
+     "within": "DataMeter.main",
+     "require": "^(?=[\\s\\S]*\\bshort\\s+dailyMegabytes\\s*=\\s*28_?500\\s*;)(?=[\\s\\S]*\\bint\\s+monthlyMegabytes\\s*=)",
+     "message": "30,000 is too big for a `byte` but fits in a `short` (up to 32,767). The monthly total can reach 31 × 30,000 = 930,000, which is too big for a `short`, so it stays an `int`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "monthlyBytes is a long computed in long",
+     "within": "DataMeter.main",
+     "require": [
+      "\\blong\\s+monthlyBytes\\s*=\\s*[^;]*\\b\\d[\\d_]*L\\b[^;]*;",
+      "\\blong\\s+monthlyBytes\\s*=\\s*\\(\\s*long\\s*\\)"
+     ],
+     "message": "Declare `monthlyBytes` as a `long` and write the factor as a `long` literal: `1_000_000L` or `1000000L`. With two `int` operands Java multiplies in `int` and overflows *before* the result reaches the `long` variable.",
+     "hint": "Run it with only the type changed to `long`. Is the number right yet?"
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "The plan cap is a long literal with an uppercase L",
+     "within": "DataMeter.main",
+     "require": "\\blong\\s+planCapBytes\\s*=\\s*1[\\d_]*L\\s*;",
+     "forbid": "\\b\\d[\\d_]*l\\b",
+     "message": "Declare `long planCapBytes` and end the number with an uppercase `L`. Without the suffix the literal is an `int`, and the compiler reports \"integer number too large\". Lowercase `l` works but looks like the digit 1."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The plan cap is printed",
+     "within": "DataMeter.main",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\\\"Plan cap: \\\"\\s*\\+\\s*planCapBytes\\s*\\+\\s*\\\" bytes\\\"\\s*\\)\\s*;",
+     "message": "Add a last output line in the same pattern as the others: the text `Plan cap: `, the variable, then ` bytes`."
+    }
+   ],
+   "hints": [
+    "For each variable, read its largest possible value in the scenario, then find the first row of Table 2-2 whose maximum is at least that big.",
+    "An overflowed result doesn't cause an error: the program runs and prints a wrong number. Compare 855 billion with the largest `int`.",
+    "The type of a calculation is decided by its operands, not by the variable that receives it. One `long` operand is enough to make the multiplication `long`."
+   ],
+   "test_program": {
+    "file_name": "TestDataMeter.java",
+    "code": "public class TestDataMeter\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java DataMeter\" would.\n        DataMeter.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Devices on network: 7\nBilling cycle: 30 days\nAverage per day: 28500 MB\nMonth so far: 855000 MB\nMonth so far: 855000000000 bytes\nPlan cap: 1200000000000 bytes\n",
+    "predict": "Before running: if you only change `int monthlyBytes` to `long monthlyBytes` and keep `1000000` without an `L`, will the bytes line be right? Predict, run that version once, then finish the fix."
+   },
+   "warmup": [
+    {
+     "question": "The starter's `int monthlyBytes = monthlyMegabytes * 1000000;` compiles. Will it print 855000000000? Explain why or why not.",
+     "model_answer": "No. 855,000 × 1,000,000 is 855 billion, but an `int` can hold only up to 2,147,483,647. Both operands are `int`, so the product overflows: the program still runs but prints a meaningless number, possibly negative."
+    },
+    {
+     "question": "A `long` can hold 1,200,000,000,000, yet `long planCapBytes = 1200000000000;` doesn't compile. Why?",
+     "model_answer": "A whole-number literal is an `int` by default, and 1,200,000,000,000 is too large to be an `int`, so the compiler rejects the literal itself before it ever reaches the `long`. Adding `L` makes the literal a `long`."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "You changed `monthlyBytes` to `long`. Why was that not enough without the `L` on the factor?",
+     "model_answer": "Java decides the type of `monthlyMegabytes * 1000000` from its operands: both are `int`, so the multiplication happens in `int` and overflows. Only then is the wrong result stored in the `long`. Making one operand a `long` makes Java multiply in `long`, which has room for 855 billion."
+    },
+    {
+     "question": "The course's examples normally use `int` for whole numbers. Why did this program use `byte` and `short`, and when would you not bother?",
+     "model_answer": "The program runs on a router with very little memory, and `byte` and `short` use 1 and 2 bytes instead of 4. On a PC, saving a few bytes rarely matters, so `int` is simpler; small types are worth it on small devices or when there are very many values."
+    }
+   ],
+   "extension": "Add `long remainingBytes` = the plan cap minus the bytes used, and print it. Then try storing 40,000 in `dailyMegabytes`: what does the compiler say, and why?",
+   "worth_knowing": "In December 2014 the video \"Gangnam Style\" passed 2,147,483,647 views, the largest value of a 32-bit `int`. YouTube said it had never expected that, and switched its view counter to a 64-bit integer, the same size as Java's `long`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.3",
+   "title": "The ride gate",
+   "subtitle": "boolean results from relational operators, tested at the exact limits",
+   "source": "Ch. 2, section 2.3 (pp. 51–52)",
+   "minutes": 25,
+   "objectives": [
+    "Store the result of a comparison in a `boolean` variable",
+    "Choose between `>` and `>=`, `<` and `<=` from the wording of a rule",
+    "Use `==` to compare for equality, not `=`",
+    "Reassign variables to evaluate a second case with the same statements"
+   ],
+   "scenario": "The gate computer at the Cyclone coaster checks three rules for every rider:\n\n- Riders must be **at least 122 cm** tall.\n- Riders may weigh **up to 136 kg**.\n- A wristband is valid only on the day printed on it, and today is the **14th**.\n\nYesterday the gate turned away a rider who was exactly 122 cm and 136 kg, with a valid wristband. The park's rule is clear that she was allowed on. The program must show this for rider 1, then check rider 2 (121 cm, 137 kg, wristband from the 13th):\n\n```\nRider 1: 122 cm, 136 kg, wristband day 14\nTall enough: true\nWithin weight limit: true\nWristband valid: true\nRider 2: 121 cm, 137 kg, wristband day 13\nTall enough: false\nWithin weight limit: false\nWristband valid: false\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`isTallEnough` is true when the height is **at least** `MIN_HEIGHT_CM`, including exactly 122."
+    },
+    {
+     "id": "R2",
+     "text": "`isWithinWeightLimit` is true when the weight is **up to** `MAX_WEIGHT_KG`, including exactly 136."
+    },
+    {
+     "id": "R3",
+     "text": "Rider 2's values are assigned to the same variables, and all three results are computed and printed again."
+    },
+    {
+     "id": "R4",
+     "text": "Every comparison uses the named constants, never the numbers 122, 136 or 14."
+    },
+    {
+     "id": "R5",
+     "text": "The output matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "RideGate.java",
+   "starter_code": "public class RideGate\n{\n    public static void main(String[] args)\n    {\n        final int MIN_HEIGHT_CM = 122;\n        final int MAX_WEIGHT_KG = 136;\n        final int TODAY = 14;\n\n        int heightCm;\n        int weightKg;\n        int wristbandDay;\n        boolean isTallEnough;\n        boolean isWithinWeightLimit;\n        boolean isWristbandValid;\n\n        // Rider 1 stands exactly at both limits.\n        heightCm = 122;\n        weightKg = 136;\n        wristbandDay = 14;\n        // TODO (R1, R2): these two comparisons turn away a rider who meets the rules.\n        isTallEnough = (heightCm > MIN_HEIGHT_CM);\n        isWithinWeightLimit = (weightKg < MAX_WEIGHT_KG);\n        isWristbandValid = (wristbandDay == TODAY);\n        System.out.println(\"Rider 1: \" + heightCm + \" cm, \" + weightKg +\n            \" kg, wristband day \" + wristbandDay);\n        System.out.println(\"Tall enough: \" + isTallEnough);\n        System.out.println(\"Within weight limit: \" + isWithinWeightLimit);\n        System.out.println(\"Wristband valid: \" + isWristbandValid);\n\n        // TODO (R3): rider 2 is 121 cm, 137 kg, with a wristband from day 13.\n        // Assign the values, recompute the results and print the same four lines.\n    }\n}\n",
+   "solution": "public class RideGate\n{\n    public static void main(String[] args)\n    {\n        final int MIN_HEIGHT_CM = 122;\n        final int MAX_WEIGHT_KG = 136;\n        final int TODAY = 14;\n\n        int heightCm;\n        int weightKg;\n        int wristbandDay;\n        boolean isTallEnough;\n        boolean isWithinWeightLimit;\n        boolean isWristbandValid;\n\n        heightCm = 122;\n        weightKg = 136;\n        wristbandDay = 14;\n        isTallEnough = (heightCm >= MIN_HEIGHT_CM);\n        isWithinWeightLimit = (weightKg <= MAX_WEIGHT_KG);\n        isWristbandValid = (wristbandDay == TODAY);\n        System.out.println(\"Rider 1: \" + heightCm + \" cm, \" + weightKg +\n            \" kg, wristband day \" + wristbandDay);\n        System.out.println(\"Tall enough: \" + isTallEnough);\n        System.out.println(\"Within weight limit: \" + isWithinWeightLimit);\n        System.out.println(\"Wristband valid: \" + isWristbandValid);\n\n        heightCm = 121;\n        weightKg = 137;\n        wristbandDay = 13;\n        isTallEnough = (heightCm >= MIN_HEIGHT_CM);\n        isWithinWeightLimit = (weightKg <= MAX_WEIGHT_KG);\n        isWristbandValid = (wristbandDay == TODAY);\n        System.out.println(\"Rider 2: \" + heightCm + \" cm, \" + weightKg +\n            \" kg, wristband day \" + wristbandDay);\n        System.out.println(\"Tall enough: \" + isTallEnough);\n        System.out.println(\"Within weight limit: \" + isWithinWeightLimit);\n        System.out.println(\"Wristband valid: \" + isWristbandValid);\n    }\n}\n",
+   "solution_notes": "\"At least 122\" includes 122, so the comparison is `>=`; \"up to 136\" includes 136, so it is `<=`. With `>` and `<` the two riders who sit exactly on a limit are wrongly refused. Each comparison produces `true` or `false`, which is stored in a `boolean`. For rider 2 the same variables receive new values (each holds one value at a time) and the results must be computed again: a `boolean` stores the result of the comparison when it ran, it doesn't watch the variables afterwards.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Height uses >= with MIN_HEIGHT_CM, for both riders",
+     "within": "RideGate.main",
+     "require": "(?:[\\s\\S]*?isTallEnough\\s*=\\s*\\(?\\s*(?:heightCm\\s*>=\\s*MIN_HEIGHT_CM|MIN_HEIGHT_CM\\s*<=\\s*heightCm)\\s*\\)?\\s*;){2}",
+     "forbid": "heightCm\\s*>\\s*MIN_HEIGHT_CM|MIN_HEIGHT_CM\\s*<\\s*heightCm",
+     "message": "\"At least 122 cm\" includes 122 itself, so use \"greater than or equal to\", `>=`, in both height comparisons. `>` leaves out the rider who is exactly at the limit.",
+     "hint": "Read the rule aloud with each operator: is 122 \"greater than 122\"? Is it \"greater than or equal to 122\"?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Weight uses <= with MAX_WEIGHT_KG, for both riders",
+     "within": "RideGate.main",
+     "require": "(?:[\\s\\S]*?isWithinWeightLimit\\s*=\\s*\\(?\\s*(?:weightKg\\s*<=\\s*MAX_WEIGHT_KG|MAX_WEIGHT_KG\\s*>=\\s*weightKg)\\s*\\)?\\s*;){2}",
+     "forbid": "weightKg\\s*<\\s*MAX_WEIGHT_KG|MAX_WEIGHT_KG\\s*>\\s*weightKg",
+     "message": "\"Up to 136 kg\" includes 136, so use `<=` in both weight comparisons. The two symbols go in that order, with no space between them."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Rider 2 reuses the variables and recomputes every result",
+     "within": "RideGate.main",
+     "require": "^(?=[\\s\\S]*;\\s*heightCm\\s*=\\s*121\\s*;)(?=[\\s\\S]*;\\s*weightKg\\s*=\\s*137\\s*;)(?=[\\s\\S]*;\\s*wristbandDay\\s*=\\s*13\\s*;)(?=(?:[\\s\\S]*?isWristbandValid\\s*=\\s*\\(?\\s*(?:wristbandDay\\s*==\\s*TODAY|TODAY\\s*==\\s*wristbandDay)\\s*\\)?\\s*;){2})",
+     "message": "For rider 2, assign 121, 137 and 13 to the *existing* variables (no new declarations), then repeat all three comparisons, including `isWristbandValid` with `==`. A boolean keeps the result from when it was computed; it doesn't update when the variables change."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "Comparisons use the named constants",
+     "within": "RideGate.main",
+     "forbid": "(?:>=|<=|==|!=|<|>)\\s*(?:122|136|14)\\b|\\b(?:122|136|14)\\s*(?:>=|<=|==|!=|<|>)",
+     "require": "MIN_HEIGHT_CM[\\s\\S]*MAX_WEIGHT_KG",
+     "starter_passes": true,
+     "message": "Compare against `MIN_HEIGHT_CM`, `MAX_WEIGHT_KG` and `TODAY`, not the numbers. If the park changes a rule, only the constant's declaration changes."
+    }
+   ],
+   "hints": [
+    "Rider 1 sits exactly on both limits. For each comparison in the starter, substitute 122 or 136 and decide whether the result is true or false.",
+    "Of the six relational operators, two include the equal case. Which one matches \"at least\", and which matches \"up to\"?",
+    "Rider 2's block looks like rider 1's: three assignments without `int` in front, three comparisons, four output lines."
+   ],
+   "test_program": {
+    "file_name": "TestRideGate.java",
+    "code": "public class TestRideGate\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java RideGate\" would.\n        RideGate.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Rider 1: 122 cm, 136 kg, wristband day 14\nTall enough: true\nWithin weight limit: true\nWristband valid: true\nRider 2: 121 cm, 137 kg, wristband day 13\nTall enough: false\nWithin weight limit: false\nWristband valid: false\n",
+    "predict": "Before running: write rider 1's three results as the starter computes them, then as your version does. Which results change, and why only those?"
+   },
+   "warmup": [
+    {
+     "question": "Rider 1 is exactly 122 cm. What does the starter's `(heightCm > MIN_HEIGHT_CM)` store in `isTallEnough`, and does that follow the rule \"at least 122 cm\"?",
+     "model_answer": "It stores `false`, because 122 is not greater than 122. That breaks the rule: \"at least 122\" includes 122, so she should be allowed on."
+    },
+    {
+     "question": "A teammate writes `isWristbandValid = (wristbandDay = TODAY);`. Why doesn't it compile?",
+     "model_answer": "A single `=` is assignment, not comparison: it stores `TODAY` in `wristbandDay`, and the result is an `int`, which can't be stored in a `boolean`. The equality operator is `==`."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why did this lab test riders who are *exactly* at the limits? What kind of mistake do those values catch that 150 cm or 100 kg wouldn't?",
+     "model_answer": "Values at the boundary are the only ones where `>` and `>=` (or `<` and `<=`) give different answers. A rider well above or below the limit gets the same result with either operator, so only boundary values reveal an operator that excludes the limit itself."
+    },
+    {
+     "question": "After rider 2's values are assigned, what would `isTallEnough` hold if you forgot to recompute it? Explain.",
+     "model_answer": "It would still hold `true`, rider 1's result. The comparison ran once, when rider 1's height was 122, and the boolean stored that answer; changing `heightCm` later doesn't change it. The comparison has to run again."
+    }
+   ],
+   "extension": "Add `boolean isAllowedOn` that is true only when all three results are true. You haven't met the operator for \"and\" yet: how far can you get with what you know, and what's missing?",
+   "worth_knowing": "In his 1937 master's thesis at MIT, Claude Shannon showed that George Boole's true/false algebra could describe circuits of electrical switches. That idea, true and false as on and off, is the basis of every digital circuit, including the processor running your Java program.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.4",
+   "title": "The drone drop-off",
+   "subtitle": "float or double: significant digits, the F suffix and when precision matters",
+   "source": "Ch. 2, section 2.4 (pp. 52–53)",
+   "minutes": 20,
+   "objectives": [
+    "Declare `float` values with the `F` suffix",
+    "Explain why a floating-point literal is a `double` by default",
+    "Compare the significant digits of `float` (6 or 7) and `double` (14 or 15)",
+    "Choose `double` when a value needs more digits than a `float` keeps"
+   ],
+   "scenario": "A delivery drone's controller saves memory by storing sensor readings as `float`: the battery reads 11.1 V and the payload scale 2.35 kg, and six or seven significant digits are plenty for both.\n\nThe drop-off point comes from the customer's map pin, with seven decimal places: latitude **25.7616798**, longitude **-80.1917902**. Yesterday a drone left a parcel on the neighbour's porch. The flight log must show:\n\n```\nBattery: 11.1 V\nPayload: 2.35 kg\nDrop-off latitude: 25.7616798\nDrop-off longitude: -80.1917902\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`payloadKg` is a `float` holding 2.35, written with the `F` suffix, and printed as `Payload: 2.35 kg`."
+    },
+    {
+     "id": "R2",
+     "text": "`latitude` and `longitude` are `double` values that keep all seven decimal places."
+    },
+    {
+     "id": "R3",
+     "text": "The log matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "DroneDrop.java",
+   "starter_code": "public class DroneDrop\n{\n    public static void main(String[] args)\n    {\n        // Sensor readings: float saves memory; 6 or 7 significant digits are enough.\n        float batteryVolts = 11.1F;\n        // TODO (R1): the payload scale reads 2.35 kg.\n\n        // Drop-off point from the customer's map pin.\n        // TODO (R2): predict what these print. Are 6 or 7 digits enough here?\n        float latitude = 25.7616798F;\n        float longitude = -80.1917902F;\n\n        System.out.println(\"Battery: \" + batteryVolts + \" V\");\n        // TODO (R1): print the payload.\n        System.out.println(\"Drop-off latitude: \" + latitude);\n        System.out.println(\"Drop-off longitude: \" + longitude);\n    }\n}\n",
+   "solution": "public class DroneDrop\n{\n    public static void main(String[] args)\n    {\n        float batteryVolts = 11.1F;\n        float payloadKg = 2.35F;\n\n        double latitude = 25.7616798;\n        double longitude = -80.1917902;\n\n        System.out.println(\"Battery: \" + batteryVolts + \" V\");\n        System.out.println(\"Payload: \" + payloadKg + \" kg\");\n        System.out.println(\"Drop-off latitude: \" + latitude);\n        System.out.println(\"Drop-off longitude: \" + longitude);\n    }\n}\n",
+   "solution_notes": "25.7616798 has nine significant digits; a `float` keeps only six or seven, so it prints 25.76168 and the drone aims for a nearby point instead. A `double` keeps 14 or 15 digits, more than enough. The literal 2.35 is a `double` by default, so storing it in a `float` needs the `F` suffix; without it the compiler reports a possible lossy conversion from `double` to `float`. The coordinates need no suffix once they are `double` (a `D` is allowed but unnecessary).",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "payloadKg is a float written with F",
+     "within": "DroneDrop.main",
+     "require": "\\bfloat\\s+payloadKg\\s*=\\s*2\\.35[fF]\\s*;",
+     "message": "Declare `float payloadKg` and write the value as `2.35F`. A literal with a decimal point is a `double` unless it ends in `F`, and Java won't silently squeeze a `double` into a `float`.",
+     "hint": "Look at how `batteryVolts` is declared on the line above."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The payload is printed",
+     "within": "DroneDrop.main",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\\\"Payload: \\\"\\s*\\+\\s*payloadKg\\s*\\+\\s*\\\" kg\\\"\\s*\\)\\s*;",
+     "message": "Print the payload between the battery and latitude lines: `Payload: `, the variable, then ` kg`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Both coordinates are doubles with all seven decimals",
+     "within": "DroneDrop.main",
+     "require": "^(?=[\\s\\S]*\\bdouble\\s+latitude\\s*=\\s*25\\.7616798[dD]?\\s*;)(?=[\\s\\S]*\\bdouble\\s+longitude\\s*=\\s*-\\s*80\\.1917902[dD]?\\s*;)",
+     "forbid": "\\bfloat\\s+(?:latitude|longitude)\\b|(?:25\\.7616798|80\\.1917902)[fF]",
+     "message": "Declare both coordinates as `double` and remove the `F`: a `float` keeps only 6 or 7 significant digits, and these values have 9. Keep every decimal place exactly as in the map pin.",
+     "hint": "Run the starter and compare the printed coordinates with the map pin, digit by digit."
+    }
+   ],
+   "hints": [
+    "Run the starter first and compare the two coordinate lines with the scenario. Count how many digits survived.",
+    "A `float` holds six or seven significant digits, a `double` 14 or 15. Count the significant digits in 25.7616798.",
+    "Without a suffix, 2.35 is a `double`. Which letter tells Java to make it a `float`?"
+   ],
+   "test_program": {
+    "file_name": "TestDroneDrop.java",
+    "code": "public class TestDroneDrop\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java DroneDrop\" would.\n        DroneDrop.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Battery: 11.1 V\nPayload: 2.35 kg\nDrop-off latitude: 25.7616798\nDrop-off longitude: -80.1917902\n",
+    "predict": "Before running: write the two coordinate lines exactly as you think the starter prints them with `float`. Then run your `double` version and compare."
+   },
+   "warmup": [
+    {
+     "question": "The starter stores the latitude 25.7616798 in a `float`. Predict what `println` shows, and explain the difference.",
+     "model_answer": "It shows about 25.76168. A `float` keeps only six or seven significant digits, so the last digits of 25.7616798 are lost; the value is rounded to what a `float` can hold."
+    },
+    {
+     "question": "Why does `float payloadKg = 2.35;` fail to compile, when `double payloadKg = 2.35;` is fine?",
+     "model_answer": "A floating-point literal such as 2.35 is a `double` by default. Storing a `double` in a `float` could lose precision, so the compiler refuses (possible lossy conversion). Writing `2.35F` makes the literal a `float` to begin with."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The battery and payload stay `float`, but the coordinates became `double`. State the rule you used to decide, in one or two sentences.",
+     "model_answer": "Count the significant digits the value really needs. If six or seven are enough, as for 11.1 V or 2.35 kg, a `float` saves memory; if it needs more, as the nine-digit coordinates do, use a `double`, which keeps 14 or 15."
+    },
+    {
+     "question": "Your program now prints the coordinates correctly. Does that mean a `double` stores 25.7616798 exactly? Explain what the reading says about floating-point values.",
+     "model_answer": "Not necessarily. Floating-point numbers are often only approximations, because many decimal fractions can't be represented exactly in binary. A `double` is close enough that it prints all seven decimals, but it may still differ from the exact value far beyond them."
+    }
+   ],
+   "extension": "Store the distance to the Moon, 384,400,000 metres, in a `float` and print it. What does the `E` in the output mean? Rewrite the value by hand as a number with eight zeros.",
+   "worth_knowing": "A degree of latitude is about 111 km, so the seventh decimal of a map pin is about a centimetre. Near -80, a `float` can only change in steps of about 0.0000076 degrees, roughly three quarters of a metre on the ground at Miami's latitude: enough to land on the wrong porch.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.5",
+   "title": "The boarding pass",
+   "subtitle": "char versus String, escape sequences, and the number behind every character",
+   "source": "Ch. 2, section 2.5 (pp. 53–57)",
+   "minutes": 25,
+   "objectives": [
+    "Store single characters in `char` variables with single quotation marks",
+    "Use the escape sequences `\\n`, `\\\"` and `\\\\` in string literals",
+    "Explain why `\"Seat: \" + 14 + 'C'` and `14 + 'C'` give different results",
+    "Store and display a character's Unicode value"
+   ],
+   "scenario": "SkyLark Air's kiosk prints a boarding pass and then saves a copy of it. The pass must look exactly like this:\n\n```\nBOARDING PASS\nPassenger: Rivera, M.\nSeat: 14C\nGate: \"B7\"\nSeat letter code: 67\nSaved to C:\\passes\\rivera.txt\n```\n\nThe developer's notes say:\n\n- The first initial and the seat letter are single characters: store them as `char`, not `String`.\n- Print the first two lines with **one** `println()`. The kiosk's printer driver adds a pause after every call.\n- The gate scanner reads the seat letter as its Unicode number, so the pass shows it.\n- The gate name prints *inside* quotation marks, and the path contains backslashes.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`firstInitial` and `seatLetter` are `char` variables holding `'M'` and `'C'`."
+    },
+    {
+     "id": "R2",
+     "text": "`BOARDING PASS` and the passenger line come from one `println()` call, using an escape sequence."
+    },
+    {
+     "id": "R3",
+     "text": "The gate line shows `\"B7\"` with its quotation marks, using an escape sequence."
+    },
+    {
+     "id": "R4",
+     "text": "`int seatCode` stores the Unicode value of `seatLetter`, and the pass prints it."
+    },
+    {
+     "id": "R5",
+     "text": "The last line shows the path `C:\\passes\\rivera.txt`, using an escape sequence for each backslash."
+    },
+    {
+     "id": "R6",
+     "text": "The pass matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "BoardingPass.java",
+   "starter_code": "public class BoardingPass\n{\n    public static void main(String[] args)\n    {\n        String lastName = \"Rivera\";\n        String firstInitial = \"M\";    // TODO (R1): a single character\n        int seatRow = 14;\n        String seatLetter = \"C\";      // TODO (R1): a single character\n        String gate = \"B7\";\n\n        // TODO (R2): these two lines must come from ONE println().\n        System.out.println(\"BOARDING PASS\");\n        System.out.println(\"Passenger: \" + lastName + \", \" + firstInitial + \".\");\n        System.out.println(\"Seat: \" + seatRow + seatLetter);\n        // TODO (R3): the gate must print inside quotation marks.\n        System.out.println(\"Gate: \" + gate);\n        // TODO (R4): store the seat letter's Unicode value in an int and print it.\n        // TODO (R5): print the save path.\n    }\n}\n",
+   "solution": "public class BoardingPass\n{\n    public static void main(String[] args)\n    {\n        String lastName = \"Rivera\";\n        char firstInitial = 'M';\n        int seatRow = 14;\n        char seatLetter = 'C';\n        String gate = \"B7\";\n        int seatCode = seatLetter;\n\n        System.out.println(\"BOARDING PASS\\nPassenger: \" + lastName + \", \" +\n            firstInitial + \".\");\n        System.out.println(\"Seat: \" + seatRow + seatLetter);\n        System.out.println(\"Gate: \\\"\" + gate + \"\\\"\");\n        System.out.println(\"Seat letter code: \" + seatCode);\n        System.out.println(\"Saved to C:\\\\passes\\\\rivera.txt\");\n    }\n}\n",
+   "solution_notes": "A `char` holds exactly one character and its literal uses single quotation marks. `\\n` starts a new line inside a single string, `\\\"` puts a double quotation mark inside a string without ending it, and `\\\\` stands for one backslash (a lone backslash would start an escape sequence). Assigning a `char` to an `int` stores its Unicode value: 'C' is 67. In `\"Seat: \" + seatRow + seatLetter` the string comes first, so both `+` signs concatenate and the result is \"Seat: 14C\"; `seatRow + seatLetter` on its own would add 14 and 67.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "firstInitial and seatLetter are chars",
+     "within": "BoardingPass.main",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\\bchar\\s+firstInitial\\s*=\\s*'M'\\s*;)(?=[\\s\\S]*\\bchar\\s+seatLetter\\s*=\\s*'C'\\s*;)",
+     "message": "Declare both as `char` and use single quotation marks: `'M'` and `'C'`. Double quotation marks make a `String`, which can't be stored in a `char`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The first two lines come from one println with \\n",
+     "within": "BoardingPass.main",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\\\"BOARDING PASS\\\\nPassenger: \\\"",
+     "forbid": "println\\s*\\(\\s*\\\"BOARDING PASS\\\"\\s*\\)",
+     "message": "Delete the separate `BOARDING PASS` statement and start the passenger line's string with `BOARDING PASS`, then the newline escape sequence, then `Passenger: `. The escape sequence is a backslash followed by `n`.",
+     "hint": "Figure 2-14 prints two lines with a single call."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The gate is printed inside escaped quotation marks",
+     "within": "BoardingPass.main",
+     "strings": true,
+     "require": "\\\"Gate: \\\\\\\"(?:\\\"\\s*\\+\\s*gate\\s*\\+\\s*\\\"\\\\\\\"\\\"|B7\\\\\\\"\\\")",
+     "message": "A plain `\"` would end the string, so write each quotation mark that must *appear* as `\\\"`: one right after `Gate: `, and one after the gate.",
+     "hint": "The first escaped quote goes inside the first string; the second needs a string of its own after `+ gate +`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "seatCode stores the seat letter's Unicode value",
+     "within": "BoardingPass.main",
+     "require": "\\bint\\s+seatCode\\s*=\\s*(?:\\(\\s*int\\s*\\)\\s*)?seatLetter\\s*;",
+     "message": "Declare `int seatCode` and assign it `seatLetter`. Every character is stored as a number, and assigning a `char` to an `int` keeps that number: its Unicode value."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The seat code is printed",
+     "within": "BoardingPass.main",
+     "strings": true,
+     "require": "println\\s*\\(\\s*\\\"Seat letter code: \\\"\\s*\\+\\s*seatCode\\s*\\)",
+     "message": "Print `Seat letter code: ` followed by `seatCode`, after the gate line."
+    },
+    {
+     "id": "C6",
+     "requirement": "R5",
+     "title": "Each backslash in the path is escaped",
+     "within": "BoardingPass.main",
+     "strings": true,
+     "require": "\\\"Saved to C:\\\\\\\\passes\\\\\\\\rivera\\.txt\\\"",
+     "message": "Inside a string a single backslash starts an escape sequence, so each backslash that must appear is written as two: `\\\\`. The path has two of them."
+    }
+   ],
+   "hints": [
+    "Single characters live in single quotation marks; strings in double ones. Change both the type and the quotation marks.",
+    "Table 2-6 lists the escape sequences. You need three of them: one for a new line, one for a double quotation mark, one for a backslash.",
+    "For the Unicode value you need no new syntax: an `int` variable can receive a `char`. Table 2-5 tells you what to expect for C."
+   ],
+   "test_program": {
+    "file_name": "TestBoardingPass.java",
+    "code": "public class TestBoardingPass\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java BoardingPass\" would.\n        BoardingPass.main(new String[0]);\n    }\n}\n",
+    "expected_output": "BOARDING PASS\nPassenger: Rivera, M.\nSeat: 14C\nGate: \"B7\"\nSeat letter code: 67\nSaved to C:\\passes\\rivera.txt\n",
+    "predict": "Before running: Table 2-5 says C is 67. Predict the seat-code line. Then predict what `System.out.println(seatRow + seatLetter);` would print, and why it isn't \"14C\"."
+   },
+   "warmup": [
+    {
+     "question": "Once `seatLetter` is the `char` 'C' (Unicode 67), what does `System.out.println(seatRow + seatLetter);` print? Compare it with `\"Seat: \" + seatRow + seatLetter`.",
+     "model_answer": "It prints 81: with no string involved, `+` adds the numbers, and the `char` counts as its Unicode value, 14 + 67. In `\"Seat: \" + seatRow + seatLetter` the string comes first, so each `+` is concatenation, from left to right, giving \"Seat: 14C\"."
+    },
+    {
+     "question": "Why can't you write the gate line as `\"Gate: \"B7\"\"`?",
+     "model_answer": "The second double quotation mark ends the string after `Gate: `, so `B7` would be read as code and the line wouldn't compile. A quotation mark that must appear in the output is written as the escape sequence `\\\"`."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The path needs `\\\\` for each backslash. What would `\"C:\\passes\\rivera.txt\"` (single backslashes) do instead?",
+     "model_answer": "Each single backslash would start an escape sequence with the next letter: `\\p` isn't valid, so the compiler reports an illegal escape character. (`\\r` would even be read as a carriage return.) Doubling it gives one literal backslash."
+    },
+    {
+     "question": "Printing two lines with one `println()` and `\\n` versus two `println()` calls: the reading says each has an advantage. What are they?",
+     "model_answer": "One call with `\\n` is shorter to type and calls the method once; two separate calls can be easier to read because each output line has its own statement. (A text block is a third option.)"
+    }
+   ],
+   "extension": "Replace the first `println()` with a text block (three double quotation marks) that holds the first two lines. What changes about how you write the line break?",
+   "worth_knowing": "'A' is 65 in Unicode because Unicode's first 128 values copy ASCII, a code standardized in 1963 for teleprinters. That's why Table 2-5 still contains codes such as bel, which rang a real bell on the teleprinter, and why `\\n` and `\\r` are two separate characters: line feed and carriage return were two separate motions of the print head.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.6",
+   "title": "The taco pickup kiosk",
+   "subtitle": "Scanner input, tokens, and the Enter key left in the keyboard buffer",
+   "source": "Ch. 2, section 2.6 (pp. 57–63)",
+   "minutes": 25,
+   "objectives": [
+    "Read an `int`, a line and a token with `nextInt()`, `nextLine()` and `next()`",
+    "Explain how the keyboard buffer keeps the Enter key after `nextInt()`",
+    "Consume the leftover Enter with an extra `nextLine()` call",
+    "Write one clear prompt for each value the user enters"
+   ],
+   "scenario": "Rosa's Taco Truck has a pickup kiosk. It asks how many tacos, the name for the order, and a pickup time, then prints a ticket for the kitchen. Customers have been complaining: the kiosk skips straight past \"Name for the order\" and tickets come out with no name.\n\nWhen a customer enters **3**, **Dana Cruz** and **18:45**, the ticket must read:\n\n```\n--- Order ticket ---\n3 tacos for Dana Cruz\nPickup at 18:45\n```\n\nThe ticket starts with a blank line, so it doesn't run into the last prompt.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "After `nextInt()` reads the quantity, a `nextLine()` call whose result isn't stored consumes the leftover Enter, before the name is read with `nextLine()`."
+    },
+    {
+     "id": "R2",
+     "text": "The kiosk prompts `Pickup time >> ` with `print()` and reads the time into `pickupTime`."
+    },
+    {
+     "id": "R3",
+     "text": "The ticket starts with a blank line from `println()`, then the header, the quantity and name, and `Pickup at` with the time."
+    },
+    {
+     "id": "R4",
+     "text": "With the input 3, Dana Cruz and 18:45, the output matches the test program's expected output.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "TacoKiosk.java",
+   "starter_code": "import java.util.Scanner;\n\npublic class TacoKiosk\n{\n    public static void main(String[] args)\n    {\n        int quantity;\n        String customerName;\n        String pickupTime;\n        Scanner input = new Scanner(System.in);\n\n        System.out.print(\"Number of tacos >> \");\n        quantity = input.nextInt();\n        // TODO (R1): the kiosk never waits for the name. What is still in the buffer?\n        System.out.print(\"Name for the order >> \");\n        customerName = input.nextLine();\n\n        // TODO (R2): prompt for the pickup time and read it.\n\n        // TODO (R3): a blank line first, and the pickup line last.\n        System.out.println(\"--- Order ticket ---\");\n        System.out.println(quantity + \" tacos for \" + customerName);\n    }\n}\n",
+   "solution": "import java.util.Scanner;\n\npublic class TacoKiosk\n{\n    public static void main(String[] args)\n    {\n        int quantity;\n        String customerName;\n        String pickupTime;\n        Scanner input = new Scanner(System.in);\n\n        System.out.print(\"Number of tacos >> \");\n        quantity = input.nextInt();\n        input.nextLine();\n        System.out.print(\"Name for the order >> \");\n        customerName = input.nextLine();\n\n        System.out.print(\"Pickup time >> \");\n        pickupTime = input.next();\n\n        System.out.println();\n        System.out.println(\"--- Order ticket ---\");\n        System.out.println(quantity + \" tacos for \" + customerName);\n        System.out.println(\"Pickup at \" + pickupTime);\n    }\n}\n",
+   "solution_notes": "`nextInt()` reads the token 3 and leaves the Enter key that followed it in the keyboard buffer. The next `nextLine()` reads everything up to the next Enter, which is already waiting, so it returns an empty string without pausing. A `nextLine()` call that isn't stored consumes that Enter. `nextLine()` is needed for the name because it contains a space (`next()` would return only \"Dana\"); the pickup time is a single token, so `next()` works (and `nextLine()` would too).",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The leftover Enter is consumed before the name is read",
+     "within": "TacoKiosk.main",
+     "require": "quantity\\s*=\\s*input\\s*\\.\\s*nextInt\\s*\\(\\s*\\)\\s*;(?:\\s*System\\s*\\.\\s*out\\s*\\.\\s*print\\s*\\([^;]*\\)\\s*;)?\\s*input\\s*\\.\\s*nextLine\\s*\\(\\s*\\)\\s*;(?:\\s*System\\s*\\.\\s*out\\s*\\.\\s*print\\s*\\([^;]*\\)\\s*;)?\\s*customerName\\s*=\\s*input\\s*\\.\\s*nextLine\\s*\\(\\s*\\)\\s*;",
+     "message": "Between `quantity = input.nextInt();` and the line that reads the name, add a call to `nextLine()` on the Scanner without storing the result. It removes the Enter that `nextInt()` left behind, so the name's `nextLine()` waits for the customer.",
+     "hint": "The extra call doesn't need a variable or an `=`: its only job is to throw away what's in the buffer."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The full name is read with nextLine()",
+     "within": "TacoKiosk.main",
+     "forbid": "customerName\\s*=\\s*input\\s*\\.\\s*next\\s*\\(",
+     "require": "customerName\\s*=\\s*input\\s*\\.\\s*nextLine\\s*\\(",
+     "starter_passes": true,
+     "message": "Keep `nextLine()` for the name: `next()` stops at the first space, so \"Dana Cruz\" would become \"Dana\" and \"Cruz\" would be read as the pickup time."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The pickup time has its own prompt and input",
+     "within": "TacoKiosk.main",
+     "strings": true,
+     "require": "print\\s*\\(\\s*\\\"Pickup time >> \\\"\\s*\\)\\s*;\\s*pickupTime\\s*=\\s*input\\s*\\.\\s*(?:next|nextLine)\\s*\\(\\s*\\)\\s*;",
+     "message": "Print the prompt `Pickup time >> ` with `print()` (so the answer goes on the same line), then read the answer into `pickupTime` on the next line."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "The ticket starts with a blank line and ends with the pickup time",
+     "within": "TacoKiosk.main",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*println\\s*\\(\\s*\\)\\s*;\\s*System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(\\s*\\\"--- Order ticket ---\\\"\\s*\\))(?=[\\s\\S]*println\\s*\\(\\s*\\\"Pickup at \\\"\\s*\\+\\s*pickupTime\\s*\\)\\s*;)",
+     "message": "Call `println()` with no argument right before the header line, and add a last line that prints `Pickup at ` followed by `pickupTime`."
+    }
+   ],
+   "hints": [
+    "Run the starter and watch the prompts: which one doesn't wait? Ask yourself what `nextInt()` takes from the buffer, and what it leaves.",
+    "The reading's fix in Figure 2-22 adds one statement. It calls a Scanner method but doesn't assign its result to anything.",
+    "The name contains a space, so it needs the method that reads a whole line. The pickup time is a single token."
+   ],
+   "test_program": {
+    "file_name": "TestTacoKiosk.java",
+    "code": "import java.io.ByteArrayInputStream;\n\npublic class TestTacoKiosk\n{\n    public static void main(String[] args)\n    {\n        // Types the answers for you: 3, Enter, Dana Cruz, Enter, 18:45, Enter.\n        // (System.setIn swaps the keyboard for this text, so you won't type anything.)\n        System.setIn(new ByteArrayInputStream(\"3\\nDana Cruz\\n18:45\\n\".getBytes()));\n        TacoKiosk.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Number of tacos >> Name for the order >> Pickup time >> \n--- Order ticket ---\n3 tacos for Dana Cruz\nPickup at 18:45\n",
+    "predict": "Before running: the test types the answers for you, and typed answers don't appear in the output, so all three prompts end up on one line. Predict the ticket the *starter* prints for the same answers, then run your version.",
+    "how_to_run": "Put `TacoKiosk.java` and `TestTacoKiosk.java` in the same folder, then run `javac *.java` and `java TestTacoKiosk`. In an IDE, add both files to one project and run `TestTacoKiosk`. The test program supplies the customer's answers itself, so don't type anything: copy all the console output into the box below.\n\nTo try the kiosk as a customer, run `TacoKiosk` itself and type the answers."
+   },
+   "warmup": [
+    {
+     "question": "The customer types 3 and presses Enter. What does `nextInt()` take from the keyboard buffer, and what does it leave there?",
+     "model_answer": "`nextInt()` takes the token 3 and stops at the whitespace after it, so the Enter key press is left in the buffer."
+    },
+    {
+     "question": "Why does the starter's name prompt appear but never wait for an answer?",
+     "model_answer": "`nextLine()` reads everything up to the next Enter. The Enter left by `nextInt()` is already waiting, so `nextLine()` returns immediately with an empty string, and the program moves on without letting the customer type."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your fix calls `nextLine()` without storing what it returns. Explain what that call does in this program and why nothing needs to be stored.",
+     "model_answer": "It consumes the Enter key that `nextInt()` left in the keyboard buffer. The Enter carries no information we need, so it's read and thrown away; that clears the buffer, and the following `nextLine()` waits for the name."
+    },
+    {
+     "question": "Why does the name need `nextLine()` while the pickup time could use `next()`? What would happen with `next()` for the name?",
+     "model_answer": "`next()` returns one token, stopping at whitespace; `nextLine()` returns the whole line. \"Dana Cruz\" has a space, so `next()` would return only \"Dana\" and leave \"Cruz\" to be read as the pickup time. \"18:45\" has no spaces, so one token is enough."
+    }
+   ],
+   "extension": "Ask for the quantity *last*, after the name and the pickup time. Which `nextLine()` calls are still needed, and why?",
+   "worth_knowing": "The `Scanner` class only arrived in Java 5, in 2004. Before it, reading a number from the keyboard meant wrapping `System.in` in an `InputStreamReader` and a `BufferedReader`, reading a whole line, and converting it with `Integer.parseInt()`: three classes for one number.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.7",
+   "title": "The ticket order dialogs",
+   "subtitle": "Input dialogs return Strings: parse them with type-wrapper classes; confirm dialogs return an int",
+   "source": "Ch. 2, section 2.7 (pp. 64–67)",
+   "minutes": 30,
+   "objectives": [
+    "Accept input with `JOptionPane.showInputDialog()`, in its one-argument and four-argument versions",
+    "Convert a `String` to a number with `Double.parseDouble()` and `Integer.parseInt()`",
+    "Ask a yes-or-no question with `showConfirmDialog()` and compare its result with `JOptionPane.YES_OPTION`",
+    "Explain why a dialog's answer can't be used in arithmetic until it's converted"
+   ],
+   "scenario": "The Riverside Amphitheater sells tickets at a desktop kiosk that works entirely in dialog boxes. The kiosk asks:\n\n1. *Price per ticket?* (a simple input dialog)\n2. *How many tickets?* in a dialog titled **Ticket order**, with a question-mark icon\n3. *Add a parking pass?* in a dialog titled **Parking** with only **Yes** and **No** buttons and a question-mark icon\n\nThen it shows the total in a message dialog and writes a log line for the box office. For a customer who answers 27.25, 4 and Yes, the log must read:\n\n```\nTickets: 4 at $27.25\nTotal: $109.0\nParking pass: true\n```\n\nWhen you run the test program, it answers each dialog for you after a moment, so the log is the same on every computer. To try the kiosk as a customer, run `TicketOrder` on its own and answer the dialogs yourself.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The price typed in the first dialog is converted from `String` to `double` with `Double.parseDouble()`."
+    },
+    {
+     "id": "R2",
+     "text": "The number of tickets comes from a four-argument input dialog (message `How many tickets?`, title `Ticket order`, `QUESTION_MESSAGE`) and is converted with `Integer.parseInt()`."
+    },
+    {
+     "id": "R3",
+     "text": "The parking question uses a five-argument confirm dialog (message `Add a parking pass?`, title `Parking`, `YES_NO_OPTION`, `QUESTION_MESSAGE`), and `wantsParking` stores whether the result equals `JOptionPane.YES_OPTION`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program produces exactly its expected output.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "TicketOrder.java",
+   "starter_code": "import javax.swing.JOptionPane;\n\npublic class TicketOrder\n{\n    public static void main(String[] args)\n    {\n        String priceString;\n        String ticketsString;\n        double price;\n        int tickets;\n        int parkingChoice;\n        boolean wantsParking;\n        double total;\n\n        priceString = JOptionPane.showInputDialog(null, \"Price per ticket?\");\n        // TODO (R1): priceString holds text such as \"27.25\". Convert it.\n        price = 0;\n\n        // TODO (R2): ask \"How many tickets?\" in a dialog titled \"Ticket order\"\n        // with a question-mark icon, then convert the answer.\n        tickets = 0;\n\n        // TODO (R3): ask \"Add a parking pass?\" in a dialog titled \"Parking\" with\n        // only Yes and No buttons; wantsParking is true when the customer chose Yes.\n        wantsParking = false;\n\n        total = price * tickets;\n        System.out.println(\"Tickets: \" + tickets + \" at $\" + price);\n        System.out.println(\"Total: $\" + total);\n        System.out.println(\"Parking pass: \" + wantsParking);\n        JOptionPane.showMessageDialog(null, \"Your total is $\" + total +\n            \"\\nParking pass: \" + wantsParking);\n    }\n}\n",
+   "solution": "import javax.swing.JOptionPane;\n\npublic class TicketOrder\n{\n    public static void main(String[] args)\n    {\n        String priceString;\n        String ticketsString;\n        double price;\n        int tickets;\n        int parkingChoice;\n        boolean wantsParking;\n        double total;\n\n        priceString = JOptionPane.showInputDialog(null, \"Price per ticket?\");\n        price = Double.parseDouble(priceString);\n\n        ticketsString = JOptionPane.showInputDialog(null,\n            \"How many tickets?\", \"Ticket order\",\n            JOptionPane.QUESTION_MESSAGE);\n        tickets = Integer.parseInt(ticketsString);\n\n        parkingChoice = JOptionPane.showConfirmDialog(null,\n            \"Add a parking pass?\", \"Parking\",\n            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);\n        wantsParking = (parkingChoice == JOptionPane.YES_OPTION);\n\n        total = price * tickets;\n        System.out.println(\"Tickets: \" + tickets + \" at $\" + price);\n        System.out.println(\"Total: $\" + total);\n        System.out.println(\"Parking pass: \" + wantsParking);\n        JOptionPane.showMessageDialog(null, \"Your total is $\" + total +\n            \"\\nParking pass: \" + wantsParking);\n    }\n}\n",
+   "solution_notes": "`showInputDialog()` always returns a `String`, even when the user types digits, and a `String` can't be multiplied. The type-wrapper classes `Double` and `Integer` provide static `parse` methods that convert the text to a number. A cast can't do this: casts work only between primitive types, and `String` is a reference type. `showConfirmDialog()` returns an `int` naming the button clicked, so comparing it with `JOptionPane.YES_OPTION` produces the `boolean`. 27.25 × 4 is 109.0, which Java prints with one decimal place.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The price is parsed with Double.parseDouble()",
+     "within": "TicketOrder.main",
+     "require": "price\\s*=\\s*Double\\s*\\.\\s*parseDouble\\s*\\(\\s*priceString\\s*\\)\\s*;",
+     "forbid": "price\\s*=\\s*0\\s*;",
+     "message": "Replace `price = 0;` with a call to `Double.parseDouble()` that receives `priceString`. The dialog returns text, and the wrapper class `Double` converts text to a `double`.",
+     "hint": "Figure 2-31 converts a wage the same way."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The tickets dialog has a title and a question icon",
+     "within": "TicketOrder.main",
+     "strings": true,
+     "require": "ticketsString\\s*=\\s*JOptionPane\\s*\\.\\s*showInputDialog\\s*\\(\\s*null\\s*,\\s*\\\"How many tickets\\?\\\"\\s*,\\s*\\\"Ticket order\\\"\\s*,\\s*JOptionPane\\s*\\.\\s*QUESTION_MESSAGE\\s*\\)\\s*;",
+     "message": "Use the four-argument version and store the result in `ticketsString`: `null`, the message `How many tickets?`, the title `Ticket order`, and `JOptionPane.QUESTION_MESSAGE`, separated by commas.",
+     "hint": "The order of the arguments is: parent, message, title, kind of dialog."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The number of tickets is parsed with Integer.parseInt()",
+     "within": "TicketOrder.main",
+     "require": "tickets\\s*=\\s*Integer\\s*\\.\\s*parseInt\\s*\\(\\s*ticketsString\\s*\\)\\s*;",
+     "forbid": "tickets\\s*=\\s*0\\s*;",
+     "message": "Convert `ticketsString` with `Integer.parseInt()` and store the result in `tickets`. Tickets are whole numbers, so the `int` wrapper class is the right one."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "The parking dialog offers only Yes and No",
+     "within": "TicketOrder.main",
+     "strings": true,
+     "require": "parkingChoice\\s*=\\s*JOptionPane\\s*\\.\\s*showConfirmDialog\\s*\\(\\s*null\\s*,\\s*\\\"Add a parking pass\\?\\\"\\s*,\\s*\\\"Parking\\\"\\s*,\\s*JOptionPane\\s*\\.\\s*YES_NO_OPTION\\s*,\\s*JOptionPane\\s*\\.\\s*QUESTION_MESSAGE\\s*\\)\\s*;",
+     "message": "Use the five-argument `showConfirmDialog()` and store its result in `parkingChoice`: `null`, the question, the title `Parking`, `JOptionPane.YES_NO_OPTION` (no Cancel button), and `JOptionPane.QUESTION_MESSAGE`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "wantsParking compares the choice with YES_OPTION",
+     "within": "TicketOrder.main",
+     "require": "wantsParking\\s*=\\s*\\(?\\s*(?:parkingChoice\\s*==\\s*JOptionPane\\s*\\.\\s*YES_OPTION|JOptionPane\\s*\\.\\s*YES_OPTION\\s*==\\s*parkingChoice)\\s*\\)?\\s*;",
+     "forbid": "wantsParking\\s*=\\s*false\\s*;",
+     "message": "The dialog returns an `int` that identifies the button. Compare `parkingChoice` with `JOptionPane.YES_OPTION` using `==`, and store the `true`/`false` result in `wantsParking`."
+    }
+   ],
+   "hints": [
+    "Whatever the customer types, an input dialog gives you a `String`. Which classes did the reading use to turn a `String` into a number?",
+    "The longer `showInputDialog()` takes four arguments and the longer `showConfirmDialog()` takes five. The extra ones are the title, the buttons and the icon.",
+    "A confirm dialog doesn't return true or false: it returns a number for the button. Compare that number with the constant for Yes."
+   ],
+   "test_program": {
+    "file_name": "TestTicketOrder.java",
+    "code": "import java.awt.Component;\nimport java.awt.Container;\nimport java.awt.Window;\nimport javax.swing.JDialog;\nimport javax.swing.JOptionPane;\nimport javax.swing.Timer;\n\npublic class TestTicketOrder\n{\n    // A customer's answers, in order: the price, the number of tickets,\n    // Yes to the parking pass, and OK on the total.\n    private static final Object[] ANSWERS =\n        { \"27.25\", \"4\", JOptionPane.YES_OPTION, JOptionPane.OK_OPTION };\n    private static int nextAnswer = 0;\n\n    public static void main(String[] args)\n    {\n        System.out.println(\"TicketOrder starts; the test answers each dialog\");\n        // Every 0.7 seconds, answer whichever dialog is open.\n        // You'll see each one appear and close.\n        Timer helper = new Timer(700, e -> answerOpenDialog());\n        helper.start();\n        TicketOrder.main(new String[0]);\n        helper.stop();\n        System.out.println(\"TicketOrder finished\");\n        System.exit(0);\n    }\n\n    // You don't need to follow the rest yet: it finds the open dialog and answers it.\n    private static void answerOpenDialog()\n    {\n        for (Window window : Window.getWindows())\n        {\n            if (window instanceof JDialog && window.isShowing())\n            {\n                JOptionPane pane = findPane(((JDialog) window).getContentPane());\n                if (pane != null)\n                {\n                    Object answer = JOptionPane.OK_OPTION;\n                    if (nextAnswer < ANSWERS.length)\n                    {\n                        answer = ANSWERS[nextAnswer];\n                    }\n                    nextAnswer++;\n                    if (pane.getWantsInput())\n                    {\n                        pane.setInputValue(answer.toString());\n                        pane.setValue(JOptionPane.OK_OPTION);\n                    }\n                    else if (answer instanceof Integer)\n                    {\n                        pane.setValue(answer);\n                    }\n                    else\n                    {\n                        pane.setValue(JOptionPane.OK_OPTION);\n                    }\n                    return;\n                }\n            }\n        }\n    }\n\n    private static JOptionPane findPane(Container container)\n    {\n        for (Component child : container.getComponents())\n        {\n            if (child instanceof JOptionPane)\n            {\n                return (JOptionPane) child;\n            }\n            if (child instanceof Container)\n            {\n                JOptionPane found = findPane((Container) child);\n                if (found != null)\n                {\n                    return found;\n                }\n            }\n        }\n        return null;\n    }\n}\n",
+    "expected_output": "TicketOrder starts; the test answers each dialog\nTickets: 4 at $27.25\nTotal: $109.0\nParking pass: true\nTicketOrder finished\n",
+    "predict": "Before running: the test answers 27.25, 4 and Yes. Predict the three log lines the *starter* writes, and the three your version writes. Why does the starter print 0 tickets even though the customer answered?",
+    "how_to_run": "Put `TicketOrder.java` and `TestTicketOrder.java` in the same folder, then run `javac *.java` and `java TestTicketOrder`. In an IDE, add both files to one project and run `TestTicketOrder`. Four dialogs open one after another and the test answers each after a moment, so don't click them (in some IDEs they open behind the editor window: check the taskbar). Then copy all the console output into the box below."
+   },
+   "warmup": [
+    {
+     "question": "In the starter, `priceString` holds what the customer typed, for example \"27.25\". Why can't the program simply write `price = priceString;` or `total = priceString * tickets;`?",
+     "model_answer": "`priceString` is a `String`, text that happens to contain digits. A `String` can't be stored in a `double` or used in arithmetic, so it must first be converted to a number, with `Double.parseDouble()`."
+    },
+    {
+     "question": "`Double.parseDouble(priceString)` is called on the class name `Double`, not on an object. What does that tell you about the method?",
+     "model_answer": "It is a `static` method: it belongs to the class and can be used without creating any object of that class."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "You can cast a `double` to an `int` with `(int)`. Why can't you convert the dialog's `String` with a cast such as `(double) priceString`?",
+     "model_answer": "Casts convert only between primitive types such as `int` and `double`. A `String` is an object, a reference type, so a cast can't turn it into a number; the type-wrapper classes' parse methods are needed."
+    },
+    {
+     "question": "What would `wantsParking` be if the customer chose No, and what number does the confirm dialog return in that case?",
+     "model_answer": "`wantsParking` would be `false`, because the dialog returns `JOptionPane.NO_OPTION`, which is not equal to `JOptionPane.YES_OPTION`. The constants are `int` values identifying the button."
+    }
+   ],
+   "extension": "Run `TicketOrder` yourself and type `four` in the tickets dialog. What happens, and which statement causes it? (You'll learn to handle this later in the course.)",
+   "worth_knowing": "On Windows these dialogs don't look like the rest of Windows. Swing draws every button and icon itself, and its default \"look and feel\" is called Metal. One line at the start of a program can switch it to the system's own look, which is how many Java desktop apps blend in.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.8",
+   "title": "The episode-length converter",
+   "subtitle": "Integer division, the remainder operator and operator precedence",
+   "source": "Ch. 2, section 2.8 (pp. 68–72)",
+   "minutes": 30,
+   "objectives": [
+    "Use integer division to count whole hours and minutes",
+    "Use the remainder operator `%` to find what's left over",
+    "Predict results from precedence and left-to-right associativity",
+    "Use parentheses to make an addition happen before a division"
+   ],
+   "scenario": "A podcast studio's upload tool asks for the length of two episodes in seconds and shows them in hours, minutes and seconds, plus their average length. For episodes of **7385** and **5415** seconds it must show:\n\n```\nEpisode 1: 2 h 3 min 5 s\nEpisode 2: 1 h 30 min 15 s\nAverage length: 6400 s\n```\n\nRight now it only works out the hours, and the producer noticed the \"average\" is longer than either episode. The studio also wants the conversion factors 3600 and 60 written only once, as named constants.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`SECONDS_PER_HOUR` (3600) and `SECONDS_PER_MINUTE` (60) are named constants, and no calculation uses the numbers 3600 or 60 directly."
+    },
+    {
+     "id": "R2",
+     "text": "Each episode is broken into whole hours, the remaining whole minutes and the remaining seconds with `/` and `%`, reusing `hours`, `minutes` and `seconds`."
+    },
+    {
+     "id": "R3",
+     "text": "The average adds both lengths *before* dividing by 2."
+    },
+    {
+     "id": "R4",
+     "text": "With the input 7385 and 5415, the output matches the test program's expected output.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "EpisodeLength.java",
+   "starter_code": "import java.util.Scanner;\n\npublic class EpisodeLength\n{\n    public static void main(String[] args)\n    {\n        // TODO (R1): name the two conversion factors as constants.\n        int firstSeconds;\n        int secondSeconds;\n        int hours;\n        int minutes;\n        int seconds;\n        int averageSeconds;\n        Scanner input = new Scanner(System.in);\n\n        System.out.print(\"Episode 1 length in seconds >> \");\n        firstSeconds = input.nextInt();\n        System.out.print(\"Episode 2 length in seconds >> \");\n        secondSeconds = input.nextInt();\n        System.out.println();\n\n        hours = firstSeconds / 3600;\n        // TODO (R2): the whole minutes and the seconds left after the whole hours.\n        minutes = 0;\n        seconds = 0;\n        System.out.println(\"Episode 1: \" + hours + \" h \" + minutes + \" min \" +\n            seconds + \" s\");\n\n        // TODO (R2): the same breakdown and output line for episode 2.\n\n        // TODO (R3): the producer says this average is far too long.\n        averageSeconds = firstSeconds + secondSeconds / 2;\n        System.out.println(\"Average length: \" + averageSeconds + \" s\");\n    }\n}\n",
+   "solution": "import java.util.Scanner;\n\npublic class EpisodeLength\n{\n    public static void main(String[] args)\n    {\n        final int SECONDS_PER_HOUR = 3600;\n        final int SECONDS_PER_MINUTE = 60;\n        int firstSeconds;\n        int secondSeconds;\n        int hours;\n        int minutes;\n        int seconds;\n        int averageSeconds;\n        Scanner input = new Scanner(System.in);\n\n        System.out.print(\"Episode 1 length in seconds >> \");\n        firstSeconds = input.nextInt();\n        System.out.print(\"Episode 2 length in seconds >> \");\n        secondSeconds = input.nextInt();\n        System.out.println();\n\n        hours = firstSeconds / SECONDS_PER_HOUR;\n        minutes = firstSeconds % SECONDS_PER_HOUR / SECONDS_PER_MINUTE;\n        seconds = firstSeconds % SECONDS_PER_MINUTE;\n        System.out.println(\"Episode 1: \" + hours + \" h \" + minutes + \" min \" +\n            seconds + \" s\");\n\n        hours = secondSeconds / SECONDS_PER_HOUR;\n        minutes = secondSeconds % SECONDS_PER_HOUR / SECONDS_PER_MINUTE;\n        seconds = secondSeconds % SECONDS_PER_MINUTE;\n        System.out.println(\"Episode 2: \" + hours + \" h \" + minutes + \" min \" +\n            seconds + \" s\");\n\n        averageSeconds = (firstSeconds + secondSeconds) / 2;\n        System.out.println(\"Average length: \" + averageSeconds + \" s\");\n    }\n}\n",
+   "solution_notes": "Both operands are `int`, so `/` is integer division and drops the fraction: 7385 / 3600 is 2 whole hours. `7385 % 3600` is the 185 seconds left over, and since `%` and `/` have the same precedence and run left to right, `7385 % 3600 / 60` is `185 / 60`, 3 minutes. `7385 % 60` gives the 5 seconds that don't fill a minute. In the starter's average, `/` runs before `+`, so it computed 7385 + 2707 = 10092; parentheses make the addition happen first: 12800 / 2 = 6400.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Both conversion factors are named constants",
+     "within": "EpisodeLength.main",
+     "require": "^(?=[\\s\\S]*\\bfinal\\s+int\\s+SECONDS_PER_HOUR\\s*=\\s*3_?600\\s*;)(?=[\\s\\S]*\\bfinal\\s+int\\s+SECONDS_PER_MINUTE\\s*=\\s*60\\s*;)",
+     "message": "Declare `final int SECONDS_PER_HOUR = 3600;` and `final int SECONDS_PER_MINUTE = 60;` at the start of `main()`. The names say what the numbers mean."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "No calculation uses 3600 or 60 directly",
+     "within": "EpisodeLength.main",
+     "forbid": "[/%*]\\s*(?:3_?600|60)\\b",
+     "require": "/\\s*SECONDS_PER_HOUR",
+     "message": "Replace each `3600` or `60` in a calculation with its constant, including the starter's `firstSeconds / 3600`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Minutes and seconds use % and /, for both episodes",
+     "within": "EpisodeLength.main",
+     "require": "^(?=(?:[\\s\\S]*?\\bminutes\\s*=\\s*(?=[^;]*%)(?=[^;]*/)[^;]*;){2})(?=(?:[\\s\\S]*?\\bseconds\\s*=\\s*\\w+\\s*%\\s*SECONDS_PER_MINUTE\\s*;){2})",
+     "forbid": "\\bminutes\\s*=\\s*0\\s*;",
+     "message": "For each episode: the remaining minutes need both operators (the remainder after whole hours, divided by the seconds in a minute), and the remaining seconds are the remainder after dividing by `SECONDS_PER_MINUTE`.",
+     "hint": "Work 7385 through by hand: how many seconds are left after the 2 whole hours? How many whole minutes is that?"
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "Episode 2 is converted and printed",
+     "within": "EpisodeLength.main",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\\bhours\\s*=\\s*secondSeconds\\s*/\\s*SECONDS_PER_HOUR\\s*;)(?=[\\s\\S]*println\\s*\\(\\s*\\\"Episode 2: \\\"\\s*\\+\\s*hours)",
+     "message": "Repeat the three calculations with `secondSeconds`, assigning them to the same `hours`, `minutes` and `seconds` variables, then print the `Episode 2: ` line in the same format."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "The average adds before it divides",
+     "within": "EpisodeLength.main",
+     "require": "averageSeconds\\s*=\\s*\\(\\s*(?:firstSeconds\\s*\\+\\s*secondSeconds|secondSeconds\\s*\\+\\s*firstSeconds)\\s*\\)\\s*/\\s*2\\s*;",
+     "message": "Division has higher precedence than addition, so the starter divides only `secondSeconds` by 2. Put the sum in parentheses so it's computed first, then divide by 2.",
+     "hint": "Compute the starter's version by hand with 7385 and 5415. Which operation ran first?"
+    }
+   ],
+   "hints": [
+    "Work through 7385 seconds by hand: whole hours first, then what's left over, then whole minutes in what's left, then what's left after that.",
+    "`/` with two integers gives the whole number of times one fits into the other; `%` gives what's left over. You need both for the minutes.",
+    "`*`, `/` and `%` run before `+` and `-`. When you need an addition to happen first, give it parentheses."
+   ],
+   "test_program": {
+    "file_name": "TestEpisodeLength.java",
+    "code": "import java.io.ByteArrayInputStream;\n\npublic class TestEpisodeLength\n{\n    public static void main(String[] args)\n    {\n        // Types the answers for you: 7385, Enter, 5415, Enter.\n        // (System.setIn swaps the keyboard for this text, so you won't type anything.)\n        System.setIn(new ByteArrayInputStream(\"7385\\n5415\\n\".getBytes()));\n        EpisodeLength.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Episode 1 length in seconds >> Episode 2 length in seconds >> \nEpisode 1: 2 h 3 min 5 s\nEpisode 2: 1 h 30 min 15 s\nAverage length: 6400 s\n",
+    "predict": "Before running: work out by hand what the starter prints as the average for 7385 and 5415. Then predict your three output lines.",
+    "how_to_run": "Put `EpisodeLength.java` and `TestEpisodeLength.java` in the same folder, then run `javac *.java` and `java TestEpisodeLength`. In an IDE, add both files to one project and run `TestEpisodeLength`. The test program enters 7385 and 5415 itself, so don't type anything: copy all the console output into the box below."
+   },
+   "warmup": [
+    {
+     "question": "Compute by hand: `7385 / 3600` and `7385 % 3600`. What does each result mean for the episode?",
+     "model_answer": "`7385 / 3600` is 2 (integer division drops the fraction): the episode has 2 whole hours. `7385 % 3600` is 185: the seconds left over after those 2 hours."
+    },
+    {
+     "question": "The starter computes `firstSeconds + secondSeconds / 2`. What does it give for 7385 and 5415, and why?",
+     "model_answer": "10092. Division has higher precedence than addition, so `secondSeconds / 2` (2707) is computed first and then added to 7385, instead of averaging the two lengths."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Explain how `firstSeconds % SECONDS_PER_HOUR / SECONDS_PER_MINUTE` is evaluated, step by step, for 7385. Which rule decides the order?",
+     "model_answer": "`%` and `/` have the same precedence and associate left to right, so `7385 % 3600` runs first, giving 185, and then `185 / 60` gives 3 whole minutes."
+    },
+    {
+     "question": "If the two episodes were 7385 and 5416 seconds, the true average is 6400.5. What does your program print, and why?",
+     "model_answer": "6400. `(7385 + 5416) / 2` divides two integers, so Java performs integer division and drops the .5. To keep it, at least one operand would need to be a floating-point value."
+    }
+   ],
+   "extension": "Add a third line that shows the *total* length of both episodes in hours, minutes and seconds. Can you reuse the same three variables again?",
+   "worth_knowing": "Java's `%` can return a negative number: `-7 % 3` is -1 in Java, because the result takes the sign of the left operand. Python's `%` gives 2 for the same expression. Both are standard behaviours, which is why the reading prefers the name \"remainder\" to \"modulus\".",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  },
+  {
+   "id": "2.9",
+   "title": "The muffin batch scaler",
+   "subtitle": "Unifying types, implicit promotion, and explicit casts in the right place",
+   "source": "Ch. 2, section 2.9 (pp. 72–76)",
+   "minutes": 25,
+   "objectives": [
+    "Predict the unifying type of an expression with mixed operand types",
+    "Cast an operand to `double` *before* a division, not after",
+    "Use a cast to store a `double` result in a `float`",
+    "Use a cast to `int` and explain that it drops the fractional part"
+   ],
+   "scenario": "Corner Crumb bakery's standard muffin recipe makes **12** muffins with 450 g of flour, 0.75 cups of butter and 3 eggs. A café has ordered **30** muffins, which is 2.5 batches, and the batch card must read:\n\n```\nOrder: 30 muffins (recipe makes 12)\nScale factor: 2.5\nFlour: 1125.0 g\nButter: 1.875 cups\nWhole eggs: 7\n```\n\nTwo details come from the kitchen equipment: the card printer's driver takes cup amounts as a `float`, and the card lists only **whole** eggs (the baker adds the half egg by hand). The current program says the order is 2.0 batches.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`scale` is computed with floating-point division by casting an operand to `double` before dividing."
+    },
+    {
+     "id": "R2",
+     "text": "`butterCups` (a `float`) receives the scaled butter through an explicit cast of the whole product."
+    },
+    {
+     "id": "R3",
+     "text": "`wholeEggs` (an `int`) receives the scaled eggs through an explicit cast, which drops the fraction."
+    },
+    {
+     "id": "R4",
+     "text": "The batch card matches the screen above exactly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "BatchScaler.java",
+   "starter_code": "public class BatchScaler\n{\n    public static void main(String[] args)\n    {\n        final int BASE_BATCH = 12;\n        final int BASE_FLOUR_GRAMS = 450;\n        final double BASE_BUTTER_CUPS = 0.75;\n        final int BASE_EGGS = 3;\n\n        int orderedMuffins = 30;\n        double scale;\n        double flourGrams;\n        float butterCups;\n        int wholeEggs;\n\n        // TODO (R1): 30 muffins is 2.5 batches, but this gives 2.0.\n        scale = (double) (orderedMuffins / BASE_BATCH);\n        flourGrams = BASE_FLOUR_GRAMS * scale;\n        // TODO (R2): the scaled butter, for the printer's float.\n        butterCups = 0;\n        // TODO (R3): whole eggs only.\n        wholeEggs = 0;\n\n        System.out.println(\"Order: \" + orderedMuffins +\n            \" muffins (recipe makes \" + BASE_BATCH + \")\");\n        System.out.println(\"Scale factor: \" + scale);\n        System.out.println(\"Flour: \" + flourGrams + \" g\");\n        System.out.println(\"Butter: \" + butterCups + \" cups\");\n        System.out.println(\"Whole eggs: \" + wholeEggs);\n    }\n}\n",
+   "solution": "public class BatchScaler\n{\n    public static void main(String[] args)\n    {\n        final int BASE_BATCH = 12;\n        final int BASE_FLOUR_GRAMS = 450;\n        final double BASE_BUTTER_CUPS = 0.75;\n        final int BASE_EGGS = 3;\n\n        int orderedMuffins = 30;\n        double scale;\n        double flourGrams;\n        float butterCups;\n        int wholeEggs;\n\n        scale = (double) orderedMuffins / BASE_BATCH;\n        flourGrams = BASE_FLOUR_GRAMS * scale;\n        butterCups = (float) (BASE_BUTTER_CUPS * scale);\n        wholeEggs = (int) (BASE_EGGS * scale);\n\n        System.out.println(\"Order: \" + orderedMuffins +\n            \" muffins (recipe makes \" + BASE_BATCH + \")\");\n        System.out.println(\"Scale factor: \" + scale);\n        System.out.println(\"Flour: \" + flourGrams + \" g\");\n        System.out.println(\"Butter: \" + butterCups + \" cups\");\n        System.out.println(\"Whole eggs: \" + wholeEggs);\n    }\n}\n",
+   "solution_notes": "In the starter, `orderedMuffins / BASE_BATCH` divides two `int`s, so the result is already 2 before the cast runs: casting afterwards is too late. Casting `orderedMuffins` first makes one operand a `double`, so `double` becomes the unifying type and the division keeps the .5. `BASE_FLOUR_GRAMS * scale` needs no cast: the `int` is promoted to `double` and the result fits the `double` variable. `BASE_BUTTER_CUPS * scale` is a `double`, so storing it in a `float` needs an explicit cast around the whole product. `(int)` on 7.5 drops the fraction and gives 7: it truncates, it does not round.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The cast happens before the division",
+     "within": "BatchScaler.main",
+     "require": "scale\\s*=\\s*(?:\\(\\s*double\\s*\\)\\s*orderedMuffins\\s*/\\s*BASE_BATCH|orderedMuffins\\s*/\\s*\\(\\s*double\\s*\\)\\s*BASE_BATCH)\\s*;",
+     "forbid": "\\(\\s*double\\s*\\)\\s*\\(\\s*orderedMuffins\\s*/",
+     "message": "Remove the parentheses around the division so the cast applies to `orderedMuffins` alone: with one `double` operand, Java divides in floating point and keeps the .5. Casting the finished `int` result is too late; the fraction is already gone.",
+     "hint": "The cast applies to whatever immediately follows it. What follows it in the starter?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The butter product is cast to float",
+     "within": "BatchScaler.main",
+     "require": "butterCups\\s*=\\s*\\(\\s*float\\s*\\)\\s*\\(\\s*(?:BASE_BUTTER_CUPS\\s*\\*\\s*scale|scale\\s*\\*\\s*BASE_BUTTER_CUPS)\\s*\\)\\s*;",
+     "forbid": "butterCups\\s*=\\s*0\\s*;",
+     "message": "Multiply `BASE_BUTTER_CUPS` by `scale` (a `double` result) and cast the whole product to `float`: put the product in parentheses and `(float)` in front. Without the cast Java refuses, because a `double` doesn't fit a `float` without losing precision."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The eggs are cast to int",
+     "within": "BatchScaler.main",
+     "require": "wholeEggs\\s*=\\s*\\(\\s*int\\s*\\)\\s*\\(\\s*(?:BASE_EGGS\\s*\\*\\s*scale|scale\\s*\\*\\s*BASE_EGGS)\\s*\\)\\s*;",
+     "forbid": "wholeEggs\\s*=\\s*0\\s*;",
+     "message": "Compute `BASE_EGGS * scale` (a `double`, 7.5) in parentheses and cast it to `int` with `(int)`. The cast drops the fractional part, which is exactly the \"whole eggs\" rule."
+    }
+   ],
+   "hints": [
+    "Run the starter and look at the scale factor. Then evaluate `orderedMuffins / BASE_BATCH` by hand: what type are the two operands?",
+    "A cast applies only to the value directly after it. To change how a division is done, the cast must reach an operand, not the result.",
+    "When you cast an expression with several operators, put the expression in parentheses so the cast applies to the result of all of it."
+   ],
+   "test_program": {
+    "file_name": "TestBatchScaler.java",
+    "code": "public class TestBatchScaler\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java BatchScaler\" would.\n        BatchScaler.main(new String[0]);\n    }\n}\n",
+    "expected_output": "Order: 30 muffins (recipe makes 12)\nScale factor: 2.5\nFlour: 1125.0 g\nButter: 1.875 cups\nWhole eggs: 7\n",
+    "predict": "Before running: write the starter's scale factor and flour lines, then yours. Then predict the eggs line: does `(int)` turn 7.5 into 7 or 8?"
+   },
+   "warmup": [
+    {
+     "question": "Evaluate the starter's `(double) (orderedMuffins / BASE_BATCH)` step by step for 30 and 12. Why is the result 2.0 and not 2.5?",
+     "model_answer": "The parentheses make `30 / 12` run first. Both operands are `int`, so integer division gives 2 and the .5 is lost. Then `(double)` converts 2 into 2.0: the cast comes too late to save the fraction."
+    },
+    {
+     "question": "`flourGrams = BASE_FLOUR_GRAMS * scale;` multiplies an `int` by a `double` and needs no cast. What is the unifying type, and why is no cast needed?",
+     "model_answer": "`double`, the higher type in the order of unifying types. Java promotes the `int` to `double` automatically, and the `double` result is stored in a `double` variable, so nothing is lost and no cast is required."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Compare `(double) orderedMuffins / BASE_BATCH` with `(double) (orderedMuffins / BASE_BATCH)`. Explain in your own words why the parentheses change the answer.",
+     "model_answer": "In the first, the cast converts `orderedMuffins` to 30.0 before dividing, so the division is floating-point and gives 2.5. In the second, the parentheses make the integer division happen first, giving 2, and only that result is cast. Extra parentheses change which value the cast applies to."
+    },
+    {
+     "question": "Flour needed no cast, but butter and eggs did. State the rule: when does Java convert for you, and when must you cast?",
+     "model_answer": "Java converts automatically when the value goes to a higher type in the unifying order (an `int` into a `double`), because nothing is lost. Going to a lower type, such as `double` to `float` or `double` to `int`, can lose data, so Java requires an explicit cast to show you meant it."
+    }
+   ],
+   "extension": "The kitchen would rather round eggs to the nearest whole egg (7.5 to 8) than drop the fraction. Using only a cast and arithmetic, how could you round instead of truncate?",
+   "worth_knowing": "In 1996 the first Ariane 5 rocket broke apart about 40 seconds after launch. Its guidance software converted a 64-bit floating-point value, a measure of horizontal velocity, into a 16-bit integer; the value was too large to fit, the conversion failed, and the guidance system shut down.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; variables in camel case, named constants in all capitals."
+    }
+   ]
+  }
+ ]
+}

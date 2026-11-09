@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The shift trade</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.1</div>
+  <h1>The shift trade</h1>
+<h2>Objectives</h2><ul><li>Declare a named constant with <code>final</code> and a conventional all-capitals name</li><li>Concatenate a constant&#x27;s value into a string with <code>+</code></li><li>Explain why a variable holds only one value at a time</li><li>Swap the values of two variables using a third, temporary variable</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The shift length is a named constant, <code>SHIFT_HOURS</code>, declared once with <code>final</code> and the value 12.</li><li><strong>R2</strong> All four board lines show the shift length by concatenating <code>SHIFT_HOURS</code>: no <code>12</code> typed inside a string.</li><li><strong>R3</strong> The trade swaps the two start times through a third variable, without retyping 7 or 19.</li><li><strong>R4</strong> The board matches the screen above exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter&#x27;s trade with <code>ortizStart</code> = 7 and <code>leeStart</code> = 19. What does each variable hold after <code>ortizStart = leeStart;</code>, and after <code>leeStart = ortizStart;</code>?</p><div class="answer"><p>After the first line both hold 19: the 7 in <code>ortizStart</code> is overwritten and gone. The second line copies 19 into <code>leeStart</code>, which already held 19, so both nurses end up starting at 19:00.</p></div></li><li><p>The starter types <code>12</code> inside four strings. If the ward switches to 8-hour shifts, what would you have to do, and what could go wrong?</p><div class="answer"><p>Find and edit all four strings by hand. It&#x27;s easy to miss one, or to change a 12 that means something else, and the compiler can&#x27;t help because the numbers are just text inside strings.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ShiftTrade.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ShiftTrade</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SHIFT_HOURS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">12</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ortizStart</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">7</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">leeStart</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">19</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">temp</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Before the trade"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Ortiz starts at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ortizStart</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":00 ("</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-n">SHIFT_HOURS</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"-hour shift)"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Lee starts at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">leeStart</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":00 ("</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">SHIFT_HOURS</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-s">"-hour shift)"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">temp</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ortizStart</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">ortizStart</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">leeStart</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">leeStart</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">temp</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"After the trade"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Ortiz starts at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ortizStart</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":00 ("</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-n">SHIFT_HOURS</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"-hour shift)"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Lee starts at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">leeStart</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":00 ("</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">SHIFT_HOURS</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-s">"-hour shift)"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A variable holds one value at a time: <code>ortizStart = leeStart;</code> overwrites the 7, so the next line can only copy 19 back. Parking the 7 in <code>temp</code> first keeps it alive until <code>leeStart</code> receives it. <code>SHIFT_HOURS</code> is declared once with <code>final</code>, so a change to 8-hour shifts is one edit, and the compiler rejects any later attempt to assign it. To place its value in a sentence, the string is closed, <code>+ SHIFT_HOURS +</code> is concatenated, and a new string continues.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestShiftTrade.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestShiftTrade</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java ShiftTrade" would.</span>
+<span class="t-w">        </span><span class="t-n">ShiftTrade</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Before the trade
+Ortiz starts at 7:00 (12-hour shift)
+Lee starts at 19:00 (12-hour shift)
+After the trade
+Ortiz starts at 19:00 (12-hour shift)
+Lee starts at 7:00 (12-hour shift)
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>SHIFT_HOURS is a final int set to 12<div class="small">in <code>ShiftTrade.main</code></div></td><td><div><span class="tag">require</span> <code>final\s+int\s+SHIFT_HOURS\s*=\s*12\s*;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Every board line concatenates SHIFT_HOURS<div class="small">in <code>ShiftTrade.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>(?:[\s\S]*?\+\s*SHIFT_HOURS\s*\+\s*\&quot;-hour shift\)\&quot;){4}</code></div><div><span class="tag">forbid</span> <code>12-hour</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The swap goes through a temporary variable<div class="small">in <code>ShiftTrade.main</code></div></td><td><div><span class="tag">require</span> <code>(?:int\s+)?(\w+)\s*=\s*ortizStart\s*;\s*ortizStart\s*=\s*leeStart\s*;\s*leeStart\s*=\s*\1\s*;</code></div><div><span class="tag">require</span> <code>(?:int\s+)?(\w+)\s*=\s*leeStart\s*;\s*leeStart\s*=\s*ortizStart\s*;\s*ortizStart\s*=\s*\1\s*;</code></div></td></tr><tr><td>C4</td><td>R3</td><td>No value is lost or retyped<div class="small">in <code>ShiftTrade.main</code></div></td><td><div><span class="tag">forbid</span> <code>ortizStart\s*=\s*leeStart\s*;\s*leeStart\s*=\s*ortizStart\s*;</code></div><div><span class="tag">forbid</span> <code>leeStart\s*=\s*ortizStart\s*;\s*ortizStart\s*=\s*leeStart\s*;</code></div><div><span class="tag">forbid</span> <code>;\s*(?:ortizStart|leeStart)\s*=\s*(?:7|19)\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · SHIFT_HOURS is a final int set to 12</dt><dd><p>Declare the constant with the keyword <code>final</code> before the type: <code>final</code>, <code>int</code>, the name <code>SHIFT_HOURS</code>, <code>= 12</code> and a semicolon. <code>final</code> is what stops the value from ever being reassigned.</p><div class='small'><strong>Hint:</strong></div><p>The reading&#x27;s examples, such as <code>NUMBER_OF_DEPTS</code>, show the order of the words.</p></dd><dt>C2 · Every board line concatenates SHIFT_HOURS</dt><dd><p>In all four board lines, end the string after <code>:00 (</code>, add <code>+ SHIFT_HOURS +</code>, then start a new string with <code>-hour shift)</code>. A <code>12</code> inside quotation marks is text the compiler can&#x27;t connect to your constant.</p><div class='small'><strong>Hint:</strong></div><p>Count the lines that still contain <code>12-hour</code>. Each one needs the same change.</p></dd><dt>C3 · The swap goes through a temporary variable</dt><dd><p>Use three assignments in a row: copy one start time into a third variable, overwrite that start time with the other one, then give the other one the saved value. The third variable is the only place the first value survives.</p><div class='small'><strong>Hint:</strong></div><p>Which value disappears on the starter&#x27;s first trade line? Save that one before the line runs.</p></dd><dt>C4 · No value is lost or retyped</dt><dd><p>Remove the two-line attempt (<code>ortizStart = leeStart;</code> followed by <code>leeStart = ortizStart;</code>): after its first line both variables hold 19. And don&#x27;t assign 7 or 19 directly: the program must trade whatever times the nurses had, not the ones you know today.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Trace the starter&#x27;s two trade lines with real numbers: after the first line, what does <code>ortizStart</code> hold? What is left for the second line to copy?</p></li><li><p>Before you overwrite a variable, store its current value in a variable nobody else changes. The reading calls it a temporary holding spot.</p></li><li><p>To put a constant inside a sentence, close the string, concatenate the constant with <code>+</code> on both sides, and open a new string.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain in your own words why the swap needs a third variable. Use the words &quot;one value at a time&quot;.</p><div class="answer"><p>A variable holds one value at a time, so assigning a new value destroys the old one. To swap, one of the original values has to be copied into a third variable before it is overwritten; then it can be given to the other variable.</p></div></li><li><p>Name two benefits of <code>SHIFT_HOURS</code> over typing 12, and say what the compiler does if a later line tries <code>SHIFT_HOURS = 8;</code>.</p><div class="answer"><p>The name says what the number means, and a change happens in one place instead of four; the compiler also catches a misspelled name, which it can&#x27;t do for a mistyped 12. Because the constant is <code>final</code>, <code>SHIFT_HOURS = 8;</code> is a compiler error: a final variable can&#x27;t be assigned again.</p></div></li></ol>
+<h2>Extension</h2><p>Add a third nurse, Park, who starts at 15:00, and rotate the times: Ortiz takes Lee&#x27;s time, Lee takes Park&#x27;s, and Park takes Ortiz&#x27;s. How many extra variables do you need?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The muffin batch scaler</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.9</div>
+  <h1>The muffin batch scaler</h1>
+<h2>Objectives</h2><ul><li>Predict the unifying type of an expression with mixed operand types</li><li>Cast an operand to <code>double</code> <em>before</em> a division, not after</li><li>Use a cast to store a <code>double</code> result in a <code>float</code></li><li>Use a cast to <code>int</code> and explain that it drops the fractional part</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>scale</code> is computed with floating-point division by casting an operand to <code>double</code> before dividing.</li><li><strong>R2</strong> <code>butterCups</code> (a <code>float</code>) receives the scaled butter through an explicit cast of the whole product.</li><li><strong>R3</strong> <code>wholeEggs</code> (an <code>int</code>) receives the scaled eggs through an explicit cast, which drops the fraction.</li><li><strong>R4</strong> The batch card matches the screen above exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Evaluate the starter&#x27;s <code>(double) (orderedMuffins / BASE_BATCH)</code> step by step for 30 and 12. Why is the result 2.0 and not 2.5?</p><div class="answer"><p>The parentheses make <code>30 / 12</code> run first. Both operands are <code>int</code>, so integer division gives 2 and the .5 is lost. Then <code>(double)</code> converts 2 into 2.0: the cast comes too late to save the fraction.</p></div></li><li><p><code>flourGrams = BASE_FLOUR_GRAMS * scale;</code> multiplies an <code>int</code> by a <code>double</code> and needs no cast. What is the unifying type, and why is no cast needed?</p><div class="answer"><p><code>double</code>, the higher type in the order of unifying types. Java promotes the <code>int</code> to <code>double</code> automatically, and the <code>double</code> result is stored in a <code>double</code> variable, so nothing is lost and no cast is required.</p></div></li></ol>
+<h2>Solution</h2><div class="file">BatchScaler.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BatchScaler</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">BASE_BATCH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">12</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">BASE_FLOUR_GRAMS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">450</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">BASE_BUTTER_CUPS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">0.75</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">BASE_EGGS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">orderedMuffins</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">30</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">scale</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">flourGrams</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">float</span><span class="t-w"> </span><span class="t-n">butterCups</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">wholeEggs</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">scale</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">orderedMuffins</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">BASE_BATCH</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">flourGrams</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">BASE_FLOUR_GRAMS</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">scale</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">butterCups</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">float</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">BASE_BUTTER_CUPS</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">scale</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">wholeEggs</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">BASE_EGGS</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">scale</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Order: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">orderedMuffins</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-s">" muffins (recipe makes "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BASE_BATCH</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">")"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Scale factor: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">scale</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Flour: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">flourGrams</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" g"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Butter: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">butterCups</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cups"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Whole eggs: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">wholeEggs</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>In the starter, <code>orderedMuffins / BASE_BATCH</code> divides two <code>int</code>s, so the result is already 2 before the cast runs: casting afterwards is too late. Casting <code>orderedMuffins</code> first makes one operand a <code>double</code>, so <code>double</code> becomes the unifying type and the division keeps the .5. <code>BASE_FLOUR_GRAMS * scale</code> needs no cast: the <code>int</code> is promoted to <code>double</code> and the result fits the <code>double</code> variable. <code>BASE_BUTTER_CUPS * scale</code> is a <code>double</code>, so storing it in a <code>float</code> needs an explicit cast around the whole product. <code>(int)</code> on 7.5 drops the fraction and gives 7: it truncates, it does not round.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBatchScaler.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBatchScaler</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java BatchScaler" would.</span>
+<span class="t-w">        </span><span class="t-n">BatchScaler</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Order: 30 muffins (recipe makes 12)
+Scale factor: 2.5
+Flour: 1125.0 g
+Butter: 1.875 cups
+Whole eggs: 7
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The cast happens before the division<div class="small">in <code>BatchScaler.main</code></div></td><td><div><span class="tag">require</span> <code>scale\s*=\s*(?:\(\s*double\s*\)\s*orderedMuffins\s*/\s*BASE_BATCH|orderedMuffins\s*/\s*\(\s*double\s*\)\s*BASE_BATCH)\s*;</code></div><div><span class="tag">forbid</span> <code>\(\s*double\s*\)\s*\(\s*orderedMuffins\s*/</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The butter product is cast to float<div class="small">in <code>BatchScaler.main</code></div></td><td><div><span class="tag">require</span> <code>butterCups\s*=\s*\(\s*float\s*\)\s*\(\s*(?:BASE_BUTTER_CUPS\s*\*\s*scale|scale\s*\*\s*BASE_BUTTER_CUPS)\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>butterCups\s*=\s*0\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The eggs are cast to int<div class="small">in <code>BatchScaler.main</code></div></td><td><div><span class="tag">require</span> <code>wholeEggs\s*=\s*\(\s*int\s*\)\s*\(\s*(?:BASE_EGGS\s*\*\s*scale|scale\s*\*\s*BASE_EGGS)\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>wholeEggs\s*=\s*0\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The cast happens before the division</dt><dd><p>Remove the parentheses around the division so the cast applies to <code>orderedMuffins</code> alone: with one <code>double</code> operand, Java divides in floating point and keeps the .5. Casting the finished <code>int</code> result is too late; the fraction is already gone.</p><div class='small'><strong>Hint:</strong></div><p>The cast applies to whatever immediately follows it. What follows it in the starter?</p></dd><dt>C2 · The butter product is cast to float</dt><dd><p>Multiply <code>BASE_BUTTER_CUPS</code> by <code>scale</code> (a <code>double</code> result) and cast the whole product to <code>float</code>: put the product in parentheses and <code>(float)</code> in front. Without the cast Java refuses, because a <code>double</code> doesn&#x27;t fit a <code>float</code> without losing precision.</p></dd><dt>C3 · The eggs are cast to int</dt><dd><p>Compute <code>BASE_EGGS * scale</code> (a <code>double</code>, 7.5) in parentheses and cast it to <code>int</code> with <code>(int)</code>. The cast drops the fractional part, which is exactly the &quot;whole eggs&quot; rule.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter and look at the scale factor. Then evaluate <code>orderedMuffins / BASE_BATCH</code> by hand: what type are the two operands?</p></li><li><p>A cast applies only to the value directly after it. To change how a division is done, the cast must reach an operand, not the result.</p></li><li><p>When you cast an expression with several operators, put the expression in parentheses so the cast applies to the result of all of it.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Compare <code>(double) orderedMuffins / BASE_BATCH</code> with <code>(double) (orderedMuffins / BASE_BATCH)</code>. Explain in your own words why the parentheses change the answer.</p><div class="answer"><p>In the first, the cast converts <code>orderedMuffins</code> to 30.0 before dividing, so the division is floating-point and gives 2.5. In the second, the parentheses make the integer division happen first, giving 2, and only that result is cast. Extra parentheses change which value the cast applies to.</p></div></li><li><p>Flour needed no cast, but butter and eggs did. State the rule: when does Java convert for you, and when must you cast?</p><div class="answer"><p>Java converts automatically when the value goes to a higher type in the unifying order (an <code>int</code> into a <code>double</code>), because nothing is lost. Going to a lower type, such as <code>double</code> to <code>float</code> or <code>double</code> to <code>int</code>, can lose data, so Java requires an explicit cast to show you meant it.</p></div></li></ol>
+<h2>Extension</h2><p>The kitchen would rather round eggs to the nearest whole egg (7.5 to 8) than drop the fraction. Using only a cast and arithmetic, how could you round instead of truncate?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

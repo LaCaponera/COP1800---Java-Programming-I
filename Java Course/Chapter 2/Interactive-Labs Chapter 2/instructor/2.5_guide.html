@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The boarding pass</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.5</div>
+  <h1>The boarding pass</h1>
+<h2>Objectives</h2><ul><li>Store single characters in <code>char</code> variables with single quotation marks</li><li>Use the escape sequences <code>\n</code>, <code>\&quot;</code> and <code>\\</code> in string literals</li><li>Explain why <code>&quot;Seat: &quot; + 14 + &#x27;C&#x27;</code> and <code>14 + &#x27;C&#x27;</code> give different results</li><li>Store and display a character&#x27;s Unicode value</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>firstInitial</code> and <code>seatLetter</code> are <code>char</code> variables holding <code>&#x27;M&#x27;</code> and <code>&#x27;C&#x27;</code>.</li><li><strong>R2</strong> <code>BOARDING PASS</code> and the passenger line come from one <code>println()</code> call, using an escape sequence.</li><li><strong>R3</strong> The gate line shows <code>&quot;B7&quot;</code> with its quotation marks, using an escape sequence.</li><li><strong>R4</strong> <code>int seatCode</code> stores the Unicode value of <code>seatLetter</code>, and the pass prints it.</li><li><strong>R5</strong> The last line shows the path <code>C:\passes\rivera.txt</code>, using an escape sequence for each backslash.</li><li><strong>R6</strong> The pass matches the screen above exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Once <code>seatLetter</code> is the <code>char</code> &#x27;C&#x27; (Unicode 67), what does <code>System.out.println(seatRow + seatLetter);</code> print? Compare it with <code>&quot;Seat: &quot; + seatRow + seatLetter</code>.</p><div class="answer"><p>It prints 81: with no string involved, <code>+</code> adds the numbers, and the <code>char</code> counts as its Unicode value, 14 + 67. In <code>&quot;Seat: &quot; + seatRow + seatLetter</code> the string comes first, so each <code>+</code> is concatenation, from left to right, giving &quot;Seat: 14C&quot;.</p></div></li><li><p>Why can&#x27;t you write the gate line as <code>&quot;Gate: &quot;B7&quot;&quot;</code>?</p><div class="answer"><p>The second double quotation mark ends the string after <code>Gate: </code>, so <code>B7</code> would be read as code and the line wouldn&#x27;t compile. A quotation mark that must appear in the output is written as the escape sequence <code>\&quot;</code>.</p></div></li></ol>
+<h2>Solution</h2><div class="file">BoardingPass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BoardingPass</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">lastName</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Rivera"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">firstInitial</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-sc">'M'</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seatRow</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">14</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">seatLetter</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-sc">'C'</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">gate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"B7"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seatCode</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">seatLetter</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"BOARDING PASS\nPassenger: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lastName</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span>
+<span class="t-w">            </span><span class="t-n">firstInitial</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">seatRow</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">seatLetter</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Gate: \""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">gate</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat letter code: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">seatCode</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Saved to C:\\passes\\rivera.txt"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A <code>char</code> holds exactly one character and its literal uses single quotation marks. <code>\n</code> starts a new line inside a single string, <code>\&quot;</code> puts a double quotation mark inside a string without ending it, and <code>\\</code> stands for one backslash (a lone backslash would start an escape sequence). Assigning a <code>char</code> to an <code>int</code> stores its Unicode value: &#x27;C&#x27; is 67. In <code>&quot;Seat: &quot; + seatRow + seatLetter</code> the string comes first, so both <code>+</code> signs concatenate and the result is &quot;Seat: 14C&quot;; <code>seatRow + seatLetter</code> on its own would add 14 and 67.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBoardingPass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBoardingPass</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java BoardingPass" would.</span>
+<span class="t-w">        </span><span class="t-n">BoardingPass</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">BOARDING PASS
+Passenger: Rivera, M.
+Seat: 14C
+Gate: &quot;B7&quot;
+Seat letter code: 67
+Saved to C:\passes\rivera.txt
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>firstInitial and seatLetter are chars<div class="small">in <code>BoardingPass.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bchar\s+firstInitial\s*=\s*&#x27;M&#x27;\s*;)(?=[\s\S]*\bchar\s+seatLetter\s*=\s*&#x27;C&#x27;\s*;)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The first two lines come from one println with \n<div class="small">in <code>BoardingPass.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>println\s*\(\s*\&quot;BOARDING PASS\\nPassenger: \&quot;</code></div><div><span class="tag">forbid</span> <code>println\s*\(\s*\&quot;BOARDING PASS\&quot;\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The gate is printed inside escaped quotation marks<div class="small">in <code>BoardingPass.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\&quot;Gate: \\\&quot;(?:\&quot;\s*\+\s*gate\s*\+\s*\&quot;\\\&quot;\&quot;|B7\\\&quot;\&quot;)</code></div></td></tr><tr><td>C4</td><td>R4</td><td>seatCode stores the seat letter&#x27;s Unicode value<div class="small">in <code>BoardingPass.main</code></div></td><td><div><span class="tag">require</span> <code>\bint\s+seatCode\s*=\s*(?:\(\s*int\s*\)\s*)?seatLetter\s*;</code></div></td></tr><tr><td>C5</td><td>R4</td><td>The seat code is printed<div class="small">in <code>BoardingPass.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>println\s*\(\s*\&quot;Seat letter code: \&quot;\s*\+\s*seatCode\s*\)</code></div></td></tr><tr><td>C6</td><td>R5</td><td>Each backslash in the path is escaped<div class="small">in <code>BoardingPass.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\&quot;Saved to C:\\\\passes\\\\rivera\.txt\&quot;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · firstInitial and seatLetter are chars</dt><dd><p>Declare both as <code>char</code> and use single quotation marks: <code>&#x27;M&#x27;</code> and <code>&#x27;C&#x27;</code>. Double quotation marks make a <code>String</code>, which can&#x27;t be stored in a <code>char</code>.</p></dd><dt>C2 · The first two lines come from one println with \n</dt><dd><p>Delete the separate <code>BOARDING PASS</code> statement and start the passenger line&#x27;s string with <code>BOARDING PASS</code>, then the newline escape sequence, then <code>Passenger: </code>. The escape sequence is a backslash followed by <code>n</code>.</p><div class='small'><strong>Hint:</strong></div><p>Figure 2-14 prints two lines with a single call.</p></dd><dt>C3 · The gate is printed inside escaped quotation marks</dt><dd><p>A plain <code>&quot;</code> would end the string, so write each quotation mark that must <em>appear</em> as <code>\&quot;</code>: one right after <code>Gate: </code>, and one after the gate.</p><div class='small'><strong>Hint:</strong></div><p>The first escaped quote goes inside the first string; the second needs a string of its own after <code>+ gate +</code>.</p></dd><dt>C4 · seatCode stores the seat letter&#x27;s Unicode value</dt><dd><p>Declare <code>int seatCode</code> and assign it <code>seatLetter</code>. Every character is stored as a number, and assigning a <code>char</code> to an <code>int</code> keeps that number: its Unicode value.</p></dd><dt>C5 · The seat code is printed</dt><dd><p>Print <code>Seat letter code: </code> followed by <code>seatCode</code>, after the gate line.</p></dd><dt>C6 · Each backslash in the path is escaped</dt><dd><p>Inside a string a single backslash starts an escape sequence, so each backslash that must appear is written as two: <code>\\</code>. The path has two of them.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Single characters live in single quotation marks; strings in double ones. Change both the type and the quotation marks.</p></li><li><p>Table 2-6 lists the escape sequences. You need three of them: one for a new line, one for a double quotation mark, one for a backslash.</p></li><li><p>For the Unicode value you need no new syntax: an <code>int</code> variable can receive a <code>char</code>. Table 2-5 tells you what to expect for C.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The path needs <code>\\</code> for each backslash. What would <code>&quot;C:\passes\rivera.txt&quot;</code> (single backslashes) do instead?</p><div class="answer"><p>Each single backslash would start an escape sequence with the next letter: <code>\p</code> isn&#x27;t valid, so the compiler reports an illegal escape character. (<code>\r</code> would even be read as a carriage return.) Doubling it gives one literal backslash.</p></div></li><li><p>Printing two lines with one <code>println()</code> and <code>\n</code> versus two <code>println()</code> calls: the reading says each has an advantage. What are they?</p><div class="answer"><p>One call with <code>\n</code> is shorter to type and calls the method once; two separate calls can be easier to read because each output line has its own statement. (A text block is a third option.)</p></div></li></ol>
+<h2>Extension</h2><p>Replace the first <code>println()</code> with a text block (three double quotation marks) that holds the first two lines. What changes about how you write the line break?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The router&#x27;s data meter</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 2.2</div>
+  <h1>The router&#x27;s data meter</h1>
+<h2>Objectives</h2><ul><li>Choose <code>byte</code>, <code>short</code>, <code>int</code> or <code>long</code> from a variable&#x27;s largest possible value</li><li>Recognize integer overflow when a product is too large for an <code>int</code></li><li>Write a <code>long</code> literal with the uppercase <code>L</code> suffix</li><li>Explain the compiler&#x27;s &quot;possible lossy conversion&quot; and &quot;integer number too large&quot; messages</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>devices</code> and <code>daysInCycle</code> use the smallest type that holds 32 and 31.</li><li><strong>R2</strong> <code>dailyMegabytes</code> uses the smallest type that holds 30,000; <code>monthlyMegabytes</code> (up to 31 × 30,000) stays an <code>int</code>.</li><li><strong>R3</strong> <code>monthlyBytes</code> is a <code>long</code>, and the multiplication that produces it is done with a <code>long</code> operand, so it can&#x27;t overflow.</li><li><strong>R4</strong> <code>planCapBytes</code> is a <code>long</code> initialized with a literal ending in an uppercase <code>L</code>, and it is printed as the last line.</li><li><strong>R5</strong> The meter matches the screen above exactly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s <code>int monthlyBytes = monthlyMegabytes * 1000000;</code> compiles. Will it print 855000000000? Explain why or why not.</p><div class="answer"><p>No. 855,000 × 1,000,000 is 855 billion, but an <code>int</code> can hold only up to 2,147,483,647. Both operands are <code>int</code>, so the product overflows: the program still runs but prints a meaningless number, possibly negative.</p></div></li><li><p>A <code>long</code> can hold 1,200,000,000,000, yet <code>long planCapBytes = 1200000000000;</code> doesn&#x27;t compile. Why?</p><div class="answer"><p>A whole-number literal is an <code>int</code> by default, and 1,200,000,000,000 is too large to be an <code>int</code>, so the compiler rejects the literal itself before it ever reaches the <code>long</code>. Adding <code>L</code> makes the literal a <code>long</code>.</p></div></li></ol>
+<h2>Solution</h2><div class="file">DataMeter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DataMeter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">byte</span><span class="t-w"> </span><span class="t-n">devices</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">7</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">byte</span><span class="t-w"> </span><span class="t-n">daysInCycle</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">30</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">short</span><span class="t-w"> </span><span class="t-n">dailyMegabytes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">28500</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">monthlyMegabytes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">dailyMegabytes</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">daysInCycle</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-kt">long</span><span class="t-w"> </span><span class="t-n">monthlyBytes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">monthlyMegabytes</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mi">1_000_000L</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-kt">long</span><span class="t-w"> </span><span class="t-n">planCapBytes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1_200_000_000_000L</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Devices on network: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">devices</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Billing cycle: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">daysInCycle</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" days"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Average per day: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">dailyMegabytes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" MB"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Month so far: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">monthlyMegabytes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" MB"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Month so far: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">monthlyBytes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" bytes"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Plan cap: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">planCapBytes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" bytes"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>32 and 31 fit in a <code>byte</code> (up to 127) and 30,000 fits in a <code>short</code> (up to 32,767), but 31 × 30,000 = 930,000 needs an <code>int</code>. <code>855000 * 1000000</code> is 855 billion, far past the <code>int</code> limit of 2,147,483,647, so with two <code>int</code> operands the product wraps around and even the sign is lost. Declaring the result <code>long</code> is not enough on its own: the multiplication must already be done in <code>long</code>, which the <code>L</code> on <code>1_000_000L</code> guarantees. The plan cap needs <code>L</code> because a literal without it is an <code>int</code>, and 1.2 trillion is too large to be one.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestDataMeter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestDataMeter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java DataMeter" would.</span>
+<span class="t-w">        </span><span class="t-n">DataMeter</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Devices on network: 7
+Billing cycle: 30 days
+Average per day: 28500 MB
+Month so far: 855000 MB
+Month so far: 855000000000 bytes
+Plan cap: 1200000000000 bytes
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>devices and daysInCycle are bytes<div class="small">in <code>DataMeter.main</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bbyte\s+devices\s*=\s*7\s*;)(?=[\s\S]*\bbyte\s+daysInCycle\s*=\s*30\s*;)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>dailyMegabytes is a short; monthlyMegabytes stays an int<div class="small">in <code>DataMeter.main</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bshort\s+dailyMegabytes\s*=\s*28_?500\s*;)(?=[\s\S]*\bint\s+monthlyMegabytes\s*=)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>monthlyBytes is a long computed in long<div class="small">in <code>DataMeter.main</code></div></td><td><div><span class="tag">require</span> <code>\blong\s+monthlyBytes\s*=\s*[^;]*\b\d[\d_]*L\b[^;]*;</code></div><div><span class="tag">require</span> <code>\blong\s+monthlyBytes\s*=\s*\(\s*long\s*\)</code></div></td></tr><tr><td>C4</td><td>R4</td><td>The plan cap is a long literal with an uppercase L<div class="small">in <code>DataMeter.main</code></div></td><td><div><span class="tag">require</span> <code>\blong\s+planCapBytes\s*=\s*1[\d_]*L\s*;</code></div><div><span class="tag">forbid</span> <code>\b\d[\d_]*l\b</code></div></td></tr><tr><td>C5</td><td>R4</td><td>The plan cap is printed<div class="small">in <code>DataMeter.main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>println\s*\(\s*\&quot;Plan cap: \&quot;\s*\+\s*planCapBytes\s*\+\s*\&quot; bytes\&quot;\s*\)\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · devices and daysInCycle are bytes</dt><dd><p>Both maximums (32 devices, 31 days) are below 127, so <code>byte</code> is the smallest type that holds them. Change <code>int</code> to <code>byte</code> in both declarations.</p><div class='small'><strong>Hint:</strong></div><p>Table 2-2 lists the largest value of each integer type.</p></dd><dt>C2 · dailyMegabytes is a short; monthlyMegabytes stays an int</dt><dd><p>30,000 is too big for a <code>byte</code> but fits in a <code>short</code> (up to 32,767). The monthly total can reach 31 × 30,000 = 930,000, which is too big for a <code>short</code>, so it stays an <code>int</code>.</p></dd><dt>C3 · monthlyBytes is a long computed in long</dt><dd><p>Declare <code>monthlyBytes</code> as a <code>long</code> and write the factor as a <code>long</code> literal: <code>1_000_000L</code> or <code>1000000L</code>. With two <code>int</code> operands Java multiplies in <code>int</code> and overflows <em>before</em> the result reaches the <code>long</code> variable.</p><div class='small'><strong>Hint:</strong></div><p>Run it with only the type changed to <code>long</code>. Is the number right yet?</p></dd><dt>C4 · The plan cap is a long literal with an uppercase L</dt><dd><p>Declare <code>long planCapBytes</code> and end the number with an uppercase <code>L</code>. Without the suffix the literal is an <code>int</code>, and the compiler reports &quot;integer number too large&quot;. Lowercase <code>l</code> works but looks like the digit 1.</p></dd><dt>C5 · The plan cap is printed</dt><dd><p>Add a last output line in the same pattern as the others: the text <code>Plan cap: </code>, the variable, then <code> bytes</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>For each variable, read its largest possible value in the scenario, then find the first row of Table 2-2 whose maximum is at least that big.</p></li><li><p>An overflowed result doesn&#x27;t cause an error: the program runs and prints a wrong number. Compare 855 billion with the largest <code>int</code>.</p></li><li><p>The type of a calculation is decided by its operands, not by the variable that receives it. One <code>long</code> operand is enough to make the multiplication <code>long</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>You changed <code>monthlyBytes</code> to <code>long</code>. Why was that not enough without the <code>L</code> on the factor?</p><div class="answer"><p>Java decides the type of <code>monthlyMegabytes * 1000000</code> from its operands: both are <code>int</code>, so the multiplication happens in <code>int</code> and overflows. Only then is the wrong result stored in the <code>long</code>. Making one operand a <code>long</code> makes Java multiply in <code>long</code>, which has room for 855 billion.</p></div></li><li><p>The course&#x27;s examples normally use <code>int</code> for whole numbers. Why did this program use <code>byte</code> and <code>short</code>, and when would you not bother?</p><div class="answer"><p>The program runs on a router with very little memory, and <code>byte</code> and <code>short</code> use 1 and 2 bytes instead of 4. On a PC, saving a few bytes rarely matters, so <code>int</code> is simpler; small types are worth it on small devices or when there are very many values.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>long remainingBytes</code> = the plan cap minus the bytes used, and print it. Then try storing 40,000 in <code>dailyMegabytes</code>: what does the compiler say, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; variables in camel case, named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
