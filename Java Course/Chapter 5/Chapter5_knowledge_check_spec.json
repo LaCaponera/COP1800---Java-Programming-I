@@ -1,0 +1,1893 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 5: Making Decisions",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 5 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "5.1",
+   "title": "Planning Decision-Making Logic",
+   "subtitle": "Pseudocode and flowcharts, sequence versus decision structures, and why every decision is yes or no",
+   "source": "Ch. 5, section 5.1 (pp. 161–163)",
+   "intro": "Your driving directions to a friend's house work fine until the expressway backs up. Five questions on planning the moment a program has to choose.",
+   "takeaways": [
+    "Plan logic before you code: pseudocode writes the steps in plain English, and a flowchart draws them as shapes joined by arrows. Neither checks syntax.",
+    "A sequence structure runs every step, one after another. A decision structure chooses between paths based on a value, drawn as a diamond holding a yes-or-no question.",
+    "Every computer decision reduces to a Boolean value, `true` or `false`, so a many-way choice is really a series of yes-or-no questions."
+   ],
+   "questions": [
+    {
+     "id": "sequence-to-decision",
+     "concept": "Sequence versus decision structure",
+     "level": "understand",
+     "stem": "A flowchart for checkout has three rectangles joined by arrows: *Read price*, *Add tax*, *Display total*. Which change turns it from a sequence structure into a decision structure?",
+     "options": [
+      {
+       "text": "Add a diamond asking *Is the customer a member?* with a path for each answer",
+       "feedback": "A decision structure chooses between alternative courses of action. The diamond holds the question, and its two exits lead to different steps.",
+       "correct": true
+      },
+      {
+       "text": "Add a fourth rectangle, *Print receipt*, after the *Display total* step",
+       "feedback": "One more unconditional step is still a sequence: every step runs, one after the other, with no chance to branch."
+      },
+      {
+       "text": "Rewrite the three steps as numbered lines of pseudocode instead of shapes",
+       "feedback": "Pseudocode and flowcharts express the same logic in different forms. Changing the notation doesn't add a choice."
+      },
+      {
+       "text": "Replace the three arrows with one straight line through all the rectangles",
+       "feedback": "The arrows show order, not choice. However they are drawn, the steps still follow one another unconditionally."
+      }
+     ],
+     "hint": "What does a sequence structure never get the chance to do?",
+     "explanation": "In a sequence structure, one step follows another unconditionally. A decision structure chooses between alternative courses of action based on a value in the program, and a flowchart shows that choice as a diamond with a path for each answer.",
+     "ref": "Ch. 5.1, Figures 5-1 and 5-2 (p. 162)"
+    },
+    {
+     "id": "flowchart-shapes",
+     "concept": "Flowchart shapes",
+     "level": "remember",
+     "stem": "Using only the shapes from the textbook's simple flowcharts, how would you draw *Compute the tax* and *Is the total over $100?*",
+     "options": [
+      {
+       "text": "A rectangle for the tax step and a diamond for the total question",
+       "feedback": "A rectangle represents any unconditional step, and a diamond represents any decision.",
+       "correct": true
+      },
+      {
+       "text": "A diamond for the tax step and a rectangle for the total question",
+       "feedback": "The roles are swapped. Computing tax happens every time; only the question about the total can go two ways."
+      },
+      {
+       "text": "A rectangle for each, with two arrows leaving the second one",
+       "feedback": "A decision needs its own shape so a reader can spot every branch point at a glance: the diamond."
+      },
+      {
+       "text": "An oval for the tax step and a diamond for the total question",
+       "feedback": "The text's simple flowcharts need only rectangles, diamonds and arrows; an unconditional step is a rectangle."
+      }
+     ],
+     "hint": "One step always happens; the other one can go two ways. Which shape is reserved for that?",
+     "explanation": "You can draw flowcharts for very complex situations with just rectangles, diamonds and arrows: a rectangle for any unconditional step and a diamond for any decision, with paths to the alternatives leaving its sides.",
+     "aside": "Flowcharts are older than computers. Industrial engineers Frank and Lillian Gilbreth presented \"process charts\" to the American Society of Mechanical Engineers in 1921, and Herman Goldstine and John von Neumann adapted the idea to plan programs in 1947.",
+     "ref": "Ch. 5.1, flowcharts (p. 162)"
+    },
+    {
+     "id": "pseudocode-purpose",
+     "concept": "What pseudocode is for",
+     "level": "evaluate",
+     "stem": "A student plans with the line *if the expressway is backed up, stay on Roselle Road*. A classmate says the plan is wrong because it isn't valid Java. Who is right?",
+     "options": [
+      {
+       "text": "The student: pseudocode states the logic in everyday language, not Java syntax",
+       "feedback": "Pseudocode is a planning tool. It is written in plain English precisely so you can think about the steps before worrying about syntax.",
+       "correct": true
+      },
+      {
+       "text": "The classmate: pseudocode must compile before you turn it into a program",
+       "feedback": "Pseudocode is never compiled. Checking syntax is the compiler's job, not the plan's."
+      },
+      {
+       "text": "Neither: pseudocode is only for tasks that have nothing to do with computers",
+       "feedback": "Pseudocode *can* describe non-computer tasks, like directions to a house, but programmers use it mainly to plan programs."
+      },
+      {
+       "text": "The classmate: a decision can only be planned in a flowchart, not in pseudocode",
+       "feedback": "Both tools can express a decision. A flowchart draws it as a diamond; pseudocode writes it as an *if* sentence."
+      }
+     ],
+     "hint": "What is pseudocode written in, and what is it supposed to help you with?",
+     "explanation": "Pseudocode and flowcharts help programmers plan a program's logic; they are not tools for checking syntax. Pseudocode writes the steps in everyday language, and a flowchart writes the same steps as connected shapes.",
+     "ref": "Ch. 5.1, pseudocode (p. 161) and Two Truths & a Lie (p. 163)"
+    },
+    {
+     "id": "yes-no-decisions",
+     "concept": "Decisions are yes-or-no questions",
+     "level": "apply",
+     "stem": "A menu program must react to a choice of 1, 2 or 3. How does the program actually decide what the user picked?",
+     "options": [
+      {
+       "text": "It asks a series of yes-or-no questions: was it 1? If not, was it 2? If not, was it 3?",
+       "feedback": "Every computer decision produces a Boolean value, so a three-way choice becomes a chain of true-or-false tests.",
+       "correct": true
+      },
+      {
+       "text": "It reads the number and jumps straight to the matching choice in one decision",
+       "feedback": "A program never asks *What number did the user enter?* as one open question; each test can only answer true or false."
+      },
+      {
+       "text": "It makes one three-way decision, drawn as a diamond with three exits",
+       "feedback": "A decision diamond holds a yes-or-no question, so it has two exits. Three choices need more than one question."
+      },
+      {
+       "text": "It needs no decision, because the number itself selects the next statement",
+       "feedback": "Choosing different actions for different values is exactly what a decision structure does."
+      }
+     ],
+     "hint": "How many possible answers does any single computer decision have?",
+     "explanation": "When reduced to their most basic form, all computer decisions are yes-or-no decisions. A choice among several values becomes a series of questions, each answered `true` or `false`.",
+     "ref": "Ch. 5.1, yes-or-no decisions (p. 162)"
+    },
+    {
+     "id": "why-boolean",
+     "concept": "Why decisions are Boolean",
+     "level": "understand",
+     "stem": "Why does every computer decision come down to a Boolean value?",
+     "options": [
+      {
+       "text": "The circuitry is made of tiny switches that are either on or off",
+       "feedback": "Each decision's result sets one of these two-state switches in memory, so true/false is the natural answer.",
+       "correct": true
+      },
+      {
+       "text": "Java has only two decision keywords, `if` and `else`",
+       "feedback": "This reverses cause and effect: the language offers true/false decisions because the hardware works in two states."
+      },
+      {
+       "text": "A flowchart diamond has only two exits",
+       "feedback": "The diamond shows two exits because decisions are two-way; it is a picture of the rule, not its cause."
+      },
+      {
+       "text": "Pseudocode is written in English, which answers questions with yes or no",
+       "feedback": "English allows many kinds of answers. The two-way limit comes from the machine, not from the planning language."
+      }
+     ],
+     "hint": "Think about what a computer's memory is physically made of.",
+     "explanation": "Computer circuitry consists of millions of switches that are on or off, and every decision sets one of them. That is why every decision results in a Boolean value, held in Java's `boolean` type.",
+     "aside": "\"Boolean\" honors George Boole, whose 1854 book *The Laws of Thought* treated logic as algebra. In 1937, Claude Shannon's master's thesis showed that Boole's algebra could design switching circuits, the idea underneath every `if` you write.",
+     "ref": "Ch. 5.1, Boolean values (p. 162)"
+    }
+   ]
+  },
+  {
+   "id": "5.2",
+   "title": "The if and if…else Statements",
+   "subtitle": "Single- and dual-alternative selection, the stray semicolon, = versus ==, and comparing objects",
+   "source": "Ch. 5, section 5.2 (pp. 163–168)",
+   "intro": "A program prints *The score is perfect* for a score of 7, and the compiler raised no complaint. Six questions on the `if` statement and its classic traps.",
+   "takeaways": [
+    "`if(condition)` is not a complete statement. The semicolon goes after the action; a semicolon right after the parentheses makes an empty statement the whole body.",
+    "`==` compares and `=` assigns. Java rejects an `int` assignment as a condition, but `if(flag = true)` compiles for a `boolean` and is always true.",
+    "Relational operators compare primitive values. With objects, `<` and `>` don't compile and `==` compares references, so call methods that return values to compare."
+   ],
+   "questions": [
+    {
+     "id": "stray-semicolon",
+     "concept": "Semicolon after the condition",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int quizScore = 7;\nif(quizScore == 10);\n    System.out.println(\"The score is perfect\");\nSystem.out.println(\"Done\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class StraySemicolon\n{\n    public static void main(String[] args)\n    {\n        int quizScore = 7;\n        if(quizScore == 10);\n            System.out.println(\"The score is perfect\");\n        System.out.println(\"Done\");\n    }\n}",
+       "output": "The score is perfect Done"
+      }
+     },
+     "options": [
+      {
+       "text": "`The score is perfect`, then `Done`",
+       "feedback": "The semicolon after `)` is an empty statement and becomes the whole body of the `if`. The `println()` below it is independent, so it runs no matter what `quizScore` holds.",
+       "correct": true
+      },
+      {
+       "text": "Only `Done`",
+       "feedback": "This trusts the indentation. The compiler ignores it: the `if` ended at the semicolon, so the next `println()` isn't controlled by the test."
+      },
+      {
+       "text": "A compile error, because of the extra semicolon",
+       "feedback": "A lone semicolon is a legal empty statement, so the code compiles. That is what makes the mistake hard to spot."
+      },
+      {
+       "text": "Only `The score is perfect`",
+       "feedback": "Nothing stops the last statement. Whatever the `if` does, execution continues with the statements after it."
+      }
+     ],
+     "hint": "Where does the `if` statement end? Look for the first semicolon.",
+     "explanation": "An `if` statement ends after the action that runs when the condition is true, so that is where the semicolon belongs. A semicolon right after the Boolean expression makes an empty statement the body, and the indented line becomes an independent statement that always runs.",
+     "aside": "The compiler can warn you about this one: compile with `javac -Xlint:empty` and it reports *empty statement after if*, pointing at the stray semicolon.",
+     "ref": "Ch. 5.2, Pitfall: Misplacing a Semicolon, Figure 5-4 (p. 164)"
+    },
+    {
+     "id": "assign-not-compare",
+     "concept": "= versus ==",
+     "level": "apply",
+     "stem": "What happens when you compile this code?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int quizScore = 7;\nif(quizScore = 10)\n    System.out.println(\"The score is perfect\");",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "incompatible types"
+       ],
+       "program": "public class AssignInIf\n{\n    public static void main(String[] args)\n    {\n        int quizScore = 7;\n        if(quizScore = 10)\n            System.out.println(\"The score is perfect\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `quizScore = 10` is an `int`, not a Boolean expression",
+       "feedback": "A single `=` assigns. The result of assigning to an `int` is an `int`, and an `if` accepts only Boolean expressions.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and always prints, since assigning 10 succeeds",
+       "feedback": "That is how C and C++ behave, where a nonzero value counts as true. Java demands a real `boolean`."
+      },
+      {
+       "text": "It compiles and prints nothing, since 7 is not 10",
+       "feedback": "This reads `=` as if it were `==`. A single equal sign never compares."
+      },
+      {
+       "text": "It compiles, but stops with an error when the `if` runs",
+       "feedback": "Java catches this before the program can run: the compiler checks that the condition is Boolean."
+      }
+     ],
+     "hint": "What does a single equal sign do, and what type of value must sit inside the parentheses?",
+     "explanation": "Java's equivalency operator is `==`. The expression `quizScore = 10` tries to assign, and because only Boolean expressions are allowed in an `if`, the compiler rejects it.",
+     "ref": "Ch. 5.2, Pitfall: Using the Assignment Operator (p. 165)"
+    },
+    {
+     "id": "boolean-assignment",
+     "concept": "Assignment inside a Boolean condition",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "boolean done = false;\nif(done = true)\n    System.out.println(\"Finished\");\nelse\n    System.out.println(\"Still working\");\nSystem.out.println(done);",
+      "verify": {
+       "expect": "output",
+       "program": "public class BooleanAssign\n{\n    public static void main(String[] args)\n    {\n        boolean done = false;\n        if(done = true)\n            System.out.println(\"Finished\");\n        else\n            System.out.println(\"Still working\");\n        System.out.println(done);\n    }\n}",
+       "output": "Finished true"
+      }
+     },
+     "options": [
+      {
+       "text": "`Finished`, then `true`",
+       "feedback": "Assigning `true` to a `boolean` is legal, and the whole expression `(done = true)` has the value `true`. The `if` clause runs, and `done` now holds `true`.",
+       "correct": true
+      },
+      {
+       "text": "`Still working`, then `false`",
+       "feedback": "This reads `=` as a comparison of `false` with `true`. It is an assignment, and it changes `done`."
+      },
+      {
+       "text": "`Still working`, then `true`",
+       "feedback": "The assignment does change `done`, but its value is also the value of the condition, so the `if` clause runs, not the `else`."
+      },
+      {
+       "text": "A compile error, because `=` can't appear in a condition",
+       "feedback": "The compiler rejects `=` in a condition only when the result isn't Boolean. Here it is, so the code compiles."
+      }
+     ],
+     "hint": "After an assignment runs, what value does the assignment expression itself have?",
+     "explanation": "`if(x = true)` compiles only when `x` is a `boolean`. After the assignment, both `x` and the expression `(x = true)` are `true`, so the `if` clause always runs.",
+     "ref": "Ch. 5.2, Note on if(x = true) (p. 165)"
+    },
+    {
+     "id": "compare-objects",
+     "concept": "== with objects compares references",
+     "level": "apply",
+     "stem": "`Student` stores a GPA set by its constructor. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Student s1 = new Student(3.5);\nStudent s2 = new Student(3.5);\nif(s1 == s2)\n    System.out.println(\"Same\");\nelse\n    System.out.println(\"Different\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class CompareStudents\n{\n    public static void main(String[] args)\n    {\n        Student s1 = new Student(3.5);\n        Student s2 = new Student(3.5);\n        if(s1 == s2)\n            System.out.println(\"Same\");\n        else\n            System.out.println(\"Different\");\n    }\n}\nclass Student\n{\n    private double gpa;\n    public Student(double g)\n    {\n        gpa = g;\n    }\n    public double getGpa()\n    {\n        return gpa;\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Different`",
+       "feedback": "`s1` and `s2` are two separate objects, so their references differ. `==` compares the references, not the GPAs inside.",
+       "correct": true
+      },
+      {
+       "text": "`Same`",
+       "feedback": "Both students hold 3.5, but `==` with objects asks whether the two names refer to the same object in memory."
+      },
+      {
+       "text": "A compile error: `==` can't be used with objects",
+       "feedback": "`==` and `!=` do compile with objects; it is `<`, `>`, `<=` and `>=` that don't. The catch is what `==` compares."
+      },
+      {
+       "text": "Nothing: the program stops when it compares two objects",
+       "feedback": "Comparing references is legal and safe at run time. It just doesn't answer the question you meant to ask."
+      }
+     ],
+     "hint": "Every object name is a reference. What does `==` compare when both sides are references?",
+     "explanation": "With objects, `==` yields `true` only when both names refer to the same object in memory, not when two objects hold the same value. To compare values, compare what methods return, such as `s1.getGpa() == s2.getGpa()`.",
+     "ref": "Ch. 5.2, Pitfall: Attempting to Compare Objects (pp. 165–166)"
+    },
+    {
+     "id": "boolean-variable",
+     "concept": "Storing a comparison in a boolean",
+     "level": "apply",
+     "stem": "After `boolean isPerfectScore = (quizScore == 10);`, which header can replace `if(quizScore == 10)` without changing what the program does?",
+     "options": [
+      {
+       "text": "`if(isPerfectScore)`",
+       "feedback": "The variable already holds the result of the comparison, `true` or `false`, which is exactly what an `if` needs.",
+       "correct": true
+      },
+      {
+       "text": "`if(isPerfectScore == 10)`",
+       "feedback": "This compares a `boolean` with the number 10, which doesn't compile. The comparison with 10 already happened."
+      },
+      {
+       "text": "`if(isPerfectScore = true)`",
+       "feedback": "This assigns `true` to the variable, so the condition is always true, even for a score of 7."
+      },
+      {
+       "text": "`if(quizScore = isPerfectScore)`",
+       "feedback": "This tries to assign a `boolean` to an `int`, which doesn't compile, and it isn't a test at all."
+      }
+     ],
+     "hint": "What type of value does `isPerfectScore` already hold, and what does an `if` need inside its parentheses?",
+     "explanation": "An `if` can test any expression that evaluates to `true` or `false`, including a plain `boolean` variable. Storing the comparison first adds a step but makes the `if` read like an English sentence.",
+     "ref": "Ch. 5.2, storing a Boolean expression's value (p. 165)"
+    },
+    {
+     "id": "constant-on-left",
+     "concept": "Constant to the right in Java",
+     "level": "evaluate",
+     "stem": "A C++ programmer writes `if(10 == quizScore)` in Java. Why do most Java programmers write `quizScore == 10` instead?",
+     "options": [
+      {
+       "text": "Java already rejects an accidental `=` here, so the guard adds nothing",
+       "feedback": "Putting the constant first protects against a mistaken assignment in languages where it compiles. Java's compiler catches it, so the natural order wins.",
+       "correct": true
+      },
+      {
+       "text": "`10 == quizScore` doesn't compile; Java requires the variable on the left",
+       "feedback": "It compiles and gives exactly the same result: `==` doesn't care which side the constant is on."
+      },
+      {
+       "text": "`10 == quizScore` compares in the other direction and can give a different result",
+       "feedback": "Equality is symmetric. Both orders are `true` for exactly the same values."
+      },
+      {
+       "text": "Java evaluates the left side first, so `10 == quizScore` runs more slowly",
+       "feedback": "There's no speed difference. The choice is about readability, since `quizScore == 10` reads like English."
+      }
+     ],
+     "hint": "What mistake was the constant-first habit invented to catch, and does Java need help catching it?",
+     "explanation": "In languages such as C++, `if(quizScore = 10)` compiles and silently assigns, so some programmers put the constant first to turn that slip into an error. Java's compiler doesn't allow a mistaken assignment in a Boolean expression, so Java programmers usually put the constant on the right.",
+     "aside": "Constant-first comparisons are nicknamed *Yoda conditions*, after the Star Wars character's reversed word order: \"if ten the score is.\"",
+     "ref": "Ch. 5.2, Note on constants to the left (p. 165)"
+    }
+   ]
+  },
+  {
+   "id": "5.3",
+   "title": "Using Multiple Statements in if and if…else Clauses",
+   "subtitle": "Blocks with curly braces, why indentation decides nothing, else without if, and block scope",
+   "source": "Ch. 5, section 5.3 (pp. 168–171)",
+   "intro": "Someone who worked 30 hours gets a paycheck with negative overtime. Five questions on making several statements depend on one decision.",
+   "takeaways": [
+    "Without braces, only the first statement after `if(...)` or `else` depends on the decision. Curly braces make a block; indentation is ignored by the compiler.",
+    "An `else` must follow its `if` immediately. A stand-alone statement in between ends the `if`, and the compiler reports *else without if*.",
+    "A variable declared inside a block is local to that block. To use it afterward, declare it before the block."
+   ],
+   "questions": [
+    {
+     "id": "missing-braces",
+     "concept": "Indentation doesn't make a block",
+     "level": "apply",
+     "stem": "`FULL_WEEK` is 40 and `OT_RATE` is 1.5. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "double hoursWorked = 30, rate = 20;\ndouble regularPay = 0, overtimePay = 0;\nif(hoursWorked > FULL_WEEK)\n    regularPay = FULL_WEEK * rate;\n    overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\nSystem.out.println(regularPay + \" \" + overtimePay);",
+      "verify": {
+       "expect": "output",
+       "program": "public class MissingBraces\n{\n    public static void main(String[] args)\n    {\n        final int FULL_WEEK = 40;\n        final double OT_RATE = 1.5;\n\n        double hoursWorked = 30, rate = 20;\n        double regularPay = 0, overtimePay = 0;\n        if(hoursWorked > FULL_WEEK)\n            regularPay = FULL_WEEK * rate;\n            overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\n        System.out.println(regularPay + \" \" + overtimePay);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`0.0 -300.0`",
+       "feedback": "The test is false, so `regularPay` stays 0. The overtime line isn't part of the `if`, so it always runs: (30 − 40) × 1.5 × 20 = −300.",
+       "correct": true
+      },
+      {
+       "text": "`0.0 0.0`",
+       "feedback": "This assumes the indented line belongs to the `if`. Without braces, only the first statement depends on the decision."
+      },
+      {
+       "text": "`800.0 -300.0`",
+       "feedback": "The first assignment depends on the test, and 30 hours is not more than 40, so `regularPay` is never set to 800."
+      },
+      {
+       "text": "A compile error: two indented statements need braces",
+       "feedback": "The code is legal Java. The compiler simply reads the second line as a separate statement, which is why the bug is quiet."
+      }
+     ],
+     "hint": "Without curly braces, how many statements does the `if` control?",
+     "explanation": "Indentation doesn't cause statements to depend on an `if`; curly braces do. Without them, only the first statement is controlled, and every later statement is independent and always runs.",
+     "ref": "Ch. 5.3, Figure 5-8 (p. 169)"
+    },
+    {
+     "id": "else-without-if",
+     "concept": "else without if",
+     "level": "apply",
+     "stem": "The constants and variables are declared correctly. What happens when you compile this fragment?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "if(hoursWorked > FULL_WEEK)\n    regularPay = FULL_WEEK * rate;\n    overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\nelse\n    regularPay = hoursWorked * rate;",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "'else' without 'if'"
+       ],
+       "program": "public class ElseWithoutIf\n{\n    public static void main(String[] args)\n    {\n        final int FULL_WEEK = 40;\n        final double OT_RATE = 1.5;\n        double hoursWorked = 42, rate = 20;\n        double regularPay, overtimePay;\n\n        if(hoursWorked > FULL_WEEK)\n            regularPay = FULL_WEEK * rate;\n            overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\n        else\n            regularPay = hoursWorked * rate;\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: the `else` has no `if` to belong to",
+       "feedback": "The `if` ends after the first assignment, and the overtime line is a stand-alone statement. An `else` can't follow a stand-alone statement.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; the `else` runs whenever the `if` is false",
+       "feedback": "That would be true with braces around the two dependent lines. Without them, the `else` is separated from its `if`."
+      },
+      {
+       "text": "It compiles, but the overtime line runs every time",
+       "feedback": "That is what happens with no `else` at all. Adding the `else` turns the silent bug into an error."
+      },
+      {
+       "text": "Compile error: `overtimePay` might not be initialized",
+       "feedback": "The compiler stops at a more basic problem first: an `else` that doesn't directly follow an `if` clause."
+      }
+     ],
+     "hint": "Where does the `if` statement end when there are no braces?",
+     "explanation": "When you fail to block statements that should depend on an `if` and you also use an `else`, the program doesn't compile. The `if` ended after its first statement, so the `else` is illegal and the error message reports *else without if*.",
+     "ref": "Ch. 5.3, else without if (p. 169)"
+    },
+    {
+     "id": "block-scope",
+     "concept": "Variables declared in a block are local",
+     "level": "apply",
+     "stem": "What happens when you compile this code?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int a = 5, b = 5;\nif(a == b)\n{\n    int sum = a + b;\n    System.out.println(\"The two variables are equal\");\n}\nSystem.out.println(\"The sum is \" + sum);",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ],
+       "program": "public class BlockScope\n{\n    public static void main(String[] args)\n    {\n        int a = 5, b = 5;\n        if(a == b)\n        {\n            int sum = a + b;\n            System.out.println(\"The two variables are equal\");\n        }\n        System.out.println(\"The sum is \" + sum);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `sum` is not recognized outside its block",
+       "feedback": "`sum` is declared inside the braces, so it exists only there. The last `println()` is outside the block.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints the message, then `The sum is 10`",
+       "feedback": "The block did run, but its local variables disappear when it ends. Visibility is checked by the compiler, not at run time."
+      },
+      {
+       "text": "It compiles and prints `The sum is 0`, the default for an `int`",
+       "feedback": "Local variables get no default values, and this one can't even be seen outside the block."
+      },
+      {
+       "text": "It compiles, but stops with an error when `a` and `b` differ",
+       "feedback": "The problem doesn't depend on the values: the compiler rejects any use of `sum` outside the block."
+      }
+     ],
+     "hint": "Where does a variable declared inside a pair of curly braces stop existing?",
+     "explanation": "Any variable you declare within a block is local to that block. Declare `sum` before the `if` if later statements need it.",
+     "ref": "Ch. 5.3, local variables in blocks (p. 170)"
+    },
+    {
+     "id": "if-else-blocks",
+     "concept": "Blocks in both if and else",
+     "level": "apply",
+     "stem": "`FULL_WEEK` is 40 and `OT_RATE` is 1.5. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "double hoursWorked = 42, rate = 20;\ndouble regularPay, overtimePay;\nif(hoursWorked > FULL_WEEK)\n{\n    regularPay = FULL_WEEK * rate;\n    overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\n}\nelse\n{\n    regularPay = hoursWorked * rate;\n    overtimePay = 0.0;\n}\nSystem.out.println(regularPay + \" \" + overtimePay);",
+      "verify": {
+       "expect": "output",
+       "program": "public class PayrollBlocks\n{\n    public static void main(String[] args)\n    {\n        final int FULL_WEEK = 40;\n        final double OT_RATE = 1.5;\n\n        double hoursWorked = 42, rate = 20;\n        double regularPay, overtimePay;\n        if(hoursWorked > FULL_WEEK)\n        {\n            regularPay = FULL_WEEK * rate;\n            overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\n        }\n        else\n        {\n            regularPay = hoursWorked * rate;\n            overtimePay = 0.0;\n        }\n        System.out.println(regularPay + \" \" + overtimePay);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`800.0 60.0`",
+       "feedback": "42 hours is more than 40, so the `if` block runs both lines: 40 × 20 = 800, and (42 − 40) × 1.5 × 20 = 60.",
+       "correct": true
+      },
+      {
+       "text": "`840.0 0.0`",
+       "feedback": "This is the `else` block's result. It runs only when `hoursWorked` is 40 or less."
+      },
+      {
+       "text": "`800.0 40.0`",
+       "feedback": "This drops `OT_RATE`. Overtime hours are paid at 1.5 times the rate: 2 × 1.5 × 20 = 60."
+      },
+      {
+       "text": "`840.0 60.0`",
+       "feedback": "Only one block runs. The `if` block pays the first 40 hours at the regular rate, not all 42."
+      }
+     ],
+     "hint": "Which block runs for 42 hours, and what does each of its two lines compute?",
+     "explanation": "Just as you can block statements that depend on an `if`, you can block statements that depend on an `else`. Exactly one block runs, and the statement after the whole `if…else` runs either way.",
+     "ref": "Ch. 5.3, Figure 5-9 (p. 170)"
+    },
+    {
+     "id": "always-braces",
+     "concept": "Why some programmers always use braces",
+     "level": "evaluate",
+     "stem": "A team rule says every `if` and `else` body gets curly braces, even a single statement. What does the rule protect against?",
+     "options": [
+      {
+       "text": "A statement added later that looks dependent but always runs",
+       "feedback": "With braces already in place, a second statement typed inside them really does depend on the decision.",
+       "correct": true
+      },
+      {
+       "text": "Slow code, since a braced body runs faster",
+       "feedback": "Braces only group statements. One statement runs the same way with or without them."
+      },
+      {
+       "text": "A compile error, since an `if` with an `else` must use braces",
+       "feedback": "A single statement after `if` or `else` compiles without braces; Figure 5-5 does exactly that."
+      },
+      {
+       "text": "Losing variables, since braces make them visible after the `if`",
+       "feedback": "It is the reverse: a variable declared inside braces is local to that block."
+      }
+     ],
+     "hint": "Picture someone adding a second line under a one-line `if` six months from now.",
+     "explanation": "Curly braces are required whenever several statements must depend on a decision. Some programmers use them even around a single statement so that statements added later can't silently escape the `if`.",
+     "aside": "This mistake has real consequences. In 2014, Apple's \"goto fail\" bug was a duplicated `goto fail;` line under an `if` without braces. The second copy always ran, skipping the step that verified a server's TLS signature in iOS and OS X.",
+     "ref": "Ch. 5.3, blocks and curly braces (pp. 168–169)"
+    }
+   ]
+  },
+  {
+   "id": "5.4",
+   "title": "Nesting if and if…else Statements",
+   "subtitle": "Decisions inside decisions, and which if each else belongs to",
+   "source": "Ch. 5, section 5.4 (pp. 172–173)",
+   "intro": "A salesperson who sold two items gets no bonus at all, though the code clearly says *else bonus = 10*. Five questions on nested decisions.",
+   "takeaways": [
+    "A nested `if` is a decision inside the `if` or `else` clause of another decision; it is useful when two or more conditions must all be met.",
+    "Each `else` pairs with the most recent `if` that doesn't already have one (first in, last out). The compiler ignores indentation when pairing.",
+    "To pair an `else` with an outer `if`, put the inner `if` in curly braces so it ends before the `else`."
+   ],
+   "questions": [
+    {
+     "id": "trace-nested",
+     "concept": "Tracing a nested if…else",
+     "level": "apply",
+     "stem": "Using the bonus constants from Figure 5-13 (`MIN_ITEMS` 3, `MIN_VALUE` 1000, bonuses 50, 25 and 10), what does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int itemsSold = 2;\nint totalValue = 1500;\nint bonus = 0;\nif(itemsSold >= MIN_ITEMS)\n    if(totalValue >= MIN_VALUE)\n        bonus = LARGE_BONUS;\n    else\n        bonus = MEDIUM_BONUS;\nelse\n    bonus = SMALL_BONUS;\nSystem.out.println(bonus);",
+      "verify": {
+       "expect": "output",
+       "program": "public class NestedBonus\n{\n    public static void main(String[] args)\n    {\n        final int MIN_ITEMS = 3;\n        final int MIN_VALUE = 1000;\n        final int LARGE_BONUS = 50;\n        final int MEDIUM_BONUS = 25;\n        final int SMALL_BONUS = 10;\n\n        int itemsSold = 2;\n        int totalValue = 1500;\n        int bonus = 0;\n        if(itemsSold >= MIN_ITEMS)\n            if(totalValue >= MIN_VALUE)\n                bonus = LARGE_BONUS;\n            else\n                bonus = MEDIUM_BONUS;\n        else\n            bonus = SMALL_BONUS;\n        System.out.println(bonus);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`10`",
+       "feedback": "The outer test fails because 2 is less than 3, so its `else` runs. The inner test about value is never reached.",
+       "correct": true
+      },
+      {
+       "text": "`50`",
+       "feedback": "A total of 1500 would earn 50, but only for a salesperson who first passes the outer test of at least three items."
+      },
+      {
+       "text": "`25`",
+       "feedback": "25 is the inner `else`, for three or more items worth under 1000. The inner decision never runs here."
+      },
+      {
+       "text": "`0`",
+       "feedback": "Some branch always assigns a bonus here: the last `else` belongs to the outer `if` and catches every failure of the first test."
+      }
+     ],
+     "hint": "Which test runs first, and which `else` handles its false result?",
+     "explanation": "The outer expression is evaluated first. The complete inner `if…else` fits entirely within the outer `if` clause, so when the outer test is false, control goes straight to the outer `else`.",
+     "ref": "Ch. 5.4, Figure 5-13 (p. 173)"
+    },
+    {
+     "id": "dangling-else",
+     "concept": "Indentation doesn't pair an else",
+     "level": "analyze",
+     "stem": "The programmer meant: \"fewer than three items earns 10.\" What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int itemsSold = 2;\nint totalValue = 1500;\nint bonus = 0;\nif(itemsSold >= 3)\n    if(totalValue >= 1000)\n        bonus = 50;\nelse\n    bonus = 10;\nSystem.out.println(bonus);",
+      "verify": {
+       "expect": "output",
+       "program": "public class DanglingElse\n{\n    public static void main(String[] args)\n    {\n        int itemsSold = 2;\n        int totalValue = 1500;\n        int bonus = 0;\n        if(itemsSold >= 3)\n            if(totalValue >= 1000)\n                bonus = 50;\n        else\n            bonus = 10;\n        System.out.println(bonus);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`0`",
+       "feedback": "The `else` pairs with the most recent `if`, the value test. The outer test fails, so that whole inner `if…else` is skipped and `bonus` keeps 0.",
+       "correct": true
+      },
+      {
+       "text": "`10`",
+       "feedback": "That's what the indentation suggests, but the compiler ignores indentation. This `else` belongs to the inner `if`."
+      },
+      {
+       "text": "`50`",
+       "feedback": "Assigning 50 requires the item test to pass first, and 2 is less than 3."
+      },
+      {
+       "text": "A compile error: the `else` is ambiguous",
+       "feedback": "Java has a fixed rule for this, so the code compiles. The rule just isn't the one the indentation shows."
+      }
+     ],
+     "hint": "When one `if` follows another, which `if` claims the first `else` the compiler meets?",
+     "explanation": "When one `if` follows another, the first `else` encountered is paired with the most recent `if`. Consistent indentation helps readers, but only braces change how the compiler pairs them.",
+     "aside": "This is the classic *dangling else* problem. ALGOL 60 avoided it by forbidding an `if` directly after `then`; Python avoids it by making indentation part of the syntax, so there the layout really does decide the pairing.",
+     "ref": "Ch. 5.4, pairing else clauses (p. 172)"
+    },
+    {
+     "id": "second-test-skipped",
+     "concept": "Inner test runs only when the outer test is true",
+     "level": "understand",
+     "stem": "In Figure 5-12, the bonus code is `if(itemsSold >= MIN_ITEMS)` followed by a nested `if(totalValue >= MIN_VALUE)`. When `itemsSold` is 1, which tests does the program evaluate?",
+     "options": [
+      {
+       "text": "Only `itemsSold >= MIN_ITEMS`",
+       "feedback": "The inner `if` is the outer test's dependent statement. When the outer test is false, the inner statement is skipped, test and all.",
+       "correct": true
+      },
+      {
+       "text": "Both, from top to bottom",
+       "feedback": "Statements inside an `if` run only when its test is true, and the inner `if` is one of those statements."
+      },
+      {
+       "text": "Only `totalValue >= MIN_VALUE`",
+       "feedback": "The outer expression is always evaluated first; it decides whether the inner one is reached at all."
+      },
+      {
+       "text": "Neither, because `bonus` already starts at 0",
+       "feedback": "The starting value doesn't skip any tests. The program still has to ask the first question to know what to do."
+      }
+     ],
+     "hint": "What does the outer `if` control?",
+     "explanation": "With nested `if` statements, the outer Boolean expression is evaluated first, and only if it is true does the program evaluate the inner one. Both must be true before the dependent action runs.",
+     "ref": "Ch. 5.4, Figure 5-12 (p. 172)"
+    },
+    {
+     "id": "fix-dangling",
+     "concept": "Pairing an else with the outer if",
+     "level": "apply",
+     "stem": "In the dangling-else code, the programmer wants the `else` to belong to `if(itemsSold >= 3)`. Which change does that?",
+     "options": [
+      {
+       "text": "Put curly braces around the inner `if` statement",
+       "feedback": "The closing brace ends the inner `if`, so the next `else` pairs with the outer one.",
+       "correct": true
+      },
+      {
+       "text": "Move the `else` so it lines up exactly under the outer `if`",
+       "feedback": "It already lines up there. The compiler doesn't take indentation into account when pairing."
+      },
+      {
+       "text": "Add a semicolon right after `if(totalValue >= 1000)`",
+       "feedback": "That gives the inner `if` an empty body; the bonus line becomes unconditional, and the `else` still pairs with the inner `if`."
+      },
+      {
+       "text": "Swap the two tests so the value test comes first",
+       "feedback": "The `else` would still pair with whichever `if` comes last, and the meaning of the tests would change."
+      }
+     ],
+     "hint": "What can end a statement early, so the `else` can't attach to it?",
+     "explanation": "An `else` pairs with the most recent unpaired `if` in the same block. Enclosing the inner `if` in braces closes it off, so the `else` attaches to the outer `if`.",
+     "ref": "Ch. 5.4, pairing else clauses (p. 172)"
+    },
+    {
+     "id": "first-in-last-out",
+     "concept": "First in, last out pairing",
+     "level": "analyze",
+     "stem": "Every line is flush left, so you must pair the clauses yourself. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int a = 1, b = -1, c = 1;\nint result = 0;\nif(a > 0)\nif(b > 0)\nif(c > 0)\nresult = 1;\nelse\nresult = 2;\nelse\nresult = 3;\nSystem.out.println(result);",
+      "verify": {
+       "expect": "output",
+       "program": "public class ThreeLevels\n{\n    public static void main(String[] args)\n    {\n        int a = 1, b = -1, c = 1;\n        int result = 0;\n        if(a > 0)\n        if(b > 0)\n        if(c > 0)\n        result = 1;\n        else\n        result = 2;\n        else\n        result = 3;\n        System.out.println(result);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`3`",
+       "feedback": "The first `else` pairs with `if(c > 0)`, the second with `if(b > 0)`. Because `b` is negative, the `else` that sets 3 runs.",
+       "correct": true
+      },
+      {
+       "text": "`2`",
+       "feedback": "Setting 2 belongs to `if(c > 0)`'s `else`, which is only reached when `b > 0` is true."
+      },
+      {
+       "text": "`0`",
+       "feedback": "This pairs the last `else` with `if(a > 0)`. Pairing is first in, last out: the second `else` takes the second-most-recent `if`."
+      },
+      {
+       "text": "`1`",
+       "feedback": "Assigning 1 needs all three tests to pass, and `b` is −1."
+      }
+     ],
+     "hint": "Pair the first `else` with the nearest `if` above it, then pair the next `else` with the nearest `if` that is still unpaired.",
+     "explanation": "No matter how many levels are nested, `else` clauses are matched to their `if` statements on a first in, last out basis: each `else` takes the most recent `if` that doesn't yet have one.",
+     "ref": "Ch. 5.4, first in, last out pairing (p. 172)"
+    }
+   ]
+  },
+  {
+   "id": "5.5",
+   "title": "Using Logical AND and OR Operators",
+   "subtitle": "Compound conditions with && and ||, complete expressions on both sides, and short-circuit evaluation",
+   "source": "Ch. 5, section 5.5 (pp. 174–177)",
+   "intro": "A method that writes to a log file runs on some days and not on others, and the `if` that calls it never changes. Five questions on `&&`, `||` and what they skip.",
+   "takeaways": [
+    "`&&` is true only when both operands are true; `||` is true when at least one is. Each is binary, so each side must be a complete Boolean expression.",
+    "Short-circuit evaluation: `&&` skips its right side when the left is false, and `||` skips it when the left is true.",
+    "A method call on the right of `&&` or `||` may never run. If its side effects must happen, call it on its own first and test the stored result."
+   ],
+   "questions": [
+    {
+     "id": "complete-expressions",
+     "concept": "A complete expression on each side",
+     "level": "apply",
+     "stem": "You want a $400 bonus when `saleAmount` is more than 1000 and less than 5000. Which condition compiles and says that?",
+     "options": [
+      {
+       "text": "`saleAmount > 1000 && saleAmount < 5000`",
+       "feedback": "Each side of `&&` is a complete Boolean expression, and both must be true, so only amounts between the limits qualify.",
+       "correct": true
+      },
+      {
+       "text": "`saleAmount > 1000 && < 5000`",
+       "feedback": "`< 5000` has nothing on its left. `&&` is a binary operator, and its right side isn't a complete expression, so it doesn't compile."
+      },
+      {
+       "text": "`1000 < saleAmount < 5000`",
+       "feedback": "Math notation doesn't carry over. Java evaluates `1000 < saleAmount` to a `boolean`, then can't compare a `boolean` with 5000."
+      },
+      {
+       "text": "`saleAmount >= 1000 && saleAmount <= 5000`",
+       "feedback": "This compiles, but *more than* 1000 doesn't include 1000 itself, and *less than* 5000 doesn't include 5000. Both boundaries are wrong."
+      }
+     ],
+     "hint": "What must appear on each side of a binary operator like `&&`?",
+     "explanation": "The `&&` operator requires a complete Boolean expression on each side, even when both parts test the same variable. Extra parentheses, as in `(saleAmount > 1000) && (saleAmount < 5000)`, are optional but can make it clearer.",
+     "ref": "Ch. 5.5, The AND Operator (p. 174)"
+    },
+    {
+     "id": "short-circuit-and",
+     "concept": "Short-circuit evaluation with &&",
+     "level": "apply",
+     "stem": "This is the *You Do It* program with the method calls reversed. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class ShortCircuitTestAnd\n{\n    public static void main(String[] args)\n    {\n        if(falseMethod() && trueMethod())\n            System.out.println(\"Both are true\");\n        else\n            System.out.println(\"Both are not true\");\n    }\n    public static boolean trueMethod()\n    {\n        System.out.println(\"Within trueMethod()\");\n        return true;\n    }\n    public static boolean falseMethod()\n    {\n        System.out.println(\"Within falseMethod()\");\n        return false;\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class ShortCircuitTestAnd\n{\n    public static void main(String[] args)\n    {\n        if(falseMethod() && trueMethod())\n            System.out.println(\"Both are true\");\n        else\n            System.out.println(\"Both are not true\");\n    }\n    public static boolean trueMethod()\n    {\n        System.out.println(\"Within trueMethod()\");\n        return true;\n    }\n    public static boolean falseMethod()\n    {\n        System.out.println(\"Within falseMethod()\");\n        return false;\n    }\n}",
+       "output": "Within falseMethod() Both are not true"
+      }
+     },
+     "options": [
+      {
+       "text": "`Within falseMethod()`, then `Both are not true`",
+       "feedback": "The left side is false, so the whole `&&` must be false. Java never calls `trueMethod()`.",
+       "correct": true
+      },
+      {
+       "text": "`Within falseMethod()`, `Within trueMethod()`, then `Both are not true`",
+       "feedback": "This evaluates both sides. With `&&`, a false left side settles the answer, so the right side is skipped."
+      },
+      {
+       "text": "`Within trueMethod()`, `Within falseMethod()`, then `Both are not true`",
+       "feedback": "The order of the method declarations doesn't matter; the condition calls `falseMethod()` first."
+      },
+      {
+       "text": "Only `Both are not true`",
+       "feedback": "The left side has to be evaluated to learn that it is false, so `falseMethod()` does run and print."
+      }
+     ],
+     "hint": "Once the left side of `&&` is false, can the right side change the result?",
+     "explanation": "The expressions on each side of `&&` and `||` are evaluated only as far as necessary to decide the whole expression. With `&&`, if the first expression is false, the second is never evaluated.",
+     "ref": "Ch. 5.5, Short-Circuit Evaluation and You Do It (pp. 175–177)"
+    },
+    {
+     "id": "short-circuit-or",
+     "concept": "Short-circuit evaluation with ||",
+     "level": "apply",
+     "stem": "Each method adds 1 to `checks` before returning. What is the **last** line this program prints?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Checkout\n{\n    static int checks = 0;\n    public static boolean isMember()\n    {\n        checks = checks + 1;\n        return true;\n    }\n    public static boolean hasCoupon()\n    {\n        checks = checks + 1;\n        return false;\n    }\n    public static void main(String[] args)\n    {\n        if(isMember() || hasCoupon())\n            System.out.println(\"Discount applied\");\n        System.out.println(checks);\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class Checkout\n{\n    static int checks = 0;\n    public static boolean isMember()\n    {\n        checks = checks + 1;\n        return true;\n    }\n    public static boolean hasCoupon()\n    {\n        checks = checks + 1;\n        return false;\n    }\n    public static void main(String[] args)\n    {\n        if(isMember() || hasCoupon())\n            System.out.println(\"Discount applied\");\n        System.out.println(checks);\n    }\n}",
+       "output": "Discount applied 1"
+      }
+     },
+     "options": [
+      {
+       "text": "`1`",
+       "feedback": "`isMember()` returns true, and one true operand is enough for `||`, so `hasCoupon()` never runs.",
+       "correct": true
+      },
+      {
+       "text": "`2`",
+       "feedback": "This assumes both sides always run. With `||`, a true left side settles the result."
+      },
+      {
+       "text": "`0`",
+       "feedback": "The left side must be evaluated to know it is true, so `isMember()` runs and adds 1."
+      }
+     ],
+     "hint": "After the left side of `||` returns true, what does the right side still need to decide?",
+     "explanation": "The `||` operator also short-circuits: if the expression to its left is true, there is no need to evaluate the one to its right. If the left side is false, the right side must be evaluated.",
+     "ref": "Ch. 5.5, Short-Circuit Evaluation (p. 175)"
+    },
+    {
+     "id": "side-effects",
+     "concept": "Side effects and short-circuiting",
+     "level": "evaluate",
+     "stem": "`method2()` records each check in a log and must run every time. The decision should still be \"both are true.\" Which code does both?",
+     "options": [
+      {
+       "text": "`boolean ok2 = method2();` then `if(method1() && ok2)`",
+       "feedback": "`method2()` runs on its own line, every time, and its stored result still takes part in the AND decision.",
+       "correct": true
+      },
+      {
+       "text": "`if(method1() && method2())`, the original condition, unchanged",
+       "feedback": "When `method1()` returns false, short-circuiting skips `method2()`, and the log entry is lost."
+      },
+      {
+       "text": "`if(method2() || method1())`, so that `method2()` is called first",
+       "feedback": "`method2()` now runs first, but the decision has become OR, true when just one is true."
+      },
+      {
+       "text": "`if(method1())` with a nested `if(method2())` inside it",
+       "feedback": "Nested `if` statements skip the inner test the same way `&&` does, so `method2()` is still skipped sometimes."
+      }
+     ],
+     "hint": "Where can you put a call so that nothing can skip it?",
+     "explanation": "Anything a method does besides altering local variables or returning a value is a side effect. Because of short-circuit evaluation, a method used as the right operand might not execute; if it must, call it separately and use its result.",
+     "aside": "Java also has non-short-circuit versions: with `boolean` operands, a single `&` or `|` always evaluates both sides. Because a single `&` is easy to mistake for a typo, calling the method on its own line, as here, is usually clearer.",
+     "ref": "Ch. 5.5, side effects (p. 176)"
+    },
+    {
+     "id": "or-as-nested-if",
+     "concept": "|| expressed with nested ifs",
+     "level": "analyze",
+     "stem": "Which code prints `Discount` exactly as often as `if(a || b) System.out.println(\"Discount\");` does, for every pair of `boolean` values?",
+     "options": [
+      {
+       "text": "`if(a)` print; `else if(b)` print",
+       "feedback": "When `a` is true, it prints once and skips the `else`. When `a` is false, it asks about `b`, the same two questions `||` asks.",
+       "correct": true
+      },
+      {
+       "text": "`if(a)` with a nested `if(b)` print",
+       "feedback": "This prints only when both are true. That is the nested form of `&&`, not `||`."
+      },
+      {
+       "text": "`if(a)` print; then a separate `if(b)` print",
+       "feedback": "When both are true, this prints twice. The `else` is what keeps the second test from running after a success."
+      },
+      {
+       "text": "`if(!a)` with a nested `if(b)` print",
+       "feedback": "This prints only when `a` is false and `b` is true, missing every case where `a` is true."
+      }
+     ],
+     "hint": "When `a` is true, how many times should the message print, and should `b` even be tested?",
+     "explanation": "You are never required to use `&&` or `||`: nested `if` statements can always produce the same result. For OR, the second test goes in the `else` of the first; the operator is simply more concise and less error-prone.",
+     "ref": "Ch. 5.5, The OR Operator, Figure 5-16 (p. 175)"
+    }
+   ]
+  },
+  {
+   "id": "5.6",
+   "title": "Making Accurate and Efficient Decisions",
+   "subtitle": "Range checks with else, boundary values, asking the likeliest question first, and choosing && or ||",
+   "source": "Ch. 5, section 5.6 (pp. 178–181)",
+   "intro": "Your best salesperson closes a $5,000 deal and gets the medium commission rate. Six questions on range checks and on translating a boss's *and* into Java.",
+   "takeaways": [
+    "In a range check, chain the tests with `else`: once a range is found, the rest are skipped, and the last range needs no test at all.",
+    "Boundaries matter. Decide which range an exact limit belongs to, and pick `<` or `<=` to match; when most values fall in one range, test that range first.",
+    "English *and* often means `||` in code: one variable can never be below a low limit and above a high limit at the same time."
+   ],
+   "questions": [
+    {
+     "id": "separate-ifs",
+     "concept": "Separate ifs overwrite each other",
+     "level": "apply",
+     "stem": "This is the textbook's Figure 5-19 logic with a sale of $5,000. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "double saleAmount = 5000.00;\ndouble commissionRate = 0;\nif(saleAmount >= HIGH_LIM)\n    commissionRate = HIGH_RATE;\nif(saleAmount >= MED_LIM)\n    commissionRate = MED_RATE;\nif(saleAmount <= LOW_LIM)\n    commissionRate = LOW_RATE;\nSystem.out.println(commissionRate);",
+      "verify": {
+       "expect": "output",
+       "program": "public class CommissionBad\n{\n    public static void main(String[] args)\n    {\n        final double HIGH_LIM = 1000.00;\n        final double HIGH_RATE = 0.08;\n        final double MED_LIM = 500.00;\n        final double MED_RATE = 0.06;\n        final double LOW_LIM = 499.99;\n        final double LOW_RATE = 0.05;\n\n        double saleAmount = 5000.00;\n        double commissionRate = 0;\n        if(saleAmount >= HIGH_LIM)\n            commissionRate = HIGH_RATE;\n        if(saleAmount >= MED_LIM)\n            commissionRate = MED_RATE;\n        if(saleAmount <= LOW_LIM)\n            commissionRate = LOW_RATE;\n        System.out.println(commissionRate);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`0.06`",
+       "feedback": "The first `if` correctly sets 0.08, but the second, independent `if` is also true for 5000 and resets the rate to 0.06.",
+       "correct": true
+      },
+      {
+       "text": "`0.08`",
+       "feedback": "That is the right rate, and it is assigned, but nothing stops the next `if` from overwriting it."
+      },
+      {
+       "text": "`0.05`",
+       "feedback": "The last test asks whether 5000 is at most 499.99, which is false, so it doesn't change the rate."
+      },
+      {
+       "text": "`0.0`",
+       "feedback": "At least one test is true for 5000; in fact two are, which is the problem."
+      }
+     ],
+     "hint": "Three separate `if` statements all get a turn. Which ones are true for 5000, and which one runs last?",
+     "explanation": "Separate `if` statements are each evaluated, so a later true test can overwrite an earlier, correct assignment. Joining the tests with `else` ends the decision as soon as the right range is found.",
+     "ref": "Ch. 5.6, Making Accurate Range Checks, Figure 5-19 (p. 178)"
+    },
+    {
+     "id": "wasted-test",
+     "concept": "Inefficient range checks",
+     "level": "analyze",
+     "stem": "Figure 5-20 adds an `else` after the first test but keeps a third separate `if(saleAmount <= LOW_LIM)`. The rates now come out right. What makes it inefficient?",
+     "options": [
+      {
+       "text": "It asks the low-limit question after the rate is already settled",
+       "feedback": "For amounts of 500 or more, the third test is always false, so asking it is wasted work. A final `else` covers the low range.",
+       "correct": true
+      },
+      {
+       "text": "The `else` makes Java evaluate both of the first two tests every time",
+       "feedback": "It is the opposite: the `else` means the second test runs only when the first one is false."
+      },
+      {
+       "text": "Testing with `>=` takes longer than testing with `<` or `<=`",
+       "feedback": "Relational operators cost about the same. The inefficiency is a question that didn't need asking."
+      },
+      {
+       "text": "It should combine all three tests into one condition with `&&`",
+       "feedback": "No single value satisfies all three range tests, so one `&&` condition could never assign the right rate."
+      }
+     ],
+     "hint": "If a sale is not at least 1000 and not at least 500, what do you already know about it?",
+     "explanation": "After you know a value is not in any of the higher ranges, it must be in the remaining one, so an `else` replaces the last test. That is simpler, more efficient and less error-prone, and the `LOW_LIM` constant is no longer needed.",
+     "ref": "Ch. 5.6, Figures 5-20 and 5-21 (p. 179)"
+    },
+    {
+     "id": "boundary",
+     "concept": "Choosing < or <= at a boundary",
+     "level": "apply",
+     "stem": "The rule: 5% under $500, 6% from $500 up to $1,000, and 8% at $1,000 or more. Testing the low range first, which test sends a sale of exactly $500.00 to the 6% rate?",
+     "options": [
+      {
+       "text": "`if(saleAmount < 500.00)`",
+       "feedback": "500.00 is not less than 500.00, so the test is false and the sale moves on to the 6% range, as the rule requires.",
+       "correct": true
+      },
+      {
+       "text": "`if(saleAmount <= 500.00)`",
+       "feedback": "This test is true for exactly 500.00, so that sale wrongly gets 5%."
+      },
+      {
+       "text": "`if(saleAmount > 500.00)`",
+       "feedback": "This tests the wrong side of the limit: it is true for large sales, not small ones."
+      },
+      {
+       "text": "`if(saleAmount <= 499.00)`",
+       "feedback": "This handles 500.00, but a sale of $499.50 would skip the 5% range it belongs in."
+      }
+     ],
+     "hint": "Is 500.00 less than 500.00? Is it less than or equal to it?",
+     "explanation": "Selecting values less than a limit is different from selecting values at or below it. Figure 5-22 uses `<` so that exactly 500.00 and 1000.00 fall into the higher ranges; `<=` would need cutoffs like 499.99, which works only for whole-cent amounts.",
+     "ref": "Ch. 5.6, Figure 5-22 (p. 180)"
+    },
+    {
+     "id": "likeliest-first",
+     "concept": "Asking the likeliest question first",
+     "level": "evaluate",
+     "stem": "In your store, nine of ten sales are under $500. Which order of tests is most efficient for the three commission ranges?",
+     "options": [
+      {
+       "text": "Test `saleAmount < 500` first, then the middle range, then `else` for the high range",
+       "feedback": "Nine times out of ten the first question settles it, so the program usually asks just one question.",
+       "correct": true
+      },
+      {
+       "text": "Test `saleAmount >= 1000` first, since the highest range should always come first",
+       "feedback": "That order asks two questions for nine of every ten sales. Order by likelihood, not size."
+      },
+      {
+       "text": "The order doesn't matter as long as the tests are chained with `else`",
+       "feedback": "The order changes how many questions are asked on average, even though every order gives the same rates."
+      },
+      {
+       "text": "Test all three ranges with separate `if` statements so none is skipped",
+       "feedback": "Separate tests always ask every question, and can even overwrite a correct result."
+      }
+     ],
+     "hint": "With a chain of `else` tests, the program stops at the first true one. Which test is most often true?",
+     "explanation": "Within a nested `if…else`, it is most efficient to ask first the question most likely to be true. That way the program more often avoids asking multiple questions.",
+     "ref": "Ch. 5.6, Making Efficient Range Checks (p. 180)"
+    },
+    {
+     "id": "and-means-or",
+     "concept": "English and versus logical &&",
+     "level": "apply",
+     "stem": "Your boss asks: \"Display an error when the pay rate is less than `LOW` and when it is greater than `HIGH`.\" Which condition does that?",
+     "options": [
+      {
+       "text": "`payRate < LOW || payRate > HIGH`",
+       "feedback": "A bad rate is either too low or too high, and `||` is true when at least one side is.",
+       "correct": true
+      },
+      {
+       "text": "`payRate < LOW && payRate > HIGH`",
+       "feedback": "One `payRate` can never be both below `LOW` and above `HIGH`, so the message would never appear."
+      },
+      {
+       "text": "`payRate > LOW && payRate < HIGH`",
+       "feedback": "This selects the rates that are inside the limits, the valid ones."
+      },
+      {
+       "text": "`payRate < LOW || payRate < HIGH`",
+       "feedback": "Any rate below `HIGH` makes this true, so ordinary, valid rates would trigger the error."
+      }
+     ],
+     "hint": "Can a single value be below 17.85 and above 60 at the same moment?",
+     "explanation": "Beginning programmers often write `&&` when they need `||`, because people say *and* when they mean *either case*. A condition that requires one variable to be in two separate ranges at once can never be true.",
+     "ref": "Ch. 5.6, Using && and || Appropriately (p. 180)"
+    },
+    {
+     "id": "departments-1-and-2",
+     "concept": "A test that can never be true",
+     "level": "analyze",
+     "stem": "A file holds 40 employees: 20 in department 1 and 20 in department 2. For each one, the program runs `if(department == 1 && department == 2)` to display the name. How many names appear?",
+     "options": [
+      {
+       "text": "None",
+       "feedback": "`department` holds one value at a time, so it can't equal 1 and 2 at once; the condition is always false.",
+       "correct": true
+      },
+      {
+       "text": "All 40",
+       "feedback": "This is what the boss wanted, which takes `department == 1 || department == 2`."
+      },
+      {
+       "text": "20, the employees in department 1",
+       "feedback": "Short-circuiting only skips the second test when the first is false. For department 1, the second test runs and is false."
+      },
+      {
+       "text": "20, the employees in department 2",
+       "feedback": "For department 2, the first test is already false, so the whole `&&` is false."
+      }
+     ],
+     "hint": "Pick any single employee. Can both sides of the `&&` be true for them?",
+     "explanation": "A variable can never contain two different values at the same time, so an `&&` that demands it never selects anything. The correct statement asks whether `department` is 1 *or* 2.",
+     "aside": "Logicians call an always-false condition a *contradiction*. Code analyzers, such as the inspections built into IntelliJ IDEA, warn when a condition like `x == 1 && x == 2` can never be true.",
+     "ref": "Ch. 5.6, Using && and || Appropriately (p. 181)"
+    }
+   ]
+  },
+  {
+   "id": "5.7",
+   "title": "Using switch",
+   "subtitle": "case, break and default, fall-through, empty cases, the switch expression with -> and yield",
+   "source": "Ch. 5, section 5.7 (pp. 181–186)",
+   "intro": "A scheduling program prints three reminders when it should print one, and there isn't a loop in sight. Six questions on `switch`.",
+   "takeaways": [
+    "`switch` compares one value against exact `case` values (integer types, `char` or `String`). Execution starts at the matching case and continues until a `break` or the closing brace.",
+    "Leaving out `break` makes execution fall through into later cases, which is a bug or, with empty cases, a way to share one action.",
+    "The arrow form `case 'a', 'A' -> value` (Java 14+) has no fall-through and needs no `break`; a block that produces a value hands it back with `yield`."
+   ],
+   "questions": [
+    {
+     "id": "fall-through",
+     "concept": "Fall-through without break",
+     "level": "apply",
+     "stem": "This is Figure 5-25, which has no `break` statements. What does it print when `day` is `\"Thursday\"`?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String day = \"Thursday\";\nswitch(day)\n{\n    case \"Monday\":\n        System.out.println(\"Reserve room for Friday meeting\");\n    case \"Tuesday\":\n        System.out.println(\"Prepare PowerPoint slides\");\n    case \"Wednesday\":\n        System.out.println(\"Send out meeting reminders\");\n    case \"Thursday\":\n        System.out.println(\"Order snacks for delivery\");\n    case \"Friday\":\n        System.out.println(\"Meeting 10 am\");\n    default:\n        System.out.println(\"Invalid day\");\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class TasksLeft\n{\n    public static void main(String[] args)\n    {\n        String day = \"Thursday\";\n        switch(day)\n        {\n            case \"Monday\":\n                System.out.println(\"Reserve room for Friday meeting\");\n            case \"Tuesday\":\n                System.out.println(\"Prepare PowerPoint slides\");\n            case \"Wednesday\":\n                System.out.println(\"Send out meeting reminders\");\n            case \"Thursday\":\n                System.out.println(\"Order snacks for delivery\");\n            case \"Friday\":\n                System.out.println(\"Meeting 10 am\");\n            default:\n                System.out.println(\"Invalid day\");\n        }\n    }\n}",
+       "output": "Order snacks for delivery Meeting 10 am Invalid day"
+      }
+     },
+     "options": [
+      {
+       "text": "`Order snacks for delivery`, `Meeting 10 am`, then `Invalid day`",
+       "feedback": "Execution starts at the matching case and, with no `break`, runs every statement below it, including `default`.",
+       "correct": true
+      },
+      {
+       "text": "Only `Order snacks for delivery`, the Thursday case",
+       "feedback": "That needs a `break` after the Thursday case. Without one, the following cases run too."
+      },
+      {
+       "text": "`Order snacks for delivery`, then `Meeting 10 am`",
+       "feedback": "`default` isn't skipped during fall-through. Once execution is inside the `switch`, case labels don't stop it."
+      },
+      {
+       "text": "All six messages, from `Reserve room for Friday meeting` on",
+       "feedback": "Cases before the match are bypassed. Fall-through only goes downward from the matching case."
+      }
+     ],
+     "hint": "Where does execution start, and what would make it stop?",
+     "explanation": "If you omit `break` and the program finds a match, all the statements in the `switch` run from that point forward. Omit `break` on purpose only when you want every later case to run.",
+     "ref": "Ch. 5.7, Figure 5-25 (p. 182)"
+    },
+    {
+     "id": "empty-cases",
+     "concept": "Empty cases share an action",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int department = 2;\nString supervisor = \"none\";\nswitch(department)\n{\n    case 1:\n    case 2:\n    case 3:\n        supervisor = \"Jones\";\n        break;\n    case 4:\n        supervisor = \"Staples\";\n        break;\n    default:\n        System.out.println(\"Invalid department code\");\n}\nSystem.out.println(supervisor);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Supervisor\n{\n    public static void main(String[] args)\n    {\n        int department = 2;\n        String supervisor = \"none\";\n        switch(department)\n        {\n            case 1:\n            case 2:\n            case 3:\n                supervisor = \"Jones\";\n                break;\n            case 4:\n                supervisor = \"Staples\";\n                break;\n            default:\n                System.out.println(\"Invalid department code\");\n        }\n        System.out.println(supervisor);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Jones`",
+       "feedback": "Case 2 has no statements, so execution falls through to case 3's statements, which assign Jones and then `break`.",
+       "correct": true
+      },
+      {
+       "text": "`none`",
+       "feedback": "An empty case doesn't do nothing: execution falls through to the next statements below it."
+      },
+      {
+       "text": "`Staples`",
+       "feedback": "The `break` after the Jones assignment ends the `switch` before case 4 is reached."
+      },
+      {
+       "text": "`Invalid department code`, then `none`",
+       "feedback": "`default` runs only when no case matches, and 2 matches `case 2:`."
+      }
+     ],
+     "hint": "Department 2 matches `case 2:`. What are the first statements below that label?",
+     "explanation": "You don't need code for each case. Stacking empty cases lets several values share one action, because execution falls through to the next statements and runs until a `break`.",
+     "ref": "Ch. 5.7, Figure 5-26 (p. 183)"
+    },
+    {
+     "id": "switch-types",
+     "concept": "Types switch can test",
+     "level": "remember",
+     "stem": "Which variable can you **NOT** use as the tested value of a `switch` statement in this chapter's rules?",
+     "options": [
+      {
+       "text": "`double price`",
+       "feedback": "`switch` tests exact matches against integer, character or string values. Floating-point values aren't allowed.",
+       "correct": true
+      },
+      {
+       "text": "`String day`",
+       "feedback": "Strings have been allowed in a `switch` since Java 7, as Figure 5-25 shows."
+      },
+      {
+       "text": "`char departmentCode`",
+       "feedback": "Characters are allowed; Figure 5-28 switches on a `char` to ignore upper- or lowercase."
+      },
+      {
+       "text": "`byte level`",
+       "feedback": "`byte`, `short` and `int` are the integer types `switch` accepts."
+      }
+     ],
+     "hint": "`switch` compares against exact values. Which kind of number is rarely exact?",
+     "explanation": "The `switch` statement tests a single variable against a series of exact integer (`int`, `byte`, `short`), character or string values. Don't try to switch on anything else.",
+     "aside": "Floating-point values are a poor fit for exact matching anyway: in Java, `0.1 + 0.2 == 0.3` is `false`, because neither side is stored exactly in binary.",
+     "ref": "Ch. 5.7, switch types (p. 182) and Don't Do It (p. 193)"
+    },
+    {
+     "id": "switch-expression",
+     "concept": "No fall-through with ->",
+     "level": "apply",
+     "stem": "What does this Java 14+ code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "char departmentCode = 'm';\nSystem.out.println(switch(departmentCode)\n{\n    case 'A', 'a' -> \"Accounting\";\n    case 'M', 'm' -> \"Marketing\";\n    default -> \"Invalid department\";\n});",
+      "verify": {
+       "expect": "output",
+       "program": "public class SwitchExpression\n{\n    public static void main(String[] args)\n    {\n        char departmentCode = 'm';\n        System.out.println(switch(departmentCode)\n        {\n            case 'A', 'a' -> \"Accounting\";\n            case 'M', 'm' -> \"Marketing\";\n            default -> \"Invalid department\";\n        });\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Marketing`",
+       "feedback": "`'m'` matches the second label list. With the arrow form, only that case produces the value, and there is no fall-through.",
+       "correct": true
+      },
+      {
+       "text": "`Marketing`, then `Invalid department`",
+       "feedback": "That is how a colon-style `switch` without `break` behaves. The arrow form never falls through."
+      },
+      {
+       "text": "A compile error, because each case is missing `break`",
+       "feedback": "The arrow form doesn't use `break`, which removes the common error of forgetting it."
+      },
+      {
+       "text": "`Invalid department`",
+       "feedback": "Each case lists both letters, so the lowercase `'m'` matches `'M', 'm'`."
+      }
+     ],
+     "hint": "How does the arrow form treat the cases below the one that matches?",
+     "explanation": "In a switch expression, several labels share a case separated by commas, the arrow `->` gives the result, and no case needs `break`. Its value can be assigned or used directly, as inside `println()` here.",
+     "ref": "Ch. 5.7, Using the switch Expression, Figure 5-30 (pp. 183–184)"
+    },
+    {
+     "id": "yield-not-return",
+     "concept": "yield in a switch expression block",
+     "level": "analyze",
+     "stem": "Someone \"simplifies\" Figure 5-31 by writing `return` instead of `yield`. What happens when you compile it?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "departmentName = switch(departmentCode)\n{\n    case 'a', 'A' -> \"Accounting\";\n    case 'm', 'M' ->\n    {\n        System.out.println(\"Marketing is closed on Fridays\");\n        return \"Marketing\";\n    }\n    default -> \"Invalid\";\n};",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "return out of a switch expression"
+       ],
+       "program": "public class YieldNotReturn\n{\n    public static void main(String[] args)\n    {\n        char departmentCode = 'M';\n        String departmentName;\n\n        departmentName = switch(departmentCode)\n        {\n            case 'a', 'A' -> \"Accounting\";\n            case 'm', 'M' ->\n            {\n                System.out.println(\"Marketing is closed on Fridays\");\n                return \"Marketing\";\n            }\n            default -> \"Invalid\";\n        };\n        System.out.println(departmentName);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "Compile error: `return` can't hand a value out of a switch expression",
+       "feedback": "`return` would leave the whole method. Inside a switch expression's block, `yield` is how a case produces its value.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and works the same, because `return` and `yield` both give back a value",
+       "feedback": "Both hand back a value, but to different places. `return` ends the method, which Java doesn't allow from inside a switch expression."
+      },
+      {
+       "text": "It compiles, but the method ends right after printing the message",
+       "feedback": "That is what `return` would mean, which is why the compiler refuses it here instead of letting it happen."
+      },
+      {
+       "text": "Compile error: the block also needs a `break` after `return`",
+       "feedback": "Arrow cases never use `break`. The problem is `return` itself."
+      }
+     ],
+     "hint": "Where would `return` send the value: to the `switch`, or out of the method?",
+     "explanation": "When an arrow case needs several statements, its block uses the keyword `yield` to supply the switch expression's value. `return` belongs to methods and can't jump out of a switch expression.",
+     "ref": "Ch. 5.7, Figure 5-31 (p. 184)"
+    },
+    {
+     "id": "when-switch",
+     "concept": "When switch is the right tool",
+     "level": "evaluate",
+     "stem": "Which task is the best fit for a `switch`?",
+     "options": [
+      {
+       "text": "Run one of six different actions for menu choices 1 through 6",
+       "feedback": "One variable, a handful of exact values, a different action for each: that's the case `switch` was made for.",
+       "correct": true
+      },
+      {
+       "text": "Decide whether a quiz score is between 1 and 100",
+       "feedback": "A range check is one `if` with `&&`. Listing 100 cases with the same action would be far harder."
+      },
+      {
+       "text": "Show one message for a perfect score and another for any other score",
+       "feedback": "With only two options, most programmers choose an `if…else`."
+      },
+      {
+       "text": "Choose between options because nested `if` statements would run out",
+       "feedback": "Nested `if` statements can choose among any number of alternatives; `switch` is only a convenience."
+      }
+     ],
+     "hint": "`switch` shines with one variable and several exact values. Which task looks like that?",
+     "explanation": "You never need `switch`: nested `if` statements always achieve the same result. It is convenient when several actions depend on one value with a reasonable number of exact matches; for two or three options, or for ranges, use `if`.",
+     "ref": "Ch. 5.7, when to use switch (p. 184)"
+    }
+   ]
+  },
+  {
+   "id": "5.8",
+   "title": "Using the Conditional and NOT Operators",
+   "subtitle": "The ?: conditional operator as a short if…else, and negating conditions with !",
+   "source": "Ch. 5, section 5.8 (pp. 186–187)",
+   "intro": "A four-line `if…else` that picks a number can shrink to a single line. Five questions on the conditional operator and on `!`.",
+   "takeaways": [
+    "`test ? trueResult : falseResult` takes the value of `trueResult` when the test is true and `falseResult` otherwise: an `if…else` that produces a value, concise but harder to read at first.",
+    "`!` reverses any Boolean expression. It binds more tightly than relational operators, so `!(age <= 25)` needs its inner parentheses.",
+    "`!` reads best on a well-named `boolean` variable, as in `if(!oldEnough)`."
+   ],
+   "questions": [
+    {
+     "id": "ternary-trace",
+     "concept": "Value of a conditional expression",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int a = 8, b = 3;\nint smallerNum = (a < b) ? a : b;\nSystem.out.println(smallerNum);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Smaller\n{\n    public static void main(String[] args)\n    {\n        int a = 8, b = 3;\n        int smallerNum = (a < b) ? a : b;\n        System.out.println(smallerNum);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`3`",
+       "feedback": "`8 < 3` is false, so the whole expression takes the value after the colon, `b`, which is 3.",
+       "correct": true
+      },
+      {
+       "text": "`8`",
+       "feedback": "That is the value before the colon, used only when the test is true."
+      },
+      {
+       "text": "`false`",
+       "feedback": "The test's own value only chooses a result. The expression takes the value of `a` or `b`, never of the test."
+      },
+      {
+       "text": "A compile error: `?:` can't be assigned to a variable",
+       "feedback": "The conditional operator produces a value, which is exactly what makes it useful on the right of an assignment."
+      }
+     ],
+     "hint": "When the test is false, which of the two results does the expression take?",
+     "explanation": "If `testExpression` is true, the conditional expression takes the value of `trueResult`; if it is false, it takes the value of `falseResult`. Here that assigns the smaller of the two numbers.",
+     "aside": "The textbook's note says Java 7 added an \"Elvis\" operator `?:`. It didn't: that proposal was not accepted for Java 7, and `s ?: \"x\"` is a syntax error in Java. Groovy and Kotlin do have it.",
+     "ref": "Ch. 5.8, the conditional operator (p. 186)"
+    },
+    {
+     "id": "ternary-to-if",
+     "concept": "Conditional operator as if…else",
+     "level": "understand",
+     "stem": "Which `if…else` does exactly what `premium = (age <= 25) ? 200 : 125;` does?",
+     "options": [
+      {
+       "text": "`if(age <= 25) premium = 200; else premium = 125;`",
+       "feedback": "The test goes in the `if`, the value before the colon goes in the `if` clause, and the value after it goes in the `else`.",
+       "correct": true
+      },
+      {
+       "text": "`if(age <= 25) premium = 125; else premium = 200;`",
+       "feedback": "The two results are swapped: the value after `?` is the one used when the test is true."
+      },
+      {
+       "text": "`if(age < 25) premium = 200; else premium = 125;`",
+       "feedback": "This moves the boundary. A 25-year-old would pay 125 here but 200 with `<=`."
+      },
+      {
+       "text": "`if(age <= 25) premium = 200; premium = 125;`",
+       "feedback": "Without `else`, the second assignment always runs, so every driver ends up paying 125."
+      }
+     ],
+     "hint": "Read it as: *if* the test is true, use the first value, *otherwise* use the second.",
+     "explanation": "The conditional operator is an abbreviated `if…else`. Anything you write with it you could write as an `if…else` with the same test, the true result in the `if` clause and the false result in the `else`.",
+     "ref": "Ch. 5.8, the conditional operator (pp. 186–187)"
+    },
+    {
+     "id": "not-equivalent",
+     "concept": "Negating a comparison",
+     "level": "apply",
+     "stem": "`age` is an `int`. Which condition is true for exactly the same ages as `!(age <= 25)`?",
+     "options": [
+      {
+       "text": "`age > 25`",
+       "feedback": "`!` flips the result: `age <= 25` is false exactly when the age is greater than 25.",
+       "correct": true
+      },
+      {
+       "text": "`age >= 25`",
+       "feedback": "This includes 25, but at 25, `age <= 25` is true, so `!(age <= 25)` is false."
+      },
+      {
+       "text": "`age < 25`",
+       "feedback": "This flips the arrow instead of the result, which keeps most of the young ages that should be excluded."
+      },
+      {
+       "text": "`!age <= 25`",
+       "feedback": "`!` is applied first, to the `int` `age`, and `!` works only on Boolean values, so this doesn't compile."
+      }
+     ],
+     "hint": "For which ages is `age <= 25` false?",
+     "explanation": "The NOT operator negates any Boolean expression: true becomes false and false becomes true. Because `!` has the highest precedence, negating a comparison needs parentheses around the comparison.",
+     "ref": "Ch. 5.8, Using the NOT Operator, Figure 5-33 (p. 187)"
+    },
+    {
+     "id": "not-boolean-var",
+     "concept": "! on a boolean variable",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int age = 25;\nboolean oldEnough = (age >= 25);\nif(!oldEnough)\n    System.out.println(\"Young driver rate\");\nelse\n    System.out.println(\"Standard rate\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class Premium\n{\n    public static void main(String[] args)\n    {\n        int age = 25;\n        boolean oldEnough = (age >= 25);\n        if(!oldEnough)\n            System.out.println(\"Young driver rate\");\n        else\n            System.out.println(\"Standard rate\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Standard rate`",
+       "feedback": "25 >= 25 is true, so `oldEnough` is true and `!oldEnough` is false. The `else` runs.",
+       "correct": true
+      },
+      {
+       "text": "`Young driver rate`",
+       "feedback": "This treats 25 as too young. `>=` includes the boundary, so a 25-year-old is old enough."
+      },
+      {
+       "text": "A compile error: `!` needs parentheses around the variable",
+       "feedback": "Parentheses are needed when negating a comparison. A plain `boolean` variable can follow `!` directly."
+      },
+      {
+       "text": "Nothing: `if(!oldEnough)` is never true",
+       "feedback": "`!oldEnough` is true for every age under 25; it just isn't true for this one."
+      }
+     ],
+     "hint": "First work out `oldEnough`, then flip it.",
+     "explanation": "Using `!` is clearest when it is applied to a `boolean` variable with a meaningful name, as in `if(!oldEnough)`. With a comparison, the double parentheses make it harder to read.",
+     "ref": "Ch. 5.8, Using the NOT Operator (p. 187)"
+    },
+    {
+     "id": "ternary-tradeoff",
+     "concept": "Conditional operator trade-off",
+     "level": "evaluate",
+     "stem": "A teammate replaces a four-line `if…else` with `smallerNum = (a < b) ? a : b;`. What actually changes?",
+     "options": [
+      {
+       "text": "It is shorter but harder to read at first; the result is the same",
+       "feedback": "That is the whole trade-off: the advantage is conciseness, and the disadvantage is readability.",
+       "correct": true
+      },
+      {
+       "text": "The result is different whenever `a` and `b` hold equal values",
+       "feedback": "When they are equal, `a < b` is false, so both versions pick `b`."
+      },
+      {
+       "text": "The program runs noticeably faster, since it has fewer lines",
+       "feedback": "The operator is a convenient shortcut for writing, not a speedup."
+      },
+      {
+       "text": "It only works because `a` and `b` are `int`; `double` values would need an `if`",
+       "feedback": "The conditional operator works with any type of values, as long as both results fit the variable."
+      }
+     ],
+     "hint": "Compare the two versions on result, length and readability.",
+     "explanation": "You never need the conditional operator; it is a convenient shortcut for an `if…else` that chooses a value. Its advantage is conciseness and its disadvantage is that it is harder to read at first.",
+     "ref": "Ch. 5.8, the conditional operator (p. 187)"
+    }
+   ]
+  },
+  {
+   "id": "5.9",
+   "title": "Understanding Operator Precedence",
+   "subtitle": "&& before ||, the full precedence table, and parentheses that change or clarify meaning",
+   "source": "Ch. 5, section 5.9 (pp. 187–189)",
+   "intro": "A 40-year-old minivan driver is charged the sports-car premium. Five questions on the order in which Java evaluates a condition.",
+   "takeaways": [
+    "`&&` has higher precedence than `||`, just as multiplication comes before addition. Mixing them without parentheses groups the `&&` part first.",
+    "From highest to lowest: `!`, then `* / %`, `+ -`, relational, equality, `&&`, `||`, `?:`, and assignment last.",
+    "Parentheses change precedence, and they also make an intended order visible even when they change nothing."
+   ],
+   "questions": [
+    {
+     "id": "and-before-or",
+     "concept": "&& binds before ||",
+     "level": "apply",
+     "stem": "The rule: charge 200 extra to drivers with more than two tickets **or** under 25, **and** who drive a sports car (`'S'`). What does this code print for a 40-year-old minivan driver with three tickets?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int trafficTickets = 3;\nint age = 40;\nchar carCode = 'M';\nint extraPremium = 0;\nif(trafficTickets > 2 || age < 25 && carCode == 'S')\n    extraPremium = 200;\nSystem.out.println(extraPremium);",
+      "verify": {
+       "expect": "output",
+       "program": "public class ExtraPremium\n{\n    public static void main(String[] args)\n    {\n        int trafficTickets = 3;\n        int age = 40;\n        char carCode = 'M';\n        int extraPremium = 0;\n        if(trafficTickets > 2 || age < 25 && carCode == 'S')\n            extraPremium = 200;\n        System.out.println(extraPremium);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`200`",
+       "feedback": "`&&` goes first: `age < 25 && carCode == 'S'` is false. That leaves `trafficTickets > 2 || false`, which is true.",
+       "correct": true
+      },
+      {
+       "text": "`0`",
+       "feedback": "That is the result the rule calls for, but this code groups the conditions differently than the rule does."
+      },
+      {
+       "text": "A compile error: `&&` and `||` can't be mixed without parentheses",
+       "feedback": "Mixing them is legal. Java applies its precedence rules, which is exactly why the result surprises."
+      }
+     ],
+     "hint": "Which operator does Java apply first, `&&` or `||`?",
+     "explanation": "Because `&&` has higher precedence than `||`, the expression is evaluated as `trafficTickets > 2 || (age < 25 && carCode == 'S')`, so any driver with more than two tickets is charged.",
+     "aside": "The book's memory aid: AND and OR are evaluated in alphabetical order. It isn't arbitrary: in Boolean algebra, AND behaves like multiplication and OR like addition, mirroring `*` before `+`.",
+     "ref": "Ch. 5.9, Figure 5-34 (pp. 188–189)"
+    },
+    {
+     "id": "parenthesize",
+     "concept": "Parentheses that change meaning",
+     "level": "apply",
+     "stem": "Which condition matches the rule \"more than two tickets or under 25, and drives a sports car\"?",
+     "options": [
+      {
+       "text": "`(trafficTickets > 2 || age < 25) && carCode == 'S'`",
+       "feedback": "The parentheses make Java decide the *tickets or age* part first, and then require the sports car too.",
+       "correct": true
+      },
+      {
+       "text": "`trafficTickets > 2 || (age < 25 && carCode == 'S')`",
+       "feedback": "These parentheses only spell out what Java already does, the grouping that charged the minivan driver."
+      },
+      {
+       "text": "`(trafficTickets > 2) || (age < 25) && (carCode == 'S')`",
+       "feedback": "Wrapping each comparison doesn't change anything: `&&` still binds before `||`."
+      },
+      {
+       "text": "`trafficTickets > 2 || age < 25 && (carCode == 'S')`",
+       "feedback": "The comparison was already evaluated before `&&`; the parentheses around it change nothing."
+      }
+     ],
+     "hint": "Which two comparisons must be combined first, before the sports-car test is applied?",
+     "explanation": "Parentheses are evaluated first, so they can change precedence. To combine two tests with `||` before applying `&&`, put the `||` part inside the parentheses.",
+     "ref": "Ch. 5.9, Figure 5-34 (p. 188)"
+    },
+    {
+     "id": "not-precedence",
+     "concept": "! and parentheses",
+     "level": "analyze",
+     "stem": "These are the three `p`, `q`, `r` statements from the end of section 5.9, rewritten as code. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "boolean q = true, r = true;\nSystem.out.println(!q || r);\nSystem.out.println(!(!q && !r));\nSystem.out.println(!(q || !r));",
+      "verify": {
+       "expect": "output",
+       "program": "public class PQR\n{\n    public static void main(String[] args)\n    {\n        boolean q = true, r = true;\n        System.out.println(!q || r);\n        System.out.println(!(!q && !r));\n        System.out.println(!(q || !r));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`true true false`",
+       "feedback": "Line 1: `false || true` is true. Line 2: `!(false && false)` is true. Line 3: `q || !r` is true, and `!` turns it to false.",
+       "correct": true
+      },
+      {
+       "text": "`false true false`",
+       "feedback": "This applies `!` to the whole of `q || r` on line 1. `!` binds tightest, so it applies only to `q`."
+      },
+      {
+       "text": "`true false false`",
+       "feedback": "On line 2, the inside, `!q && !r`, is false, and the leading `!` makes it true."
+      },
+      {
+       "text": "`true true true`",
+       "feedback": "On line 3, the parentheses are true because `q` is true, and the leading `!` reverses that."
+      }
+     ],
+     "hint": "`!` has the highest precedence. In each line, what exactly does each `!` apply to?",
+     "explanation": "The logical NOT operator has the highest precedence of all, so it applies to the single operand just after it. To negate a larger expression, put that expression in parentheses.",
+     "ref": "Ch. 5.9, Table 5-1 and Two Truths & a Lie (pp. 188–189)"
+    },
+    {
+     "id": "full-table",
+     "concept": "Arithmetic, relational, equality, &&, ||",
+     "level": "analyze",
+     "stem": "Using the precedence table, what does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int a = 5, b = 10;\nboolean result = a + 5 == b || b > a * 3 && a > b;\nSystem.out.println(result);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Precedence\n{\n    public static void main(String[] args)\n    {\n        int a = 5, b = 10;\n        boolean result = a + 5 == b || b > a * 3 && a > b;\n        System.out.println(result);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`true`",
+       "feedback": "Arithmetic first, then comparisons: `10 == 10` is true. Then `&&`: `false && false` is false. Finally `true || false` is true.",
+       "correct": true
+      },
+      {
+       "text": "`false`",
+       "feedback": "This reads left to right: `(true || false) && false`. But `&&` is applied before `||`."
+      },
+      {
+       "text": "A compile error: `+` can't appear in a Boolean expression",
+       "feedback": "Arithmetic is evaluated first, so `a + 5` becomes a number before `==` compares it."
+      }
+     ],
+     "hint": "Work from the top of the table down: arithmetic, relational, equality, `&&`, then `||`.",
+     "explanation": "Table 5-1 orders the operators: `!`; `* / %`; `+ -`; relational; equality; `&&`; `||`; the conditional operator; and assignment. Higher-precedence operators are applied first, wherever they appear.",
+     "ref": "Ch. 5.9, Table 5-1 (p. 188)"
+    },
+    {
+     "id": "clarifying-parens",
+     "concept": "Parentheses for clarity",
+     "level": "evaluate",
+     "stem": "A reviewer asks you to rewrite `a > 0 && b > 0 || c > 0` as `(a > 0 && b > 0) || c > 0`. What does the change do?",
+     "options": [
+      {
+       "text": "It leaves the result unchanged and shows readers the existing order",
+       "feedback": "`&&` already went first. The parentheses only show that order to the next reader.",
+       "correct": true
+      },
+      {
+       "text": "It makes the `||` part go first, which changes the result",
+       "feedback": "To make `||` go first, the parentheses would have to surround the `||` part."
+      },
+      {
+       "text": "It turns off short-circuit evaluation inside the parentheses",
+       "feedback": "Parentheses group operands. `&&` and `||` still short-circuit."
+      },
+      {
+       "text": "It fixes a compile error caused by mixing `&&` and `||`",
+       "feedback": "The original compiles; mixing `&&` and `||` is legal."
+      }
+     ],
+     "hint": "Which part did Java evaluate first in the original?",
+     "explanation": "The order in which you use operators makes a difference, and you can always use parentheses to change precedence or to make your intentions clearer, even when the result would be the same without them.",
+     "ref": "Ch. 5.9, conventions (p. 189)"
+    }
+   ]
+  },
+  {
+   "id": "5.10",
+   "title": "Making Constructors More Efficient by Using Decisions in Other Methods",
+   "subtitle": "Enforcing field rules once, in set methods, and having constructors call them",
+   "source": "Ch. 5, section 5.10 (pp. 189–193)",
+   "intro": "A preschool's records list a nine-year-old student. Five questions on putting the rules for a field in exactly one place.",
+   "takeaways": [
+    "Use decisions to restrict the values assigned to fields. When the constructor and a set method share a rule, code the rule once in the set method and have the constructor call it.",
+    "Each set method enforces its own field, so one invalid argument doesn't reject the whole object, and later calls are checked too.",
+    "Test the parameter, the incoming value, not the field. A rule that tests the field's old value lets bad data in."
+   ],
+   "questions": [
+    {
+     "id": "where-rule-goes",
+     "concept": "One place for each rule",
+     "level": "evaluate",
+     "stem": "A `Product` class has a constructor and a `setPrice()` method, and both must reject negative prices. Where should the `if` statement go?",
+     "options": [
+      {
+       "text": "In `setPrice()`, with the constructor calling `setPrice()`",
+       "feedback": "The rule is written once, so the constructor and every later change follow it, and a future change happens in one place.",
+       "correct": true
+      },
+      {
+       "text": "In the constructor only, since that is where each object starts",
+       "feedback": "Then `setPrice()` would let a negative price in after the object is built."
+      },
+      {
+       "text": "Copied into both the constructor and `setPrice()`",
+       "feedback": "This works today, but a rule change must now be made twice, inviting inconsistency."
+      },
+      {
+       "text": "In `main()`, before each call to the constructor or `setPrice()`",
+       "feedback": "Every program that uses the class would have to remember the check. The class should protect its own fields."
+      }
+     ],
+     "hint": "If the rule changes next year, how many places should you have to edit?",
+     "explanation": "When the constructor and set methods follow the same rules, make the decisions in the set methods and have the constructor call them. The decisions appear only once, and a future change happens in one place, reducing error and inconsistency.",
+     "ref": "Ch. 5.10, Figures 5-35 and 5-36 (p. 190)"
+    },
+    {
+     "id": "mixed-valid",
+     "concept": "Each setter checks its own field",
+     "level": "apply",
+     "stem": "Using the `PreschoolStudent` class from the *You Do It* section (highest ID 9999, highest age 6, invalid values become 0), what does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "PreschoolStudent ps = new PreschoolStudent(1234, 9);\nSystem.out.print(\"Student ID \" + ps.getIdNum());\nSystem.out.println(\" Student age \" + ps.getAge());",
+      "verify": {
+       "expect": "output",
+       "program": "public class PreschoolMixed\n{\n    public static void main(String[] args)\n    {\n        PreschoolStudent ps = new PreschoolStudent(1234, 9);\n        System.out.print(\"Student ID \" + ps.getIdNum());\n        System.out.println(\" Student age \" + ps.getAge());\n    }\n}\nclass PreschoolStudent\n{\n    int idNum;\n    int age;\n    public final int HIGH_ID = 9999;\n    public final int HIGH_AGE = 6;\n    public PreschoolStudent(int num, int studentAge)\n    {\n        setIdNum(num);\n        setAge(studentAge);\n    }\n    public void setIdNum(int num)\n    {\n        if(num <= HIGH_ID)\n            idNum = num;\n        else\n            idNum = 0;\n    }\n    public void setAge(int studentAge)\n    {\n        if(studentAge <= HIGH_AGE)\n            age = studentAge;\n        else\n            age = 0;\n    }\n    public int getIdNum()\n    {\n        return idNum;\n    }\n    public int getAge()\n    {\n        return age;\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Student ID 1234 Student age 0`",
+       "feedback": "The constructor calls both setters. 1234 passes `setIdNum()`'s test; 9 fails `setAge()`'s, so only `age` becomes 0.",
+       "correct": true
+      },
+      {
+       "text": "`Student ID 1234 Student age 9`",
+       "feedback": "This assumes the constructor assigns directly. It calls `setAge()`, which enforces the limit."
+      },
+      {
+       "text": "`Student ID 0 Student age 0`",
+       "feedback": "Each setter decides only for its own field. A bad age doesn't erase a good ID."
+      },
+      {
+       "text": "`Student ID 1234 Student age 6`",
+       "feedback": "This class doesn't cap a value at the limit; its rule replaces an invalid age with 0."
+      }
+     ],
+     "hint": "The constructor calls two separate set methods. What does each one decide on its own?",
+     "explanation": "Having the constructor call the set methods means every field is checked by the same rule whether the value arrives at construction or later. Each method enforces only its own field.",
+     "ref": "Ch. 5.10, You Do It: PreschoolStudent (pp. 191–193)"
+    },
+    {
+     "id": "setter-after-construction",
+     "concept": "Rules keep applying after construction",
+     "level": "apply",
+     "stem": "Using the same `PreschoolStudent` class, what does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "PreschoolStudent ps1 = new PreschoolStudent(2345, 5);\nps1.setAge(6);\nps1.setAge(7);\nSystem.out.println(ps1.getAge());",
+      "verify": {
+       "expect": "output",
+       "program": "public class PreschoolSetAge\n{\n    public static void main(String[] args)\n    {\n        PreschoolStudent ps1 = new PreschoolStudent(2345, 5);\n        ps1.setAge(6);\n        ps1.setAge(7);\n        System.out.println(ps1.getAge());\n    }\n}\nclass PreschoolStudent\n{\n    int idNum;\n    int age;\n    public final int HIGH_ID = 9999;\n    public final int HIGH_AGE = 6;\n    public PreschoolStudent(int num, int studentAge)\n    {\n        setIdNum(num);\n        setAge(studentAge);\n    }\n    public void setIdNum(int num)\n    {\n        if(num <= HIGH_ID)\n            idNum = num;\n        else\n            idNum = 0;\n    }\n    public void setAge(int studentAge)\n    {\n        if(studentAge <= HIGH_AGE)\n            age = studentAge;\n        else\n            age = 0;\n    }\n    public int getIdNum()\n    {\n        return idNum;\n    }\n    public int getAge()\n    {\n        return age;\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`0`",
+       "feedback": "`setAge(6)` is valid and sets 6, but `setAge(7)` fails the test, so its `else` replaces the age with 0.",
+       "correct": true
+      },
+      {
+       "text": "`6`",
+       "feedback": "The rule doesn't keep the last good value; an invalid argument sets `age` to 0."
+      },
+      {
+       "text": "`7`",
+       "feedback": "`setAge()` checks every call, not just the one inside the constructor."
+      },
+      {
+       "text": "`5`",
+       "feedback": "Each valid call to `setAge()` replaces the age, so the 5 from the constructor is gone after `setAge(6)`."
+      }
+     ],
+     "hint": "Trace each `setAge()` call through the method's `if…else`.",
+     "explanation": "Because the rule lives in `setAge()`, it applies to the constructor and to every later call alike. As in the textbook's demo, a valid change takes effect, and an invalid one sets the field to 0.",
+     "ref": "Ch. 5.10, You Do It, steps 10 and 12 (pp. 192–193)"
+    },
+    {
+     "id": "clamp-policy",
+     "concept": "The class chooses the replacement value",
+     "level": "apply",
+     "stem": "In the textbook's `Employee` class, an employee number above 9999 is replaced. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Employee e = new Employee(12345);\nSystem.out.println(e.getEmpNum());",
+      "verify": {
+       "expect": "output",
+       "program": "public class EmployeeClamp\n{\n    public static void main(String[] args)\n    {\n        Employee e = new Employee(12345);\n        System.out.println(e.getEmpNum());\n    }\n}\nclass Employee\n{\n    private int empNum;\n    public final int MAX_EMP_NUM = 9999;\n    public Employee(int num)\n    {\n        setEmpNum(num);\n    }\n    public void setEmpNum(int num)\n    {\n        if(num <= MAX_EMP_NUM)\n            empNum = num;\n        else\n            empNum = MAX_EMP_NUM;\n    }\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`9999`",
+       "feedback": "This class's rule replaces a number that is too high with `MAX_EMP_NUM`, the highest allowed value.",
+       "correct": true
+      },
+      {
+       "text": "`0`",
+       "feedback": "That is `PreschoolStudent`'s policy. Each class chooses its own replacement; this one uses the maximum."
+      },
+      {
+       "text": "`12345`",
+       "feedback": "The constructor calls `setEmpNum()`, which rejects any number above 9999."
+      },
+      {
+       "text": "`1234`",
+       "feedback": "Nothing truncates digits. The `else` assigns the constant `MAX_EMP_NUM`."
+      }
+     ],
+     "hint": "Read the `else` clause in `setEmpNum()`: what does it assign?",
+     "explanation": "Decisions in set methods restrict what a field can hold, and the class decides what to do with an invalid value: substitute 0, substitute the maximum, or anything its rules require.",
+     "ref": "Ch. 5.10, Figure 5-36 (p. 190)"
+    },
+    {
+     "id": "test-the-parameter",
+     "concept": "Test the incoming value",
+     "level": "analyze",
+     "stem": "This follows the textbook's Figure 5-36 exactly, with a getter and `main()` added. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Employee\n{\n    private double payRate;\n    public final double MAX_RATE = 60.00;\n    public Employee(double rate)\n    {\n        setPayRate(rate);\n    }\n    public void setPayRate(double rate)\n    {\n        if(payRate <= MAX_RATE)\n            payRate = rate;\n        else\n            payRate = 0;\n    }\n    public double getPayRate()\n    {\n        return payRate;\n    }\n    public static void main(String[] args)\n    {\n        Employee e = new Employee(75.00);\n        System.out.println(e.getPayRate());\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class Employee\n{\n    private double payRate;\n    public final double MAX_RATE = 60.00;\n    public Employee(double rate)\n    {\n        setPayRate(rate);\n    }\n    public void setPayRate(double rate)\n    {\n        if(payRate <= MAX_RATE)\n            payRate = rate;\n        else\n            payRate = 0;\n    }\n    public double getPayRate()\n    {\n        return payRate;\n    }\n    public static void main(String[] args)\n    {\n        Employee e = new Employee(75.00);\n        System.out.println(e.getPayRate());\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`75.0`",
+       "feedback": "The `if` tests the field `payRate`, still 0.0 for a new object, instead of `rate`. 0.0 <= 60.0, so 75.00 is accepted.",
+       "correct": true
+      },
+      {
+       "text": "`0.0`",
+       "feedback": "That is what the rule intends for a rate above 60, but this code compares the wrong variable."
+      },
+      {
+       "text": "`60.0`",
+       "feedback": "Nothing caps the rate at the maximum. The `else` would assign 0, if it ever ran."
+      },
+      {
+       "text": "A compile error: `payRate` is used before it is assigned",
+       "feedback": "Fields get automatic starting values, so `payRate` is 0.0 and the code compiles."
+      }
+     ],
+     "hint": "Which variable does the `if` compare with `MAX_RATE`: the one coming in, or the one already stored?",
+     "explanation": "A set method must test the value it receives. This version of `setPayRate()` tests the field's old value instead of the parameter, so any rate is accepted the first time. Writing `if(rate <= MAX_RATE)` fixes it.",
+     "aside": "This slip appears in the textbook itself, in both Figures 5-35 and 5-36. Placing the rule in one method pays off here: fixing one line in `setPayRate()` repairs the constructor too.",
+     "ref": "Ch. 5.10, Figures 5-35 and 5-36 (p. 190)"
+    }
+   ]
+  }
+ ]
+}
