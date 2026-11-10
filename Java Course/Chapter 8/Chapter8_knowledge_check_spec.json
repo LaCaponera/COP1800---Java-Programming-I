@@ -1,0 +1,1913 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 8: Arrays",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 8 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "8.1",
+   "title": "Declaring an Array",
+   "subtitle": "One name for many values, reserving memory with new, subscripts from 0, and legal array sizes",
+   "source": "Ch. 8, section 8.1 (pp. 267–271)",
+   "intro": "A sales manager wants to know which of 20 salespeople beat the average, but the average isn't known until all 20 numbers are in. Four questions on the structure that keeps them all.",
+   "takeaways": [
+    "An array is a named list of elements that all share one data type. Declaring the array variable and reserving memory for its elements with `new` are two separate steps, which you may combine in one statement.",
+    "Subscripts start at 0, so an array of *n* elements uses subscripts 0 through *n* − 1. Any other subscript is out of bounds and stops the program with an `ArrayIndexOutOfBoundsException`.",
+    "The size in `new double[size]` can be any expression that produces an `int`: a literal, a named constant, a variable, a calculation or a method's return value."
+   ],
+   "questions": [
+    {
+     "id": "last-element",
+     "concept": "Subscripts run from 0 to size − 1",
+     "level": "apply",
+     "stem": "After `double[] salesFigures = new double[20];`, which statement displays the **last** element?",
+     "options": [
+      {
+       "text": "`System.out.println(salesFigures[19]);`",
+       "feedback": "Twenty elements numbered from 0 end at 19: the last subscript is always one less than the size.",
+       "correct": true
+      },
+      {
+       "text": "`System.out.println(salesFigures[20]);`",
+       "feedback": "20 is the array's size, not its last position. Counting starts at 0, so subscript 20 would be a 21st element, and Java stops with an out-of-bounds error."
+      },
+      {
+       "text": "`System.out.println(salesFigures(19));`",
+       "feedback": "Parentheses are how languages such as Visual Basic reach an element. Java uses square brackets, which keeps array names visibly different from method calls."
+      },
+      {
+       "text": "`System.out.println(salesFigures[-1]);`",
+       "feedback": "In Python, −1 means the last element. Java has no negative subscripts: −1 is out of bounds and stops the program."
+      }
+     ],
+     "hint": "If the first element is zero elements away from the start, how far from the start is the twentieth?",
+     "explanation": "Java numbers array elements from 0, so an array of *n* elements has subscripts 0 through *n* − 1. Forgetting either end of that range makes code \"off by one\".",
+     "aside": "Counting from 0 is a design choice, not a law. C, Java, Python and JavaScript start at 0 because a subscript is an offset from the start of the array; Fortran, MATLAB and Lua start at 1.",
+     "ref": "Ch. 8.1, subscripts and Figure 8-1 (p. 269)"
+    },
+    {
+     "id": "out-of-bounds",
+     "concept": "Out-of-bounds subscripts fail at run time",
+     "level": "apply",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "double[] salaries = new double[4];\nsalaries[0] = 16.25;\nsalaries[1] = 17.55;\nsalaries[2] = 18.25;\nsalaries[3] = 19.85;\nSystem.out.println(salaries[3]);\nSystem.out.println(salaries[4]);",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class DemoArray\n{\n    public static void main(String[] args)\n    {\n        double[] salaries = new double[4];\n        salaries[0] = 16.25;\n        salaries[1] = 17.55;\n        salaries[2] = 18.25;\n        salaries[3] = 19.85;\n        System.out.println(salaries[3]);\n        System.out.println(salaries[4]);\n    }\n}\n",
+       "error_contains": [
+        "ArrayIndexOutOfBoundsException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `19.85`, then stops with an `ArrayIndexOutOfBoundsException`",
+       "feedback": "The compiler accepts any `int` subscript. Only when the program runs does Java check that 4 is outside 0–3 and stop with the exception.",
+       "correct": true
+      },
+      {
+       "text": "It prints `19.85`, then `0.0`, the default value for a `double` element",
+       "feedback": "There is no fifth element to hold a default. `new double[4]` made exactly four, and Java refuses to read past them."
+      },
+      {
+       "text": "It does not compile, because 4 is past the end of a four-element array",
+       "feedback": "The compiler doesn't check subscript values against sizes. The error appears at run time, after the first `println()` has already printed."
+      }
+     ],
+     "hint": "Which positions exist in an array created with `new double[4]`, and when does Java check a subscript?",
+     "explanation": "Java checks every subscript when the statement runs. A subscript below 0 or at or above the array's size is out of bounds and throws an `ArrayIndexOutOfBoundsException`, which ends the program unless it is handled.",
+     "aside": "Modern Java names the problem precisely: the message reads `Index 4 out of bounds for length 4`. In C, the same mistake reads or writes whatever memory sits past the array, a classic source of security holes.",
+     "ref": "Ch. 8.1, You Do It: Using a Subscript That is Out of Bounds (p. 271)"
+    },
+    {
+     "id": "declare-vs-new",
+     "concept": "Declaring an array reserves no element memory",
+     "level": "understand",
+     "stem": "What does the statement `double[] salesFigures;` do on its own?",
+     "options": [
+      {
+       "text": "Creates a variable that can refer to an array, but no elements yet",
+       "feedback": "Like `Employee oneWorker;`, this only names a variable. The elements exist after `salesFigures = new double[20];`.",
+       "correct": true
+      },
+      {
+       "text": "Creates an array that holds a single `double` value until it is resized",
+       "feedback": "No elements are created at all, not even one. Java arrays also never resize; a different size means a new array."
+      },
+      {
+       "text": "Creates an empty array that grows each time a new element is assigned",
+       "feedback": "Java arrays have a fixed size chosen when `new` creates them. Assigning to a position that doesn't exist is an error, not a way to grow."
+      },
+      {
+       "text": "Nothing, because the statement does not compile without a size in the brackets",
+       "feedback": "The declaration is legal: in Java the size never goes in the declaration's brackets. It goes with `new`, as in `new double[20]`."
+      }
+     ],
+     "hint": "Compare this with `Employee oneWorker;`. Does that statement build an `Employee`?",
+     "explanation": "Declaring an array variable and reserving memory for its elements are distinct steps. The declaration names the variable; `new type[size]` creates the elements. You can write them as two statements or as one: `double[] salesFigures = new double[20];`.",
+     "ref": "Ch. 8.1, declaring and creating arrays (p. 268)"
+    },
+    {
+     "id": "size-expression",
+     "concept": "Array sizes must be integers",
+     "level": "analyze",
+     "stem": "Which line does the compiler reject?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int numberOfEls = 3;\ndouble rate = 2.0;\ndouble[] a = new double[numberOfEls * 2];\ndouble[] b = new double[rate];",
+      "verify": {
+       "expect": "compile_error",
+       "program": "public class SizeDemo\n{\n    public static void main(String[] args)\n    {\n        int numberOfEls = 3;\n        double rate = 2.0;\n        double[] a = new double[numberOfEls * 2];\n        double[] b = new double[rate];\n    }\n}\n",
+       "error_contains": [
+        "lossy conversion"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "The `b` line: an array size must be an integer, and `rate` is a `double`",
+       "feedback": "Java accepts any integer expression as a size, but a `double` would mean a fractional number of elements, so the compiler reports a possible lossy conversion.",
+       "correct": true
+      },
+      {
+       "text": "The `a` line: an array size must be a literal number or a named constant",
+       "feedback": "That rule belongs to some other languages, such as older C++. Java accepts variables, calculations and method results, as long as the result is an `int`."
+      },
+      {
+       "text": "Neither line: Java truncates `2.0` to `2` and creates both arrays",
+       "feedback": "Java never quietly turns a `double` into an `int` here; it would lose information. You would have to cast it yourself: `new double[(int) rate]`."
+      },
+      {
+       "text": "Both lines: a size must be written as a number, not computed",
+       "feedback": "Computing the size is one of Java's conveniences. `numberOfEls * 2` is an `int` expression, so the `a` line is fine."
+      }
+     ],
+     "hint": "What type does the expression inside `new double[...]` have to produce on each line?",
+     "explanation": "Java lets you size an array with any expression of integer type: a literal, a named constant, a variable, an arithmetic expression or a method's return value. A floating-point size is a compile-time error.",
+     "ref": "Ch. 8.1, array size expressions (pp. 269–270)"
+    }
+   ]
+  },
+  {
+   "id": "8.2",
+   "title": "Initializing an Array",
+   "subtitle": "References and null, default element values, and initialization lists",
+   "source": "Ch. 8, section 8.2 (pp. 271–273)",
+   "intro": "A gradebook shows `null` where a student's name should be, and `0` for a quiz nobody has taken. Four questions on what an array holds before you put anything in it.",
+   "takeaways": [
+    "An array variable holds a reference: the address of the elements, not the elements themselves. It acquires an address when `new` or an initialization list creates the elements.",
+    "Elements you never set hold default values: 0 for `int`, 0.0 for `double` and `float`, `'\\u0000'` for `char`, `false` for `boolean`, and `null` for objects, including `String`s.",
+    "An initialization list sets the size from the number of values, needs no `new`, ends with a semicolon, and must supply every element: Java can't initialize only part of an array."
+   ],
+   "questions": [
+    {
+     "id": "defaults",
+     "concept": "Default element values by type",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] counts = new int[3];\nboolean[] flags = new boolean[2];\nString[] names = new String[2];\nSystem.out.println(counts[1] + \" \" + flags[0] + \" \" + names[1]);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Defaults\n{\n    public static void main(String[] args)\n    {\n        int[] counts = new int[3];\n        boolean[] flags = new boolean[2];\n        String[] names = new String[2];\n        System.out.println(counts[1] + \" \" + flags[0] + \" \" + names[1]);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0 false null`",
+       "feedback": "Each type gets its own default: 0 for an `int`, `false` for a `boolean`, and `null` for an object reference such as a `String`.",
+       "correct": true
+      },
+      {
+       "text": "`0 false`",
+       "feedback": "A `String` element doesn't default to empty text. It holds no reference at all, `null`, and concatenation shows that as the word `null`."
+      },
+      {
+       "text": "`null null null`",
+       "feedback": "Only object elements default to `null`. Primitive elements hold values, so the `int` is 0 and the `boolean` is `false`."
+      },
+      {
+       "text": "Nothing: it does not compile, because the elements were never assigned",
+       "feedback": "That rule applies to plain local variables. Array elements are filled with defaults as soon as `new` creates them, so they can be read right away."
+      }
+     ],
+     "hint": "When `new` creates elements, what does Java put in each one, and does it depend on the element type?",
+     "explanation": "Creating an array with `new` and no initialization list fills every element with its type's default: numbers get zero, `char` gets the null character, `boolean` gets `false`, and every object type gets `null`.",
+     "aside": "An unfilled `char` array is quieter still: its default, `'\\u0000'`, prints as nothing visible, so a bug shows up as a blank instead of a value.",
+     "ref": "Ch. 8.2, list of default values (p. 272)"
+    },
+    {
+     "id": "init-list-size",
+     "concept": "An initialization list fixes the size",
+     "level": "apply",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] scores = {100, 90, 80};\nSystem.out.println(scores[3]);",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class InitList\n{\n    public static void main(String[] args)\n    {\n        int[] scores = {100, 90, 80};\n        System.out.println(scores[3]);\n    }\n}\n",
+       "error_contains": [
+        "ArrayIndexOutOfBoundsException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It stops with an `ArrayIndexOutOfBoundsException`: there are three elements",
+       "feedback": "The list `{100, 90, 80}` creates exactly three elements, subscripts 0–2. Subscript 3 doesn't exist.",
+       "correct": true
+      },
+      {
+       "text": "It prints `0`, the default value for the element the list did not fill in",
+       "feedback": "No element was left unfilled: the array's size comes from the list itself, so there is no fourth element holding a default."
+      },
+      {
+       "text": "It prints `80`, the last value given in the array's initialization list",
+       "feedback": "Subscript 3 would be a fourth element; the last value, 80, is at subscript 2."
+      },
+      {
+       "text": "It does not compile, because the declaration never gives the array a size",
+       "feedback": "With an initialization list you must leave the size out. Java counts the values and sizes the array to match."
+      }
+     ],
+     "hint": "Count the values in the list. Which subscripts does that give?",
+     "explanation": "An initialization list both creates and fills the array, and the array contains exactly as many elements as there are values in the list. No extra elements are added with default values.",
+     "ref": "Ch. 8.2, initialization lists and Two Truths & a Lie (p. 272)"
+    },
+    {
+     "id": "legal-init",
+     "concept": "Initialization-list syntax",
+     "level": "analyze",
+     "stem": "Which statement creates and fills an array of the first six multiples of 10?",
+     "options": [
+      {
+       "text": "`int[] multsOfTen = {10, 20, 30, 40, 50, 60};`",
+       "feedback": "Braces hold the values, Java counts them to size the array, and the statement ends with a semicolon after the closing brace.",
+       "correct": true
+      },
+      {
+       "text": "`int[] multsOfTen = new int[6] {10, 20, 30, 40, 50, 60};`",
+       "feedback": "Giving both a size and a list is rejected in Java (C# allows it). With a list, the list alone decides the size."
+      },
+      {
+       "text": "`int[6] multsOfTen = {10, 20, 30, 40, 50, 60};`",
+       "feedback": "Java never puts a size in the declaration's brackets. The brackets after the type only say \"this is an array\"."
+      },
+      {
+       "text": "`int[] multsOfTen = (10, 20, 30, 40, 50, 60);`",
+       "feedback": "An initialization list is enclosed in curly braces. Parentheses here would be read as an expression, which doesn't compile."
+      }
+     ],
+     "hint": "Where does the size come from when you supply the values yourself?",
+     "explanation": "To populate an array when you create it, list the values, separated by commas, inside curly braces and end with a semicolon. Leave out both the size and the keyword `new`: the number of values decides the size.",
+     "aside": "To build a filled array anywhere other than a declaration, such as straight inside a method call, Java has a second form: `new int[] {10, 20, 30}`. The brackets stay empty there too.",
+     "ref": "Ch. 8.2, initialization lists (p. 272)"
+    },
+    {
+     "id": "reference-holds",
+     "concept": "An array variable holds an address",
+     "level": "understand",
+     "stem": "After `int[] someNums = new int[10];`, what is stored in the variable `someNums`?",
+     "options": [
+      {
+       "text": "The memory address of ten `int` elements, each holding 0",
+       "feedback": "An array is a reference type, so the variable holds where the elements are. The elements, created by `new`, each start at 0.",
+       "correct": true
+      },
+      {
+       "text": "The ten `int` values themselves, each holding 0",
+       "feedback": "That is how a primitive variable works: `int x = 0;` holds 0. An array variable holds an address, just as an object variable does."
+      },
+      {
+       "text": "`null`, until a value is stored in at least one element",
+       "feedback": "`null` is the value of an array variable that hasn't been given memory yet. Here `new` has already assigned an address."
+      },
+      {
+       "text": "The address of ten elements whose contents are unpredictable",
+       "feedback": "Some languages, such as C, leave new memory uninitialized. Java always fills new array elements with defaults, so these hold 0."
+      }
+     ],
+     "hint": "Is `int[]` a primitive type like `int`, or a reference type like `Employee`?",
+     "explanation": "Array names are references. Declaring one without memory leaves it unassociated with any address; `new` creates the elements, fills them with defaults, and gives the variable their address.",
+     "ref": "Ch. 8.2, references and default values (pp. 271–272)"
+    }
+   ]
+  },
+  {
+   "id": "8.3",
+   "title": "Using Variable Subscripts with an Array",
+   "subtitle": "Loops over every element, the length field, the enhanced for loop, and using part of an array",
+   "source": "Ch. 8, section 8.3 (pp. 273–277)",
+   "intro": "A teacher adds 3 points to every quiz score, and the loop she wrote for last term's five scores breaks on this term's list of 30. Five questions on loops that fit any array.",
+   "takeaways": [
+    "A variable subscript lets one loop process every element: start at 0 and continue while the subscript is less than the number of elements.",
+    "Use the array's `length` field (no parentheses) or a named constant as the loop limit, so loops stay correct when the size changes. `length()` with parentheses is the `String` method.",
+    "The enhanced `for` loop hands you each element's value in turn. When only part of an array is filled, a separate count of the elements in use must control the loop."
+   ],
+   "questions": [
+    {
+     "id": "loop-all",
+     "concept": "A loop with a variable subscript visits every element",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] scoreArray = {2, 14, 35, 67, 85};\nfinal int INCREASE = 3;\nfor(int sub = 0; sub < scoreArray.length; ++sub)\n    scoreArray[sub] += INCREASE;\nSystem.out.println(scoreArray[0] + \" \" + scoreArray[4]);",
+      "verify": {
+       "expect": "output",
+       "program": "public class AddPoints\n{\n    public static void main(String[] args)\n    {\n        int[] scoreArray = {2, 14, 35, 67, 85};\n        final int INCREASE = 3;\n        for(int sub = 0; sub < scoreArray.length; ++sub)\n            scoreArray[sub] += INCREASE;\n        System.out.println(scoreArray[0] + \" \" + scoreArray[4]);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`5 88`",
+       "feedback": "The loop runs for `sub` = 0 through 4, adding 3 to every element, including the first and the last.",
+       "correct": true
+      },
+      {
+       "text": "`5 85`",
+       "feedback": "This assumes `sub < scoreArray.length` stops before the last element. It stops after it: `sub` reaches 4, then 5 fails the test."
+      },
+      {
+       "text": "`2 85`",
+       "feedback": "`+=` changes the element stored in the array, so the array itself holds the increased scores afterward."
+      },
+      {
+       "text": "It stops with an `ArrayIndexOutOfBoundsException` when `sub` reaches 5",
+       "feedback": "`sub` does become 5, but `5 < 5` is false, so the body never runs with that subscript."
+      }
+     ],
+     "hint": "List the values `sub` takes inside the loop body. Which elements does that cover?",
+     "explanation": "Looping a subscript from 0 while it is less than the array's size touches each element exactly once. Running one more time goes out of bounds; running one fewer misses the last element.",
+     "ref": "Ch. 8.3, for loops with variable subscripts (pp. 273–275)"
+    },
+    {
+     "id": "length-field",
+     "concept": "length is a field, not a method",
+     "level": "analyze",
+     "stem": "What happens with this code?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] scoreArray = {2, 14, 35, 67, 85};\nfor(int sub = 0; sub < scoreArray.length(); ++sub)\n    System.out.println(scoreArray[sub]);",
+      "verify": {
+       "expect": "compile_error",
+       "program": "public class LengthDemo\n{\n    public static void main(String[] args)\n    {\n        int[] scoreArray = {2, 14, 35, 67, 85};\n        for(int sub = 0; sub < scoreArray.length(); ++sub)\n            System.out.println(scoreArray[sub]);\n    }\n}\n",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It does not compile: for an array, `length` is a field, not a method",
+       "feedback": "`scoreArray.length()` asks for a method that arrays don't have, so the compiler reports that it cannot find the symbol.",
+       "correct": true
+      },
+      {
+       "text": "It prints the five scores, one per line",
+       "feedback": "The loop would print them if its header compiled. With parentheses, Java looks for a `length()` method on the array and finds none."
+      },
+      {
+       "text": "It prints the five scores, then stops at subscript 5 with an exception",
+       "feedback": "The program never runs: the mistake is in the source code, so the compiler catches it first."
+      },
+      {
+       "text": "It compiles, but prints nothing, because `length()` counts characters",
+       "feedback": "`length()` counts characters only for a `String`. An `int` array has no such method, so this can't compile at all."
+      }
+     ],
+     "hint": "Which kind of object has a `length()` *method*, and what does an array have instead?",
+     "explanation": "Every array automatically gets a `length` field holding its number of elements. Because it is a field (a property), you read it without parentheses: `scoreArray.length`. Writing `length()` is a compile-time error.",
+     "aside": "Java has three names for \"how many\": arrays use the field `length`, `String`s use the method `length()`, and the collections you'll meet later, such as `ArrayList`, use `size()`.",
+     "ref": "Ch. 8.3, the length field (pp. 274–275)"
+    },
+    {
+     "id": "foreach-copy",
+     "concept": "The enhanced for variable holds a copy",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] scoreArray = {2, 14, 35};\nfor(int val : scoreArray)\n    val += 10;\nfor(int val : scoreArray)\n    System.out.print(val + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "public class ForEachCopy\n{\n    public static void main(String[] args)\n    {\n        int[] scoreArray = {2, 14, 35};\n        for(int val : scoreArray)\n            val += 10;\n        for(int val : scoreArray)\n            System.out.print(val + \" \");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`2 14 35`",
+       "feedback": "`val` receives a copy of each value in turn. Adding 10 to the copy leaves the elements in the array unchanged.",
+       "correct": true
+      },
+      {
+       "text": "`12 24 45`",
+       "feedback": "This treats `val` as the array element itself. It is a separate local variable that only takes on each element's value."
+      },
+      {
+       "text": "`0 1 2`",
+       "feedback": "This reads `val` as a subscript. In an enhanced `for` loop, the variable takes on each element's value, not its position."
+      },
+      {
+       "text": "Nothing: it does not compile, because the loop variable cannot be changed",
+       "feedback": "Java allows the change; it just has no effect on the array. That silence is what makes this bug easy to miss."
+      }
+     ],
+     "hint": "In `for(int val : scoreArray)`, is `val` the element, or a variable that receives the element's value?",
+     "explanation": "In an enhanced `for` loop, the loop variable takes on each element's value in turn. It is ideal for reading every element, but assigning to it doesn't change the array: to change elements, use a subscript, as in `scoreArray[sub] += 10`.",
+     "ref": "Ch. 8.3, Using the Enhanced for Loop (p. 275)"
+    },
+    {
+     "id": "partial-array",
+     "concept": "Use a count when only part of an array is filled",
+     "level": "apply",
+     "stem": "Only two quiz scores have been entered. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] scores = new int[10];\nint count = 0;\nscores[count] = 80;\n++count;\nscores[count] = 90;\n++count;\nint total = 0;\nfor(int x = 0; x < scores.length; ++x)\n    total += scores[x];\nSystem.out.println(total / scores.length);",
+      "verify": {
+       "expect": "output",
+       "program": "public class PartArray\n{\n    public static void main(String[] args)\n    {\n        int[] scores = new int[10];\n        int count = 0;\n        scores[count] = 80;\n        ++count;\n        scores[count] = 90;\n        ++count;\n        int total = 0;\n        for(int x = 0; x < scores.length; ++x)\n            total += scores[x];\n        System.out.println(total / scores.length);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`17`",
+       "feedback": "The loop adds all ten elements, eight of them still 0, and divides 170 by 10. The count of scores entered, 2, should control both the loop and the division.",
+       "correct": true
+      },
+      {
+       "text": "`85`",
+       "feedback": "85 is the average of the two scores entered, which is what the code *should* compute. It loops over `scores.length` instead of `count`."
+      },
+      {
+       "text": "`0`",
+       "feedback": "The two scores were stored in elements 0 and 1, so the total is 170, not 0."
+      },
+      {
+       "text": "It stops with a `NullPointerException` at the unfilled elements",
+       "feedback": "Unfilled `int` elements hold 0, not `null`, so adding them is legal; they just pull the average down."
+      }
+     ],
+     "hint": "How many elements does `scores.length` count, and how many of them hold real scores?",
+     "explanation": "When an array is only partly filled, `length` still reports its full capacity. Keep a count of the elements actually used, as `AverageOfQuizzes` does, and use that count to limit loops and calculations.",
+     "ref": "Ch. 8.3, Using Part of an Array and Figure 8-4 (pp. 275–276)"
+    },
+    {
+     "id": "why-length",
+     "concept": "Named constants and length make loops maintainable",
+     "level": "evaluate",
+     "stem": "Why is `sub < scoreArray.length` a better loop limit than `sub < 5` for a five-element array?",
+     "options": [
+      {
+       "text": "If scores are added or removed, the loop still visits every element",
+       "feedback": "`length` always matches the array, so you change the data in one place and every loop adjusts by itself.",
+       "correct": true
+      },
+      {
+       "text": "`length` makes the loop run faster, because a literal 5 is converted at run time",
+       "feedback": "Speed isn't the issue; both limits cost the same. The difference is what happens when the array's size changes."
+      },
+      {
+       "text": "`sub < 5` stops one element early, because the last subscript in the array is 5",
+       "feedback": "The last subscript of a five-element array is 4, so `sub < 5` covers it today. The danger is the next edit to the array."
+      },
+      {
+       "text": "`length` lets the loop skip elements that have not yet been assigned values",
+       "feedback": "`length` counts every element, filled or not. To process only the filled part, you need a separate count."
+      }
+     ],
+     "hint": "Imagine the teacher adds a sixth score to the list. What else has to change in each version?",
+     "explanation": "Hard-coding an array's size into loops hides what the number means and forces you to find and fix every loop when the size changes. A named constant, or better, the array's own `length` field, documents intent and updates automatically.",
+     "ref": "Ch. 8.3, named constants and the length field (pp. 274–275)"
+    }
+   ]
+  },
+  {
+   "id": "8.4",
+   "title": "Declaring and Using Arrays of Objects",
+   "subtitle": "Arrays of references, constructing each element, calling methods on elements, and arrays of Strings",
+   "source": "Ch. 8, section 8.4 (pp. 277–283)",
+   "intro": "A payroll program creates an array for seven employees, then crashes the first time it asks one of them for a salary. Five questions on arrays that hold objects.",
+   "takeaways": [
+    "`new Employee[7]` creates seven references, all `null`. Every object still has to be built with `new` and a constructor call, usually in a loop, whether the class has a default constructor or not.",
+    "The subscript chooses the object, so it goes right after the array name and before the dot: `emps[x].getSalary()`.",
+    "An array's `length` field counts elements; a `String`'s `length()` method counts characters. `deptNames.length` and `deptNames[0].length()` answer different questions."
+   ],
+   "questions": [
+    {
+     "id": "null-elements",
+     "concept": "An array of objects starts as null references",
+     "level": "apply",
+     "stem": "`Employee` is the class in Figure 8-6, whose constructor takes a number and a salary. What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java (Employee from Figure 8-6)",
+      "text": "Employee[] emps = new Employee[7];\nSystem.out.println(emps[0].getSalary());",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class EmpArray\n{\n    public static void main(String[] args)\n    {\n        Employee[] emps = new Employee[7];\n        System.out.println(emps[0].getSalary());\n    }\n}\n\nclass Employee\n{\n    private int empNum;\n    private double empSal;\n    Employee(int e, double s)\n    {\n        empNum = e;\n        empSal = s;\n    }\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n    public double getSalary()\n    {\n        return empSal;\n    }\n}\n",
+       "error_contains": [
+        "NullPointerException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It stops with a `NullPointerException`: `emps[0]` refers to no object yet",
+       "feedback": "`new Employee[7]` makes room for seven references and sets each to `null`. Calling a method through `null` stops the program.",
+       "correct": true
+      },
+      {
+       "text": "It prints `0.0`, the default salary of an `Employee` that was never set",
+       "feedback": "There is no `Employee` whose salary could default. The array holds `null` references; no constructor has run."
+      },
+      {
+       "text": "It does not compile: creating `Employee`s requires two constructor arguments",
+       "feedback": "`new Employee[7]` doesn't call the constructor at all, so its arguments aren't needed yet. The problem appears at run time."
+      }
+     ],
+     "hint": "Did `new Employee[7]` call the `Employee` constructor seven times?",
+     "explanation": "Creating an array of objects reserves only the references, each initialized to `null`. Until you assign `emps[x] = new Employee(...)`, there is no object to call a method on.",
+     "aside": "Since Java 14, a `NullPointerException` message also says which expression was `null`, such as an array element, which turns this once-baffling crash into a quick fix.",
+     "ref": "Ch. 8.4, arrays of objects (p. 278)"
+    },
+    {
+     "id": "construct-loop",
+     "concept": "Constructing each element in a loop",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java (Employee from Figure 8-6)",
+      "text": "Employee[] emps = new Employee[7];\nfinal int START_NUM = 101;\nfinal double STARTING_SALARY = 20_000;\nfor(int x = 0; x < emps.length; ++x)\n    emps[x] = new Employee(START_NUM + x, STARTING_SALARY);\nSystem.out.println(emps[6].getEmpNum());",
+      "verify": {
+       "expect": "output",
+       "program": "public class EmpLoop\n{\n    public static void main(String[] args)\n    {\n        Employee[] emps = new Employee[7];\n        final int START_NUM = 101;\n        final double STARTING_SALARY = 20_000;\n        for(int x = 0; x < emps.length; ++x)\n            emps[x] = new Employee(START_NUM + x, STARTING_SALARY);\n        System.out.println(emps[6].getEmpNum());\n    }\n}\n\nclass Employee\n{\n    private int empNum;\n    private double empSal;\n    Employee(int e, double s)\n    {\n        empNum = e;\n        empSal = s;\n    }\n    public int getEmpNum()\n    {\n        return empNum;\n    }\n    public double getSalary()\n    {\n        return empSal;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`107`",
+       "feedback": "The last element, `emps[6]`, is built when `x` is 6, so its number is 101 + 6.",
+       "correct": true
+      },
+      {
+       "text": "`106`",
+       "feedback": "This counts `emps[6]` as the sixth element. Subscript 6 is the seventh element, built when `x` is 6."
+      },
+      {
+       "text": "`108`",
+       "feedback": "This adds one too many. `START_NUM + x` with `x` = 6 gives 107."
+      },
+      {
+       "text": "`101`",
+       "feedback": "Each pass uses the current `x`, so the numbers run 101, 102, … 107; only `emps[0]` gets 101."
+      }
+     ],
+     "hint": "Which value of `x` constructs `emps[6]`, and what is `START_NUM + x` then?",
+     "explanation": "A loop that runs `x` from 0 through `length − 1` and assigns `emps[x] = new Employee(...)` constructs every element. Values computed from `x`, like `START_NUM + x`, give each object its own data.",
+     "ref": "Ch. 8.4, constructing an array of Employees (p. 278)"
+    },
+    {
+     "id": "subscript-placement",
+     "concept": "Where the subscript goes in a method call",
+     "level": "analyze",
+     "stem": "Inside `for(int x = 0; x < emps.length; ++x)`, which statement displays the number of employee `x`?",
+     "options": [
+      {
+       "text": "`System.out.println(emps[x].getEmpNum());`",
+       "feedback": "`emps[x]` picks one `Employee`; then the dot calls that employee's method.",
+       "correct": true
+      },
+      {
+       "text": "`System.out.println(emps.getEmpNum()[x]);`",
+       "feedback": "This calls `getEmpNum()` on the array, which has no such method, then indexes an `int`. The subscript must pick the object first."
+      },
+      {
+       "text": "`System.out.println(emps.getEmpNum[x]);`",
+       "feedback": "This treats the method as if it were an array. Each `Employee` has one `getEmpNum()`; the subscript belongs to `emps`."
+      },
+      {
+       "text": "`System.out.println(emps[].getEmpNum(x));`",
+       "feedback": "Empty brackets don't select anything, and `getEmpNum()` takes no argument. The position goes inside the brackets after `emps`."
+      }
+     ],
+     "hint": "Which part of the expression is an array: `emps`, or `getEmpNum`?",
+     "explanation": "To use a method of an object stored in an array, put the subscript right after the array name and before the dot: `emps[x].getEmpNum()`. The subscript chooses the object; the method belongs to that object.",
+     "ref": "Ch. 8.4, calling methods on array elements (p. 279)"
+    },
+    {
+     "id": "strings-length",
+     "concept": "Array length versus String length()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String[] deptNames = {\"Accounting\", \"Human Resources\", \"Sales\"};\nSystem.out.println(deptNames.length + \" \" + deptNames[0].length());",
+      "verify": {
+       "expect": "output",
+       "program": "public class DeptNames\n{\n    public static void main(String[] args)\n    {\n        String[] deptNames = {\"Accounting\", \"Human Resources\", \"Sales\"};\n        System.out.println(deptNames.length + \" \" + deptNames[0].length());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 10`",
+       "feedback": "`deptNames.length` is the number of elements, 3. `deptNames[0].length()` is the number of characters in `Accounting`, 10.",
+       "correct": true
+      },
+      {
+       "text": "`10 3`",
+       "feedback": "The two expressions are swapped. The field on the array counts elements; the method on one `String` counts its characters."
+      },
+      {
+       "text": "`3 3`",
+       "feedback": "`deptNames[0]` is a `String`, so `length()` counts its characters, not the array's elements."
+      },
+      {
+       "text": "It does not compile: an array of `String`s needs `length()` with parentheses",
+       "feedback": "An array is still an array whatever it holds, so its size is the field `length`. Parentheses belong only on the `String` method."
+      }
+     ],
+     "hint": "What kind of thing is `deptNames`, and what kind of thing is `deptNames[0]`?",
+     "explanation": "Arrays report their number of elements through the `length` field; `String` objects report their number of characters through the `length()` method. With an array of `String`s you can use both, and they answer different questions.",
+     "ref": "Ch. 8.4, Manipulating Arrays of Strings (p. 279)"
+    },
+    {
+     "id": "default-ctor",
+     "concept": "Every element needs its own new",
+     "level": "understand",
+     "stem": "`InventoryItem` has only a default constructor. After `InventoryItem[] items = new InventoryItem[1000];`, what must happen before `items[0]` can be used?",
+     "options": [
+      {
+       "text": "Each element must be built with `new InventoryItem()`, usually in a loop",
+       "feedback": "The array holds 1,000 `null` references. Each needs its own object, created by calling the constructor with `new`.",
+       "correct": true
+      },
+      {
+       "text": "Nothing more, because Java calls the default constructor for each element",
+       "feedback": "Java never calls a constructor for array elements, default or not. The elements start as `null`."
+      },
+      {
+       "text": "One call, `items = new InventoryItem();`, builds all 1,000 objects at once",
+       "feedback": "That tries to store one `InventoryItem` in a variable meant for an array, which doesn't compile. Each element is built separately."
+      },
+      {
+       "text": "Each element must be set to `null` before it can hold an object",
+       "feedback": "The elements are already `null`. What's missing is the object each one should refer to."
+      }
+     ],
+     "hint": "What value does each element of a new array of objects hold?",
+     "explanation": "Whether a class has a default constructor or one that takes arguments, creating an array of that class creates no objects. You must call the constructor with `new` for every element you intend to use.",
+     "ref": "Ch. 8.4, default constructors and Two Truths & a Lie (pp. 278–280)"
+    }
+   ]
+  },
+  {
+   "id": "8.5",
+   "title": "Searching an Array and Using Parallel Arrays",
+   "subtitle": "Searching with a flag, parallel arrays, ending a search early, and range matches",
+   "source": "Ch. 8, section 8.5 (pp. 284–288)",
+   "intro": "An online store must check that an ordered item number exists and look up its price, without a wall of `if` statements. Five questions on searching arrays.",
+   "takeaways": [
+    "To search an array, compare the target with each element in a loop and set a flag when a match is found. The loop doesn't change when the list grows.",
+    "In parallel arrays, the same subscript links related data, so the subscript where a match is found also locates the matching price, rate or name.",
+    "A range match compares a value with the endpoints of ranges, here each range's low limit starting from the highest, instead of storing one entry for every possible value."
+   ],
+   "questions": [
+    {
+     "id": "parallel-price",
+     "concept": "The match's subscript finds the parallel value",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] validValues = {101, 108, 201, 213, 266,\n                     304, 311, 409, 411, 412};\ndouble[] prices = {0.29, 1.23, 3.50, 0.69, 6.79,\n                   3.19, 0.99, 0.89, 1.26, 8.00};\nint itemOrdered = 409;\ndouble itemPrice = 0.0;\nboolean isValidItem = false;\nfor(int x = 0; x < validValues.length; ++x)\n{\n    if(itemOrdered == validValues[x])\n    {\n        isValidItem = true;\n        itemPrice = prices[x];\n    }\n}\nSystem.out.println(isValidItem + \" \" + itemPrice);",
+      "verify": {
+       "expect": "output",
+       "program": "public class FindPrice\n{\n    public static void main(String[] args)\n    {\n        int[] validValues = {101, 108, 201, 213, 266,\n                             304, 311, 409, 411, 412};\n        double[] prices = {0.29, 1.23, 3.50, 0.69, 6.79,\n                           3.19, 0.99, 0.89, 1.26, 8.00};\n        int itemOrdered = 409;\n        double itemPrice = 0.0;\n        boolean isValidItem = false;\n        for(int x = 0; x < validValues.length; ++x)\n        {\n            if(itemOrdered == validValues[x])\n            {\n                isValidItem = true;\n                itemPrice = prices[x];\n            }\n        }\n        System.out.println(isValidItem + \" \" + itemPrice);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`true 0.89`",
+       "feedback": "409 is at subscript 7 of `validValues`, so the price comes from `prices[7]`, which is 0.89.",
+       "correct": true
+      },
+      {
+       "text": "`true 1.26`",
+       "feedback": "1.26 is one position too far, at subscript 8. The same subscript `x` is used for both arrays."
+      },
+      {
+       "text": "`true 0.99`",
+       "feedback": "0.99 sits one position too early, at subscript 6, the price of item 311."
+      },
+      {
+       "text": "`false 0.0`",
+       "feedback": "409 is in the list, so the `if` sets the flag and copies the price when `x` reaches 7."
+      }
+     ],
+     "hint": "At which subscript does 409 appear? Read the price at that same subscript.",
+     "explanation": "Parallel arrays store related data at corresponding positions. Once a search finds the subscript of a match in one array, that same subscript retrieves the related value from the other.",
+     "aside": "Most object-oriented programmers would store an `Item` object holding both number and price in one array, as the book's Note suggests: data that belongs together can then never drift out of step.",
+     "ref": "Ch. 8.5, Using Parallel Arrays and Figure 8-9 (pp. 284–285)"
+    },
+    {
+     "id": "flag-reset",
+     "concept": "A flag must not be reset after a match",
+     "level": "analyze",
+     "stem": "A student adds an `else` to the search, and item 108 is now reported as invalid. Why?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] validValues = {101, 108, 201, 213, 266};\nint itemOrdered = 108;\nboolean isValidItem = false;\nfor(int x = 0; x < validValues.length; ++x)\n{\n    if(itemOrdered == validValues[x])\n        isValidItem = true;\n    else\n        isValidItem = false;\n}\nSystem.out.println(isValidItem);",
+      "verify": {
+       "expect": "output",
+       "output": "false",
+       "program": "public class FlagReset\n{\n    public static void main(String[] args)\n    {\n        int[] validValues = {101, 108, 201, 213, 266};\n        int itemOrdered = 108;\n        boolean isValidItem = false;\n        for(int x = 0; x < validValues.length; ++x)\n        {\n            if(itemOrdered == validValues[x])\n                isValidItem = true;\n            else\n                isValidItem = false;\n        }\n        System.out.println(isValidItem);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Comparisons after the match fail and reset the flag to `false`",
+       "feedback": "108 matches at subscript 1, but the loop keeps going, and every later mismatch sets `isValidItem` back to `false`.",
+       "correct": true
+      },
+      {
+       "text": "The loop stops at the first element that doesn't match, 101",
+       "feedback": "Nothing ends the loop early; it visits all five elements. The flag simply ends up with the last comparison's result."
+      },
+      {
+       "text": "`==` can't compare an `int` variable with an array element",
+       "feedback": "An `int` element is used exactly like an `int` variable, so `==` works. The match is found, then overwritten."
+      },
+      {
+       "text": "`isValidItem` is declared outside the loop, so changes inside don't stick",
+       "feedback": "Changes inside the loop do stick, and that is the problem: the last change made is to `false`."
+      }
+     ],
+     "hint": "After the match at subscript 1, what do the remaining passes do to `isValidItem`?",
+     "explanation": "A search flag starts `false` and is only ever set to `true` when a match appears. Assigning `false` on each mismatch makes the result depend on the last element checked, not on whether a match happened anywhere.",
+     "ref": "Ch. 8.5, searching with a flag (p. 284)"
+    },
+    {
+     "id": "early-exit",
+     "concept": "Ending a search early with a compound test",
+     "level": "evaluate",
+     "stem": "Which loop header stops searching as soon as the item is found, without changing `x` inside the loop body?",
+     "options": [
+      {
+       "text": "`for(int x = 0; x < NUMBER_OF_ITEMS && !isValidItem; ++x)`",
+       "feedback": "The loop continues only while `x` is in range *and* no match has been found, so it ends after a match or at the end of the array.",
+       "correct": true
+      },
+      {
+       "text": "`for(int x = 0; x < NUMBER_OF_ITEMS || !isValidItem; ++x)`",
+       "feedback": "With `||`, an item that isn't in the list keeps `!isValidItem` true, so the loop runs past the end of the array."
+      },
+      {
+       "text": "`for(int x = 0; !isValidItem; ++x)`",
+       "feedback": "This stops after a match, but an invalid item never sets the flag, so `x` runs out of bounds."
+      },
+      {
+       "text": "`for(int x = 0; x < NUMBER_OF_ITEMS && isValidItem; ++x)`",
+       "feedback": "The flag starts `false`, so this condition is false immediately and the loop never searches at all."
+      }
+     ],
+     "hint": "The loop must stop in two situations. What are they, and which operator requires both conditions to stay true?",
+     "explanation": "Once a match is found, further comparisons are wasted. Putting a compound condition in the `for` header, \"in range and not yet found\", ends the search early without altering the loop control variable in the body.",
+     "aside": "Checking elements one by one is called a linear or sequential search: up to *n* comparisons for *n* items. The binary search in 8.9 needs only about log₂ *n* on a sorted list, around 20 comparisons for a million items.",
+     "ref": "Ch. 8.5, Figures 8-11 and 8-12 (p. 286)"
+    },
+    {
+     "id": "range-match",
+     "concept": "Range match from the highest limit down",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] discountRangeLimits = {   1,   13,   50,  100,  200};\ndouble[] discountRates   = {0.00, 0.10, 0.14, 0.18, 0.20};\nint numOrdered = 50;\nint sub = discountRangeLimits.length - 1;\nwhile(sub >= 0 && numOrdered < discountRangeLimits[sub])\n    --sub;\nSystem.out.println(discountRates[sub]);",
+      "verify": {
+       "expect": "output",
+       "program": "public class FindDiscount\n{\n    public static void main(String[] args)\n    {\n        int[] discountRangeLimits = {   1,   13,   50,  100,  200};\n        double[] discountRates   = {0.00, 0.10, 0.14, 0.18, 0.20};\n        int numOrdered = 50;\n        int sub = discountRangeLimits.length - 1;\n        while(sub >= 0 && numOrdered < discountRangeLimits[sub])\n            --sub;\n        System.out.println(discountRates[sub]);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0.14`",
+       "feedback": "Starting at 200, the loop moves down past 200 and 100, then stops at 50, since 50 is not less than 50. Subscript 2 gives 0.14.",
+       "correct": true
+      },
+      {
+       "text": "`0.1`",
+       "feedback": "That treats 50 as belonging to the 13–49 range. The limits are low endpoints, so 50 starts the 14% range."
+      },
+      {
+       "text": "`0.18`",
+       "feedback": "0.18 is for 100 to 199 items. The loop moves down past 100 because 50 is less than 100."
+      },
+      {
+       "text": "`0.0`",
+       "feedback": "The loop stops at the first limit that `numOrdered` reaches, which is 50, long before subscript 0."
+      }
+     ],
+     "hint": "Starting with the last limit, when does `numOrdered < discountRangeLimits[sub]` first become false?",
+     "explanation": "In a range match, one array holds the low (or high) endpoint of each range and a parallel array holds the value for that range. Searching from the highest low limit downward, the first limit the value reaches identifies its range.",
+     "ref": "Ch. 8.5, Searching an Array for a Range Match and Figure 8-13 (pp. 286–287)"
+    },
+    {
+     "id": "guard-order",
+     "concept": "Guarding the subscript in a compound condition",
+     "level": "understand",
+     "stem": "Why does the `while` condition in the range match test `sub >= 0` before `numOrdered < discountRangeLimits[sub]`?",
+     "options": [
+      {
+       "text": "If `sub` drops to −1, `&&` stops before an illegal array read",
+       "feedback": "`&&` evaluates its right side only when the left side is true, so a negative `sub` never reaches the array.",
+       "correct": true
+      },
+      {
+       "text": "The cheaper test runs first, so the loop finishes in fewer passes",
+       "feedback": "The number of passes is the same either way. The order matters because one order can crash."
+      },
+      {
+       "text": "The order makes no difference, because `&&` always evaluates both sides",
+       "feedback": "`&&` short-circuits: once the left side is false, the right side isn't evaluated. That is what protects the array."
+      },
+      {
+       "text": "It keeps `sub` from going above the highest subscript of the array",
+       "feedback": "`sub` only decreases in this loop. The danger is falling below 0, not climbing past the end."
+      }
+     ],
+     "hint": "If `numOrdered` were 0, what value would `sub` eventually reach?",
+     "explanation": "With `&&`, Java evaluates the right operand only if the left one is true. Placing a bounds check first guarantees the array is never read with a subscript below zero, a common defensive pattern.",
+     "ref": "Ch. 8.5, Note following Figure 8-13 (p. 287)"
+    }
+   ]
+  },
+  {
+   "id": "8.6",
+   "title": "Passing Arrays to and Returning Arrays from Methods",
+   "subtitle": "Elements passed by value, array references passed by value, and arrays as return values",
+   "source": "Ch. 8, section 8.6 (pp. 289–292)",
+   "intro": "One helper method changes a number and `main()` never sees it; another, a `void` method, rewrites a whole array and `main()` does. Five questions on what a method really receives.",
+   "takeaways": [
+    "Passing one element of a primitive array passes a copy of its value; changing the parameter doesn't change the array.",
+    "Passing an array passes a copy of its reference, so the method reaches the same elements and its changes to them are visible to the caller, even from a `void` method. Pointing the parameter at a new array changes only the copy.",
+    "Pass an array by its name, without brackets. Use brackets in the parameter type (`int[] arr`) and in the return type (`public static int[] getArray()`)."
+   ],
+   "questions": [
+    {
+     "id": "element-by-value",
+     "concept": "A primitive element is passed by value",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void main(String[] args)\n{\n    int[] someNums = {5, 10, 15, 20};\n    methodGetsOneInt(someNums[1]);\n    System.out.println(someNums[1]);\n}\npublic static void methodGetsOneInt(int one)\n{\n    one = 999;\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class PassArrayElement\n{\n    public static void main(String[] args)\n    {\n        int[] someNums = {5, 10, 15, 20};\n        methodGetsOneInt(someNums[1]);\n        System.out.println(someNums[1]);\n    }\n    public static void methodGetsOneInt(int one)\n    {\n        one = 999;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`10`",
+       "feedback": "The method receives a copy of the value 10. Setting the copy, `one`, to 999 leaves `someNums[1]` untouched.",
+       "correct": true
+      },
+      {
+       "text": "`999`",
+       "feedback": "This assumes the method gets the element itself. A primitive is passed by value: the method works on its own copy."
+      },
+      {
+       "text": "`0`",
+       "feedback": "Nothing resets the element. The method changes only its local parameter, and `someNums[1]` keeps 10."
+      }
+     ],
+     "hint": "When an `int` is passed to a method, does the method get the variable or a copy of its value?",
+     "explanation": "An individual array element of a primitive type is passed like any primitive variable: by value. The receiving method gets a copy, so changes it makes are local and never reach the array.",
+     "ref": "Ch. 8.6, Figure 8-16 and Figure 8-17 (p. 289)"
+    },
+    {
+     "id": "array-reference",
+     "concept": "A method can change the caller's array",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void main(String[] args)\n{\n    int[] someNums = {5, 10, 15, 20};\n    methodGetsArray(someNums);\n    System.out.println(someNums[0] + \" \" + someNums[3]);\n}\npublic static void methodGetsArray(int[] arr)\n{\n    for(int x = 0; x < arr.length; ++x)\n        arr[x] = 888;\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class PassArray\n{\n    public static void main(String[] args)\n    {\n        int[] someNums = {5, 10, 15, 20};\n        methodGetsArray(someNums);\n        System.out.println(someNums[0] + \" \" + someNums[3]);\n    }\n    public static void methodGetsArray(int[] arr)\n    {\n        for(int x = 0; x < arr.length; ++x)\n            arr[x] = 888;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`888 888`",
+       "feedback": "The method receives a copy of the array's address, so `arr` and `someNums` refer to the same elements, and the method rewrites them all.",
+       "correct": true
+      },
+      {
+       "text": "`5 20`",
+       "feedback": "This would be right for a single `int`. An array name is a reference, so the method reaches the original elements."
+      },
+      {
+       "text": "`888 20`",
+       "feedback": "The loop runs to `arr.length`, so it changes all four elements, the last one included."
+      },
+      {
+       "text": "Nothing: it does not compile, because a `void` method cannot change `main()`'s values",
+       "feedback": "A `void` method returns nothing, but it can still change objects it has a reference to, as it does here."
+      }
+     ],
+     "hint": "What does `methodGetsArray()` receive: four numbers, or the location of the four numbers?",
+     "explanation": "Arrays are reference types. Passing an array to a method gives the method a copy of the array's memory address, so it can read and change the caller's elements directly, without returning anything.",
+     "ref": "Ch. 8.6, Figures 8-18 and 8-19 (pp. 289–290)"
+    },
+    {
+     "id": "reference-by-value",
+     "concept": "The reference itself is a copy",
+     "level": "analyze",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void main(String[] args)\n{\n    int[] nums = {1, 2, 3};\n    replace(nums);\n    System.out.println(nums[0]);\n}\npublic static void replace(int[] arr)\n{\n    arr = new int[] {7, 8, 9};\n    arr[0] = 100;\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class Reassign\n{\n    public static void main(String[] args)\n    {\n        int[] nums = {1, 2, 3};\n        replace(nums);\n        System.out.println(nums[0]);\n    }\n    public static void replace(int[] arr)\n    {\n        arr = new int[] {7, 8, 9};\n        arr[0] = 100;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`1`",
+       "feedback": "`arr` starts as a copy of `nums`'s address. Assigning a new array to `arr` changes only that copy, so `nums` still refers to {1, 2, 3}.",
+       "correct": true
+      },
+      {
+       "text": "`100`",
+       "feedback": "100 is stored in the new array `arr` points to after the reassignment, not in `nums`'s array."
+      },
+      {
+       "text": "`7`",
+       "feedback": "This assumes reassigning `arr` also redirects `nums`. Only the method's copy of the address changes."
+      }
+     ],
+     "hint": "After `arr = new int[] {7, 8, 9};`, do `arr` and `nums` still refer to the same array?",
+     "explanation": "In Java an array is not passed by reference; a reference to it is passed by value. The method can change the elements the reference points to, but pointing its parameter at a different array never affects the caller's variable.",
+     "aside": "Strictly speaking, Java has only pass-by-value. For objects and arrays, the value passed happens to be a reference, which is why the book calls the distinction subtle.",
+     "ref": "Ch. 8.6, Note on passing references by value (p. 290)"
+    },
+    {
+     "id": "call-syntax",
+     "concept": "Pass an array by name, without brackets",
+     "level": "apply",
+     "stem": "Which statement passes the array `someNums` to the method `methodGetsArray(int[] arr)`?",
+     "options": [
+      {
+       "text": "`methodGetsArray(someNums);`",
+       "feedback": "The array's name is the reference to pass. No brackets are needed in the call.",
+       "correct": true
+      },
+      {
+       "text": "`methodGetsArray(someNums[]);`",
+       "feedback": "Empty brackets after a name aren't an expression Java understands. Brackets belong in the parameter list, not the call."
+      },
+      {
+       "text": "`methodGetsArray(int[] someNums);`",
+       "feedback": "Types go in method headers, not in calls. In the call you pass a value, here the reference stored in `someNums`."
+      },
+      {
+       "text": "`methodGetsArray(someNums[4]);`",
+       "feedback": "This passes one `int` element, which is also out of bounds for four elements. The method expects the whole array."
+      }
+     ],
+     "hint": "In a call, you pass values. What value represents the whole array?",
+     "explanation": "When you pass an array, use only its name, which holds the reference. The method header shows that it receives an array by using brackets with the parameter's type, as in `int[] arr`.",
+     "ref": "Ch. 8.6, Note in Figure 8-18 and p. 291"
+    },
+    {
+     "id": "return-type",
+     "concept": "Returning an array",
+     "level": "apply",
+     "stem": "Which method header lets `int[] scoresFromMethod = getArray();` compile, with the method returning the array it builds?",
+     "options": [
+      {
+       "text": "`public static int[] getArray()`",
+       "feedback": "The brackets in the return type say the method hands back a reference to an array of `int`.",
+       "correct": true
+      },
+      {
+       "text": "`public static int getArray()`",
+       "feedback": "This promises a single `int`, so `return scores;` with an array wouldn't compile, and neither would the assignment."
+      },
+      {
+       "text": "`public static void getArray(int[] scores)`",
+       "feedback": "A `void` method returns nothing, so its call can't appear on the right side of an assignment."
+      },
+      {
+       "text": "`public static int[4] getArray()`",
+       "feedback": "A size never appears in an array type. The array's size is decided when it is created, not in the return type."
+      }
+     ],
+     "hint": "The method returns `scores`, which was declared as `int[] scores`. What must the return type be?",
+     "explanation": "A method can return an array reference. Put square brackets with the return type in the header, return the array's name without brackets, and store the result in any array variable of the same type.",
+     "ref": "Ch. 8.6, Returning an Array from a Method and Figure 8-20 (p. 291)"
+    }
+   ]
+  },
+  {
+   "id": "8.7",
+   "title": "Sorting Array Elements",
+   "subtitle": "Swapping with a temporary variable, the bubble sort, its efficiency, sorting objects, and the insertion sort",
+   "source": "Ch. 8, section 8.7 (pp. 292–300)",
+   "intro": "A leaderboard must list scores in order, and the first attempt at swapping two of them makes one score vanish. Six questions on putting arrays in order.",
+   "takeaways": [
+    "Swapping two values needs a temporary variable: save one value, overwrite it with the other, then copy the saved value into the second variable.",
+    "Each pass of an ascending bubble sort compares adjacent pairs and carries the largest remaining value to the end, so at most `length − 1` passes are needed and each pass can make one fewer comparison than the last.",
+    "An insertion sort takes each element in turn, shifts larger earlier elements one position later, and puts the element in the gap. When sorting objects, compare one field but swap whole objects."
+   ],
+   "questions": [
+    {
+     "id": "bad-swap",
+     "concept": "A swap needs a temporary variable",
+     "level": "apply",
+     "stem": "A student tries to swap two values. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int valA = 16;\nint valB = 2;\nvalA = valB;\nvalB = valA;\nSystem.out.println(valA + \" \" + valB);",
+      "verify": {
+       "expect": "output",
+       "program": "public class BadSwap\n{\n    public static void main(String[] args)\n    {\n        int valA = 16;\n        int valB = 2;\n        valA = valB;\n        valB = valA;\n        System.out.println(valA + \" \" + valB);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`2 2`",
+       "feedback": "`valA = valB` overwrites 16 with 2 before it is saved anywhere, so `valB = valA` copies 2 back. The 16 is lost.",
+       "correct": true
+      },
+      {
+       "text": "`2 16`",
+       "feedback": "That is what a swap should produce, but it needs somewhere to hold 16 while `valA` is overwritten."
+      },
+      {
+       "text": "`16 16`",
+       "feedback": "This runs the assignments in the opposite order. The first statement copies `valB`'s 2 into `valA`."
+      },
+      {
+       "text": "`16 2`",
+       "feedback": "Each assignment really happens; the first one changes `valA` to 2 before the second runs."
+      }
+     ],
+     "hint": "After the first assignment runs, where is the value 16 stored?",
+     "explanation": "Assignment replaces a variable's old value. To exchange two values, first copy one into a temporary variable, then overwrite it, then assign the saved copy to the other variable: `temp = valA; valA = valB; valB = temp;`.",
+     "ref": "Ch. 8.7, swapping two values (pp. 292–293)"
+    },
+    {
+     "id": "one-pass",
+     "concept": "One bubble sort pass moves the largest value to the end",
+     "level": "apply",
+     "stem": "This is one pass of an ascending bubble sort. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] someNums = {88, 33, 99, 22, 54};\nint temp;\nfor(int b = 0; b < someNums.length - 1; ++b)\n    if(someNums[b] > someNums[b + 1])\n    {\n        temp = someNums[b];\n        someNums[b] = someNums[b + 1];\n        someNums[b + 1] = temp;\n    }\nfor(int n : someNums)\n    System.out.print(n + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "public class OnePass\n{\n    public static void main(String[] args)\n    {\n        int[] someNums = {88, 33, 99, 22, 54};\n        int temp;\n        for(int b = 0; b < someNums.length - 1; ++b)\n            if(someNums[b] > someNums[b + 1])\n            {\n                temp = someNums[b];\n                someNums[b] = someNums[b + 1];\n                someNums[b + 1] = temp;\n            }\n        for(int n : someNums)\n            System.out.print(n + \" \");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`33 88 22 54 99`",
+       "feedback": "The pass swaps 88/33, leaves 88/99, swaps 99/22, then swaps 99/54. The largest value, 99, ends at the bottom.",
+       "correct": true
+      },
+      {
+       "text": "`22 33 54 88 99`",
+       "feedback": "This is the fully sorted list, which takes several passes. One pass guarantees only that the largest value reaches the end."
+      },
+      {
+       "text": "`33 22 54 88 99`",
+       "feedback": "This is the list after two passes. The second pass is what moves 88 into place."
+      },
+      {
+       "text": "`33 88 22 99 54`",
+       "feedback": "This stops one comparison short. With `b < length - 1`, `b` reaches 3, so 99 and 54 are compared and swapped too."
+      }
+     ],
+     "hint": "Carry out each comparison in order, swapping as you go. Which value is moved along with every swap?",
+     "explanation": "In a bubble sort, each pass compares adjacent pairs and swaps the ones that are out of order. In ascending order, every pass carries the largest unsorted value to the end of the list while smaller values drift toward the front.",
+     "ref": "Ch. 8.7, Using the Bubble Sort Algorithm (pp. 293–294)"
+    },
+    {
+     "id": "pass-bounds",
+     "concept": "The bubble sort's loop limit",
+     "level": "analyze",
+     "stem": "A student changes the loop test to `b < someNums.length`. What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] someNums = {88, 33, 99, 22, 54};\nint temp;\nfor(int b = 0; b < someNums.length; ++b)\n    if(someNums[b] > someNums[b + 1])\n    {\n        temp = someNums[b];\n        someNums[b] = someNums[b + 1];\n        someNums[b + 1] = temp;\n    }",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class PassBounds\n{\n    public static void main(String[] args)\n    {\n        int[] someNums = {88, 33, 99, 22, 54};\n        int temp;\n        for(int b = 0; b < someNums.length; ++b)\n            if(someNums[b] > someNums[b + 1])\n            {\n                temp = someNums[b];\n                someNums[b] = someNums[b + 1];\n                someNums[b + 1] = temp;\n            }\n    }\n}\n",
+       "error_contains": [
+        "ArrayIndexOutOfBoundsException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It throws an `ArrayIndexOutOfBoundsException` when it reads `someNums[5]`",
+       "feedback": "The last pair to compare is elements 3 and 4. With `b` = 4, `someNums[b + 1]` is `someNums[5]`, which doesn't exist.",
+       "correct": true
+      },
+      {
+       "text": "It compares one extra pair, which is harmless, and the list ends the same",
+       "feedback": "There is no extra pair: element 4 has no neighbor after it, so the comparison itself fails."
+      },
+      {
+       "text": "It does not compile, because the compiler sees `b + 1` might exceed the size",
+       "feedback": "The compiler doesn't track subscript values. The out-of-range read happens, and fails, at run time."
+      },
+      {
+       "text": "It sorts the list correctly, using one fewer pass than the original loop",
+       "feedback": "Changing the limit doesn't change how many passes are needed; it makes the last comparison read past the array."
+      }
+     ],
+     "hint": "In each comparison the code reads `someNums[b + 1]`. What is the largest `b` for which that element exists?",
+     "explanation": "Because each comparison reads `someNums[b]` and `someNums[b + 1]`, `b` must stay less than the array's length minus 1. The highest legal value for `b` is one less than the highest subscript.",
+     "ref": "Ch. 8.7, Note following the first bubble sort loop (p. 294)"
+    },
+    {
+     "id": "fewer-compares",
+     "concept": "Each pass needs one fewer comparison",
+     "level": "understand",
+     "stem": "In the improved bubble sort (Figure 8-22), how many comparisons does the inner loop make on the **third** pass through this five-element array?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] someNums = {88, 33, 99, 22, 54};\nint a, b, temp;\nint comparisonsToMake = someNums.length - 1;\nfor(a = 0; a < someNums.length - 1; ++a)\n{\n    for(b = 0; b < comparisonsToMake; ++b)\n    {\n        if(someNums[b] > someNums[b + 1])\n        {\n            temp = someNums[b];\n            someNums[b] = someNums[b + 1];\n            someNums[b + 1] = temp;\n        }\n    }\n    --comparisonsToMake;\n}",
+      "verify": {
+       "expect": "output",
+       "output": "2",
+       "program": "public class CountCompares\n{\n    public static void main(String[] args)\n    {\n        int[] someNums = {88, 33, 99, 22, 54};\n        int a, b, temp;\n        int count = 0;\n        int comparisonsToMake = someNums.length - 1;\n        for(a = 0; a < someNums.length - 1; ++a)\n        {\n            for(b = 0; b < comparisonsToMake; ++b)\n            {\n                if(a == 2)\n                    ++count;\n                if(someNums[b] > someNums[b + 1])\n                {\n                    temp = someNums[b];\n                    someNums[b] = someNums[b + 1];\n                    someNums[b + 1] = temp;\n                }\n            }\n            --comparisonsToMake;\n        }\n        System.out.println(count);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "2",
+       "feedback": "`comparisonsToMake` starts at 4 and drops by 1 after each pass: 4 on the first pass, 3 on the second, 2 on the third.",
+       "correct": true
+      },
+      {
+       "text": "4",
+       "feedback": "Four comparisons is the first pass. After each pass the largest remaining value is in place, so the next pass checks one fewer pair."
+      },
+      {
+       "text": "3",
+       "feedback": "Three comparisons belong to the second pass; the third pass starts after one more decrement."
+      },
+      {
+       "text": "1",
+       "feedback": "One comparison is left for the fourth and final pass, when only the first two values can still be out of order."
+      }
+     ],
+     "hint": "What is `comparisonsToMake` before the first pass, and how does it change after each one?",
+     "explanation": "After pass *k* of an ascending bubble sort, the *k* largest values are already in their final positions at the end. Decreasing the number of comparisons by one after each pass skips those settled values without changing the result.",
+     "aside": "Even improved, bubble sort makes roughly *n*²/2 comparisons: hundreds of billions for a million items. That is why library sorts, like the `Arrays.sort()` you'll use in 8.9, rely on faster algorithms.",
+     "ref": "Ch. 8.7, Improving Bubble Sort Efficiency and Figure 8-22 (p. 295)"
+    },
+    {
+     "id": "insertion-trace",
+     "concept": "Tracing an insertion sort",
+     "level": "apply",
+     "stem": "Trace this insertion sort (Figure 8-25). What does the array hold right after the outer loop has finished `a` = 2?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] someNums = {90, 85, 65, 95, 75};\nint a, b, temp;\na = 1;\nwhile(a < someNums.length)\n{\n    temp = someNums[a];\n    b = a - 1;\n    while(b >= 0 && someNums[b] > temp)\n    {\n        someNums[b + 1] = someNums[b];\n        --b;\n    }\n    someNums[b + 1] = temp;\n    ++a;\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class InsertionTrace\n{\n    public static void main(String[] args)\n    {\n        int[] someNums = {90, 85, 65, 95, 75};\n        int a, b, temp;\n        a = 1;\n        while(a < someNums.length)\n        {\n            temp = someNums[a];\n            b = a - 1;\n            while(b >= 0 && someNums[b] > temp)\n            {\n                someNums[b + 1] = someNums[b];\n                --b;\n            }\n            someNums[b + 1] = temp;\n            if(a == 2)\n                for(int n : someNums)\n                    System.out.print(n + \" \");\n            ++a;\n        }\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`65 85 90 95 75`",
+       "feedback": "`a` = 1 inserts 85 before 90; `a` = 2 shifts 90 and 85 down and inserts 65 first. 95 and 75 haven't been handled yet.",
+       "correct": true
+      },
+      {
+       "text": "`85 90 65 95 75`",
+       "feedback": "This is the array after `a` = 1 only. When `a` = 2, 65 moves in front of both 85 and 90."
+      },
+      {
+       "text": "`65 75 85 90 95`",
+       "feedback": "This is the finished sort. 75 isn't inserted until `a` = 4."
+      },
+      {
+       "text": "`65 90 85 95 75`",
+       "feedback": "This swaps 65 with 90 as a bubble sort would. An insertion sort shifts each larger earlier value down one position, keeping 85 before 90."
+      }
+     ],
+     "hint": "When `a` is 2, `temp` is 65. Which earlier values are greater than 65, and where does each move?",
+     "explanation": "An insertion sort keeps the front of the array sorted. For each new element, it shifts every larger value in the sorted part one position later, then places the element in the opening, much like sorting cards in your hand.",
+     "aside": "Insertion sort is very fast on short or nearly sorted lists, so Java's own library sorts switch to it for very short stretches of an array.",
+     "ref": "Ch. 8.7, Using the Insertion Sort Algorithm (pp. 296–297)"
+    },
+    {
+     "id": "swap-objects",
+     "concept": "Sorting objects: compare a field, swap the object",
+     "level": "evaluate",
+     "stem": "A student's `Employee` sort compares `getSalary()` values but, when a pair is out of order, swaps only the two salaries using `setSalary()`. What goes wrong?",
+     "options": [
+      {
+       "text": "Salaries end up in order, but attached to the wrong employees",
+       "feedback": "Each salary moves while the names and numbers stay put, so the data no longer describes real people. The whole `Employee` object should move.",
+       "correct": true
+      },
+      {
+       "text": "Nothing goes wrong, because the list ends up in salary order either way",
+       "feedback": "The salary column is in order, but each employee's record has been altered; that's data corruption, not sorting."
+      },
+      {
+       "text": "It cannot compile, because `temp` must be an `Employee` to hold a salary",
+       "feedback": "A `double temp` can hold a salary perfectly well, so it compiles. The flaw is in what gets moved."
+      },
+      {
+       "text": "It works only when no two employees earn exactly the same salary",
+       "feedback": "Equal salaries aren't swapped at all. The problem shows up whenever any swap happens."
+      }
+     ],
+     "hint": "After the sort, is each salary still stored with the same name and employee number it started with?",
+     "explanation": "When sorting objects, you compare one field to decide the order, but you swap the entire objects, using a `temp` variable of the object's type. That keeps every field of each record together.",
+     "ref": "Ch. 8.7, Sorting Arrays of Objects and Figure 8-24 (pp. 295–296)"
+    }
+   ]
+  },
+  {
+   "id": "8.8",
+   "title": "Using Two-Dimensional and Other Multidimensional Arrays",
+   "subtitle": "Rows and columns, the length of rows and columns, jagged arrays, and more dimensions",
+   "source": "Ch. 8, section 8.8 (pp. 300–306)",
+   "intro": "An apartment's rent depends on two things, the floor and the number of bedrooms, and a single list can't be indexed by both. Five questions on arrays with rows and columns.",
+   "takeaways": [
+    "A two-dimensional array is an array of arrays: the first subscript chooses the row, the second chooses the column, and both start at 0.",
+    "`array.length` is the number of rows; `array[row].length` is the number of columns in that row. Nested loops use both as limits.",
+    "Rows can have different lengths (a jagged array): give only the number of rows with `new`, then create each row separately before using it."
+   ],
+   "questions": [
+    {
+     "id": "row-col",
+     "concept": "First subscript is the row, second the column",
+     "level": "apply",
+     "stem": "Using the rents table from Figure 8-30, what does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[][] rents = { {400, 450, 510},\n                  {500, 560, 630},\n                  {625, 676, 740},\n                  {1000, 1250, 1600} };\nSystem.out.println(rents[2][1]);",
+      "verify": {
+       "expect": "output",
+       "program": "public class FindRent\n{\n    public static void main(String[] args)\n    {\n        int[][] rents = { {400, 450, 510},\n                          {500, 560, 630},\n                          {625, 676, 740},\n                          {1000, 1250, 1600} };\n        System.out.println(rents[2][1]);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`676`",
+       "feedback": "`rents[2]` is the third row, {625, 676, 740}, and column 1 is its second value.",
+       "correct": true
+      },
+      {
+       "text": "`630`",
+       "feedback": "630 is `rents[1][2]`, with row and column swapped. The first subscript always picks the row."
+      },
+      {
+       "text": "`500`",
+       "feedback": "500 is `rents[1][0]`, which you get by counting rows and columns from 1. Both subscripts start at 0."
+      },
+      {
+       "text": "`560`",
+       "feedback": "560 is `rents[1][1]`, counting only the row from 1. Row 2 is the third row of the table."
+      }
+     ],
+     "hint": "Which row is row 2 when counting starts at 0? Then which value in that row is column 1?",
+     "explanation": "In `array[row][column]`, the first subscript selects a row and the second selects a position within it, both counted from 0. `rents[floor][bedrooms]` reads naturally as \"this floor, this many bedrooms\".",
+     "aside": "Java stores a two-dimensional array as an array of row references, each pointing to its own one-dimensional array. That is why rows can have different lengths, which a single rectangular block of memory, as in C, can't.",
+     "ref": "Ch. 8.8, two-dimensional arrays and Table 8-2 (pp. 301–302)"
+    },
+    {
+     "id": "lengths-2d",
+     "concept": "length counts rows; row.length counts columns",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[][] rents = { {400, 450, 510},\n                  {500, 560, 630},\n                  {625, 676, 740},\n                  {1000, 1250, 1600} };\nSystem.out.println(rents.length + \" \" + rents[0].length);",
+      "verify": {
+       "expect": "output",
+       "program": "public class RentLengths\n{\n    public static void main(String[] args)\n    {\n        int[][] rents = { {400, 450, 510},\n                          {500, 560, 630},\n                          {625, 676, 740},\n                          {1000, 1250, 1600} };\n        System.out.println(rents.length + \" \" + rents[0].length);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`4 3`",
+       "feedback": "`rents.length` counts the rows, 4, and `rents[0].length` counts the values in the first row, 3.",
+       "correct": true
+      },
+      {
+       "text": "`3 4`",
+       "feedback": "The two are reversed. The outer array holds the rows, so its length is the row count."
+      },
+      {
+       "text": "`12 3`",
+       "feedback": "`length` doesn't count every value in the table. For the outer array, each element is a whole row."
+      },
+      {
+       "text": "`4 4`",
+       "feedback": "`rents[0]` is one row, and each row holds three rents, so its length is 3."
+      }
+     ],
+     "hint": "In an array of arrays, what are the elements of the outer array?",
+     "explanation": "For a two-dimensional array, `length` holds the number of rows, and each row's own `length` holds its number of columns. Looping `row < array.length` and `col < array[row].length` visits every element, even in a jagged array.",
+     "ref": "Ch. 8.8, Using the length Field with a Two-Dimensional Array (p. 303)"
+    },
+    {
+     "id": "count-rows",
+     "concept": "Reading rows and columns from an initializer",
+     "level": "understand",
+     "stem": "How many rows and columns does this array have?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[][] myArray = { {12, 14, 19},\n                    {33, 45, 88} };",
+      "verify": {
+       "expect": "output",
+       "output": "2 3",
+       "program": "public class RowsCols\n{\n    public static void main(String[] args)\n    {\n        int[][] myArray = { {12, 14, 19},\n                            {33, 45, 88} };\n        System.out.println(myArray.length + \" \" + myArray[0].length);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "2 rows and 3 columns",
+       "feedback": "Each inner pair of braces is one row, so there are two rows, each holding three values.",
+       "correct": true
+      },
+      {
+       "text": "3 rows and 2 columns",
+       "feedback": "This reads the inner lists as columns. Each inner brace pair is a row, as in `rents`."
+      },
+      {
+       "text": "2 rows and 6 columns",
+       "feedback": "Six is the total number of values. Each row holds three of them."
+      },
+      {
+       "text": "1 row and 6 columns",
+       "feedback": "The outer braces hold the whole array; the two inner pairs make two separate rows."
+      }
+     ],
+     "hint": "What does each inner pair of curly braces represent?",
+     "explanation": "In a two-dimensional initialization list, the outer braces enclose the whole array and each inner set of braces is one row. The number of inner sets is the row count; the values in each set are that row's columns.",
+     "ref": "Ch. 8.8, initializing a two-dimensional array and Two Truths & a Lie (pp. 301, 305)"
+    },
+    {
+     "id": "jagged-size",
+     "concept": "A jagged array's rows can differ in length",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "double[][] sales = new double[4][];\nsales[0] = new double[12];\nsales[1] = new double[18];\nsales[2] = new double[9];\nsales[3] = new double[11];\nint cells = 0;\nfor(int r = 0; r < sales.length; ++r)\n    cells += sales[r].length;\nSystem.out.println(sales.length + \" \" + cells);",
+      "verify": {
+       "expect": "output",
+       "program": "public class JaggedSales\n{\n    public static void main(String[] args)\n    {\n        double[][] sales = new double[4][];\n        sales[0] = new double[12];\n        sales[1] = new double[18];\n        sales[2] = new double[9];\n        sales[3] = new double[11];\n        int cells = 0;\n        for(int r = 0; r < sales.length; ++r)\n            cells += sales[r].length;\n        System.out.println(sales.length + \" \" + cells);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`4 50`",
+       "feedback": "There are 4 rows, and the loop adds each row's own length: 12 + 18 + 9 + 11 = 50.",
+       "correct": true
+      },
+      {
+       "text": "`4 72`",
+       "feedback": "72 is 4 rows × 18, which assumes every row is as long as the longest. Each row was created with its own size."
+      },
+      {
+       "text": "`4 48`",
+       "feedback": "48 is 4 rows × 12, which assumes every row matches the first. `sales[r].length` reads each row separately."
+      },
+      {
+       "text": "`50 4`",
+       "feedback": "`sales.length` is the number of rows, so it is printed first as 4."
+      }
+     ],
+     "hint": "Add up `sales[r].length` for each of the four rows.",
+     "explanation": "In a jagged (ragged) array, each row is a separate array with its own length. Create one by giving only the row count, then creating each row; always use `array[row].length` to find a row's size.",
+     "ref": "Ch. 8.8, Understanding Jagged Arrays (p. 304)"
+    },
+    {
+     "id": "jagged-null",
+     "concept": "Rows of a jagged array must be created first",
+     "level": "analyze",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "double[][] sales = new double[4][];\nsales[0][0] = 1500.0;",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class JaggedNull\n{\n    public static void main(String[] args)\n    {\n        double[][] sales = new double[4][];\n        sales[0][0] = 1500.0;\n    }\n}\n",
+       "error_contains": [
+        "NullPointerException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It stops with a `NullPointerException`: row 0 has not been created yet",
+       "feedback": "`new double[4][]` creates four row references, all `null`. There is no row 0 array to store into.",
+       "correct": true
+      },
+      {
+       "text": "It stores `1500.0`, because Java creates each row when it is first used",
+       "feedback": "Java never creates rows automatically. Each row needs its own `sales[r] = new double[size];`."
+      },
+      {
+       "text": "It does not compile, because the number of columns is missing",
+       "feedback": "Leaving out the column count is legal; that's how jagged arrays start. The problem is at run time."
+      },
+      {
+       "text": "It stops with an `ArrayIndexOutOfBoundsException` at column 0",
+       "feedback": "Column 0 isn't out of bounds, because there is no row array yet to have bounds. The reference itself is `null`."
+      }
+     ],
+     "hint": "After `new double[4][]`, what is stored in `sales[0]`?",
+     "explanation": "With only the first dimension given, each row reference starts as `null`, just like the elements of any array of objects. A row must be created with `new` before any of its elements can be used.",
+     "ref": "Ch. 8.8, Understanding Jagged Arrays (p. 304)"
+    }
+   ]
+  },
+  {
+   "id": "8.9",
+   "title": "Using the Arrays Class",
+   "subtitle": "fill(), sort(), binarySearch() and equals(): static methods for everyday array work",
+   "source": "Ch. 8, section 8.9 (pp. 307–311)",
+   "intro": "You've written your own sorts and searches. Java already ships tested versions, each one line long, and one of them has a trap. Five questions on the `Arrays` class.",
+   "takeaways": [
+    "`Arrays` methods are static and live in `java.util`: import the package, then call them on the class, as in `Arrays.sort(scores)`.",
+    "`binarySearch()` works correctly only on an array already sorted in ascending order. It returns the element's position when found and a negative number when not.",
+    "Compare two arrays' contents with `Arrays.equals()`; `==` only asks whether two references point to the same array."
+   ],
+   "questions": [
+    {
+     "id": "fill-sort",
+     "concept": "fill() and sort() change the array itself",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] myScores = new int[5];\nArrays.fill(myScores, 8);\nmyScores[2] = 6;\nmyScores[4] = 3;\nArrays.sort(myScores);\nfor(int s : myScores)\n    System.out.print(s + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\npublic class ArraysDemo\n{\n    public static void main(String[] args)\n    {\n        int[] myScores = new int[5];\n        Arrays.fill(myScores, 8);\n        myScores[2] = 6;\n        myScores[4] = 3;\n        Arrays.sort(myScores);\n        for(int s : myScores)\n            System.out.print(s + \" \");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 6 8 8 8`",
+       "feedback": "`fill()` sets all five to 8, two are changed to 6 and 3, and `sort()` rearranges the array in ascending order.",
+       "correct": true
+      },
+      {
+       "text": "`8 8 6 8 3`",
+       "feedback": "That is the array before sorting. `Arrays.sort()` rearranges the array you pass it; it doesn't return a separate copy."
+      },
+      {
+       "text": "`8 8 8 6 3`",
+       "feedback": "`sort()` uses ascending order, smallest first. Descending would need extra work."
+      },
+      {
+       "text": "`3 6 0 0 0`",
+       "feedback": "`fill()` replaced the default zeros with 8s before the two changes, so no zeros remain."
+      }
+     ],
+     "hint": "Track the array after each statement. Which order does `Arrays.sort()` produce?",
+     "explanation": "`Arrays.fill()` assigns one value to every element, and `Arrays.sort()` rearranges an array into ascending order. Both are `void` static methods that change the array passed to them.",
+     "ref": "Ch. 8.9, Table 8-3 and Figure 8-35 (pp. 307–308)"
+    },
+    {
+     "id": "binary-found",
+     "concept": "binarySearch() returns the position",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "char[] codes = {'B', 'E', 'K', 'M', 'P', 'T'};\nSystem.out.println(Arrays.binarySearch(codes, 'K'));",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\npublic class VerifyCode\n{\n    public static void main(String[] args)\n    {\n        char[] codes = {'B', 'E', 'K', 'M', 'P', 'T'};\n        System.out.println(Arrays.binarySearch(codes, 'K'));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`2`",
+       "feedback": "`'K'` is the third code, and positions start at 0, so `binarySearch()` returns 2.",
+       "correct": true
+      },
+      {
+       "text": "`3`",
+       "feedback": "That counts positions from 1. Like a subscript, the position returned starts at 0."
+      },
+      {
+       "text": "`true`",
+       "feedback": "`binarySearch()` returns an `int`, the position found, not a `boolean`."
+      },
+      {
+       "text": "`K`",
+       "feedback": "The method returns where the value is, not the value itself, which you already know."
+      }
+     ],
+     "hint": "What type does `binarySearch()` return, and how are positions counted?",
+     "explanation": "`Arrays.binarySearch()` returns the subscript where the key is found. A non-negative result means found; a negative result means the key isn't in the array.",
+     "aside": "A missing value doesn't just give any negative number: the result is −(insertion point) − 1, where the insertion point is where the value would go. Searching `codes` for `'C'` returns −2, because `'C'` belongs at position 1.",
+     "ref": "Ch. 8.9, Figure 8-37 and Figure 8-38 (pp. 308–309)"
+    },
+    {
+     "id": "binary-unsorted",
+     "concept": "binarySearch() needs a sorted array",
+     "level": "analyze",
+     "stem": "This prints a negative number, even though 7 is in the array. Why?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] nums = {2, 9, 5, 7};\nSystem.out.println(Arrays.binarySearch(nums, 7));",
+      "verify": {
+       "expect": "output",
+       "output": "-2",
+       "program": "import java.util.*;\npublic class Unsorted\n{\n    public static void main(String[] args)\n    {\n        int[] nums = {2, 9, 5, 7};\n        System.out.println(Arrays.binarySearch(nums, 7));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Binary search assumes sorted order, so it discards the half that holds 7",
+       "feedback": "It checks a middle element, sees 9, decides 7 must be to its left, and never looks to the right, where 7 is.",
+       "correct": true
+      },
+      {
+       "text": "`binarySearch()` can only find values in the first half of an array",
+       "feedback": "It can find a value anywhere in a sorted array; it repeatedly halves the area it searches."
+      },
+      {
+       "text": "The array must be prepared with `Arrays.fill()` before searching",
+       "feedback": "`fill()` would overwrite the values. The requirement is that the array be sorted."
+      },
+      {
+       "text": "It compares references, and the 7 in the call is a different object",
+       "feedback": "These are `int` values, compared by value. The search simply looks in the wrong half."
+      }
+     ],
+     "hint": "After comparing 7 with a middle element, which half does binary search keep, and what must be true for that to be safe?",
+     "explanation": "Binary search divides the search area in half after each comparison, assuming everything to one side is smaller and everything to the other is larger. On an unsorted array that assumption fails and the result is unpredictable, so sort first.",
+     "ref": "Ch. 8.9, binarySearch() and Two Truths & a Lie (pp. 307–309)"
+    },
+    {
+     "id": "import-static",
+     "concept": "Arrays is in java.util",
+     "level": "apply",
+     "stem": "What happens with this complete file?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class SortScores\n{\n    public static void main(String[] args)\n    {\n        int[] scores = {88, 72, 95};\n        Arrays.sort(scores);\n        System.out.println(scores[0]);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It does not compile: `Arrays` is in `java.util`, which this file never imports",
+       "feedback": "Without `import java.util.Arrays;` or `import java.util.*;`, the compiler doesn't know the name `Arrays`.",
+       "correct": true
+      },
+      {
+       "text": "It prints `72`, the smallest score after sorting",
+       "feedback": "That is what it would print with the import. As written, the compiler stops at the name `Arrays`."
+      },
+      {
+       "text": "It prints `88`, because `sort()` returns a sorted copy and leaves `scores` unchanged",
+       "feedback": "`sort()` changes the array itself, and here the file doesn't compile anyway."
+      },
+      {
+       "text": "It does not compile: `sort()` must be called on an `Arrays` object",
+       "feedback": "`sort()` is static, so calling it on the class is correct. The missing piece is the import."
+      }
+     ],
+     "hint": "Which package is `Arrays` in, and what lets a file use classes from that package?",
+     "explanation": "The `Arrays` class is in `java.util`, so a program must import it before using it. Its methods are static, so you call them with the class name, never on an `Arrays` object.",
+     "ref": "Ch. 8.9, static methods and the import statement (p. 307)"
+    },
+    {
+     "id": "equals-arrays",
+     "concept": "== versus Arrays.equals()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int[] a = {5, 10, 15};\nint[] b = {5, 10, 15};\nSystem.out.println((a == b) + \" \" + Arrays.equals(a, b));",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\npublic class CompareArrays\n{\n    public static void main(String[] args)\n    {\n        int[] a = {5, 10, 15};\n        int[] b = {5, 10, 15};\n        System.out.println((a == b) + \" \" + Arrays.equals(a, b));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`false true`",
+       "feedback": "`a` and `b` are two separate arrays at different addresses, so `==` is false. `Arrays.equals()` compares the elements, which match.",
+       "correct": true
+      },
+      {
+       "text": "`true true`",
+       "feedback": "`==` on array names compares references. Equal contents in two separate arrays still give two different addresses."
+      },
+      {
+       "text": "`false false`",
+       "feedback": "`Arrays.equals()` compares the elements one by one, and all three match, so it returns `true`."
+      },
+      {
+       "text": "`true false`",
+       "feedback": "Both results are reversed: `==` compares addresses, and `Arrays.equals()` compares contents."
+      }
+     ],
+     "hint": "What is stored in `a` and in `b`: the numbers, or the addresses of two separate arrays?",
+     "explanation": "Array names hold references, so `==` tells you only whether two names refer to the same array. To ask whether two arrays hold the same values in the same order, use `Arrays.equals()`.",
+     "ref": "Ch. 8.9, Table 8-3; Ch. 8.6, arrays as references (pp. 289, 307)"
+    }
+   ]
+  },
+  {
+   "id": "8.10",
+   "title": "Creating Enumerations",
+   "subtitle": "enum types and constants, ordinal(), compareTo(), valueOf(), switch, and type safety",
+   "source": "Ch. 8, section 8.10 (pp. 311–316)",
+   "intro": "A scheduling app stores months as `int`s, and someone has just booked a meeting in month 13. Six questions on types that allow only the values you list.",
+   "takeaways": [
+    "An `enum` declares a type with a fixed set of constants. A variable of that type can hold only those values, which makes it type-safe, and the constants are identifiers, not strings.",
+    "`ordinal()` gives a constant's position, starting at 0; `compareTo()` compares positions; `values()` returns all the constants as an array; `valueOf()` converts exactly matching text into a constant.",
+    "To compare enum order, use `compareTo()` or `ordinal()`. Relational operators such as `<` don't compile with enum constants."
+   ],
+   "questions": [
+    {
+     "id": "ordinal",
+     "concept": "ordinal() counts from 0",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "enum Month {JAN, FEB, MAR, APR, MAY, JUN,\n            JUL, AUG, SEP, OCT, NOV, DEC};\n\nMonth mon = Month.MAY;\nSystem.out.println(mon + \" \" + mon.ordinal());",
+      "verify": {
+       "expect": "output",
+       "program": "enum Month {JAN, FEB, MAR, APR, MAY, JUN,\n            JUL, AUG, SEP, OCT, NOV, DEC};\n\npublic class EnumOrdinal\n{\n    public static void main(String[] args)\n    {\n        Month mon = Month.MAY;\n        System.out.println(mon + \" \" + mon.ordinal());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`MAY 4`",
+       "feedback": "An enum constant prints as its name, and `ordinal()` counts positions from 0, like a subscript: JAN 0, FEB 1, … MAY 4.",
+       "correct": true
+      },
+      {
+       "text": "`MAY 5`",
+       "feedback": "5 is May's month number, counting from 1. `ordinal()` starts at 0, so add 1 to get a calendar month number."
+      },
+      {
+       "text": "`Month.MAY 4`",
+       "feedback": "`toString()` returns just the constant's name, without the type name in front."
+      },
+      {
+       "text": "`4 4`",
+       "feedback": "Printing an enum value shows its name, not its position. Only `ordinal()` gives the number."
+      }
+     ],
+     "hint": "Count the constants from the start of the list, the way you count array subscripts.",
+     "explanation": "An enum constant's `toString()` returns its name, and `ordinal()` returns its position in the declaration, with the first constant at 0, as with arrays.",
+     "ref": "Ch. 8.10, Table 8-4 (p. 312)"
+    },
+    {
+     "id": "compareto",
+     "concept": "compareTo() compares positions, not spelling",
+     "level": "apply",
+     "stem": "Using the same `Month` enum, what does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Month birthMonth = Month.valueOf(\"AUG\");\nint comparison = birthMonth.compareTo(Month.JUN);\nif(comparison < 0)\n    System.out.println(\"earlier\");\nelse if(comparison > 0)\n    System.out.println(\"later\");\nelse\n    System.out.println(\"same\");",
+      "verify": {
+       "expect": "output",
+       "program": "enum Month {JAN, FEB, MAR, APR, MAY, JUN,\n            JUL, AUG, SEP, OCT, NOV, DEC};\n\npublic class EnumCompare\n{\n    public static void main(String[] args)\n    {\n        Month birthMonth = Month.valueOf(\"AUG\");\n        int comparison = birthMonth.compareTo(Month.JUN);\n        if(comparison < 0)\n            System.out.println(\"earlier\");\n        else if(comparison > 0)\n            System.out.println(\"later\");\n        else\n            System.out.println(\"same\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`later`",
+       "feedback": "AUG is at position 7 and JUN at 5, so `compareTo()` returns a positive number.",
+       "correct": true
+      },
+      {
+       "text": "`earlier`",
+       "feedback": "This compares the names alphabetically, where A comes before J. Enum constants are compared by their position in the list."
+      },
+      {
+       "text": "`same`",
+       "feedback": "`compareTo()` returns 0 only when both are the same constant. AUG and JUN are different months."
+      },
+      {
+       "text": "Nothing: `compareTo()` works only on `String` values",
+       "feedback": "Every enum type has `compareTo()`, which compares the ordinal positions of two constants."
+      }
+     ],
+     "hint": "Which comes first in the declaration, `AUG` or `JUN`?",
+     "explanation": "`compareTo()` on an enum returns a negative number if the calling constant comes earlier in the declaration, 0 if they are the same, and a positive number if it comes later. Alphabetical order plays no part.",
+     "ref": "Ch. 8.10, Table 8-4 and Figure 8-40 (pp. 312–313)"
+    },
+    {
+     "id": "enum-relational",
+     "concept": "Relational operators don't work on enums",
+     "level": "analyze",
+     "stem": "A student compares two months with `<`. What does the Java compiler do with this code?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Month birthMonth = Month.AUG;\nif(birthMonth < Month.JUN)\n    System.out.println(\"earlier\");",
+      "verify": {
+       "expect": "compile_error",
+       "program": "enum Month {JAN, FEB, MAR, APR, MAY, JUN,\n            JUL, AUG, SEP, OCT, NOV, DEC};\n\npublic class EnumLess\n{\n    public static void main(String[] args)\n    {\n        Month birthMonth = Month.AUG;\n        if(birthMonth < Month.JUN)\n            System.out.println(\"earlier\");\n    }\n}\n",
+       "error_contains": [
+        "bad operand types"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It rejects it: `<` needs numbers, so use `compareTo()` or `ordinal()`",
+       "feedback": "`<` is defined only for numeric types. The compiler reports \"bad operand types\". `birthMonth.compareTo(Month.JUN) < 0` says what was meant.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the program prints nothing, because AUG comes after JUN",
+       "feedback": "That is what the comparison was meant to do, but Java won't apply `<` to enum constants, so the program never runs."
+      },
+      {
+       "text": "It compiles, and the program prints `earlier`, because A comes before J",
+       "feedback": "Enum order is never alphabetical, and this code doesn't compile in the first place."
+      },
+      {
+       "text": "It compiles, but the program stops with an error when the `if` runs",
+       "feedback": "A type mismatch like this is caught by the compiler, before the program can run."
+      }
+     ],
+     "hint": "Which types can Java's `<` operator work with?",
+     "explanation": "Enum constants are objects, and Java's relational operators accept only numbers (and `char`). To test order, compare positions with `compareTo()`, or compare `ordinal()` values. Page 314 and the Two Truths & a Lie on p. 315 show `<` with enum constants, but the Java compiler rejects that code.",
+     "ref": "Ch. 8.10, comparing enum constants (pp. 313–315)"
+    },
+    {
+     "id": "valueof-case",
+     "concept": "valueOf() needs the exact name",
+     "level": "apply",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Month birthMonth = Month.valueOf(\"may\");\nSystem.out.println(birthMonth.ordinal());",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "enum Month {JAN, FEB, MAR, APR, MAY, JUN,\n            JUL, AUG, SEP, OCT, NOV, DEC};\n\npublic class EnumValueOf\n{\n    public static void main(String[] args)\n    {\n        Month birthMonth = Month.valueOf(\"may\");\n        System.out.println(birthMonth.ordinal());\n    }\n}\n",
+       "error_contains": [
+        "IllegalArgumentException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It throws an `IllegalArgumentException`: no constant is named `may`",
+       "feedback": "`valueOf()` must match a constant's name exactly, case included. That's why Figure 8-40 converts input with `toUpperCase()` first.",
+       "correct": true
+      },
+      {
+       "text": "It prints `4`, because `valueOf()` ignores uppercase and lowercase",
+       "feedback": "Enum names are identifiers, and Java identifiers are case-sensitive: `may` and `MAY` are different names."
+      },
+      {
+       "text": "It prints `-1`, the value `valueOf()` uses to mean no match was found",
+       "feedback": "`valueOf()` has no \"not found\" number to return. It signals a bad name by throwing an exception."
+      },
+      {
+       "text": "It does not compile, because `valueOf()` needs a `Month`, not text",
+       "feedback": "`valueOf()` is exactly the method that takes text. The compiler can't know whether the text will match."
+      }
+     ],
+     "hint": "Why does Figure 8-40 call `toUpperCase()` before `valueOf()`?",
+     "explanation": "The static method `valueOf()` converts a `String` into the enum constant with exactly that name. If no constant matches, including a difference only in case, it throws an `IllegalArgumentException`.",
+     "ref": "Ch. 8.10, Table 8-5 and Figure 8-40 (pp. 312–313)"
+    },
+    {
+     "id": "enum-switch",
+     "concept": "Enums in a switch",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Property propForSale = Property.MULTIPLE_FAMILY;\nswitch(propForSale)\n{\n    case SINGLE_FAMILY:\n    case MULTIPLE_FAMILY:\n        System.out.println(\"Listing fee is 5%\");\n        break;\n    case CONDOMINIUM:\n        System.out.println(\"Listing fee is 6%\");\n        break;\n    default:\n        System.out.println(\"We do not handle this type\");\n}",
+      "verify": {
+       "expect": "output",
+       "program": "enum Property {SINGLE_FAMILY, MULTIPLE_FAMILY,\n               CONDOMINIUM, LAND, BUSINESS};\n\npublic class EnumDemo2\n{\n    public static void main(String[] args)\n    {\n        Property propForSale = Property.MULTIPLE_FAMILY;\n        switch(propForSale)\n        {\n            case SINGLE_FAMILY:\n            case MULTIPLE_FAMILY:\n                System.out.println(\"Listing fee is 5%\");\n                break;\n            case CONDOMINIUM:\n                System.out.println(\"Listing fee is 6%\");\n                break;\n            default:\n                System.out.println(\"We do not handle this type\");\n        }\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Listing fee is 5%`",
+       "feedback": "`MULTIPLE_FAMILY` matches its case label, prints the 5% message, and `break` leaves the `switch`.",
+       "correct": true
+      },
+      {
+       "text": "`Listing fee is 6%`",
+       "feedback": "Execution starts at `case MULTIPLE_FAMILY:` and the `break` after the 5% message stops it before the condominium case."
+      },
+      {
+       "text": "Nothing, because `case SINGLE_FAMILY:` has no statements and ends the `switch`",
+       "feedback": "An empty case falls through to the next one; it doesn't end the `switch`. Here, though, execution starts at `MULTIPLE_FAMILY` anyway."
+      },
+      {
+       "text": "`We do not handle this type`",
+       "feedback": "`default` runs only when no case label matches, and `MULTIPLE_FAMILY` has one."
+      }
+     ],
+     "hint": "Which `case` label matches, and what stops execution after its statements run?",
+     "explanation": "A `switch` can test an enum value. Case labels use the bare constant names, execution begins at the matching label, and it continues until a `break`.",
+     "aside": "Inside a `switch` on an enum, case labels are written as bare names, like `CONDOMINIUM`; writing `Property.CONDOMINIUM` there was a compile error until Java 21 relaxed the rule.",
+     "ref": "Ch. 8.10, Figure 8-42 (p. 314)"
+    },
+    {
+     "id": "type-safe",
+     "concept": "Why enums are type-safe",
+     "level": "evaluate",
+     "stem": "Why is a `Month` enum safer than storing months as `int`s from 1 to 12?",
+     "options": [
+      {
+       "text": "A `Month` holds only its 12 constants, and month arithmetic won't compile",
+       "feedback": "With `int`s, 13 or `JUN + MAR` are perfectly legal. An enum restricts both the values and the operations to ones that make sense.",
+       "correct": true
+      },
+      {
+       "text": "Enum constants use less memory than `int`s, so programs run faster",
+       "feedback": "Enums are about correctness, not speed or memory. The benefit is which values and operations the compiler allows."
+      },
+      {
+       "text": "Enum values are `String`s, so they always print as readable names",
+       "feedback": "Enum constants are not strings and aren't written in quotes, though `toString()` does return their names."
+      },
+      {
+       "text": "An `int` can't control a `switch` statement, but an enum value can",
+       "feedback": "Both can control a `switch`. The difference is that an `int` variable accepts any number, including 13."
+      }
+     ],
+     "hint": "With `int` months, what values and operations would the compiler accept that make no sense for a month?",
+     "explanation": "An enumerated type has a fixed set of legal values, and only appropriate behaviors apply to them, which is what type-safe means. Named constants such as `OCT` also document themselves better than a bare number.",
+     "ref": "Ch. 8.10, advantages of enumerations (p. 314)"
+    }
+   ]
+  }
+ ]
+}
