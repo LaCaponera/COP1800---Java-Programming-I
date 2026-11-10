@@ -1,0 +1,1414 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 6: Looping",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 6 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "6.1",
+   "title": "Learning About the Loop Structure",
+   "subtitle": "The test-then-repeat cycle, iterations, and the three loop types Java offers",
+   "source": "Ch. 6, section 6.1 (pp. 201–202)",
+   "intro": "A cashier scans item after item until the cart is empty, and never knows in advance how many there will be. Five questions on the structure that lets a program do the same.",
+   "takeaways": [
+    "A loop evaluates a Boolean expression; while it is `true` the body runs and the expression is evaluated again. The loop ends only when an evaluation comes out `false`.",
+    "The condition is checked between passes, not continuously: once a pass starts, the whole body finishes even if the condition became false halfway through.",
+    "`while` and `for` test before the body runs, so the body may run zero times; `do…while` tests after the body, so it always runs at least once."
+   ],
+   "questions": [
+    {
+     "id": "check-between-passes",
+     "concept": "When the condition is tested",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int count = 1;\nwhile(count < 3)\n{\n    count = count + 1;\n    System.out.println(\"count is \" + count);\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class CheckBetweenPasses\n{\n    public static void main(String[] args)\n    {\n        int count = 1;\n        while(count < 3)\n        {\n            count = count + 1;\n            System.out.println(\"count is \" + count);\n        }\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`count is 2 count is 3`",
+       "feedback": "The test runs only at the top of each pass. On the second pass `count` becomes 3 in the middle of the body, but the `println()` below it still runs; the test that ends the loop comes afterwards.",
+       "correct": true
+      },
+      {
+       "text": "`count is 2`",
+       "feedback": "This assumes the loop stops the instant `count` reaches 3. Java doesn't watch the condition continuously; it evaluates it again only after the whole body finishes."
+      },
+      {
+       "text": "`count is 1 count is 2`",
+       "feedback": "This prints before adding. Here the assignment comes first in the body, so each line shows the value after the increase."
+      },
+      {
+       "text": "`count is 2 count is 3 count is 4`",
+       "feedback": "After the pass that prints `count is 3`, the test `3 < 3` is false, so no further pass begins."
+      }
+     ],
+     "hint": "Does Java re-check `count < 3` after every statement, or only at one particular moment?",
+     "explanation": "In a loop, the Boolean expression is evaluated, the body runs if it is true, and then the expression is evaluated again. Because the test happens between passes, a body that makes the condition false halfway through still finishes that pass.",
+     "ref": "Ch. 6.1, the loop structure and Figure 6-1 (pp. 201–202)"
+    },
+    {
+     "id": "count-iterations",
+     "concept": "What an iteration is",
+     "level": "understand",
+     "stem": "A `while` loop displays `Hello` five times and then stops. Its Boolean expression was evaluated six times in all. How many iterations did the loop perform?",
+     "options": [
+      {
+       "text": "Five, one for each time the loop body executed",
+       "feedback": "One execution of a loop is an iteration. The sixth evaluation is the one that came out false, and it ran no body.",
+       "correct": true
+      },
+      {
+       "text": "Six, one for each time the expression was evaluated",
+       "feedback": "Evaluations and iterations differ by one here: the final evaluation is false and ends the loop without executing the body."
+      },
+      {
+       "text": "One, because the whole loop statement runs once",
+       "feedback": "The `while` statement is reached once, but an iteration is one execution of the loop, and this loop executed five times."
+      },
+      {
+       "text": "Eleven, counting five bodies plus six evaluations",
+       "feedback": "An evaluation is part of deciding whether to iterate, not an iteration of its own. Only the five executions count."
+      }
+     ],
+     "hint": "The textbook defines an iteration as one execution of the loop. What actually executed five times?",
+     "explanation": "One execution of any loop is called an iteration. A pretest loop that iterates *n* times evaluates its condition *n* + 1 times, because the last evaluation is the false one that ends the loop.",
+     "ref": "Ch. 6.1, definition of iteration (p. 201)"
+    },
+    {
+     "id": "zero-iterations",
+     "concept": "A while body can run zero times",
+     "level": "evaluate",
+     "stem": "A classmate says: *A loop exists to repeat its body, so the body of any loop runs at least once.* For a `while` loop, what is the flaw in this claim?",
+     "options": [
+      {
+       "text": "The test comes first, so a false start skips the body entirely",
+       "feedback": "A `while` loop evaluates its Boolean expression before the body ever executes. If the first evaluation is false, the body never runs.",
+       "correct": true
+      },
+      {
+       "text": "There is no flaw; only an empty-bodied `while` loop runs zero times",
+       "feedback": "An empty body still gets entered when the test is true. Whether the body runs depends on the first test, not on what the body contains."
+      },
+      {
+       "text": "The claim fits `while` but fails for `do…while` loops",
+       "feedback": "This is reversed. `do…while` tests at the bottom, so its body always runs once; `while` is the loop that can skip its body."
+      },
+      {
+       "text": "The body runs once, but its changes are discarded",
+       "feedback": "Nothing is undone in Java loops. When the first test is false, no statement in the body executes at all."
+      }
+     ],
+     "hint": "Where does a `while` loop put its Boolean expression: before the body, or after it?",
+     "explanation": "In a `while` loop the loop-controlling Boolean expression comes first and is evaluated before the body ever executes, so the body may run zero times. Only a `do…while` loop, which tests after the body, guarantees one execution.",
+     "ref": "Ch. 6.1, the three loop types (p. 202)"
+    },
+    {
+     "id": "posttest-preview",
+     "concept": "Choosing among the three loop types",
+     "level": "understand",
+     "stem": "A program must show a menu once, and only then ask whether to show it again. Which of the three loops in this chapter evaluates its Boolean expression *after* the body executes?",
+     "options": [
+      {
+       "text": "The `do…while` loop",
+       "feedback": "Its loop-controlling expression is the last statement in the loop, evaluated after the body runs once, which matches show first, then ask.",
+       "correct": true
+      },
+      {
+       "text": "The `while` loop",
+       "feedback": "A `while` loop's expression is the first thing in the loop, evaluated before the body ever executes."
+      },
+      {
+       "text": "The `for` loop",
+       "feedback": "A `for` loop is a concise form of a pretest loop: its test section runs before each execution of the body."
+      },
+      {
+       "text": "A `while` loop nested inside a `for`",
+       "feedback": "Nesting changes how many times things repeat, not when each loop tests. Both of these loops test before their bodies."
+      }
+     ],
+     "hint": "Which loop's controlling expression is the *last* statement of the loop?",
+     "explanation": "Java has three loop types. `while` puts the Boolean expression first, `for` packages a counted loop concisely, and `do…while` puts the expression last, after the body has executed once.",
+     "ref": "Ch. 6.1, the three loop types (p. 202)"
+    },
+    {
+     "id": "loop-or-decision",
+     "concept": "When a loop is the right structure",
+     "level": "understand",
+     "stem": "Which of these tasks calls for a loop rather than a single decision?",
+     "options": [
+      {
+       "text": "Display one receipt line for each item in a cart of unknown size",
+       "feedback": "The same block of statements must execute again and again, once per item, which is exactly what a loop provides.",
+       "correct": true
+      },
+      {
+       "text": "Add a shipping charge when the order total is below $50",
+       "feedback": "This is one yes-or-no choice made once. An `if` statement handles it without any repetition."
+      },
+      {
+       "text": "Show *Member price* or *Regular price* depending on a flag",
+       "feedback": "This chooses between two actions a single time. That is a dual-alternative decision, not repetition."
+      },
+      {
+       "text": "Print a warning if the entered quantity is negative",
+       "feedback": "The program checks one value once and acts on it. Nothing here needs to be repeated."
+      }
+     ],
+     "hint": "Which task needs the *same* statements to run more than once?",
+     "explanation": "A decision chooses a path once; a loop allows repeated execution of a block of statements as long as a Boolean expression stays true. When the same work must happen for each of many items, use a loop.",
+     "aside": "Sequence, selection and repetition are all you need. In 1966 Corrado Böhm and Giuseppe Jacopini proved that any computable procedure can be written with just these three control structures, a result that helped launch structured programming.",
+     "ref": "Ch. 6.1, the loop structure (p. 201)"
+    }
+   ]
+  },
+  {
+   "id": "6.2",
+   "title": "Creating while Loops",
+   "subtitle": "Definite and indefinite loops, the three actions that prevent infinite loops, and input validation",
+   "source": "Ch. 6, section 6.2 (pp. 202–210)",
+   "intro": "A program prints nothing, the cursor just blinks, and Ctrl+C is the only way out. Six questions on writing `while` loops that end when they should.",
+   "takeaways": [
+    "A loop ends safely only when its control variable is initialized, tested in the `while` expression, and altered inside the body so the test can eventually become false.",
+    "Without braces, the body of a `while` is the single next statement, and a semicolon right after `while(…)` makes the body empty. Indentation changes neither.",
+    "To validate input, read once before the loop (the priming input) and read again as the last statement of the loop body; an `if` gives the user only one more chance."
+   ],
+   "questions": [
+    {
+     "id": "empty-body-semicolon",
+     "concept": "Semicolon after the while condition",
+     "level": "analyze",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int loopCount = 1;\nwhile(loopCount < 3);\n{\n    System.out.println(\"Hello\");\n    loopCount = loopCount + 1;\n}",
+      "verify": {
+       "expect": "compiles",
+       "program": "public class EmptyBody\n{\n    public static void main(String[] args)\n    {\n        int loopCount = 1;\n        while(loopCount < 3);\n        {\n            System.out.println(\"Hello\");\n            loopCount = loopCount + 1;\n        }\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "It runs forever and never displays anything",
+       "feedback": "The semicolon gives the loop an empty body. The test stays true because nothing in the empty body changes `loopCount`, so the block below is never reached.",
+       "correct": true
+      },
+      {
+       "text": "It displays `Hello` twice, then stops",
+       "feedback": "That is what the code would do without the semicolon. With it, the braces below are a separate block that runs only after the loop ends."
+      },
+      {
+       "text": "It displays `Hello` forever",
+       "feedback": "Nothing is displayed: the `println()` sits in the block after the loop, and the empty loop never finishes, so execution never gets there."
+      },
+      {
+       "text": "It fails to compile because of the semicolon",
+       "feedback": "A lone semicolon is a legal empty statement, so the compiler accepts it. That is why this bug is so easy to miss."
+      }
+     ],
+     "hint": "If `while(loopCount < 3);` is a complete statement, what is its body?",
+     "explanation": "A `while` loop's body is the single statement or block that follows the parentheses. A semicolon there is an empty statement, so the loop repeats nothing, and because nothing alters the control variable, the test never becomes false.",
+     "aside": "Ctrl+C doesn't just close the window: it asks the operating system to interrupt the running program. On Linux and macOS this is the SIGINT signal, short for *signal interrupt*.",
+     "ref": "Ch. 6.2, Pitfall: Unintentionally Creating a Loop with an Empty Body, Figure 6-6 (pp. 204–205)"
+    },
+    {
+     "id": "missing-braces",
+     "concept": "Altering the control variable inside the body",
+     "level": "analyze",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int loopCount = 1;\nwhile(loopCount < 3)\n    System.out.println(\"Hello\");\n    loopCount = loopCount + 1;",
+      "verify": {
+       "expect": "compiles",
+       "program": "public class MissingBraces\n{\n    public static void main(String[] args)\n    {\n        int loopCount = 1;\n        while(loopCount < 3)\n            System.out.println(\"Hello\");\n            loopCount = loopCount + 1;\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "It displays `Hello` over and over without end",
+       "feedback": "Without braces, the loop body ends at the semicolon after `println()`. The addition is outside the loop, so `loopCount` stays 1 and the test is always true.",
+       "correct": true
+      },
+      {
+       "text": "It displays `Hello` twice, as the indentation suggests",
+       "feedback": "The compiler ignores indentation. Only braces would make the addition part of the loop body."
+      },
+      {
+       "text": "It displays `Hello` once, then the loop ends",
+       "feedback": "Nothing inside the loop body changes `loopCount`, so the second test is just as true as the first."
+      },
+      {
+       "text": "It fails to compile, since a loop body needs braces",
+       "feedback": "A single statement is a legal loop body, so the code compiles. Braces are needed only to make several statements one body."
+      }
+     ],
+     "hint": "Without braces, where does the body of a `while` loop end?",
+     "explanation": "Without curly braces, a `while` loop's body is just the next statement. To prevent an infinite loop, the loop control variable must be initialized, tested, and altered *within* the body, so block every statement that belongs to the loop.",
+     "ref": "Ch. 6.2, Pitfall: Failing to Alter the Loop Control Variable, Figure 6-5 (pp. 204–205)"
+    },
+    {
+     "id": "unusual-counting",
+     "concept": "Tracing a decrementing definite loop",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int lcv = 12;\nwhile(lcv > 2)\n{\n    System.out.print(lcv + \" \");\n    lcv = lcv - 5;\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class UnusualCounting\n{\n    public static void main(String[] args)\n    {\n        int lcv = 12;\n        while(lcv > 2)\n        {\n            System.out.print(lcv + \" \");\n            lcv = lcv - 5;\n        }\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`12 7`",
+       "feedback": "12 > 2, so 12 prints and `lcv` becomes 7. 7 > 2, so 7 prints and `lcv` becomes 2. Then `2 > 2` is false and the loop ends.",
+       "correct": true
+      },
+      {
+       "text": "`12 7 2`",
+       "feedback": "This treats the test as `>=`. When `lcv` is 2, `2 > 2` is false, so 2 is never printed."
+      },
+      {
+       "text": "`7 2`",
+       "feedback": "This subtracts before printing. In this body the `print()` comes first, so each pass shows the value it started with."
+      },
+      {
+       "text": "`12 7 2 -3`",
+       "feedback": "This keeps going until the value is negative. The loop stops as soon as `lcv > 2` is false, which happens when `lcv` reaches 2."
+      }
+     ],
+     "hint": "Write down `lcv` at each test, and remember the test uses `>`, not `>=`.",
+     "explanation": "A definite loop runs a predictable number of times, but odd starting values and steps make that number hard to see. The textbook's advice: to loop a specific number of times, start at 0 or 1, add 1 each pass, and stop at the limit.",
+     "ref": "Ch. 6.2, Altering a Definite Loop's Control Variable (p. 206)"
+    },
+    {
+     "id": "event-controlled",
+     "concept": "Definite versus indefinite loops",
+     "level": "analyze",
+     "stem": "The `BankBalance` program keeps showing another year's balance while `response == 1`, and the body also adds 1 to `year`. Which description of this loop is accurate?",
+     "options": [
+      {
+       "text": "Indefinite: the user's entries decide how many passes it makes",
+       "feedback": "This is an event-controlled loop. The number of iterations is determined while the program runs, by what the user enters.",
+       "correct": true
+      },
+      {
+       "text": "Definite: `year` goes up by exactly 1 on every pass",
+       "feedback": "`year` is counted, but it doesn't control the loop. The `while` tests `response`, so no one knows in advance how many years will be shown."
+      },
+      {
+       "text": "Infinite: no counter limit appears in the `while` test",
+       "feedback": "An infinite loop never ends. This one ends as soon as the user enters anything other than 1."
+      },
+      {
+       "text": "Counted: it compares the response to the fixed value 1",
+       "feedback": "Comparing to a constant doesn't make a loop counted. A counted loop runs a specific number of times, known before it starts."
+      }
+     ],
+     "hint": "Look at which variable the `while` expression tests, and ask who decides its value.",
+     "explanation": "A definite (counted) loop runs a specific number of times; an indefinite loop's iteration count is determined while the program runs. An event-controlled loop changes its control variable through some event, such as user input, rather than by counting.",
+     "ref": "Ch. 6.2, Writing an Indefinite while Loop, Figure 6-8 (pp. 206–208)"
+    },
+    {
+     "id": "if-not-loop",
+     "concept": "Validating input with a loop",
+     "level": "evaluate",
+     "stem": "To make sure a value is no higher than `LIMIT`, a student writes this. What is the flaw?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int userEntry = input.nextInt();\nif(userEntry > LIMIT)\n{\n    System.out.print(\"Too high. Try again > \");\n    userEntry = input.nextInt();\n}\nSystem.out.println(\"You entered \" + userEntry);",
+      "verify": {
+       "expect": "compiles",
+       "program": "import java.util.Scanner;\npublic class IfNotLoop\n{\n    public static void main(String[] args)\n    {\n        final int LIMIT = 3;\n        Scanner input = new Scanner(System.in);\n        int userEntry = input.nextInt();\n        if(userEntry > LIMIT)\n        {\n            System.out.print(\"Too high. Try again > \");\n            userEntry = input.nextInt();\n        }\n        System.out.println(\"You entered \" + userEntry);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "A second too-high entry is accepted without any check",
+       "feedback": "The `if` checks only once. A user can enter bad data several times in a row, and only a loop keeps asking until the value is valid.",
+       "correct": true
+      },
+      {
+       "text": "It needs a priming input before the `if` statement",
+       "feedback": "The first `nextInt()` already is a priming-style read. The problem is what happens after the second entry, which is never tested."
+      },
+      {
+       "text": "The comparison should use `==` instead of `>` to catch it",
+       "feedback": "`>` is the right test for *too high*. Changing the operator would accept or reject the wrong values."
+      },
+      {
+       "text": "There is no flaw, because the user was warned once",
+       "feedback": "A warning doesn't guarantee valid data. If the reentered value is also too high, the program uses it anyway."
+      }
+     ],
+     "hint": "What does this code do if the user makes the same mistake twice?",
+     "explanation": "Novice programmers often validate with a decision, forgetting that a user might enter incorrect data multiple times. A loop is usually the best structure: it repeats the prompt until the value falls within the required range.",
+     "ref": "Ch. 6.2, Validating Data (pp. 208–209)"
+    },
+    {
+     "id": "priming-input",
+     "concept": "Priming input and the last read in the loop",
+     "level": "analyze",
+     "stem": "In this validation loop, the last statement of the body is deleted by mistake. What happens if the user's first entry is 9?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "userEntry = input.nextInt();\nwhile(userEntry > LIMIT)\n{\n    System.out.println(\"The number you entered was too high\");\n    userEntry = input.nextInt();   // deleted by mistake\n}",
+      "verify": {
+       "expect": "compiles",
+       "program": "import java.util.Scanner;\npublic class PrimingInput\n{\n    public static void main(String[] args)\n    {\n        int userEntry;\n        final int LIMIT = 3;\n        Scanner input = new Scanner(System.in);\n        userEntry = input.nextInt();\n        while(userEntry > LIMIT)\n        {\n            System.out.println(\"The number you entered was too high\");\n            userEntry = input.nextInt();   // deleted by mistake\n        }\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "The message repeats forever, since `userEntry` stays 9",
+       "feedback": "The read inside the loop was the only statement that altered the control variable. Without it, `9 > LIMIT` stays true on every test.",
+       "correct": true
+      },
+      {
+       "text": "The message appears once, and then the loop ends",
+       "feedback": "Nothing in the remaining body changes `userEntry`, so the second test is exactly as true as the first."
+      },
+      {
+       "text": "The program waits for a new number on each pass",
+       "feedback": "Waiting for input requires a `nextInt()` call. With it deleted, the loop never asks for anything."
+      },
+      {
+       "text": "The loop is skipped, because the priming input is gone",
+       "feedback": "Only the read inside the loop was deleted. The priming input before the loop still stores 9, which is too high, so the loop is entered."
+      }
+     ],
+     "hint": "In an event-controlled loop, which statement alters the loop control variable?",
+     "explanation": "Good validation reads a priming input before the loop, then makes the last statement of the loop body read the next value into the same variable that the `while` tests. That final read is what lets the test eventually become false.",
+     "ref": "Ch. 6.2, priming input, Figure 6-10 (pp. 208–209)"
+    }
+   ]
+  },
+  {
+   "id": "6.3",
+   "title": "Using Shortcut Arithmetic Operators",
+   "subtitle": "Counting and accumulating, compound assignment, and prefix versus postfix ++ and --",
+   "source": "Ch. 6, section 6.3 (pp. 210–214)",
+   "intro": "Two programs both add 1 to a counter, yet one of them stores a different answer. Six questions on Java's shortcut operators and the one place they behave differently.",
+   "takeaways": [
+    "`x op= y` performs the operation and assigns the result in one step: `balance += interest` means `balance = balance + interest`, and likewise for `-=`, `*=`, `/=` and `%=`.",
+    "On its own, `++x` and `x++` both add 1. Inside a larger expression, the prefix form supplies the value *after* the change and the postfix form supplies the value *before* it.",
+    "Increment and decrement operators change a variable, so they can't be applied to a literal or a `final` constant."
+   ],
+   "questions": [
+    {
+     "id": "postfix-assign",
+     "concept": "Postfix increment in an assignment",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int b = 4;\nint c = b++;\nSystem.out.println(b + \" \" + c);",
+      "verify": {
+       "expect": "output",
+       "program": "public class PostfixAssign\n{\n    public static void main(String[] args)\n    {\n        int b = 4;\n        int c = b++;\n        System.out.println(b + \" \" + c);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`5 4`",
+       "feedback": "The postfix expression `b++` has the value `b` held before the increase, 4, and that is what `c` receives. Then `b` becomes 5.",
+       "correct": true
+      },
+      {
+       "text": "`5 5`",
+       "feedback": "That is the prefix result. `c = ++b` would increase `b` first and assign 5; the postfix form assigns the old value."
+      },
+      {
+       "text": "`4 4`",
+       "feedback": "`b++` always increases `b`, even when its value is used in an assignment, so `b` ends at 5."
+      },
+      {
+       "text": "`4 5`",
+       "feedback": "This swaps the two. The variable being incremented is `b`, which ends at 5; `c` gets the value from before the increase."
+      }
+     ],
+     "hint": "When the `++` comes after the variable, which value does the expression hand to the assignment: before or after the increase?",
+     "explanation": "When a postfix operator is used in an expression, the value before the calculation is returned; with a prefix operator, the value after. Either way, the variable itself ends up changed.",
+     "aside": "C++ is named after this operator. The name, read as *C incremented*, was coined by Rick Mascitti in 1983 for Bjarne Stroustrup's extension of C.",
+     "ref": "Ch. 6.3, prefix and postfix increment (pp. 211–212)"
+    },
+    {
+     "id": "prefix-postfix-expression",
+     "concept": "Increment inside a larger expression",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int d = 5;\nint x = 2 * d++;\nint y = 2 * ++d;\nSystem.out.println(x + \" \" + y + \" \" + d);",
+      "verify": {
+       "expect": "output",
+       "program": "public class PrefixPostfixExpr\n{\n    public static void main(String[] args)\n    {\n        int d = 5;\n        int x = 2 * d++;\n        int y = 2 * ++d;\n        System.out.println(x + \" \" + y + \" \" + d);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`10 14 7`",
+       "feedback": "`2 * d++` uses 5, giving 10, then `d` becomes 6. `++d` raises `d` to 7 first, so `y` is 14 and `d` ends at 7.",
+       "correct": true
+      },
+      {
+       "text": "`10 12 7`",
+       "feedback": "This forgets that the first statement already increased `d` to 6. The prefix increment then raises it to 7 before multiplying."
+      },
+      {
+       "text": "`12 14 7`",
+       "feedback": "This treats `d++` like `++d`. The postfix form contributes the old value, 5, to the multiplication."
+      },
+      {
+       "text": "`10 14 6`",
+       "feedback": "Both statements increment `d`, the postfix one after its value is used and the prefix one before, so `d` changes twice."
+      }
+     ],
+     "hint": "Track `d` line by line. Which value does each form contribute to the multiplication?",
+     "explanation": "Choosing between prefix and postfix matters when the operator is part of a larger expression: if `d` is 5, `2 * ++d` is 12 but `2 * d++` is 10. In both cases `d` itself is increased.",
+     "ref": "Ch. 6.3, prefix versus postfix in expressions (p. 212)"
+    },
+    {
+     "id": "compound-assignment",
+     "concept": "Compound assignment operators",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int total = 10;\ntotal -= 3;\ntotal *= 2;\ntotal %= 5;\nSystem.out.println(total);",
+      "verify": {
+       "expect": "output",
+       "program": "public class CompoundAssign\n{\n    public static void main(String[] args)\n    {\n        int total = 10;\n        total -= 3;\n        total *= 2;\n        total %= 5;\n        System.out.println(total);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`4`",
+       "feedback": "10 − 3 is 7, 7 × 2 is 14, and the remainder of 14 ÷ 5 is 4. Each operator computes and assigns in one step.",
+       "correct": true
+      },
+      {
+       "text": "`2`",
+       "feedback": "14 ÷ 5 is 2 with integer division, but `%=` keeps the remainder, not the quotient."
+      },
+      {
+       "text": "`14`",
+       "feedback": "This stops one step early. `total %= 5` replaces 14 with its remainder after dividing by 5."
+      },
+      {
+       "text": "`7`",
+       "feedback": "`*=` multiplies `total` by 2 and stores the product, so it changes the value just as `-=` did."
+      }
+     ],
+     "hint": "Rewrite each line in long form, such as `total = total - 3;`, and apply them in order.",
+     "explanation": "Java's compound operators `+=`, `-=`, `*=`, `/=` and `%=` perform the operation and assign the result in one step. `total %= 5` means `total = total % 5`.",
+     "ref": "Ch. 6.3, add and assign and the other shortcut operators (p. 211)"
+    },
+    {
+     "id": "increment-constant",
+     "concept": "Increment needs a variable",
+     "level": "apply",
+     "stem": "Which statement does the compiler reject?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "final int LIMIT = 84;\nint val = LIMIT;\n++val;\nLIMIT++;",
+      "verify": {
+       "expect": "compile_error",
+       "program": "public class IncrementConstant\n{\n    public static void main(String[] args)\n    {\n        final int LIMIT = 84;\n        int val = LIMIT;\n        ++val;\n        LIMIT++;\n    }\n}",
+       "error_contains": [
+        "final variable"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "`LIMIT++;`",
+       "feedback": "`LIMIT` is a named constant. `++` must store a new value, and a `final` variable can't be assigned again.",
+       "correct": true
+      },
+      {
+       "text": "`++val;`",
+       "feedback": "`val` received its starting value from a constant, but it is an ordinary variable, so increasing it is legal."
+      },
+      {
+       "text": "`int val = LIMIT;`",
+       "feedback": "Copying a constant's value into a variable is fine; it is how you get a value you can change."
+      },
+      {
+       "text": "None of them; all four statements compile",
+       "feedback": "Increment operators work only on something that can hold a new value. One statement here applies `++` to a constant."
+      }
+     ],
+     "hint": "An `84` must always remain an `84`. Which name here is just as unchangeable?",
+     "explanation": "You can't use `++` or `--` with constants: `++84;` is illegal because 84 must remain 84. The same holds for a `final` named constant. Copy the value into a variable and increment the variable instead.",
+     "ref": "Ch. 6.3, increment operators and constants (p. 211)"
+    },
+    {
+     "id": "increment-comparison",
+     "concept": "Increment inside a comparison",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int w = 17, x = 17, y = 18;\nboolean compare1 = (++w == y);\nboolean compare2 = (x++ == y);\nSystem.out.println(compare1 + \" \" + compare2 + \" \" + x);",
+      "verify": {
+       "expect": "output",
+       "program": "public class IncrementComparison\n{\n    public static void main(String[] args)\n    {\n        int w = 17, x = 17, y = 18;\n        boolean compare1 = (++w == y);\n        boolean compare2 = (x++ == y);\n        System.out.println(compare1 + \" \" + compare2 + \" \" + x);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`true false 18`",
+       "feedback": "`++w` makes `w` 18 before comparing, so 18 == 18. `x++` compares the old value, 17, with 18, and only then makes `x` 18.",
+       "correct": true
+      },
+      {
+       "text": "`true true 18`",
+       "feedback": "This uses the new value of `x` in the comparison. The postfix form compares 17, the value before the increase."
+      },
+      {
+       "text": "`false false 18`",
+       "feedback": "The prefix form increases `w` before the comparison, so `compare1` compares 18 with 18."
+      },
+      {
+       "text": "`true false 17`",
+       "feedback": "Although the comparison used 17, `x++` still increases `x` afterward, so `x` is 18 when it is printed."
+      }
+     ],
+     "hint": "For each comparison, which value of the variable reaches `==`?",
+     "explanation": "A prefix operator changes the variable and then supplies the new value; a postfix operator supplies the old value and then changes the variable. Inside a comparison, that difference decides the result.",
+     "ref": "Ch. 6.3, You Do It: DemoIncrement2 (pp. 213–214)"
+    },
+    {
+     "id": "counting-accumulating",
+     "concept": "Counting and accumulating shortcuts",
+     "level": "analyze",
+     "stem": "Which pair of statements is equivalent to these two lines?\n\n`year = year + 1;`\n`balance = balance + balance * INT_RATE;`",
+     "options": [
+      {
+       "text": "`year++;` and `balance += balance * INT_RATE;`",
+       "feedback": "`year++` adds exactly 1, which is counting, and `+=` adds the interest to the old balance and stores it, which is accumulating.",
+       "correct": true
+      },
+      {
+       "text": "`year += 1;` and `balance *= INT_RATE;`",
+       "feedback": "`year += 1` is right, but `balance *= INT_RATE` replaces the balance with 3 percent of it instead of adding the interest."
+      },
+      {
+       "text": "`++year;` and `balance += INT_RATE;`",
+       "feedback": "`++year` is fine, but `balance += INT_RATE` adds 0.03 dollars, the rate itself, rather than the interest earned."
+      },
+      {
+       "text": "`year =+ 1;` and `balance =+ balance * INT_RATE;`",
+       "feedback": "`=+` is not an operator: Java reads it as `=` followed by a unary plus, so `year` becomes 1 and `balance` becomes the interest alone."
+      }
+     ],
+     "hint": "For each candidate, expand the shortcut back into `variable = variable op value;` form.",
+     "explanation": "Repeatedly adding 1 to track occurrences is counting; repeatedly increasing a value by some amount is accumulating. `+=` adds and assigns in one operation, and `++` adds exactly 1.",
+     "aside": "The swapped version once really was the operator. Early C wrote compound assignment as `=+`, but `x=-1` was ambiguous (subtract 1, or assign −1?), so the language switched to `+=` in the 1970s.",
+     "ref": "Ch. 6.3, counting and accumulating (pp. 210–211)"
+    }
+   ]
+  },
+  {
+   "id": "6.4",
+   "title": "Creating a for Loop",
+   "subtitle": "The three sections, their order of execution, variations, scope, and the stray semicolon",
+   "source": "Ch. 6, section 6.4 (pp. 214–217)",
+   "intro": "A `for` loop packs a whole counted loop into one line, which is exactly why a single misplaced character can hide in it. Six questions on reading `for` loops precisely.",
+   "takeaways": [
+    "A `for` loop runs its initialization once, then repeats test → body → update until the test is false. If the first test is false, the body never runs.",
+    "Each section is optional and may hold several comma-separated expressions, but the two semicolons are required; `for(;;)` is a legal loop that never ends on its own.",
+    "A variable declared in the `for` header goes out of scope when the loop ends, and a semicolon right after the header makes an empty, do-nothing body."
+   ],
+   "questions": [
+    {
+     "id": "for-trace",
+     "concept": "Tracing a for loop",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "for(int val = 10; val > 0; val -= 3)\n    System.out.print(val + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "public class ForTrace\n{\n    public static void main(String[] args)\n    {\n        for(int val = 10; val > 0; val -= 3)\n            System.out.print(val + \" \");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`10 7 4 1`",
+       "feedback": "The test `val > 0` is true for 10, 7, 4 and 1. After 1, the update makes `val` −2, the test fails, and the loop ends.",
+       "correct": true
+      },
+      {
+       "text": "`10 7 4 1 -2`",
+       "feedback": "The update produces −2, but the test runs before the body, and `-2 > 0` is false, so −2 is never printed."
+      },
+      {
+       "text": "`7 4 1`",
+       "feedback": "This applies the update before the first pass. The third section runs only after each execution of the body."
+      },
+      {
+       "text": "`10 7 4`",
+       "feedback": "This stops too soon. 1 is still greater than 0, so the body runs once more and prints it."
+      }
+     ],
+     "hint": "Write the sequence: initialize, test, body, update, test, body, update... Where does the first update happen?",
+     "explanation": "A `for` loop initializes once, then tests; if the test is true, the body runs and then the update section runs before the next test. The update never runs before the first execution of the body.",
+     "ref": "Ch. 6.4, steps in a for loop, Figure 6-18 (pp. 214–215)"
+    },
+    {
+     "id": "for-order",
+     "concept": "Order of the three sections",
+     "level": "understand",
+     "stem": "In `for(init; test; update) body`, in what order do the parts run during the first two iterations?",
+     "options": [
+      {
+       "text": "init, test, body, update, test, body, update",
+       "feedback": "The initialization runs once. After that, each pass is test, then body, then the update that prepares the next test.",
+       "correct": true
+      },
+      {
+       "text": "init, test, update, body, test, update, body",
+       "feedback": "The update section follows the body, not the test. It alters the control variable after the body has used it."
+      },
+      {
+       "text": "init, body, test, update, body, test, update",
+       "feedback": "A `for` loop is a pretest loop: the test comes before every execution of the body, including the first."
+      },
+      {
+       "text": "init, test, body, update, init, test, body",
+       "feedback": "The first section runs exactly once, no matter how many times the body executes."
+      }
+     ],
+     "hint": "Which section runs only once, and which one comes right after the body?",
+     "explanation": "The first section executes once. Control then passes to the test; when it is true the body executes, the third section alters the variable, and control returns to the test. The loop ends the first time the test is false.",
+     "aside": "Java inherited this three-part header from C, where it came from. Its *enhanced* `for` loop, which visits each element of an array, arrived much later, in Java 5 in 2004.",
+     "ref": "Ch. 6.4, steps in a for loop (pp. 214–215)"
+    },
+    {
+     "id": "for-commas",
+     "concept": "Several variables in one for header",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "for(int g = 0, h = 10; g < h; g += 2, h -= 2)\n    System.out.print(g + \"-\" + h + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "public class ForCommas\n{\n    public static void main(String[] args)\n    {\n        for(int g = 0, h = 10; g < h; g += 2, h -= 2)\n            System.out.print(g + \"-\" + h + \" \");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`0-10 2-8 4-6`",
+       "feedback": "Both variables change in the update section. After 4-6 they become 6 and 4, the test `6 < 4` fails, and the loop ends.",
+       "correct": true
+      },
+      {
+       "text": "`0-10 2-8 4-6 6-4`",
+       "feedback": "When `g` is 6 and `h` is 4, the test `g < h` is false, so this pair is never printed."
+      },
+      {
+       "text": "`0-10 2-8`",
+       "feedback": "With 4 and 6, the test `4 < 6` is still true, so the body runs a third time."
+      },
+      {
+       "text": "`0-10 2-10 4-10`",
+       "feedback": "The comma lets the third section perform several actions, so `h -= 2` runs on every pass, not just `g += 2`."
+      }
+     ],
+     "hint": "Both expressions in the third section run after every pass. Track `g` and `h` together.",
+     "explanation": "Each section of a `for` header can hold more than one expression separated by commas: the first can initialize several variables and the third can perform several actions. The test still decides, before every pass, whether the body runs.",
+     "ref": "Ch. 6.4, Variations in for Loops (p. 215)"
+    },
+    {
+     "id": "for-scope",
+     "concept": "Scope of a variable declared in the header",
+     "level": "analyze",
+     "stem": "What happens with this code?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "for(int val = 1; val < 11; ++val)\n    System.out.print(val + \" \");\nSystem.out.println(\"Last value: \" + val);",
+      "verify": {
+       "expect": "compile_error",
+       "program": "public class ForScope\n{\n    public static void main(String[] args)\n    {\n        for(int val = 1; val < 11; ++val)\n            System.out.print(val + \" \");\n        System.out.println(\"Last value: \" + val);\n    }\n}",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It fails to compile: `val` doesn't exist after the loop",
+       "feedback": "A variable declared in a `for` statement can be used only in the block that depends on it. After the loop, `val` is out of scope.",
+       "correct": true
+      },
+      {
+       "text": "It prints 1 through 10, then `Last value: 10`",
+       "feedback": "This assumes `val` survives the loop. It doesn't, so the last `println()` can't refer to it at all."
+      },
+      {
+       "text": "It prints 1 through 10, then `Last value: 11`",
+       "feedback": "Had `val` been declared before the loop, this would be the output. Declared in the header, it disappears when the loop ends."
+      },
+      {
+       "text": "It prints `Last value:` and the number on every pass",
+       "feedback": "Without braces, only the first statement after the header is the body. The last line is outside the loop."
+      }
+     ],
+     "hint": "Where was `val` declared, and where is the last line trying to use it?",
+     "explanation": "Declaring the control variable inside the `for` header is common when no other part of the program needs it. When the loop's block ends, the variable goes out of scope; declare it before the loop if you need its final value.",
+     "ref": "Ch. 6.4, declaring a variable within a for statement (p. 215)"
+    },
+    {
+     "id": "for-semicolon",
+     "concept": "Semicolon after the for header",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int x;\nfor(x = 0; x < 3; ++x);\n    System.out.println(\"x is \" + x);",
+      "verify": {
+       "expect": "output",
+       "program": "public class ForSemicolon\n{\n    public static void main(String[] args)\n    {\n        int x;\n        for(x = 0; x < 3; ++x);\n            System.out.println(\"x is \" + x);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`x is 3`",
+       "feedback": "The semicolon makes an empty body, so the loop just counts `x` up to 3. The `println()` runs once, after the loop ends.",
+       "correct": true
+      },
+      {
+       "text": "`x is 0 x is 1 x is 2`",
+       "feedback": "That would happen without the semicolon. With it, the indented line is not part of the loop."
+      },
+      {
+       "text": "`x is 2`",
+       "feedback": "The loop ends only when the test fails, which first happens when `x` reaches 3, so 3 is the value printed."
+      },
+      {
+       "text": "A compile error, because the loop body is empty",
+       "feedback": "An empty statement is a legal body. Such a do-nothing loop compiles and runs."
+      }
+     ],
+     "hint": "What is the body of a `for` loop whose header ends in a semicolon?",
+     "explanation": "A semicolon after the `for` parentheses gives the loop an empty body. Programmers occasionally write such a do-nothing loop on purpose to pass time, but usually it is a bug that makes the next statement run just once.",
+     "ref": "Ch. 6.4, do-nothing loop (p. 216)"
+    },
+    {
+     "id": "for-sections-optional",
+     "concept": "Which parts of a for header are required",
+     "level": "evaluate",
+     "stem": "A classmate claims: *Every `for` loop's third section must alter the loop control variable, or the loop won't compile.* Which response is accurate?",
+     "options": [
+      {
+       "text": "Wrong: any section may be empty if both semicolons remain",
+       "feedback": "The third section usually alters the control variable, but it isn't required. Even `for(;;)`, with all three sections empty, compiles.",
+       "correct": true
+      },
+      {
+       "text": "Right: an empty third section is a compile error",
+       "feedback": "`for(; x < 10; )` is legal Java. The compiler requires the two semicolons, not an update expression."
+      },
+      {
+       "text": "Partly right: only the test section may be left empty",
+       "feedback": "The test section is the one that, when empty, makes the loop run forever, and it may be empty too, as `for(;;)` shows."
+      },
+      {
+       "text": "Wrong: only the first section must hold an expression",
+       "feedback": "The initialization may also be empty, for example when `x` was initialized by an earlier statement."
+      }
+     ],
+     "hint": "The `Clock` program in Figure 6-19 uses a `for` loop with nothing at all between its parentheses except punctuation.",
+     "explanation": "A `for` loop must contain exactly two semicolons, but its sections may be empty, hold several expressions, or call methods. Usually, though, use one control variable in all three sections and don't alter it in the body.",
+     "aside": "Programmers often read `for(;;)` aloud as *forever*. It is a common way to write a loop meant to run until something outside the test stops it, such as Ctrl+C in the `Clock` program.",
+     "ref": "Ch. 6.4, Variations in for Loops, Figure 6-19 (pp. 215–216)"
+    }
+   ]
+  },
+  {
+   "id": "6.5",
+   "title": "Learning How and When to Use a do…while Loop",
+   "subtitle": "Pretest versus posttest loops, guaranteed first execution, and when a do…while fits",
+   "source": "Ch. 6, section 6.5 (pp. 217–220)",
+   "intro": "A game should play at least one round before asking *Play again?*, yet a `while` loop might never start. Five questions on the loop that tests at the bottom.",
+   "takeaways": [
+    "`while` and `for` are pretest loops: the test runs before the body, so the body may run zero times. `do…while` is a posttest loop: the body runs once before the first test.",
+    "Use `do…while` when a task must happen at least once. It is never required: running the body once before a `while` loop gives the same result.",
+    "A `do…while` loop ends with `while(condition);`. Braces aren't required for a single-statement body, but they keep that last line from looking like the start of a new loop."
+   ],
+   "questions": [
+    {
+     "id": "do-while-false-start",
+     "concept": "The body runs before the first test",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int n = 10;\ndo\n{\n    System.out.print(n + \" \");\n    n++;\n} while(n < 5);\nSystem.out.println(\"end\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class DoWhileFalseStart\n{\n    public static void main(String[] args)\n    {\n        int n = 10;\n        do\n        {\n            System.out.print(n + \" \");\n            n++;\n        } while(n < 5);\n        System.out.println(\"end\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`10 end`",
+       "feedback": "The body runs once before any test, printing 10. Then `11 < 5` is false, so the loop ends and `end` prints.",
+       "correct": true
+      },
+      {
+       "text": "`end`",
+       "feedback": "This treats the loop as pretest. A `do…while` executes its body before the condition is evaluated even once."
+      },
+      {
+       "text": "`10 11 end`",
+       "feedback": "After the first pass `n` is 11, and `11 < 5` is false, so there is no second pass."
+      },
+      {
+       "text": "Nothing; the loop never ends",
+       "feedback": "The body increases `n`, and the condition is already false after the first pass, so the loop ends at once."
+      }
+     ],
+     "hint": "In a `do…while`, what happens before the condition is evaluated for the first time?",
+     "explanation": "A `do…while` is a posttest loop: the body executes, then the condition is tested. Even when the condition is false from the start, the body runs exactly once.",
+     "ref": "Ch. 6.5, posttest loops, Figure 6-22 (pp. 217–218)"
+    },
+    {
+     "id": "pretest-vs-posttest",
+     "concept": "Same start, different loop types",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int a = 3, b = 3;\nwhile(a < 3)\n{\n    a++;\n}\ndo\n{\n    b++;\n} while(b < 3);\nSystem.out.println(a + \" \" + b);",
+      "verify": {
+       "expect": "output",
+       "program": "public class PretestPosttest\n{\n    public static void main(String[] args)\n    {\n        int a = 3, b = 3;\n        while(a < 3)\n        {\n            a++;\n        }\n        do\n        {\n            b++;\n        } while(b < 3);\n        System.out.println(a + \" \" + b);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 4`",
+       "feedback": "The `while` test `3 < 3` is false, so its body is skipped and `a` stays 3. The `do…while` body runs once first, making `b` 4.",
+       "correct": true
+      },
+      {
+       "text": "`3 3`",
+       "feedback": "This treats both loops as pretest. The `do…while` executes its body before the test, so `b` is increased once."
+      },
+      {
+       "text": "`4 4`",
+       "feedback": "This treats both loops as posttest. The `while` loop tests first, and `3 < 3` is false, so `a` never changes."
+      },
+      {
+       "text": "`4 3`",
+       "feedback": "This swaps the behaviors: the `while` loop is the one that can skip its body."
+      }
+     ],
+     "hint": "Both conditions are false at the start. Which loop still runs its body once?",
+     "explanation": "In a pretest loop (`while`, `for`), the loop control variable is tested before the body executes; in a posttest loop (`do…while`), after. When the condition is false from the start, that difference is one execution.",
+     "ref": "Ch. 6.5, pretest and posttest loops (pp. 217–218)"
+    },
+    {
+     "id": "single-statement-do",
+     "concept": "A single-statement do…while body",
+     "level": "apply",
+     "stem": "With `total` starting at 0 and `numberValue` at 75, what does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "do\n    total += numberValue;\nwhile(total < 200);\nSystem.out.println(total);",
+      "verify": {
+       "expect": "output",
+       "program": "public class SingleStatementDo\n{\n    public static void main(String[] args)\n    {\n        int total = 0;\n        int numberValue = 75;\n        do\n            total += numberValue;\n        while(total < 200);\n        System.out.println(total);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`225`",
+       "feedback": "`total` becomes 75, 150, then 225. Each test happens after an addition, and only `225 < 200` is false.",
+       "correct": true
+      },
+      {
+       "text": "`200`",
+       "feedback": "A loop doesn't stop at its limit value; it stops after the pass where the test first fails, here when `total` is 225."
+      },
+      {
+       "text": "`150`",
+       "feedback": "This expects the loop to avoid passing 200. The test runs after each addition, so the addition that crosses 200 still happens."
+      },
+      {
+       "text": "A compile error, because the body has no braces",
+       "feedback": "A single-statement body needs no braces in a `do…while`, although many programmers add them for readability."
+      }
+     ],
+     "hint": "List `total` after each addition, then apply the test to that value.",
+     "explanation": "A `do…while` with one statement in its body doesn't need curly braces. Many programmers use them anyway, so that the closing `while(total < 200);` isn't mistaken for the start of a new `while` loop.",
+     "ref": "Ch. 6.5, single-statement do…while (p. 219)"
+    },
+    {
+     "id": "do-while-not-required",
+     "concept": "Rewriting a do…while as a while",
+     "level": "evaluate",
+     "stem": "A teammate says the `BankBalance2` program, which shows one year's balance before asking to continue, *can only be written with a `do…while` loop*. Which response is accurate?",
+     "options": [
+      {
+       "text": "Any `do…while` can be rewritten: run the body once, then a `while`",
+       "feedback": "Display the first year's balance unconditionally, prompt, and then start a `while` loop that might not be entered. The behavior is the same.",
+       "correct": true
+      },
+      {
+       "text": "True, because only a `do…while` can guarantee a first execution",
+       "feedback": "A `do…while` makes the guarantee convenient, not unique. Placing the steps once before a `while` loop guarantees them too."
+      },
+      {
+       "text": "True for this program, because it reads input inside the loop",
+       "feedback": "Reading input inside the loop is just as possible in a `while` loop, as `BankBalance` in Figure 6-8 shows."
+      },
+      {
+       "text": "False, because a `for` loop also tests at the bottom",
+       "feedback": "A `for` loop is a pretest loop like `while`. It tests before the body, not after."
+      }
+     ],
+     "hint": "How could you make sure the first balance is shown even if the loop that follows never runs?",
+     "explanation": "You are never required to use a `do…while` loop. When a task must be performed at least once, it is convenient because it saves writing the first pass separately before a `while` loop.",
+     "aside": "Pascal's posttest loop, `repeat … until condition`, uses the opposite logic: it keeps repeating until the condition becomes *true*. Java's `do…while` keeps repeating while its condition stays true.",
+     "ref": "Ch. 6.5, when to use a do…while loop (p. 219)"
+    },
+    {
+     "id": "pretest-loops",
+     "concept": "Pretest and posttest loops",
+     "level": "understand",
+     "stem": "A program reads a value and should skip processing entirely when that first value is already invalid. Which loops test before their bodies execute, so they suit this job?",
+     "options": [
+      {
+       "text": "`while` and `for`, the pretest loops",
+       "feedback": "Both evaluate the loop control variable at the top, before the body has a chance to run, so a bad first value skips the body.",
+       "correct": true
+      },
+      {
+       "text": "Only `do…while`, the posttest loop",
+       "feedback": "A `do…while` runs its body once before testing, so the invalid value would be processed once."
+      },
+      {
+       "text": "Only `while`; a `for` tests after its body",
+       "feedback": "A `for` loop's test section runs before each execution of the body, so it is a pretest loop too."
+      },
+      {
+       "text": "All three, since each loop has a test",
+       "feedback": "Every loop has a test, but a `do…while` places it at the bottom, after one execution of the body."
+      }
+     ],
+     "hint": "Which loops evaluate their condition at the *top*?",
+     "explanation": "Both `while` loops and `for` loops are pretest loops: the loop control variable is tested before the loop body executes, so the body can be skipped. The `do…while` loop is the posttest loop.",
+     "ref": "Ch. 6.5, pretest loops (pp. 217–218)"
+    }
+   ]
+  },
+  {
+   "id": "6.6",
+   "title": "Learning About Nested Loops",
+   "subtitle": "Inner and outer loops, counting total iterations, resetting values, and choosing which loop goes outside",
+   "source": "Ch. 6, section 6.6 (pp. 220–223)",
+   "intro": "Twenty customers, three label colors, sixty labels: the order of two nested loops can decide how long the printer takes. Five questions on loops inside loops.",
+   "takeaways": [
+    "The inner loop runs completely, from start to finish, for every single iteration of the outer loop, so the outer loop's variable changes less often.",
+    "Total inner iterations are the sum of the inner counts for each outer pass: a product when the inner loop always runs the same number of times.",
+    "A value that must start fresh for each outer pass, like `balance = initialBalance`, is reset inside the outer loop, before the inner loop begins."
+   ],
+   "questions": [
+    {
+     "id": "nested-count",
+     "concept": "Counting iterations of nested loops",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int count = 0;\nfor(int x = 0; x < 4; ++x)\n    for(int y = x; y < 4; ++y)\n        count++;\nSystem.out.println(count);",
+      "verify": {
+       "expect": "output",
+       "program": "public class NestedCount\n{\n    public static void main(String[] args)\n    {\n        int count = 0;\n        for(int x = 0; x < 4; ++x)\n            for(int y = x; y < 4; ++y)\n                count++;\n        System.out.println(count);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`10`",
+       "feedback": "The inner loop starts at `x` each time, so it runs 4, 3, 2 and 1 times for the four outer passes: 4 + 3 + 2 + 1 = 10.",
+       "correct": true
+      },
+      {
+       "text": "`16`",
+       "feedback": "4 × 4 assumes the inner loop always starts at 0. Here it starts at `x`, so it runs fewer times on each later pass."
+      },
+      {
+       "text": "`4`",
+       "feedback": "This counts only the outer loop. `count++` is inside the inner loop, which runs several times for each outer pass."
+      },
+      {
+       "text": "`6`",
+       "feedback": "This leaves out the passes where `y` equals `x`. The inner test `y < 4` is true for `y = x`, so those passes count too."
+      }
+     ],
+     "hint": "For each value of `x`, how many times does the inner loop run? Add them up.",
+     "explanation": "In nested loops, the inner loop runs completely for each iteration of the outer loop. When the inner range depends on the outer variable, add the inner counts pass by pass instead of multiplying.",
+     "aside": "Nesting multiplies work fast. The textbook way to multiply two *n* × *n* matrices uses three nested loops, so 1,000-by-1,000 matrices take a billion multiplications.",
+     "ref": "Ch. 6.6, nested loops; Two Truths & a Lie (pp. 220–222)"
+    },
+    {
+     "id": "nested-pattern",
+     "concept": "Inner loop bounded by the outer variable",
+     "level": "apply",
+     "stem": "What does this code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "for(int row = 1; row <= 3; ++row)\n{\n    for(int col = 1; col <= row; ++col)\n        System.out.print(\"*\");\n    System.out.println();\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class NestedPattern\n{\n    public static void main(String[] args)\n    {\n        for(int row = 1; row <= 3; ++row)\n        {\n            for(int col = 1; col <= row; ++col)\n                System.out.print(\"*\");\n            System.out.println();\n        }\n    }\n}",
+       "output": "* ** ***"
+      }
+     },
+     "options": [
+      {
+       "text": "Three lines: `*`, then `**`, then `***`",
+       "feedback": "For each `row`, the inner loop prints `row` stars, and the `println()` after it, still in the outer loop, ends the line.",
+       "correct": true
+      },
+      {
+       "text": "Three lines, each one showing `***`",
+       "feedback": "The inner loop stops at `row`, not at 3, so the first line gets one star and the second gets two."
+      },
+      {
+       "text": "One line of six stars: `******`",
+       "feedback": "The `println()` is inside the outer loop's braces, so it runs after each row and starts a new line."
+      },
+      {
+       "text": "Three lines: `***`, then `**`, then `*`",
+       "feedback": "`row` increases from 1, so the lines grow longer, not shorter."
+      }
+     ],
+     "hint": "Trace `row = 1` completely, including the `println()`, before moving on to `row = 2`.",
+     "explanation": "Each pass of the outer loop runs the inner loop from start to finish. Statements that are inside the outer loop but after the inner loop, like this `println()`, run once per outer pass.",
+     "ref": "Ch. 6.6, You Do It: DivideEvenly2 (pp. 222–223)"
+    },
+    {
+     "id": "nested-reset",
+     "concept": "Where to reset a value in nested loops",
+     "level": "analyze",
+     "stem": "This should show the total for each `r` separately, but `total` is set to 0 only once. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int total = 0;\nfor(int r = 1; r <= 2; ++r)\n{\n    for(int y = 1; y <= 3; ++y)\n        total += r;\n    System.out.print(total + \" \");\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class NestedReset\n{\n    public static void main(String[] args)\n    {\n        int total = 0;\n        for(int r = 1; r <= 2; ++r)\n        {\n            for(int y = 1; y <= 3; ++y)\n                total += r;\n            System.out.print(total + \" \");\n        }\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 9`",
+       "feedback": "The first outer pass adds 1 three times, giving 3. Nothing resets `total`, so the second pass adds 2 three times to that 3, giving 9.",
+       "correct": true
+      },
+      {
+       "text": "`3 6`",
+       "feedback": "That is the intended output. It needs `total = 0;` inside the outer loop, before the inner loop starts."
+      },
+      {
+       "text": "`3 3`",
+       "feedback": "On the second pass `r` is 2, so the inner loop adds 2, not 1, each time."
+      },
+      {
+       "text": "`9 9`",
+       "feedback": "The first `print()` runs after the first outer pass only, when `total` holds just 3."
+      }
+     ],
+     "hint": "Does anything set `total` back to 0 before the second outer pass?",
+     "explanation": "In `BankBalanceByRateAndYear`, `balance = initialBalance;` sits inside the outer loop, before the inner loop, so every interest rate starts from the same balance. A value set before the outer loop carries over from one outer pass to the next.",
+     "ref": "Ch. 6.6, Figure 6-26 (pp. 220–221)"
+    },
+    {
+     "id": "outer-loop-choice",
+     "concept": "Which variable controls the outer loop",
+     "level": "evaluate",
+     "stem": "`outputLabel()` prints one mailing label, and changing the ink color inside it is slow. With 20 customers and 3 colors, which nesting is better?",
+     "options": [
+      {
+       "text": "Color in the outer loop: the ink changes only 3 times",
+       "feedback": "The outer variable changes least often. With color outside, all 20 labels of one color print before the ink changes.",
+       "correct": true
+      },
+      {
+       "text": "Customer in the outer loop, since it has more values",
+       "feedback": "Both orders make 60 calls, but with customer outside, the color changes on every call, 60 changes instead of 3."
+      },
+      {
+       "text": "Either one: both nestings call `outputLabel()` 60 times",
+       "feedback": "The call count is the same, but the work inside differs. How often the slow color change happens depends on the nesting."
+      },
+      {
+       "text": "Color in the inner loop, because inner loops run faster",
+       "feedback": "Inner loops aren't faster. The inner variable changes most often, which is the wrong place for the slow change."
+      }
+     ],
+     "hint": "Which loop's variable changes less often: the outer one or the inner one?",
+     "explanation": "Think of the outer loop as the all-encompassing loop: its variable changes more infrequently. When nesting order affects how often an expensive change happens, put that change's variable in the outer loop.",
+     "ref": "Ch. 6.6, mailing label example (p. 221)"
+    },
+    {
+     "id": "nesting-rules",
+     "concept": "Rules for nesting loops",
+     "level": "remember",
+     "stem": "Which statement about nested loops is accurate?",
+     "options": [
+      {
+       "text": "A `while` may nest in a `for`, but the inner loop must sit fully inside",
+       "feedback": "Any combination of loop types can be nested, but loops can never overlap: the inner loop must be entirely contained in the outer one.",
+       "correct": true
+      },
+      {
+       "text": "Only loops of the same type, such as `for` within `for`, can be nested",
+       "feedback": "You can place a `while` within a `while`, a `for` within a `for`, a `while` within a `for`, or any other combination."
+      },
+      {
+       "text": "An inner loop may begin inside the outer loop and end after it does",
+       "feedback": "That would be overlapping, which is never allowed. The inner loop must end before the outer loop's body ends."
+      },
+      {
+       "text": "Java allows at most two levels of nested loops in one method",
+       "feedback": "You can nest virtually any number of loops; the practical limit is how much looping information the machine can store."
+      }
+     ],
+     "hint": "Think about the rule for nested `if` statements: they can be nested but can never overlap.",
+     "explanation": "Nested loops occur when a loop is coded inside another loop, in any combination of types. Like decisions, loops can be nested but never overlap: each inner loop is entirely contained within its outer loop.",
+     "ref": "Ch. 6.6, nested loops, Figure 6-25 (p. 220)"
+    }
+   ]
+  },
+  {
+   "id": "6.7",
+   "title": "Improving Loop Performance",
+   "subtitle": "Unnecessary operations, short-circuit order, comparing to zero, loop fusion, and when readability wins",
+   "source": "Ch. 6, section 6.7 (pp. 223–228)",
+   "intro": "A loop that runs a million times turns one wasted calculation into a million. Six questions on making loops faster without changing what they do.",
+   "takeaways": [
+    "Work that gives the same result on every pass, such as `a + b` or a method call whose value can't change, belongs before the loop. If the loop can change it, it must stay inside.",
+    "Short-circuit order matters in a busy loop: with `&&`, test the condition most likely to be false first; with `||`, the one most likely to be true first.",
+    "Comparing to 0 and fusing independent loops can save time, but only when behavior is unchanged, and for most programs readability outweighs a few milliseconds."
+   ],
+   "questions": [
+    {
+     "id": "hoist-invariant",
+     "concept": "Avoiding unnecessary operations",
+     "level": "understand",
+     "stem": "A loop begins `while(x < a + b)`, and `a` and `b` never change inside it. What change gives the same results with less work?",
+     "options": [
+      {
+       "text": "Store `a + b` in `sum` before the loop and test `x < sum`",
+       "feedback": "The sum is then calculated once instead of on every iteration, and because `a` and `b` don't change, every test gives the same answer.",
+       "correct": true
+      },
+      {
+       "text": "Write the test as `while(x < (a + b))` with parentheses",
+       "feedback": "Parentheses only make the grouping explicit. The addition is still performed every time the condition is evaluated."
+      },
+      {
+       "text": "Compute `sum = a + b;` as the first statement in the body",
+       "feedback": "That still calculates the sum on every pass, and the first test would use `sum` before it is assigned."
+      },
+      {
+       "text": "Rewrite it as a `for` loop with `x < a + b` as the test",
+       "feedback": "A `for` loop evaluates its test section before every pass too, so the sum would still be recalculated each time."
+      }
+     ],
+     "hint": "How many times is `a + b` calculated if the loop runs 1,000 times? How could that become once?",
+     "explanation": "You can make loops more efficient by keeping unnecessary operations out of the tested expression and the body. A value that doesn't change during the loop can be calculated once, before it starts.",
+     "ref": "Ch. 6.7, Avoiding Unnecessary Operations (pp. 223–224)"
+    },
+    {
+     "id": "hoist-unsafe",
+     "concept": "When a value must stay in the loop",
+     "level": "evaluate",
+     "stem": "A teammate moves `getNumberOfEmployees()` out of `while(count < getNumberOfEmployees())` and stores its result before the loop. In which case does this change the program's behavior?",
+     "options": [
+      {
+       "text": "When the loop body can add or remove employees",
+       "feedback": "Then the count can change while the loop runs, and the stored value goes stale. The call is safe to move only if it always returns the same value.",
+       "correct": true
+      },
+      {
+       "text": "When the loop runs only a few times",
+       "feedback": "A short loop makes the saving small, not the behavior different. The results are the same either way."
+      },
+      {
+       "text": "When the method contains a loop of its own",
+       "feedback": "A method's internal work doesn't matter here. What matters is whether the value it returns can change during this loop."
+      },
+      {
+       "text": "In every case, because methods can't be called outside a loop",
+       "feedback": "A method can be called anywhere a value of its return type is allowed, including before a loop to store its result."
+      }
+     ],
+     "hint": "What would make the stored number different from what the method returns later?",
+     "explanation": "Moving a calculation out of a loop is safe only when its result can't change during the loop. If `a` or `b` (or what a method depends on) is altered in the body, the value must be recomputed on every iteration.",
+     "ref": "Ch. 6.7, Avoiding Unnecessary Operations (p. 224)"
+    },
+    {
+     "id": "or-order",
+     "concept": "Order of evaluation with ||",
+     "level": "apply",
+     "stem": "Users may request 0 to 15 copies, and they enter values that are too high far more often than negative ones. Which reprompt loop condition does the fewest comparisons?",
+     "options": [
+      {
+       "text": "`while(requestedNum > LIMIT || requestedNum < 0)`",
+       "feedback": "With `||`, a true first operand settles the result. Testing the more common error first means the second comparison is skipped more often.",
+       "correct": true
+      },
+      {
+       "text": "`while(requestedNum < 0 || requestedNum > LIMIT)`",
+       "feedback": "This tests the rare case first, so for the common too-high entry both comparisons run every time."
+      },
+      {
+       "text": "`while(requestedNum > LIMIT && requestedNum < 0)`",
+       "feedback": "No number is both above 15 and below 0, so this condition is always false and invalid values are never rejected."
+      },
+      {
+       "text": "Either `||` order, since both comparisons always run",
+       "feedback": "`||` uses short-circuit evaluation: it evaluates only as much as needed to know the result, so order changes the work done."
+      }
+     ],
+     "hint": "With `||`, which result of the first comparison lets Java skip the second one?",
+     "explanation": "AND and OR operands are evaluated only as much as necessary. In an OR, put the condition most likely to be true first; in an AND, the one most likely to be false. In a loop that runs thousands of times, the skipped comparisons add up.",
+     "ref": "Ch. 6.7, Considering the Order of Evaluation of Short-Circuit Operators (p. 224)"
+    },
+    {
+     "id": "and-order",
+     "concept": "Order of evaluation with &&",
+     "level": "analyze",
+     "stem": "Inside a loop that runs a million times, `a && b` is tested. `a` is true 95% of the time and `b` only 10% of the time, and neither has side effects. Which is the better order, and why?",
+     "options": [
+      {
+       "text": "`b && a`: `b` is usually false, so `a` is rarely tested",
+       "feedback": "A false first operand settles an AND. With `b` first, the second test runs only about 10% of the time.",
+       "correct": true
+      },
+      {
+       "text": "`a && b`: test the most likely condition first",
+       "feedback": "That rule is for OR. For AND, a likely-true first operand means the second test runs almost every time, 95% here."
+      },
+      {
+       "text": "Either order, since both operands are always evaluated",
+       "feedback": "`&&` short-circuits: when the first operand is false, the second is never evaluated, so order changes the work."
+      },
+      {
+       "text": "`b || a`, because OR evaluates fewer operands",
+       "feedback": "Changing `&&` to `||` changes the meaning of the condition, not just its speed."
+      }
+     ],
+     "hint": "Which value of the first operand makes the second one unnecessary in an AND?",
+     "explanation": "When two conditions must both be true, test the one least likely to be true first. When it is false, the whole AND is false and the second test is skipped, which matters most in loops that execute many times.",
+     "ref": "Ch. 6.7, short-circuit order; Two Truths & a Lie (pp. 224, 226)"
+    },
+    {
+     "id": "fusion-order",
+     "concept": "Loop fusion changes the order of work",
+     "level": "apply",
+     "stem": "These two loops are fused into one loop whose body prints `A` and then `B`. What does the fused version print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "for(int x = 0; x < 3; ++x)\n    System.out.print(\"A\");\nfor(int x = 0; x < 3; ++x)\n    System.out.print(\"B\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class FusionOrder\n{\n    public static void main(String[] args)\n    {\n        for(int x = 0; x < 3; ++x)\n            System.out.print(\"A\");\n        for(int x = 0; x < 3; ++x)\n            System.out.print(\"B\");\n        System.out.println();\n        for(int x = 0; x < 3; ++x)\n        {\n            System.out.print(\"A\");\n            System.out.print(\"B\");\n        }\n    }\n}",
+       "output": "AAABBB ABABAB"
+      }
+     },
+     "options": [
+      {
+       "text": "`ABABAB`",
+       "feedback": "One loop now does both jobs on every pass, so the work interleaves. The output changed, which is why fusion fits only tasks that don't depend on each other.",
+       "correct": true
+      },
+      {
+       "text": "`AAABBB`",
+       "feedback": "That is the original two-loop output. After fusing, both statements run on each pass instead of one loop finishing first."
+      },
+      {
+       "text": "`AB`",
+       "feedback": "The fused loop keeps the same header, so it still makes three passes."
+      },
+      {
+       "text": "`AAAAAABBBBBB`",
+       "feedback": "Fusing doesn't double the work: each statement still runs three times in total, once per pass."
+      }
+     ],
+     "hint": "In the fused loop, what does one pass print?",
+     "explanation": "Loop fusion combines two loops into one, saving the overhead of a second loop. It doesn't work in every situation: when all of the first task must finish before the second begins, fusing changes the result.",
+     "aside": "Timing code with `LocalDateTime.getNano()`, as Figure 6-29 does, can give negative results because it returns only the nanoseconds within the current second. Java's `System.nanoTime()` exists precisely for measuring elapsed time.",
+     "ref": "Ch. 6.7, Employing Loop Fusion (p. 226)"
+    },
+    {
+     "id": "readability-first",
+     "concept": "Comparing to zero versus readability",
+     "level": "evaluate",
+     "stem": "A loop displays the numbers 1 to 100 for the user. A teammate rewrites it to count down to 0, because comparing to 0 is faster. Is this a good change?",
+     "options": [
+      {
+       "text": "No: the display needs counting up, and clarity beats milliseconds",
+       "feedback": "Comparing to 0 helps when a loop only counts iterations. Here the count is shown to the user, and the tiny saving isn't worth harder-to-read code.",
+       "correct": true
+      },
+      {
+       "text": "Yes: comparing to 0 is faster with any comparison operator",
+       "feedback": "It is faster, but a countdown would print 100 to 1, or need extra arithmetic to print upward, adding complexity for almost no gain."
+      },
+      {
+       "text": "Yes: a countdown loop executes fewer iterations than counting up",
+       "feedback": "Counting up from 0 to 100,000 and down from 100,000 to 0 take the same number of iterations; only the comparison is cheaper."
+      },
+      {
+       "text": "No: comparing to 0 is the slower comparison in compiled languages",
+       "feedback": "This reverses the text. Comparing to 0 is the faster comparison, because condition flags for it are set once."
+      }
+     ],
+     "hint": "When is the value of the loop control variable more than just a counter?",
+     "explanation": "Comparing to 0 can make a loop slightly faster, but only when the loop's purpose is just to count iterations. Almost all business professionals agree that if saving a few milliseconds makes code harder to understand, you have not succeeded.",
+     "ref": "Ch. 6.7, Comparing to Zero; A Final Note on Improving Loop Performance (pp. 224–226)"
+    }
+   ]
+  }
+ ]
+}
