@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The food-truck log that crashes on Sunday</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 8.1</div>
+  <h1>The food-truck log that crashes on Sunday</h1>
+<h2>Objectives</h2><ul><li>Declare an array variable and reserve its memory with <code>new</code>, sizing it from a variable</li><li>Map a person&#x27;s numbering (Day 1, Day 2, ...) to array subscripts that start at 0</li><li>Predict when a subscript is out of bounds and read an <code>ArrayIndexOutOfBoundsException</code> message</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The constructor creates <code>sales</code> with exactly as many elements as the <code>days</code> parameter, not a typed number.</li><li><strong>R2</strong> <code>record()</code> and <code>getSale()</code> use the subscript <code>dayNumber - 1</code>, so Day 1 is element 0.</li><li><strong>R3</strong> <code>getLastDay()</code> returns the last element: subscript <code>numDays - 1</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, <code>sales = new double[7]</code>. What are the subscripts of the first and the last element, and what happens when <code>record(7, 380.25)</code> runs?</p><div class="answer"><p>The subscripts run from 0 to 6. record(7, ...) uses subscript 7, which is out of bounds, so Java throws an ArrayIndexOutOfBoundsException and the program stops.</p></div></li><li><p>In the starter, which element receives Day 1&#x27;s sale, and which element is never used?</p><div class="answer"><p>Day 1 goes into sales[1], the second element. sales[0], the first element, is never used.</p></div></li></ol>
+<h2>Solution</h2><div class="file">SalesWeek.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SalesWeek</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">sales</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">numDays</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Creates the sales log for a week with the given number of working days.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">SalesWeek</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">days</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">numDays</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">days</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">sales</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-o">[</span><span class="t-n">days</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The owner's sheet numbers the working days 1, 2, 3, ...</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">record</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">dayNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">sales</span><span class="t-o">[</span><span class="t-n">dayNumber</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getSale</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">dayNumber</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">sales</span><span class="t-o">[</span><span class="t-n">dayNumber</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The sale of the last working day of the week.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getLastDay</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">sales</span><span class="t-o">[</span><span class="t-n">numDays</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Declaring the variable (<code>double[] sales;</code>) and reserving memory (<code>new double[days]</code>) are two distinct steps (p. 268). Java accepts any integer expression as the size, so the parameter <code>days</code> sizes the array to the week (pp. 269–270). Subscripts start at 0, so a person&#x27;s Day n is element n − 1, and the highest legal subscript is one less than the size (p. 269): <code>sales[numDays]</code> is out of bounds. <code>new double[numDays]</code> and <code>sales[sales.length - 1]</code> also pass the checks. Day 3 prints <code>0.0</code> because nothing was stored there yet; section 8.2 explains these default values.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSalesWeek.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSalesWeek</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">SalesWeek</span><span class="t-w"> </span><span class="t-n">week</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SalesWeek</span><span class="t-p">(</span><span class="t-mi">7</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">record</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">412.25</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">record</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">298.75</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">record</span><span class="t-p">(</span><span class="t-mi">7</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">380.25</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"7-day week: Day 1 $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">getSale</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", Day 2 $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">getSale</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"7-day week: last day $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">getLastDay</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"7-day week: Day 3, nothing yet: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">week</span><span class="t-p">.</span><span class="t-na">getSale</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">SalesWeek</span><span class="t-w"> </span><span class="t-n">catering</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SalesWeek</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">catering</span><span class="t-p">.</span><span class="t-na">record</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">150.75</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">catering</span><span class="t-p">.</span><span class="t-na">record</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">640.25</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"5-day week: Day 1 $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">catering</span><span class="t-p">.</span><span class="t-na">getSale</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", last day $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">catering</span><span class="t-p">.</span><span class="t-na">getLastDay</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">7-day week: Day 1 $412.25, Day 2 $298.75
+7-day week: last day $380.25
+7-day week: Day 3, nothing yet: $0.0
+5-day week: Day 1 $150.75, last day $640.25
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The array is sized from the number of days<div class="small">in <code>SalesWeek.SalesWeek</code></div></td><td><div><span class="tag">require</span> <code>\bsales\s*=\s*new\s+double\s*\[\s*(?:days|numDays)\s*\]</code></div><div><span class="tag">forbid</span> <code>\bnew\s+double\s*\[\s*\d+\s*\]</code></div></td></tr><tr><td>C2</td><td>R2</td><td>record() stores Day n in element n − 1<div class="small">in <code>SalesWeek.record</code></div></td><td><div><span class="tag">require</span> <code>\bsales\s*\[\s*dayNumber\s*-\s*1\s*\]\s*=(?!=)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>getSale() reads the same element<div class="small">in <code>SalesWeek.getSale</code></div></td><td><div><span class="tag">require</span> <code>\bsales\s*\[\s*dayNumber\s*-\s*1\s*\]</code></div></td></tr><tr><td>C4</td><td>R3</td><td>getLastDay() reads the last element<div class="small">in <code>SalesWeek.getLastDay</code></div></td><td><div><span class="tag">require</span> <code>\bsales\s*\[\s*(?:numDays|sales\s*\.\s*length)\s*-\s*1\s*\]</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The array is sized from the number of days</dt><dd><p>Create the array with <code>new double[days]</code>, so a 5-day catering week gets 5 elements and a 7-day week gets 7. Java lets a variable set an array&#x27;s size; a typed <code>7</code> is wrong for every week that isn&#x27;t 7 days long.</p><div class='small'><strong>Hint:</strong></div><p>Which parameter already holds the number of working days?</p></dd><dt>C2 · record() stores Day n in element n − 1</dt><dd><p>Store the sale in <code>sales[dayNumber - 1]</code>: subscripts start at 0, so Day 1 belongs in element 0 and Day 7 in element 6.</p></dd><dt>C3 · getSale() reads the same element</dt><dd><p>Read <code>sales[dayNumber - 1]</code>, the element <code>record()</code> writes to; otherwise Day 1 shows Day 2&#x27;s sale.</p></dd><dt>C4 · getLastDay() reads the last element</dt><dd><p>Return <code>sales[numDays - 1]</code>: in an array of <code>numDays</code> elements the last subscript is <code>numDays - 1</code>; <code>sales[numDays]</code> is one past the end.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Java allows any integer expression as an array size: a literal, a named constant, a variable, a calculation or a method&#x27;s return value. Which variable in the constructor already holds the number of days?</p></li><li><p>Think of a subscript as &quot;how many elements away from the start&quot;. Day 1 is zero elements away from the start; Day 7 is six away.</p></li><li><p>For an array of n elements the highest legal subscript is one less than n. <code>getLastDay()</code> already uses <code>numDays</code>; it is off by one.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The crash message said <code>Index 7 out of bounds for length 7</code>. Explain why 7 is not a legal subscript for an array of length 7.</p><div class="answer"><p>A 7-element array has subscripts 0 through 6 because counting starts at 0. Subscript 7 would be an eighth element, which was never reserved.</p></div></li><li><p>Before your fix, Day 1&#x27;s sale was stored but never displayed, and nothing crashed. Why is a silent off-by-one error more dangerous than the crash on Day 7?</p><div class="answer"><p>The silent error gives wrong numbers that look plausible, so nobody notices and decisions are made on bad data. The crash at least stops the program and points to the line.</p></div></li><li><p>Why is sizing the array from the <code>days</code> parameter better than reserving 7 elements for every week?</p><div class="answer"><p>The array then matches the week exactly: getLastDay() finds the real last day, a 5-day week has no unused elements, and the class works for any schedule without editing the code.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>getTotal()</code>, which adds the sales of every day with a loop and a variable subscript (section 8.3), and <code>getAverage()</code>, which divides the total by <code>numDays</code>. What average does the 7-day test week give, and why do days without a sale count as 0?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; no typed numbers where the size of the week belongs.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

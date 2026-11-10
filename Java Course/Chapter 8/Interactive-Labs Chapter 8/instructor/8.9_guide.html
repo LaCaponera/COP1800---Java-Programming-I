@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The guest list that turns away Amir</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 8.9</div>
+  <h1>The guest list that turns away Amir</h1>
+<h2>Objectives</h2><ul><li>Use the static methods of <code>java.util.Arrays</code> with the class name</li><li>Explain why <code>binarySearch()</code> needs a sorted array, and read the position it returns</li><li>Compare the contents of two arrays with <code>Arrays.equals()</code> instead of <code>==</code></li><li>Reset every element of an array with <code>Arrays.fill()</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The constructor sorts the guest names with <code>Arrays.sort()</code> before any search.</li><li><strong>R2</strong> <code>isInvited()</code> treats every position from 0 upward that <code>binarySearch()</code> returns as found, and a negative result as not found.</li><li><strong>R3</strong> <code>sameList()</code> compares the contents of the two arrays with <code>Arrays.equals()</code>.</li><li><strong>R4</strong> <code>clearCheckIns()</code> resets every element of <code>checkedIn</code> with <code>Arrays.fill()</code> instead of a loop.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In a sorted list where Amir comes first, what does <code>Arrays.binarySearch(guests, &quot;Amir&quot;)</code> return, and what does the starter&#x27;s <code>&gt; 0</code> then decide?</p><div class="answer"><p>It returns 0, the first position. 0 &gt; 0 is false, so the starter says Amir is not invited.</p></div></li><li><p><code>guests == other</code> is false even when both arrays hold the same five names in the same order. What does <code>==</code> compare for arrays?</p><div class="answer"><p>== compares the two references, the memory addresses. Two separate arrays have different addresses, so == is false even when their contents match.</p></div></li></ol>
+<h2>Solution</h2><div class="file">GuestList.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Arrays</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">GuestList</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">guests</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">checkedIn</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// checkedIn[i] belongs to guests[i]</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">GuestList</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">guests</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">sort</span><span class="t-p">(</span><span class="t-n">guests</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">checkedIn</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-o">[</span><span class="t-n">guests</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isInvited</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">binarySearch</span><span class="t-p">(</span><span class="t-n">guests</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">checkIn</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">position</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">binarySearch</span><span class="t-p">(</span><span class="t-n">guests</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">position</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">checkedIn</span><span class="t-o">[</span><span class="t-n">position</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">arrivals</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">arrived</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">checkedIn</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">arrived</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// True when other holds the same names in the same order as this list.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">sameList</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">other</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-n">guests</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">other</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Starts a new evening: nobody has checked in yet.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">clearCheckIns</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">fill</span><span class="t-p">(</span><span class="t-n">checkedIn</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The <code>Arrays</code> class in <code>java.util</code> has static methods for common array tasks (p. 307, Table 8-3), so you call them with the class name. A binary search compares the key with the middle of the part still to search and discards the half that can&#x27;t contain it (pp. 307–308). That only works if the array is in order (p. 309): on the unsorted RSVPs it threw away the half that held Amir, and then the half that held Zoe. <code>binarySearch()</code> returns the element&#x27;s position, 0 or more, when the key is found, and a negative number when it isn&#x27;t (p. 309), so <code>&gt; 0</code> wrongly rejects position 0. <code>==</code> on arrays compares references (p. 289), while <code>Arrays.equals()</code> compares element by element. <code>Arrays.fill(checkedIn, false)</code> replaces the loop. Note that <code>Arrays.sort(guests)</code> also reorders the caller&#x27;s <code>rsvps</code> array, because <code>guests</code> holds the same reference (section 8.6).</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestGuestList.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestGuestList</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">rsvps</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"Zoe"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Amir"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Lena"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Kofi"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Bea"</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">GuestList</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">GuestList</span><span class="t-p">(</span><span class="t-n">rsvps</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Amir invited? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">isInvited</span><span class="t-p">(</span><span class="t-s">"Amir"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Zoe invited? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">isInvited</span><span class="t-p">(</span><span class="t-s">"Zoe"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Max invited? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">isInvited</span><span class="t-p">(</span><span class="t-s">"Max"</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">checkIn</span><span class="t-p">(</span><span class="t-s">"Zoe"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">checkIn</span><span class="t-p">(</span><span class="t-s">"Kofi"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">checkIn</span><span class="t-p">(</span><span class="t-s">"Max"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Arrivals: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">arrivals</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">printed</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"Amir"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Bea"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Kofi"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Lena"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Zoe"</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Matches the printed list? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">sameList</span><span class="t-p">(</span><span class="t-n">printed</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">clearCheckIns</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Arrivals after reset: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">arrivals</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Amir invited? true
+Zoe invited? true
+Max invited? false
+Arrivals: 2
+Matches the printed list? true
+Arrivals after reset: 0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The names are sorted before any search<div class="small">in <code>GuestList.GuestList</code></div></td><td><div><span class="tag">require</span> <code>\bArrays\s*\.\s*(?:sort|parallelSort)\s*\(\s*(?:guests|names)\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Position 0 counts as found<div class="small">in <code>GuestList.isInvited</code></div></td><td><div><span class="tag">require</span> <code>\bArrays\s*\.\s*binarySearch\s*\([\s\S]*(?:&gt;=\s*0|&gt;\s*-\s*1|&lt;\s*0)</code></div><div><span class="tag">forbid</span> <code>&gt;\s*0\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>sameList() compares contents<div class="small">in <code>GuestList.sameList</code></div></td><td><div><span class="tag">require</span> <code>\bArrays\s*\.\s*equals\s*\(</code></div><div><span class="tag">forbid</span> <code>==</code></div></td></tr><tr><td>C4</td><td>R4</td><td>clearCheckIns() uses Arrays.fill()<div class="small">in <code>GuestList.clearCheckIns</code></div></td><td><div><span class="tag">require</span> <code>\bArrays\s*\.\s*fill\s*\(\s*checkedIn\s*,\s*false\s*\)</code></div><div><span class="tag">forbid</span> <code>\bfor\s*\(|\bwhile\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The names are sorted before any search</dt><dd><p>Sort the names once in the constructor with <code>Arrays.sort(guests);</code>. <code>binarySearch()</code> decides which half to keep by comparing with the middle element; on an unsorted array it can throw away the half the name is in.</p></dd><dt>C2 · Position 0 counts as found</dt><dd><p>Test the result with <code>&gt;= 0</code>: position 0 is the first guest in alphabetical order, and <code>binarySearch()</code> returns a negative number only when the name is missing.</p></dd><dt>C3 · sameList() compares contents</dt><dd><p>Return <code>Arrays.equals(guests, other)</code>. <code>==</code> compares the two arrays&#x27; addresses, so two separate arrays holding the same names are never <code>==</code>.</p></dd><dt>C4 · clearCheckIns() uses Arrays.fill()</dt><dd><p>Replace the loop with <code>Arrays.fill(checkedIn, false);</code>: it assigns the same value to every element in one call.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>The <code>Arrays</code> methods are <code>static</code>: you call them with the class name, as in <code>Arrays.methodName(theArray)</code>. Sorting happens in place, so there is nothing to assign.</p></li><li><p><code>binarySearch()</code> returns a position (0 or more) when the key is found, and a negative number when it isn&#x27;t. The test you need separates negative from non-negative.</p></li><li><p>Table 8-3 lists a method that returns <code>true</code> when two arrays of the same type hold equal elements, and one that assigns one value to every element.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why did searching the unsorted RSVP list fail for Zoe, although she is in the array? Describe what <code>binarySearch()</code> did.</p><div class="answer"><p>It compared Zoe with the middle element, Lena. Zoe comes after Lena, so it searched only the elements after the middle, Kofi and Bea, and found nothing. Zoe was in position 0 of the unsorted array, in the half it had thrown away.</p></div></li><li><p><code>Arrays.sort(guests)</code> in the constructor also reorders the test program&#x27;s <code>rsvps</code> array. Why, and when could that surprise the caller?</p><div class="answer"><p>guests holds the same reference as rsvps, so sorting guests sorts the one shared array. A caller who later prints rsvps expecting the order the RSVPs arrived in would find it changed.</p></div></li><li><p>When is writing your own search or sort loop, as in sections 8.5 and 8.7, still worth it now that <code>Arrays</code> does both?</p><div class="answer"><p>When the rule is something the library methods don&#x27;t do directly, such as a range match, and while learning, because knowing how the algorithms work tells you when the library methods give reliable results, such as binarySearch() needing a sorted array.</p></div></li></ol>
+<h2>Extension</h2><p>In the constructor, copy the names into a new array before sorting it, so the caller&#x27;s array keeps its order (use a loop, or look up <code>Arrays.copyOf()</code> in the Java API documentation). Test it by printing <code>rsvps</code> after creating the list.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; <code>java.util.Arrays</code> is imported once and its methods are called with the class name.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

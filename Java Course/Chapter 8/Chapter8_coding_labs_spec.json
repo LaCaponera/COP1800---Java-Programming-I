@@ -1,0 +1,1235 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 8: Arrays",
+ "collection_intro": "Hands-on labs for sections 8.1 to 8.10 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "8.1",
+   "title": "The food-truck log that crashes on Sunday",
+   "subtitle": "An array of n elements has subscripts 0 through n − 1, and its size can come from a variable",
+   "source": "Ch. 8, section 8.1 (pp. 267–271)",
+   "minutes": 20,
+   "objectives": [
+    "Declare an array variable and reserve its memory with `new`, sizing it from a variable",
+    "Map a person's numbering (Day 1, Day 2, ...) to array subscripts that start at 0",
+    "Predict when a subscript is out of bounds and read an `ArrayIndexOutOfBoundsException` message"
+   ],
+   "scenario": "Rosa runs the *Taco Tide* food truck and logs each day's sales with `SalesWeek`. Her sheet numbers the working days 1 to 7, and the class stores them in `double[] sales`.\n\nOn Day 7 the program crashed with `ArrayIndexOutOfBoundsException: Index 7 out of bounds for length 7`. Looking back, Day 1's sale had never shown up either. And next week the truck works only five days for a catering contract, but the class always reserves seven.\n\nFix `SalesWeek` so that day numbers 1 to n land in subscripts 0 to n − 1, the array is exactly as big as the week, and `getLastDay()` reads the real last element. When you are done, the test program prints:\n\n```\n7-day week: Day 1 $412.25, Day 2 $298.75\n7-day week: last day $380.25\n7-day week: Day 3, nothing yet: $0.0\n5-day week: Day 1 $150.75, last day $640.25\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor creates `sales` with exactly as many elements as the `days` parameter, not a typed number."
+    },
+    {
+     "id": "R2",
+     "text": "`record()` and `getSale()` use the subscript `dayNumber - 1`, so Day 1 is element 0."
+    },
+    {
+     "id": "R3",
+     "text": "`getLastDay()` returns the last element: subscript `numDays - 1`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "SalesWeek.java",
+   "starter_code": "public class SalesWeek\n{\n    private double[] sales;\n    private int numDays;\n\n    // Creates the sales log for a week with the given number of working days.\n    public SalesWeek(int days)\n    {\n        numDays = days;\n        // TODO (R1): the truck does not always work 7 days a week.\n        // Size the array from the parameter, not from a typed number.\n        sales = new double[7];\n    }\n\n    // The owner's sheet numbers the working days 1, 2, 3, ...\n    public void record(int dayNumber, double amount)\n    {\n        // TODO (R2): Day 1 must go into the first element of the array.\n        sales[dayNumber] = amount;\n    }\n\n    public double getSale(int dayNumber)\n    {\n        // TODO (R2): read from the same element record() writes to.\n        return sales[dayNumber];\n    }\n\n    // The sale of the last working day of the week.\n    public double getLastDay()\n    {\n        // TODO (R3): what is the subscript of the last element?\n        return sales[numDays];\n    }\n}\n",
+   "solution": "public class SalesWeek\n{\n    private double[] sales;\n    private int numDays;\n\n    // Creates the sales log for a week with the given number of working days.\n    public SalesWeek(int days)\n    {\n        numDays = days;\n        sales = new double[days];\n    }\n\n    // The owner's sheet numbers the working days 1, 2, 3, ...\n    public void record(int dayNumber, double amount)\n    {\n        sales[dayNumber - 1] = amount;\n    }\n\n    public double getSale(int dayNumber)\n    {\n        return sales[dayNumber - 1];\n    }\n\n    // The sale of the last working day of the week.\n    public double getLastDay()\n    {\n        return sales[numDays - 1];\n    }\n}\n",
+   "solution_notes": "Declaring the variable (`double[] sales;`) and reserving memory (`new double[days]`) are two distinct steps (p. 268). Java accepts any integer expression as the size, so the parameter `days` sizes the array to the week (pp. 269–270). Subscripts start at 0, so a person's Day n is element n − 1, and the highest legal subscript is one less than the size (p. 269): `sales[numDays]` is out of bounds. `new double[numDays]` and `sales[sales.length - 1]` also pass the checks. Day 3 prints `0.0` because nothing was stored there yet; section 8.2 explains these default values.",
+   "warmup": [
+    {
+     "question": "With the starter, `sales = new double[7]`. What are the subscripts of the first and the last element, and what happens when `record(7, 380.25)` runs?",
+     "model_answer": "The subscripts run from 0 to 6. record(7, ...) uses subscript 7, which is out of bounds, so Java throws an ArrayIndexOutOfBoundsException and the program stops."
+    },
+    {
+     "question": "In the starter, which element receives Day 1's sale, and which element is never used?",
+     "model_answer": "Day 1 goes into sales[1], the second element. sales[0], the first element, is never used."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The array is sized from the number of days",
+     "within": "SalesWeek.SalesWeek",
+     "require": "\\bsales\\s*=\\s*new\\s+double\\s*\\[\\s*(?:days|numDays)\\s*\\]",
+     "forbid": "\\bnew\\s+double\\s*\\[\\s*\\d+\\s*\\]",
+     "message": "Create the array with `new double[days]`, so a 5-day catering week gets 5 elements and a 7-day week gets 7. Java lets a variable set an array's size; a typed `7` is wrong for every week that isn't 7 days long.",
+     "hint": "Which parameter already holds the number of working days?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "record() stores Day n in element n − 1",
+     "within": "SalesWeek.record",
+     "require": "\\bsales\\s*\\[\\s*dayNumber\\s*-\\s*1\\s*\\]\\s*=(?!=)",
+     "message": "Store the sale in `sales[dayNumber - 1]`: subscripts start at 0, so Day 1 belongs in element 0 and Day 7 in element 6."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "getSale() reads the same element",
+     "within": "SalesWeek.getSale",
+     "require": "\\bsales\\s*\\[\\s*dayNumber\\s*-\\s*1\\s*\\]",
+     "message": "Read `sales[dayNumber - 1]`, the element `record()` writes to; otherwise Day 1 shows Day 2's sale."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "getLastDay() reads the last element",
+     "within": "SalesWeek.getLastDay",
+     "require": "\\bsales\\s*\\[\\s*(?:numDays|sales\\s*\\.\\s*length)\\s*-\\s*1\\s*\\]",
+     "message": "Return `sales[numDays - 1]`: in an array of `numDays` elements the last subscript is `numDays - 1`; `sales[numDays]` is one past the end."
+    }
+   ],
+   "hints": [
+    "Java allows any integer expression as an array size: a literal, a named constant, a variable, a calculation or a method's return value. Which variable in the constructor already holds the number of days?",
+    "Think of a subscript as \"how many elements away from the start\". Day 1 is zero elements away from the start; Day 7 is six away.",
+    "For an array of n elements the highest legal subscript is one less than n. `getLastDay()` already uses `numDays`; it is off by one."
+   ],
+   "test_program": {
+    "file_name": "TestSalesWeek.java",
+    "code": "public class TestSalesWeek\n{\n    public static void main(String[] args)\n    {\n        SalesWeek week = new SalesWeek(7);\n        week.record(1, 412.25);\n        week.record(2, 298.75);\n        week.record(7, 380.25);\n        System.out.println(\"7-day week: Day 1 $\" + week.getSale(1)\n            + \", Day 2 $\" + week.getSale(2));\n        System.out.println(\"7-day week: last day $\" + week.getLastDay());\n        System.out.println(\"7-day week: Day 3, nothing yet: $\" + week.getSale(3));\n\n        SalesWeek catering = new SalesWeek(5);\n        catering.record(1, 150.75);\n        catering.record(5, 640.25);\n        System.out.println(\"5-day week: Day 1 $\" + catering.getSale(1)\n            + \", last day $\" + catering.getLastDay());\n    }\n}\n",
+    "expected_output": "7-day week: Day 1 $412.25, Day 2 $298.75\n7-day week: last day $380.25\n7-day week: Day 3, nothing yet: $0.0\n5-day week: Day 1 $150.75, last day $640.25\n",
+    "predict": "Before you change anything, predict what the starter does with `week.record(7, 380.25)`. Does the program print anything at all? Run it and read the first line of the error message.",
+    "how_to_run": "Put `SalesWeek.java` and `TestSalesWeek.java` in the same folder, then run `javac *.java` and `java TestSalesWeek`. In an IDE, add all of them to one project and run `TestSalesWeek.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The crash message said `Index 7 out of bounds for length 7`. Explain why 7 is not a legal subscript for an array of length 7.",
+     "model_answer": "A 7-element array has subscripts 0 through 6 because counting starts at 0. Subscript 7 would be an eighth element, which was never reserved."
+    },
+    {
+     "question": "Before your fix, Day 1's sale was stored but never displayed, and nothing crashed. Why is a silent off-by-one error more dangerous than the crash on Day 7?",
+     "model_answer": "The silent error gives wrong numbers that look plausible, so nobody notices and decisions are made on bad data. The crash at least stops the program and points to the line."
+    },
+    {
+     "question": "Why is sizing the array from the `days` parameter better than reserving 7 elements for every week?",
+     "model_answer": "The array then matches the week exactly: getLastDay() finds the real last day, a 5-day week has no unused elements, and the class works for any schedule without editing the code."
+    }
+   ],
+   "extension": "Add `getTotal()`, which adds the sales of every day with a loop and a variable subscript (section 8.3), and `getAverage()`, which divides the total by `numDays`. What average does the 7-day test week give, and why do days without a sale count as 0?",
+   "worth_knowing": "Java checks every array subscript while the program runs. In C, writing past the end of an array is not stopped: the program quietly overwrites whatever memory comes next. Such *buffer overflows* have caused serious security holes, which is one reason Java throws `ArrayIndexOutOfBoundsException` instead.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; no typed numbers where the size of the week belongs."
+    }
+   ]
+  },
+  {
+   "id": "8.2",
+   "title": "The coffee board that sells a null for $0.0",
+   "subtitle": "Initialization lists create and fill an array at once; a new array starts with default values",
+   "source": "Ch. 8, section 8.2 (pp. 271–273)",
+   "minutes": 20,
+   "objectives": [
+    "Create and fill an array in one statement with an initialization list",
+    "Predict the default value of the elements of a new `int`, `double` and `String` array",
+    "Decide when an array should be filled with a list and when its default values are exactly right"
+   ],
+   "scenario": "The *Bean There* coffee cart added an Extra Large size last week. The owner changed the array sizes to 4 but forgot two of the new assignments, and this morning the menu board showed:\n\n```\nnull $0.0 (0 sold)\n```\n\nNobody typed `null` or `0.0` anywhere: those are the values Java puts in every element of a new `String` array and a new `double` array. The constructor also sets three `cupsSold` counters to 0 one by one, and the fourth counter was 0 anyway.\n\nRewrite the arrays so the four sizes and the four prices are created **and** filled in one statement each, in the same order: Small $2.25, Medium $2.75, Large $3.25, Extra Large $3.75. Then decide what `cupsSold` needs. When you are done, the test program prints:\n\n```\nOpening board:\nSmall $2.25 (0 sold)\nMedium $2.75 (0 sold)\nLarge $3.25 (0 sold)\nExtra Large $3.75 (0 sold)\nAfter three sales:\nMedium $2.75 (2 sold)\nExtra Large $3.75 (1 sold)\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`sizes` is created and filled in one statement with an initialization list of the four size names; no statement assigns a single `sizes` element."
+    },
+    {
+     "id": "R2",
+     "text": "`prices` is created and filled in one statement with an initialization list of the four prices, in the same order as the sizes."
+    },
+    {
+     "id": "R3",
+     "text": "`cupsSold` is still created with `new int[4]`, and no statement assigns 0 to its elements: a new `int` array already holds zeros."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "CoffeeMenu.java",
+   "starter_code": "public class CoffeeMenu\n{\n    // TODO (R1): the menu has four sizes, but only three names are ever\n    // assigned. Create and fill this array in one statement.\n    private String[] sizes = new String[4];\n\n    // TODO (R2): the same problem with the prices. Create and fill this\n    // array in one statement, in the same order as the sizes.\n    private double[] prices = new double[4];\n\n    // Cups sold of each size since the cart opened this morning.\n    private int[] cupsSold = new int[4];\n\n    public CoffeeMenu()\n    {\n        sizes[0] = \"Small\";\n        sizes[1] = \"Medium\";\n        sizes[2] = \"Large\";\n\n        prices[0] = 2.25;\n        prices[1] = 2.75;\n        prices[2] = 3.25;\n\n        // TODO (R3): does a new int array need these statements?\n        cupsSold[0] = 0;\n        cupsSold[1] = 0;\n        cupsSold[2] = 0;\n    }\n\n    public void sell(int sizeIndex)\n    {\n        cupsSold[sizeIndex] += 1;\n    }\n\n    public String describe(int sizeIndex)\n    {\n        return sizes[sizeIndex] + \" $\" + prices[sizeIndex]\n            + \" (\" + cupsSold[sizeIndex] + \" sold)\";\n    }\n}\n",
+   "solution": "public class CoffeeMenu\n{\n    private String[] sizes = {\"Small\", \"Medium\", \"Large\", \"Extra Large\"};\n    private double[] prices = {2.25, 2.75, 3.25, 3.75};\n\n    // Cups sold of each size since the cart opened this morning.\n    // Every element of a new int array already starts at 0.\n    private int[] cupsSold = new int[4];\n\n    public void sell(int sizeIndex)\n    {\n        cupsSold[sizeIndex] += 1;\n    }\n\n    public String describe(int sizeIndex)\n    {\n        return sizes[sizeIndex] + \" $\" + prices[sizeIndex]\n            + \" (\" + cupsSold[sizeIndex] + \" sold)\";\n    }\n}\n",
+   "solution_notes": "An initialization list both sizes and fills an array (p. 272), so an element can't be forgotten the way the starter forgot Extra Large: four values give exactly four elements, and `new` is not needed. The starter's `null $0.0` line shows the default values at work: elements of an array of objects, including `String`, start as `null`; `double` elements start as `0.0`; `int` elements as `0`; `boolean` elements as `false` (p. 272). Those defaults are exactly what `cupsSold` needs, so `new int[4]` with no assignments is the right choice; the three `= 0` statements only repeated what Java had already done. Once the constructor is empty you can delete it: Java then supplies a default constructor, and `new CoffeeMenu()` still compiles.",
+   "warmup": [
+    {
+     "question": "In the starter, nothing is ever assigned to `sizes[3]` or `prices[3]`. So what does `describe(3)` put on the board, and where do those values come from?",
+     "model_answer": "It shows null and 0.0. They are the default values Java gives every element of a new String array (null) and a new double array (0.0)."
+    },
+    {
+     "question": "`cupsSold[3]` is never set to 0 either. What does it hold, and why?",
+     "model_answer": "It holds 0, because every element of a new int array is set to 0 automatically."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "sizes is created with an initialization list",
+     "within": "CoffeeMenu",
+     "require": "\\bString\\s*\\[\\s*\\]\\s*sizes\\s*=\\s*(?:new\\s+String\\s*\\[\\s*\\]\\s*)?\\{",
+     "forbid": "\\bsizes\\s*\\[\\s*\\d+\\s*\\]\\s*=(?!=)",
+     "message": "Declare `sizes` with an initialization list, `String[] sizes = {...};`, holding the four names. The list sets the array's size to the number of values, so no element can be left out (and left `null`)."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "prices is created with an initialization list",
+     "within": "CoffeeMenu",
+     "require": "\\bdouble\\s*\\[\\s*\\]\\s*prices\\s*=\\s*(?:new\\s+double\\s*\\[\\s*\\]\\s*)?\\{",
+     "forbid": "\\bprices\\s*\\[\\s*\\d+\\s*\\]\\s*=(?!=)",
+     "message": "Declare `prices` with an initialization list of the four prices, in the same order as the sizes. An element you never assign in a `double` array stays `0.0`, which is how Extra Large ended up free."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "cupsSold relies on the default value 0",
+     "within": "CoffeeMenu",
+     "require": "\\bint\\s*\\[\\s*\\]\\s*cupsSold\\s*=\\s*new\\s+int\\s*\\[",
+     "forbid": "\\bcupsSold\\s*\\[\\s*\\d+\\s*\\]\\s*=\\s*0\\s*;",
+     "message": "Keep `int[] cupsSold = new int[4];` and delete the `cupsSold[...] = 0;` statements: every element of a new `int` array already starts at 0. (`cupsSold[3]` was never set, and it showed 0 anyway.)"
+    }
+   ],
+   "hints": [
+    "An initialization list is a pair of curly braces holding the values, separated by commas, after the `=` in the declaration. The list decides the array's size, so no number goes in the brackets.",
+    "Once both arrays are filled where they are declared, the constructor has nothing left to assign. You may delete the whole constructor: Java then supplies a default one.",
+    "For `cupsSold`, the right starting value is 0 for every size, and that is what creating the array with `new` already gives you."
+   ],
+   "test_program": {
+    "file_name": "TestCoffeeMenu.java",
+    "code": "public class TestCoffeeMenu\n{\n    public static void main(String[] args)\n    {\n        CoffeeMenu menu = new CoffeeMenu();\n        System.out.println(\"Opening board:\");\n        System.out.println(menu.describe(0));\n        System.out.println(menu.describe(1));\n        System.out.println(menu.describe(2));\n        System.out.println(menu.describe(3));\n\n        menu.sell(1);\n        menu.sell(3);\n        menu.sell(1);\n        System.out.println(\"After three sales:\");\n        System.out.println(menu.describe(1));\n        System.out.println(menu.describe(3));\n    }\n}\n",
+    "expected_output": "Opening board:\nSmall $2.25 (0 sold)\nMedium $2.75 (0 sold)\nLarge $3.25 (0 sold)\nExtra Large $3.75 (0 sold)\nAfter three sales:\nMedium $2.75 (2 sold)\nExtra Large $3.75 (1 sold)\n",
+    "predict": "Before you change anything, predict the fourth line of the opening board. Which word and which number will appear in it, even though nobody typed them?",
+    "how_to_run": "Put `CoffeeMenu.java` and `TestCoffeeMenu.java` in the same folder, then run `javac *.java` and `java TestCoffeeMenu`. In an IDE, add all of them to one project and run `TestCoffeeMenu.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why can an initialization list never produce the `null $0.0` line that the starter produced?",
+     "model_answer": "The list sets the array's size to the number of values in it, so every element gets a value from the list. With new String[4] and separate assignments, any element you forget keeps its default."
+    },
+    {
+     "question": "Java gave `cupsSold` its zeros for free. Describe a situation where relying on a default value would hide a bug instead of helping.",
+     "model_answer": "When 0 is not a real value, such as a price: an unassigned price shows 0.0 and the item looks free, instead of the program failing where the mistake is."
+    },
+    {
+     "question": "Next season the cart adds a fifth size. With your version, which lines must change, and what keeps each price next to the right size?",
+     "model_answer": "One value in the sizes list, one in the prices list at the same position, and the 4 in new int[4]. Only keeping the two lists in the same order lines them up; nothing checks it for you."
+    }
+   ],
+   "extension": "Make `cupsSold` follow the menu automatically with `new int[sizes.length]` (the `length` field is in section 8.3). Then add a fifth size, Kids $1.50, by editing only the two initialization lists. Do the existing lines of the test program still print the same?",
+   "worth_knowing": "Java gives default values to array elements and fields, but never to local variables: `int count; count++;` inside a method does not compile. The compiler proves that every local variable is assigned before it is read, which turns the garbage-value bugs common in C into compile errors.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; each initialization list is readable, with the sizes and prices in matching order."
+    }
+   ]
+  },
+  {
+   "id": "8.3",
+   "title": "The grade book that forgets the sixth student",
+   "subtitle": "Loops with a variable subscript, the length field, and using only the filled part of an array",
+   "source": "Ch. 8, section 8.3 (pp. 273–277)",
+   "minutes": 25,
+   "objectives": [
+    "Process array elements in a loop whose subscript is a variable",
+    "Use the `length` field, not a typed number, as an array's capacity",
+    "Keep a count to process only the part of an array that holds real data",
+    "Explain why an enhanced for loop cannot change the elements it visits"
+   ],
+   "scenario": "Professor Ito's `QuizBook` holds up to 10 quiz scores in `int[] scores` and counts the entered scores in `count`. This term a sixth student joined, and three complaints came in after quiz 4 was curved by 3 points:\n\n- the sixth student's score was not curved,\n- the class average looked far too low,\n- the *Highest* line always says 0.\n\nThe curve loop still stops at the 5 that was typed when the class had five students. `average()` adds every element and divides by the array's `length`, so the empty slots count as zeros. `highest()` was never written.\n\nFix all three, and make `add()` take its limit from the array itself instead of a typed 10. Loops over scores should stop at `count`, the number of real scores. When you are done, the test program prints:\n\n```\nCurved scores: 73 87 95 68 91 84\nAverage: 83.0\nHighest: 95\nRoom for an 11th quiz? false\nEmpty book: average 0.0, highest 0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`add()` compares `count` with the array's `length` field (or the constant `MAX_QUIZZES`) instead of a typed 10."
+    },
+    {
+     "id": "R2",
+     "text": "`curve()` adds the points to every entered score: its loop stops at `count`."
+    },
+    {
+     "id": "R3",
+     "text": "`average()` totals only the entered scores and divides by `count`; it returns 0.0 when no score has been entered."
+    },
+    {
+     "id": "R4",
+     "text": "`highest()` returns the highest entered score using a loop with a variable subscript, or 0 when no score has been entered."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "QuizBook.java",
+   "starter_code": "public class QuizBook\n{\n    public static final int MAX_QUIZZES = 10;\n    private int[] scores = new int[MAX_QUIZZES];\n    private int count = 0;   // how many scores have been entered so far\n\n    // Stores a score if there is room; returns false when the book is full.\n    public boolean add(int score)\n    {\n        // TODO (R1): let the array say how big it is.\n        if(count < 10)\n        {\n            scores[count] = score;\n            ++count;\n            return true;\n        }\n        return false;\n    }\n\n    // Adds points to every score entered so far.\n    public void curve(int points)\n    {\n        // TODO (R2): this loop was written when the class had five students.\n        for(int i = 0; i < 5; ++i)\n            scores[i] += points;\n    }\n\n    // The average of the entered scores, or 0.0 when none were entered.\n    public double average()\n    {\n        // TODO (R3): only the entered scores count.\n        int total = 0;\n        for(int s : scores)\n            total += s;\n        return total * 1.0 / scores.length;\n    }\n\n    // The highest entered score, or 0 when none were entered.\n    public int highest()\n    {\n        // TODO (R4): look at each entered score with a variable subscript.\n        return 0;\n    }\n\n    public String list()\n    {\n        String text = \"\";\n        for(int i = 0; i < count; ++i)\n            text += scores[i] + \" \";\n        return text.trim();\n    }\n}\n",
+   "solution": "public class QuizBook\n{\n    public static final int MAX_QUIZZES = 10;\n    private int[] scores = new int[MAX_QUIZZES];\n    private int count = 0;   // how many scores have been entered so far\n\n    // Stores a score if there is room; returns false when the book is full.\n    public boolean add(int score)\n    {\n        if(count < scores.length)\n        {\n            scores[count] = score;\n            ++count;\n            return true;\n        }\n        return false;\n    }\n\n    // Adds points to every score entered so far.\n    public void curve(int points)\n    {\n        for(int i = 0; i < count; ++i)\n            scores[i] += points;\n    }\n\n    // The average of the entered scores, or 0.0 when none were entered.\n    public double average()\n    {\n        if(count == 0)\n            return 0.0;\n        int total = 0;\n        for(int i = 0; i < count; ++i)\n            total += scores[i];\n        return total * 1.0 / count;\n    }\n\n    // The highest entered score, or 0 when none were entered.\n    public int highest()\n    {\n        int best = 0;\n        for(int i = 0; i < count; ++i)\n            if(scores[i] > best)\n                best = scores[i];\n        return best;\n    }\n\n    public String list()\n    {\n        String text = \"\";\n        for(int i = 0; i < count; ++i)\n            text += scores[i] + \" \";\n        return text.trim();\n    }\n}\n",
+   "solution_notes": "A loop whose subscript is a variable lets one statement process every element (p. 273). The `length` field holds the number of elements, so `count < scores.length` keeps working if `MAX_QUIZZES` changes (pp. 274–275); `scores.length()` would not compile, because for arrays `length` is a field, not a method. Like the book's AverageOfQuizzes (Figure 8-4), this class uses only *part of an array*: `count` says how many elements hold real data, so `curve()`, `average()` and `highest()` all stop at `count`. The starter's enhanced for loop in `average()` visits all 10 elements; the empty ones add nothing to the total, but dividing by `length` counts them, which is why the average was 49.5 instead of 83.0. An enhanced for loop also can't curve the scores: its variable is a copy of each element, so changing it leaves the array as it was. `average()` must test for `count == 0` first, or it computes 0 / 0.0, which is `NaN`.",
+   "warmup": [
+    {
+     "question": "`scores` has 10 elements and the test enters 6 scores. What is `scores.length`, what is `count`, and what do the elements after the sixth hold?",
+     "model_answer": "scores.length is 10 and count is 6. Elements 6 through 9 still hold 0, the default value of an int array."
+    },
+    {
+     "question": "Which scores does the starter's `curve()` loop change when 6 scores have been entered?",
+     "model_answer": "Only scores[0] through scores[4], the first five. The sixth score, scores[5], is never curved."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "add() takes its limit from the array",
+     "within": "QuizBook.add",
+     "require": "\\bcount\\s*<\\s*(?:scores\\s*\\.\\s*length|MAX_QUIZZES)\\b",
+     "forbid": "[<>]=?\\s*\\d+|\\blength\\s*\\(",
+     "message": "Compare `count` with `scores.length` (or `MAX_QUIZZES`), not with a typed 10. If the book grows to 12 quizzes, a typed number silently stays wrong; the `length` field always matches the array.",
+     "hint": "Arrays have a `length` field with no parentheses; Strings have a `length()` method."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "curve() changes every entered score",
+     "within": "QuizBook.curve",
+     "require": "<\\s*count\\b",
+     "forbid": "<\\s*\\d+|<\\s*scores\\s*\\.\\s*length|:\\s*scores\\b",
+     "message": "Loop while the subscript is below `count`, the number of entered scores. A typed 5 skips the sixth student, `scores.length` would also curve the empty slots, and an enhanced for loop can't change the elements."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "average() divides by the number of entered scores",
+     "within": "QuizBook.average",
+     "require": "/\\s*count\\b",
+     "forbid": "/\\s*(?:scores\\s*\\.\\s*length|MAX_QUIZZES|\\d)",
+     "message": "Divide the total by `count`, the number of scores entered. Dividing by `scores.length` counts the empty slots as zeros, which is how the average dropped to 49.5. Return 0.0 first when `count` is 0."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "highest() loops over the entered scores",
+     "within": "QuizBook.highest",
+     "require": "^(?=[\\s\\S]*\\bscores\\s*\\[\\s*\\w+\\s*\\])(?=[\\s\\S]*<\\s*count\\b)",
+     "message": "Loop a subscript from 0 while it is below `count`, compare each `scores[i]` with the highest value so far, and keep the larger one. Stopping at `count` keeps the empty zeros out of the result."
+    }
+   ],
+   "hints": [
+    "The array knows its own size: every array has a `length` field. Two different limits are in play here: `scores.length` is how many scores fit, `count` is how many were entered.",
+    "Loops that work on real scores need the second limit. Find every loop that uses a typed number or the whole array, and ask which limit it should use.",
+    "In `average()`, test for `count == 0` before you divide. For `highest()`, keep the best value seen so far in a variable and compare it with each entered score."
+   ],
+   "test_program": {
+    "file_name": "TestQuizBook.java",
+    "code": "public class TestQuizBook\n{\n    public static void main(String[] args)\n    {\n        QuizBook book = new QuizBook();\n        book.add(70);\n        book.add(84);\n        book.add(92);\n        book.add(65);\n        book.add(88);\n        book.add(81);\n        book.curve(3);\n        System.out.println(\"Curved scores: \" + book.list());\n        System.out.println(\"Average: \" + book.average());\n        System.out.println(\"Highest: \" + book.highest());\n\n        book.add(77);\n        book.add(90);\n        book.add(59);\n        book.add(83);\n        System.out.println(\"Room for an 11th quiz? \" + book.add(95));\n\n        QuizBook empty = new QuizBook();\n        System.out.println(\"Empty book: average \" + empty.average()\n            + \", highest \" + empty.highest());\n    }\n}\n",
+    "expected_output": "Curved scores: 73 87 95 68 91 84\nAverage: 83.0\nHighest: 95\nRoom for an 11th quiz? false\nEmpty book: average 0.0, highest 0\n",
+    "predict": "Before you change anything, predict the starter's *Average* line. Which total does it compute, and which number does it divide by?",
+    "how_to_run": "Put `QuizBook.java` and `TestQuizBook.java` in the same folder, then run `javac *.java` and `java TestQuizBook`. In an IDE, add all of them to one project and run `TestQuizBook.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The starter's average was 49.5 instead of 83.0. Explain exactly where the difference comes from.",
+     "model_answer": "The starter adds the six entered scores and divides by scores.length, 10, so the four empty elements count as scores of 0. It also left the sixth score uncurved. Dividing the curved total by count, 6, gives the real average."
+    },
+    {
+     "question": "Why must `curve()` use a for loop with a subscript, and not `for(int s : scores) s += points;`?",
+     "model_answer": "In an enhanced for loop, s is a copy of each element's value. Adding to s changes the copy, not the array, so no score would be curved. It would also visit the empty elements."
+    },
+    {
+     "question": "The department raises `MAX_QUIZZES` to 12. What changes in your class, and what would have broken with the starter's typed 10?",
+     "model_answer": "Only the constant changes: the array gets 12 elements and add() accepts 12 scores because it compares with scores.length. With the typed 10, quizzes 11 and 12 would be rejected even though the array had room."
+    }
+   ],
+   "extension": "Add `aboveAverage()`, which returns how many entered scores are above the average. This is the problem the chapter opens with (p. 267): why can't a program answer it while the scores are still arriving one at a time, without an array?",
+   "worth_knowing": "For arrays, the Java Language Specification defines the enhanced for loop as an ordinary loop from subscript 0 to `length - 1` that copies each element into the loop variable. So `for(int s : scores)` is a shorter way to write a loop you already know, and that copy is why changing `s` never changes the array.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; every loop over scores has a limit that says what it means (`count` or `scores.length`), never a typed number."
+    }
+   ]
+  },
+  {
+   "id": "8.4",
+   "title": "The bike station with empty docks",
+   "subtitle": "An array of objects holds references: every element needs its own new",
+   "source": "Ch. 8, section 8.4 (pp. 277–283)",
+   "minutes": 25,
+   "objectives": [
+    "Explain why `new Bike[4]` creates four empty references and no bikes",
+    "Construct every object of an array in a loop",
+    "Call a method of one element: the subscript follows the array name, before the dot",
+    "Use the enhanced for loop with an array of objects"
+   ],
+   "scenario": "The city's new bike-share station has four docks, and `BikeStation` models it with `Bike[] bikes`. Bike 501 should stand in dock 0, bike 502 in dock 1, and so on. The first test crashed at once with a `NullPointerException` in `report()`: Java could not call `getId()` because `bikes[0]` was `null`.\n\n`new Bike[docks]` reserved one reference per dock, and every reference is still `null`: nobody ever called the `Bike` constructor. `ride()` and `totalMiles()` are still empty, too.\n\n`Bike.java` is finished and read-only. Put a bike numbered from `FIRST_ID` in every dock, record each trip on the right bike, and add up the miles of all bikes. When you are done, the test program prints:\n\n```\nBike 501: 5 mi\nBike 502: 0 mi\nBike 503: 5 mi\nBike 504: 0 mi\nTotal: 10 mi\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor builds one `Bike` per dock with `new`, numbered `FIRST_ID + x` for dock `x`."
+    },
+    {
+     "id": "R2",
+     "text": "`ride()` adds the miles to the bike in the given dock: the subscript follows `bikes`, before the dot."
+    },
+    {
+     "id": "R3",
+     "text": "`totalMiles()` adds up the miles of every bike using an enhanced for loop."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "BikeStation.java",
+     "starter": "public class BikeStation\n{\n    public static final int FIRST_ID = 501;\n    private Bike[] bikes;\n\n    // A station with one bike in each dock: bike 501 in dock 0, 502 in dock 1, ...\n    public BikeStation(int docks)\n    {\n        bikes = new Bike[docks];\n        // TODO (R1): the array has a slot for every dock, but no bikes yet.\n    }\n\n    // Records a trip on the bike in the given dock (docks are numbered from 0).\n    public void ride(int dock, int miles)\n    {\n        // TODO (R2): pick the bike with the dock number, then call its method.\n    }\n\n    // Miles ridden on all the station's bikes together.\n    public int totalMiles()\n    {\n        // TODO (R3): visit every bike with an enhanced for loop.\n        return 0;\n    }\n\n    public String report()\n    {\n        String text = \"\";\n        for(int x = 0; x < bikes.length; ++x)\n            text += \"Bike \" + bikes[x].getId() + \": \"\n                + bikes[x].getMiles() + \" mi\\n\";\n        return text;\n    }\n}\n",
+     "solution": "public class BikeStation\n{\n    public static final int FIRST_ID = 501;\n    private Bike[] bikes;\n\n    // A station with one bike in each dock: bike 501 in dock 0, 502 in dock 1, ...\n    public BikeStation(int docks)\n    {\n        bikes = new Bike[docks];\n        for(int x = 0; x < bikes.length; ++x)\n            bikes[x] = new Bike(FIRST_ID + x);\n    }\n\n    // Records a trip on the bike in the given dock (docks are numbered from 0).\n    public void ride(int dock, int miles)\n    {\n        bikes[dock].addMiles(miles);\n    }\n\n    // Miles ridden on all the station's bikes together.\n    public int totalMiles()\n    {\n        int total = 0;\n        for(Bike bike : bikes)\n            total += bike.getMiles();\n        return total;\n    }\n\n    public String report()\n    {\n        String text = \"\";\n        for(int x = 0; x < bikes.length; ++x)\n            text += \"Bike \" + bikes[x].getId() + \": \"\n                + bikes[x].getMiles() + \" mi\\n\";\n        return text;\n    }\n}\n",
+     "editable": true
+    },
+    {
+     "name": "Bike.java",
+     "starter": "public class Bike\n{\n    private int id;\n    private int miles;\n\n    public Bike(int bikeId)\n    {\n        id = bikeId;\n        miles = 0;\n    }\n\n    public int getId()\n    {\n        return id;\n    }\n\n    public int getMiles()\n    {\n        return miles;\n    }\n\n    public void addMiles(int trip)\n    {\n        miles += trip;\n    }\n}\n",
+     "solution": "public class Bike\n{\n    private int id;\n    private int miles;\n\n    public Bike(int bikeId)\n    {\n        id = bikeId;\n        miles = 0;\n    }\n\n    public int getId()\n    {\n        return id;\n    }\n\n    public int getMiles()\n    {\n        return miles;\n    }\n\n    public void addMiles(int trip)\n    {\n        miles += trip;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "BikeStation.java",
+   "solution_notes": "`new Bike[docks]` reserves memory for references only; each element starts as `null`, the default for an array of objects (pp. 272, 278). Whether or not a class has a default constructor, you must call a constructor with `new` for each element (p. 280), usually in a loop like the book's `emps[x] = new Employee(START_NUM + x, STARTING_SALARY);` (p. 278). To call a method of one element, the subscript follows the array name and comes before the dot: `bikes[dock].addMiles(miles)` (p. 279). The enhanced for loop works with objects, too: `bike` refers to each element in turn, and no subscript or limit is needed (p. 279). Using `docks` instead of `bikes.length` as the loop limit also passes.",
+   "warmup": [
+    {
+     "question": "After `bikes = new Bike[4];`, how many `Bike` objects exist, and what does `bikes[0]` hold?",
+     "model_answer": "None. The array holds four references and each one is null; bikes[0] stays null until a Bike is constructed and assigned to it."
+    },
+    {
+     "question": "Which of these is legal Java, and why: `bikes[2].getMiles()` or `bikes.getMiles()[2]`?",
+     "model_answer": "bikes[2].getMiles(). The subscript picks one Bike object from the array, then the dot calls that object's method. The array itself has no getMiles() method."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Every dock gets its own Bike object",
+     "within": "BikeStation.BikeStation",
+     "require": "\\bbikes\\s*\\[\\s*(\\w+)\\s*\\]\\s*=\\s*new\\s+Bike\\s*\\(\\s*(?:FIRST_ID\\s*\\+\\s*\\1|\\1\\s*\\+\\s*FIRST_ID)\\s*\\)",
+     "message": "In a loop over the docks, construct each bike: `bikes[x] = new Bike(FIRST_ID + x);`. `new Bike[docks]` only made empty (`null`) references; every element needs its own `new`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "ride() calls the method of one bike",
+     "within": "BikeStation.ride",
+     "require": "\\bbikes\\s*\\[\\s*dock\\s*\\]\\s*\\.\\s*addMiles\\s*\\(\\s*miles\\s*\\)",
+     "message": "Call `bikes[dock].addMiles(miles)`: the subscript chooses the bike, then the dot calls that bike's method."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "totalMiles() uses an enhanced for loop",
+     "within": "BikeStation.totalMiles",
+     "require": "^(?=[\\s\\S]*\\bfor\\s*\\(\\s*Bike\\s+\\w+\\s*:\\s*bikes\\s*\\))(?=[\\s\\S]*\\.\\s*getMiles\\s*\\(\\s*\\))",
+     "message": "Use an enhanced for loop over `bikes` with a `Bike` loop variable, and add each bike's `getMiles()` to a total. The loop variable is each Bike in turn, so you need no subscript and no limit."
+    }
+   ],
+   "hints": [
+    "Creating an array of objects and creating the objects are separate steps, even for a class with a default constructor. You need one `new Bike(...)` for each element.",
+    "In the constructor's loop, dock `x` gets the bike whose number is `x` more than `FIRST_ID`. Use the array's `length` (or `docks`) as the limit.",
+    "In `totalMiles()`, an enhanced for loop whose variable has type `Bike` gives you each bike in turn. Ask each one for its miles and keep a running total."
+   ],
+   "test_program": {
+    "file_name": "TestBikeStation.java",
+    "code": "public class TestBikeStation\n{\n    public static void main(String[] args)\n    {\n        BikeStation station = new BikeStation(4);\n        station.ride(0, 3);\n        station.ride(2, 5);\n        station.ride(0, 2);\n        System.out.print(station.report());\n        System.out.println(\"Total: \" + station.totalMiles() + \" mi\");\n    }\n}\n",
+    "expected_output": "Bike 501: 5 mi\nBike 502: 0 mi\nBike 503: 5 mi\nBike 504: 0 mi\nTotal: 10 mi\n",
+    "predict": "Before you change anything, predict whether the starter prints any bike at all. On which line of `BikeStation` will Java stop, and why?",
+    "how_to_run": "Put `Bike.java` and `BikeStation.java` and `TestBikeStation.java` in the same folder, then run `javac *.java` and `java TestBikeStation`. In an IDE, add all of them to one project and run `TestBikeStation.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The crash happened in `report()`, but the mistake was in the constructor. Explain the connection.",
+     "model_answer": "The constructor created the array but no Bike objects, so every element stayed null. report() was the first code to call a method through an element, and calling a method through a null reference throws a NullPointerException."
+    },
+    {
+     "question": "In this class, what does `bikes.length` measure? If the docks also had names, `String[] names = {\"North\", \"Pier\"};`, what would `names.length` and `names[0].length()` be?",
+     "model_answer": "bikes.length is the number of docks, the elements of the array. names.length is 2, the number of Strings; names[0].length() is 5, the number of characters in North. Arrays have a length field, Strings a length() method."
+    },
+    {
+     "question": "When would you choose the enhanced for loop over a for loop with a subscript, and when can't you use it?",
+     "model_answer": "Choose it to visit every element when the position doesn't matter, as in totalMiles(). You can't use it when you need the subscript, as for a dock number, or when you must store new objects in the elements, as in the constructor."
+    }
+   ],
+   "extension": "Add `busiestBike()`, which returns the ID of the bike with the most miles. Then add `swap(int dockA, int dockB)`, which exchanges the bikes in two docks. How many `Bike` objects exist before and after a swap?",
+   "worth_knowing": "In modern Java (15 and later), a `NullPointerException` message names the exact expression that was `null`, such as an element of `this.bikes`. Earlier messages were empty, and programmers had to guess which reference on the line had failed. The feature is called *helpful NullPointerExceptions*.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the loop variable in the enhanced for loop has a meaningful name."
+    }
+   ]
+  },
+  {
+   "id": "8.5",
+   "title": "The print shop that charges every order the small-job price",
+   "subtitle": "Searching parallel arrays, stopping early, and finding the range a value falls into",
+   "source": "Ch. 8, section 8.5 (pp. 284–288)",
+   "minutes": 30,
+   "objectives": [
+    "Search an array for a value and use the same subscript in a parallel array",
+    "Stop a search as soon as the item is found",
+    "Find the range a number falls into by comparing it with the ranges' lower limits (a range match)"
+   ],
+   "scenario": "*Inkwell Print* keeps its paper stock codes in `CODES` and each code's price per ream in `PRICES`, in matching positions: they are parallel arrays. The price per copy comes from two more parallel arrays: `LIMITS` holds the lowest copy count of each price break, and `PER_COPY` holds its price.\n\n- 1 to 99 copies: $0.12 each\n- 100 to 499 copies: $0.10 each\n- 500 to 999 copies: $0.08 each\n- 1,000 copies or more: $0.06 each\n\nTwo problems. The stock search keeps comparing after it finds the code, so the most popular stock, listed first, costs as many comparisons as a code that doesn't exist; `steps` counts them. And a customer who ordered 5,000 copies was charged $0.12 a copy: `perCopyPrice()` returns the first range whose lower limit the order reaches, and every order reaches 1.\n\nWhen you are done, the test program prints:\n\n```\nStock 204: 6.25 after 1 comparison(s)\nStock 517: 15.25 after 5 comparison(s)\nStock 999: -1.0 after 6 comparison(s)\nOrder of 1: $0.12 per copy\nOrder of 99: $0.12 per copy\nOrder of 100: $0.1 per copy\nOrder of 750: $0.08 per copy\nOrder of 1000: $0.06 per copy\nOrder of 5000: $0.06 per copy\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`priceOf()` stops comparing as soon as it finds the code, and still returns -1.0 for a code that doesn't exist."
+    },
+    {
+     "id": "R2",
+     "text": "`perCopyPrice()` finds the order's price break with a range match on `LIMITS` and returns the price at the same subscript of `PER_COPY`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "PrintShop.java",
+   "starter_code": "public class PrintShop\n{\n    // Paper stock codes and their prices per ream, in matching positions.\n    public static final int[] CODES = {204, 311, 318, 402, 517, 620};\n    public static final double[] PRICES = {6.25, 8.75, 9.5, 12.0, 15.25, 21.75};\n\n    // Price breaks: the lowest copy count of each range, and the price per copy.\n    public static final int[] LIMITS = {1, 100, 500, 1000};\n    public static final double[] PER_COPY = {0.12, 0.1, 0.08, 0.06};\n\n    // How many codes the last priceOf() call compared.\n    public static int steps = 0;\n\n    // Price per ream for a stock code, or -1.0 when the code does not exist.\n    public static double priceOf(int code)\n    {\n        double price = -1.0;\n        steps = 0;\n        // TODO (R1): stop comparing as soon as the code is found.\n        for(int x = 0; x < CODES.length; ++x)\n        {\n            ++steps;\n            if(code == CODES[x])\n                price = PRICES[x];\n        }\n        return price;\n    }\n\n    // Price per copy for an order of the given number of copies (at least 1).\n    public static double perCopyPrice(int copies)\n    {\n        // TODO (R2): every order of 1 or more copies matches the first\n        // range, so this loop never looks any further.\n        for(int x = 0; x < LIMITS.length; ++x)\n            if(copies >= LIMITS[x])\n                return PER_COPY[x];\n        return PER_COPY[0];\n    }\n}\n",
+   "solution": "public class PrintShop\n{\n    // Paper stock codes and their prices per ream, in matching positions.\n    public static final int[] CODES = {204, 311, 318, 402, 517, 620};\n    public static final double[] PRICES = {6.25, 8.75, 9.5, 12.0, 15.25, 21.75};\n\n    // Price breaks: the lowest copy count of each range, and the price per copy.\n    public static final int[] LIMITS = {1, 100, 500, 1000};\n    public static final double[] PER_COPY = {0.12, 0.1, 0.08, 0.06};\n\n    // How many codes the last priceOf() call compared.\n    public static int steps = 0;\n\n    // Price per ream for a stock code, or -1.0 when the code does not exist.\n    public static double priceOf(int code)\n    {\n        double price = -1.0;\n        boolean found = false;\n        steps = 0;\n        for(int x = 0; x < CODES.length && !found; ++x)\n        {\n            ++steps;\n            if(code == CODES[x])\n            {\n                found = true;\n                price = PRICES[x];\n            }\n        }\n        return price;\n    }\n\n    // Price per copy for an order of the given number of copies (at least 1).\n    public static double perCopyPrice(int copies)\n    {\n        int sub = LIMITS.length - 1;\n        while(sub >= 0 && copies < LIMITS[sub])\n            --sub;\n        return PER_COPY[sub];\n    }\n}\n",
+   "solution_notes": "A parallel array has the same number of elements as another, with related values in corresponding positions (p. 284): when the search finds `CODES[x]`, the price is `PRICES[x]`. Once the code is found, every further comparison is wasted (p. 286). The solution uses the book's compound condition, `x < CODES.length && !found` (Figure 8-12), so the loop counter changes only in the for clause; `return PRICES[x];` inside the `if`, or setting `x = CODES.length` (Figure 8-11), also stops early and passes. `perCopyPrice()` is a range match (pp. 286–287): store only each range's low limit and compare the order with the limits. The starter's forward loop returns at the first limit the order reaches, which is always 1. The book's FindDiscount (Figure 8-13) starts at the top range and moves down while the order is below the limit; `sub >= 0` is tested first, so the subscript is never used once it drops below 0. A forward loop that keeps updating the price while `copies >= LIMITS[x]` is also correct.",
+   "warmup": [
+    {
+     "question": "`priceOf(204)` finds 204 in `CODES[0]`. How many comparisons does the starter still make, and why?",
+     "model_answer": "Six. The for loop only stops when x reaches CODES.length, so it keeps comparing 204 with the five other codes after the match."
+    },
+    {
+     "question": "For an order of 750 copies, which lower limits in `LIMITS` does 750 reach? Which of them is the right price break?",
+     "model_answer": "It reaches 1, 100 and 500, but not 1000. The right break is the highest limit it reaches, 500, so the price is PER_COPY[2], $0.08."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The search stops at the first match",
+     "within": "PrintShop.priceOf",
+     "require": "(?:&&\\s*!\\s*\\w+|\\breturn\\s+PRICES\\s*\\[|\\bbreak\\s*;|\\b\\w+\\s*=\\s*CODES\\s*\\.\\s*length\\s*;)",
+     "message": "Stop the loop once the code is found, for example by adding `&& !found` to the for condition and setting `found = true` when the code matches. Every comparison after a match is wasted, and the first codes are the most popular ones."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "perCopyPrice() is a range match",
+     "within": "PrintShop.perCopyPrice",
+     "require": "^(?=[\\s\\S]*\\bLIMITS\\s*\\[)(?=[\\s\\S]*\\bPER_COPY\\s*\\[\\s*\\w+\\s*\\])(?=[\\s\\S]*(?:\\bLIMITS\\s*\\.\\s*length\\s*-\\s*1|=\\s*PER_COPY\\s*\\[))",
+     "message": "Use a range match: start at the last price break (`LIMITS.length - 1`) and move down while the order is below that limit, then return `PER_COPY` at the same subscript. The starter returns at the first limit the order reaches, and every order reaches 1."
+    }
+   ],
+   "hints": [
+    "To stop a for loop early without changing its counter inside the body, add a second condition to the middle part of the for: keep going only while the code has not been found. A `boolean` flag can record that.",
+    "Parallel arrays share subscripts: when `CODES[x]` matches, the price is `PRICES[x]`. In the range match, when `LIMITS[x]` is the right break, the price is `PER_COPY[x]`.",
+    "For the range match, start at the highest limit and move down while the order is smaller than the current limit. Test that the subscript is still 0 or more before you use it."
+   ],
+   "test_program": {
+    "file_name": "TestPrintShop.java",
+    "code": "public class TestPrintShop\n{\n    public static void main(String[] args)\n    {\n        lookUp(204);\n        lookUp(517);\n        lookUp(999);\n\n        quote(1);\n        quote(99);\n        quote(100);\n        quote(750);\n        quote(1000);\n        quote(5000);\n    }\n\n    private static void lookUp(int code)\n    {\n        double price = PrintShop.priceOf(code);\n        System.out.println(\"Stock \" + code + \": \" + price\n            + \" after \" + PrintShop.steps + \" comparison(s)\");\n    }\n\n    private static void quote(int copies)\n    {\n        System.out.println(\"Order of \" + copies + \": $\" + PrintShop.perCopyPrice(copies)\n            + \" per copy\");\n    }\n}\n",
+    "expected_output": "Stock 204: 6.25 after 1 comparison(s)\nStock 517: 15.25 after 5 comparison(s)\nStock 999: -1.0 after 6 comparison(s)\nOrder of 1: $0.12 per copy\nOrder of 99: $0.12 per copy\nOrder of 100: $0.1 per copy\nOrder of 750: $0.08 per copy\nOrder of 1000: $0.06 per copy\nOrder of 5000: $0.06 per copy\n",
+    "predict": "Before you change anything, predict the starter's comparison count for stock 204 and its price per copy for 5,000 copies. Then run it.",
+    "how_to_run": "Put `PrintShop.java` and `TestPrintShop.java` in the same folder, then run `javac *.java` and `java TestPrintShop`. In an IDE, add all of them to one project and run `TestPrintShop.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The book suggests putting the most often ordered items first in a search array. Why does that only pay off after your change to `priceOf()`?",
+     "model_answer": "Without an early stop, every search compares all six codes wherever the match is, so the order doesn't matter. Once the loop stops at the match, codes near the front are found in fewer comparisons."
+    },
+    {
+     "question": "Why does a range match store only the low limit of each range, instead of one price for every possible copy count?",
+     "model_answer": "One element per copy count would need thousands of elements, most repeating the same price. Four low limits describe every range, and changing a price break means editing one number."
+    },
+    {
+     "question": "The book notes that many programmers would replace parallel arrays with an array of objects. What could go wrong with `CODES` and `PRICES` that an array of `PaperStock` objects (a code and a price each) would prevent?",
+     "model_answer": "Someone could add a code without its price, or insert a price at the wrong position, and every later code would get its neighbour's price. An object keeps each code and its price together, so they can't drift apart."
+    }
+   ],
+   "extension": "Add `quote(int copies)`, which returns the total for an order (copies times the price per copy). Which costs less: 99 copies or 100 copies? What does that tell you about price breaks? Then move the stock data into a `PaperStock` class and search a `PaperStock[]` instead of two parallel arrays.",
+   "worth_knowing": "Checking one element after another, as here, is a *linear search*: in a list of a million items it may need a million comparisons. In a sorted list, a *binary search* (section 8.9) needs at most 20, because each comparison halves the part still to search, and 2 to the power 20 is more than a million.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the loop counter is changed only in the for clause, or the early exit is otherwise easy to see."
+    }
+   ]
+  },
+  {
+   "id": "8.6",
+   "title": "The greenhouse log that loses its Celsius readings",
+   "subtitle": "Array elements are passed by value; an array is passed as a copy of its reference",
+   "source": "Ch. 8, section 8.6 (pp. 289–292)",
+   "minutes": 25,
+   "objectives": [
+    "Explain why changing a parameter that received one array element doesn't change the array",
+    "Write a method that changes the caller's array through the reference it receives",
+    "Write a method that returns a new array and leaves its argument unchanged"
+   ],
+   "scenario": "A greenhouse sensor stores four Celsius readings in a `double[]`. The sensor is known to read 2.5 degrees low, so `calibrate()` should correct the caller's array in place. Then `toFahrenheit()` makes a Fahrenheit copy for a supplier in the US, and the Celsius log is archived.\n\nThe archive is wrong in two ways. The calibration never happens: `calibrate()` passes each element to `adjust()`, which receives only a copy of the number. And after the conversion, the *Celsius* log holds Fahrenheit values: `toFahrenheit()` received the address of the caller's array and wrote over it.\n\nFix both methods; `adjust()` can stay or go. When you are done, the test program prints:\n\n```\nRaw Celsius:        17.5, 20.0, 22.5, 25.0\nCalibrated Celsius: 20.0, 22.5, 25.0, 27.5\nFahrenheit:         68.0, 72.5, 77.0, 81.5\nCelsius afterwards: 20.0, 22.5, 25.0, 27.5\nSame array? false\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`calibrate()` adds the offset to every element of the array it receives, so the caller's array changes; it no longer calls `adjust()`."
+    },
+    {
+     "id": "R2",
+     "text": "`toFahrenheit()` creates a new array the same length as `celsius`, fills it and returns it; it never assigns to an element of `celsius`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "SensorLog.java",
+   "starter_code": "public class SensorLog\n{\n    // Adds an offset to one reading.\n    public static void adjust(double reading, double offset)\n    {\n        reading = reading + offset;\n    }\n\n    // Corrects every reading in the caller's array by the offset.\n    public static void calibrate(double[] readings, double offset)\n    {\n        // TODO (R1): adjust() receives a copy of one element, so the\n        // array never changes. Change the elements of readings here.\n        for(int i = 0; i < readings.length; ++i)\n            adjust(readings[i], offset);\n    }\n\n    // Returns the readings converted to Fahrenheit.\n    // The caller's Celsius log must stay exactly as it was.\n    public static double[] toFahrenheit(double[] celsius)\n    {\n        // TODO (R2): this writes over the caller's Celsius log.\n        // Build a new array, fill it, and return it.\n        for(int i = 0; i < celsius.length; ++i)\n            celsius[i] = celsius[i] * 9 / 5 + 32;\n        return celsius;\n    }\n\n    public static String format(double[] values)\n    {\n        String text = \"\";\n        for(int i = 0; i < values.length; ++i)\n        {\n            if(i > 0)\n                text += \", \";\n            text += values[i];\n        }\n        return text;\n    }\n}\n",
+   "solution": "public class SensorLog\n{\n    // Corrects every reading in the caller's array by the offset.\n    public static void calibrate(double[] readings, double offset)\n    {\n        for(int i = 0; i < readings.length; ++i)\n            readings[i] += offset;\n    }\n\n    // Returns the readings converted to Fahrenheit.\n    // The caller's Celsius log must stay exactly as it was.\n    public static double[] toFahrenheit(double[] celsius)\n    {\n        double[] fahrenheit = new double[celsius.length];\n        for(int i = 0; i < celsius.length; ++i)\n            fahrenheit[i] = celsius[i] * 9 / 5 + 32;\n        return fahrenheit;\n    }\n\n    public static String format(double[] values)\n    {\n        String text = \"\";\n        for(int i = 0; i < values.length; ++i)\n        {\n            if(i > 0)\n                text += \", \";\n            text += values[i];\n        }\n        return text;\n    }\n}\n",
+   "solution_notes": "Primitive values, including a single array element, are passed by value: `adjust()` receives a copy of one `double`, so changing it has no effect on the array (pp. 289–290, Figure 8-16). An array is a reference type: passing its name passes a copy of its memory address, so the receiving method can change the caller's elements (p. 290). `readings[i] += offset` therefore corrects the readings in `main()` even though `calibrate()` is `void`. In the book's words, Java doesn't pass an array by reference; it passes a reference to the array by value (p. 290). `toFahrenheit()` must not use that power: it creates `new double[celsius.length]`, fills it, and returns it. A method that returns an array has square brackets in its return type, and its `return` statement names the array without brackets (p. 291). `fahrenheit == log` is false because `==` on arrays compares addresses (p. 289), and these are now two different arrays.",
+   "warmup": [
+    {
+     "question": "When `calibrate()` calls `adjust(readings[i], offset)`, what does the parameter `reading` receive: the element itself, or something else? What happens to the array?",
+     "model_answer": "It receives a copy of the element's value, because a double is a primitive and is passed by value. adjust() changes its copy, and the array element stays the same."
+    },
+    {
+     "question": "The starter's `toFahrenheit()` returns `celsius`. After `double[] fahrenheit = SensorLog.toFahrenheit(log);`, how many arrays exist, and what do `fahrenheit` and `log` refer to?",
+     "model_answer": "Only one array exists. fahrenheit and log hold the same address, so both refer to that one array, which now holds Fahrenheit values."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "calibrate() changes the caller's elements",
+     "within": "SensorLog.calibrate",
+     "require": "\\breadings\\s*\\[\\s*\\w+\\s*\\]\\s*(?:\\+=|=\\s*readings\\s*\\[\\s*\\w+\\s*\\]\\s*\\+)",
+     "forbid": "\\badjust\\s*\\(",
+     "message": "Change the elements themselves: `readings[i] += offset;`. `readings` holds the address of the caller's array, so this changes the caller's readings; `adjust(readings[i], offset)` only changes a copy of one value."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "toFahrenheit() returns a new array",
+     "within": "SensorLog.toFahrenheit",
+     "require": "^(?=[\\s\\S]*\\bdouble\\s*\\[\\s*\\]\\s*\\w+\\s*=\\s*new\\s+double\\s*\\[\\s*celsius\\s*\\.\\s*length\\s*\\])(?=[\\s\\S]*\\breturn\\s+(?!celsius\\b)\\w+\\s*;)",
+     "forbid": "\\bcelsius\\s*\\[[^\\]]*\\]\\s*[-+*/]?=(?!=)",
+     "message": "Create a new array, `double[] fahrenheit = new double[celsius.length];`, write the converted values into it, and return it. Assigning to `celsius[i]` overwrites the caller's Celsius log, because `celsius` refers to that same array."
+    }
+   ],
+   "hints": [
+    "An array parameter holds a copy of the caller's array address. Through that address, assigning to an element of `readings` changes the caller's array directly.",
+    "To leave the caller's array alone, write the results somewhere else: declare a local `double[]` with the same `length` as `celsius` and fill that one instead.",
+    "A method that returns an array has square brackets in its return type, and its `return` statement names the array without brackets."
+   ],
+   "test_program": {
+    "file_name": "TestSensorLog.java",
+    "code": "public class TestSensorLog\n{\n    public static void main(String[] args)\n    {\n        double[] log = {17.5, 20.0, 22.5, 25.0};\n        System.out.println(\"Raw Celsius:        \" + SensorLog.format(log));\n\n        SensorLog.calibrate(log, 2.5);\n        System.out.println(\"Calibrated Celsius: \" + SensorLog.format(log));\n\n        double[] fahrenheit = SensorLog.toFahrenheit(log);\n        System.out.println(\"Fahrenheit:         \" + SensorLog.format(fahrenheit));\n        System.out.println(\"Celsius afterwards: \" + SensorLog.format(log));\n        System.out.println(\"Same array? \" + (fahrenheit == log));\n    }\n}\n",
+    "expected_output": "Raw Celsius:        17.5, 20.0, 22.5, 25.0\nCalibrated Celsius: 20.0, 22.5, 25.0, 27.5\nFahrenheit:         68.0, 72.5, 77.0, 81.5\nCelsius afterwards: 20.0, 22.5, 25.0, 27.5\nSame array? false\n",
+    "predict": "Before you change anything, predict the starter's *Calibrated Celsius* and *Celsius afterwards* lines. Which method changes the caller's array, and which one doesn't?",
+    "how_to_run": "Put `SensorLog.java` and `TestSensorLog.java` in the same folder, then run `javac *.java` and `java TestSensorLog`. In an IDE, add all of them to one project and run `TestSensorLog.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Both `adjust()` and your `calibrate()` are `void` and change a parameter. Why does only one of them change what `main()` sees?",
+     "model_answer": "adjust() receives a copy of a primitive value, so changing it affects only the copy. calibrate() receives a copy of the array's address; both copies point to the same array, so changing readings[i] changes main's array."
+    },
+    {
+     "question": "Java passes a reference to an array by value. What would `readings = new double[4];` inside `calibrate()` do to the caller's array?",
+     "model_answer": "Nothing. It makes the method's copy of the reference point to a new array; main's variable still refers to the original. Only changes made through the reference, to the elements, reach the caller."
+    },
+    {
+     "question": "Why is returning a new array the safer design for `toFahrenheit()`, even though converting in place would use less memory?",
+     "model_answer": "The caller still needs the Celsius values. A method named for a conversion shouldn't silently destroy its input; returning a new array leaves that decision to the caller."
+    }
+   ],
+   "extension": "Write `copyOf(double[] source)`, which returns a new array holding the same values, and use it in the test program to keep a raw backup before calibrating: `double[] raw = SensorLog.copyOf(log);`. Why does `double[] raw = log;` not make a backup?",
+   "worth_knowing": "`main(String[] args)` receives an array, too. When you start a program with `java TestSensorLog north 2`, the Java launcher builds an array from the words after the class name, so `args[0]` is `\"north\"` and `args.length` is 2.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the new array has a name that says what it holds (for example `fahrenheit`)."
+    }
+   ]
+  },
+  {
+   "id": "8.7",
+   "title": "The race results that give Dev's time to Ana",
+   "subtitle": "A bubble sort compares neighbours and swaps whole objects, not just the field it sorts by",
+   "source": "Ch. 8, section 8.7 (pp. 292–300)",
+   "minutes": 25,
+   "objectives": [
+    "Swap two array elements with a temporary variable",
+    "Trace a bubble sort and explain why each pass can make one comparison fewer",
+    "Sort an array of objects by one field while swapping the objects as units"
+   ],
+   "scenario": "The *Riverside 5K* leaderboard sorts the runners by finishing time with a bubble sort. This morning's board put the times in perfect order, but beside the wrong names:\n\n```\n1. Ana 24:35\n2. Ben 24:55\n3. Cleo 25:02\n```\n\nDev ran 24:35. The sort compares `getSeconds()` correctly, but when two runners are out of order it swaps only their *times* with `setSeconds()`, so every name stays where it was. The timing desk also noticed that each pass keeps comparing runners who have already sunk into their final places at the end: `comparisons` counts 16 pairs for 5 runners.\n\n`Runner.java` is read-only. Make the sort swap whole `Runner` objects, and shorten each pass so pairs already in place are not compared again. When you are done, the test program prints:\n\n```\n1. Dev 24:35\n2. Ben 24:55\n3. Eli 25:02\n4. Ana 25:20\n5. Cleo 26:50\nPairs compared: 10\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "When two runners are out of order, `sortByTime()` swaps the two `Runner` objects using a temporary `Runner` variable; it no longer calls `setSeconds()`."
+    },
+    {
+     "id": "R2",
+     "text": "Each pass compares one pair fewer than the pass before, because the slowest remaining runner is already at the end: 10 comparisons for 5 runners."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Leaderboard.java",
+     "starter": "public class Leaderboard\n{\n    // How many pairs the last sortByTime() call compared.\n    public static int comparisons = 0;\n\n    // Sorts the runners from fastest (fewest seconds) to slowest.\n    public static void sortByTime(Runner[] runners)\n    {\n        comparisons = 0;\n        for(int a = 0; a < runners.length - 1; ++a)\n        {\n            // TODO (R2): after each pass, the slowest runner left has sunk\n            // to the end. Stop comparing pairs that are already in place.\n            for(int b = 0; b < runners.length - 1; ++b)\n            {\n                ++comparisons;\n                if(runners[b].getSeconds() > runners[b + 1].getSeconds())\n                {\n                    // TODO (R1): this swaps the times and leaves the names\n                    // behind. Swap the two Runner objects instead.\n                    int temp = runners[b].getSeconds();\n                    runners[b].setSeconds(runners[b + 1].getSeconds());\n                    runners[b + 1].setSeconds(temp);\n                }\n            }\n        }\n    }\n\n    public static String board(Runner[] runners)\n    {\n        String text = \"\";\n        for(int x = 0; x < runners.length; ++x)\n        {\n            int min = runners[x].getSeconds() / 60;\n            int sec = runners[x].getSeconds() % 60;\n            text += (x + 1) + \". \" + runners[x].getName() + \" \"\n                + min + \":\" + (sec < 10 ? \"0\" : \"\") + sec + \"\\n\";\n        }\n        return text;\n    }\n}\n",
+     "solution": "public class Leaderboard\n{\n    // How many pairs the last sortByTime() call compared.\n    public static int comparisons = 0;\n\n    // Sorts the runners from fastest (fewest seconds) to slowest.\n    public static void sortByTime(Runner[] runners)\n    {\n        comparisons = 0;\n        for(int a = 0; a < runners.length - 1; ++a)\n        {\n            for(int b = 0; b < runners.length - 1 - a; ++b)\n            {\n                ++comparisons;\n                if(runners[b].getSeconds() > runners[b + 1].getSeconds())\n                {\n                    Runner temp = runners[b];\n                    runners[b] = runners[b + 1];\n                    runners[b + 1] = temp;\n                }\n            }\n        }\n    }\n\n    public static String board(Runner[] runners)\n    {\n        String text = \"\";\n        for(int x = 0; x < runners.length; ++x)\n        {\n            int min = runners[x].getSeconds() / 60;\n            int sec = runners[x].getSeconds() % 60;\n            text += (x + 1) + \". \" + runners[x].getName() + \" \"\n                + min + \":\" + (sec < 10 ? \"0\" : \"\") + sec + \"\\n\";\n        }\n        return text;\n    }\n}\n",
+     "editable": true
+    },
+    {
+     "name": "Runner.java",
+     "starter": "public class Runner\n{\n    private String name;\n    private int seconds;   // finishing time\n\n    public Runner(String runnerName, int finishSeconds)\n    {\n        name = runnerName;\n        seconds = finishSeconds;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public int getSeconds()\n    {\n        return seconds;\n    }\n\n    // Used by the timing desk to correct a mistyped time.\n    public void setSeconds(int finishSeconds)\n    {\n        seconds = finishSeconds;\n    }\n}\n",
+     "solution": "public class Runner\n{\n    private String name;\n    private int seconds;   // finishing time\n\n    public Runner(String runnerName, int finishSeconds)\n    {\n        name = runnerName;\n        seconds = finishSeconds;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public int getSeconds()\n    {\n        return seconds;\n    }\n\n    // Used by the timing desk to correct a mistyped time.\n    public void setSeconds(int finishSeconds)\n    {\n        seconds = finishSeconds;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "Leaderboard.java",
+   "solution_notes": "Swapping two values needs a temporary variable: copy one, overwrite it with the other, then put the copy in the second place (pp. 292–293). A bubble sort repeatedly compares neighbours and swaps the pairs that are out of order, so the largest remaining value sinks to the end on every pass (pp. 293–294). Because the last `a` elements are in their final places after `a` passes, the inner limit can shrink by one each pass; Figure 8-22 does this with a `comparisonsToMake` variable that decreases after each pass, and `runners.length - 1 - a` is the same idea: 4 + 3 + 2 + 1 = 10 comparisons instead of 4 × 4 = 16. When sorting objects, you compare one field but swap the whole object (pp. 295–296): the temporary variable has type `Runner`, and the swap moves references, so each name travels with its own time. The starter's `setSeconds()` swap changed the data inside the objects and attached the times to the wrong people.",
+   "warmup": [
+    {
+     "question": "Why does a swap need a third variable? What would `runners[b] = runners[b + 1]; runners[b + 1] = runners[b];` do?",
+     "model_answer": "The first assignment overwrites runners[b], so its old value is lost. Both elements would end up referring to the same runner, the one from b + 1. A temporary variable keeps the first value while the second is copied."
+    },
+    {
+     "question": "After the first pass of a bubble sort over these 5 runners, which runner is certain to be in the final place, and where?",
+     "model_answer": "The slowest runner, Cleo, is in the last element, runners[4], because every comparison carried the larger time one place further down."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The swap moves whole Runner objects",
+     "within": "Leaderboard.sortByTime",
+     "require": "\\bRunner\\s+\\w+\\s*=\\s*runners\\s*\\[\\s*\\w+(?:\\s*\\+\\s*1)?\\s*\\]",
+     "forbid": "\\bsetSeconds\\s*\\(",
+     "message": "Swap the elements themselves through a `Runner` temporary: `Runner temp = runners[b];`, then copy `runners[b + 1]` into `runners[b]`, and `temp` into `runners[b + 1]`. Swapping only the seconds leaves every name where it was."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Each pass makes one comparison fewer",
+     "within": "Leaderboard.sortByTime",
+     "require": "(?:-\\s*1\\s*-\\s*a\\b|-\\s*a\\s*-\\s*1\\b|<\\s*\\w+\\s*-\\s*a\\b|--\\s*\\w+|\\b\\w+\\s*--|-=\\s*1)",
+     "message": "Shorten the inner loop on each pass, for example `b < runners.length - 1 - a`. After pass `a`, the last `a` runners are already in their final places, so comparing them again only wastes work."
+    }
+   ],
+   "hints": [
+    "The temporary variable must be able to hold what is in an array element. The elements of `runners` are not `int` values.",
+    "A swap takes three assignments: copy one element to the temporary, copy the other element into the first, copy the temporary into the second. Use the elements themselves, not getters and setters.",
+    "On pass `a` (counting from 0), the last `a` runners are already in place. Subtract the outer counter from the inner loop's limit."
+   ],
+   "test_program": {
+    "file_name": "TestLeaderboard.java",
+    "code": "public class TestLeaderboard\n{\n    public static void main(String[] args)\n    {\n        Runner[] field = new Runner[5];\n        field[0] = new Runner(\"Ana\", 1520);\n        field[1] = new Runner(\"Ben\", 1495);\n        field[2] = new Runner(\"Cleo\", 1610);\n        field[3] = new Runner(\"Dev\", 1475);\n        field[4] = new Runner(\"Eli\", 1502);\n\n        Leaderboard.sortByTime(field);\n        System.out.print(Leaderboard.board(field));\n        System.out.println(\"Pairs compared: \" + Leaderboard.comparisons);\n    }\n}\n",
+    "expected_output": "1. Dev 24:35\n2. Ben 24:55\n3. Eli 25:02\n4. Ana 25:20\n5. Cleo 26:50\nPairs compared: 10\n",
+    "predict": "Before you change anything, predict the starter's leaderboard: will the times be in order? Will the names?",
+    "how_to_run": "Put `Leaderboard.java` and `Runner.java` and `TestLeaderboard.java` in the same folder, then run `javac *.java` and `java TestLeaderboard`. In an IDE, add all of them to one project and run `TestLeaderboard.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The starter sorted the times correctly and still produced a wrong leaderboard. In one or two sentences, what is the difference between sorting one field and sorting the records?",
+     "model_answer": "Sorting only the seconds rearranges one field and separates it from the rest of each record. Sorting the Runner objects moves each runner's name and time together, so every record stays intact."
+    },
+    {
+     "question": "With your shorter passes, how many comparisons would a field of 100 runners need? How many did the starter's version need?",
+     "model_answer": "99 + 98 + ... + 1 = 4,950 comparisons. The starter makes 99 passes of 99 comparisons each, 9,801."
+    },
+    {
+     "question": "The swap moves references, not the objects themselves. How many `Runner` objects exist before and after `sortByTime()` runs?",
+     "model_answer": "Five in both cases. The sort only changes which array element refers to which Runner; no Runner is created, copied or destroyed."
+    }
+   ],
+   "extension": "Rewrite the sort as an insertion sort (Figure 8-25) and count its comparisons for the same five runners. Then give both sorts a field that is already in order. Which one does less work?",
+   "worth_knowing": "Java's own `Arrays.sort()` (section 8.9) doesn't use a bubble sort. For objects it uses TimSort, designed by Tim Peters for Python in 2002, which finds runs that are already in order and merges them. Like your fixed sort it is *stable*: runners with equal times keep their original order.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the swap is three clear assignments with a well-named temporary."
+    }
+   ]
+  },
+  {
+   "id": "8.8",
+   "title": "The theater that sells balcony seats it doesn't have",
+   "subtitle": "A two-dimensional array is an array of rows, and every row has its own length",
+   "source": "Ch. 8, section 8.8 (pp. 300–306)",
+   "minutes": 30,
+   "objectives": [
+    "Create and use a two-dimensional array with `[row][column]` subscripts",
+    "Use `length` for the number of rows and `array[row].length` for the length of one row",
+    "Build a jagged array whose rows have different lengths",
+    "Visit every element with nested loops"
+   ],
+   "scenario": "The *Lantern Theater* has three rows on the floor and a narrow balcony. Row 0, nearest the stage, has 6 seats; rows 1 and 2 have 8; the balcony, row 3, has 4. `SeatMap` records sold seats in `boolean[][] taken`, where `taken[row][seat]` is `true` once that seat is sold.\n\nThe constructor makes every row 10 seats wide, so the box office offered balcony seat 9, which doesn't exist, and `seatsInRow(3)` says 10. The two counting methods for the lobby screen, `freeSeats()` and `bestRow()`, were never written.\n\nGive each row exactly the seats it has, count the unsold seats in the whole theater, and find the row with the most unsold seats (on a tie, the row nearer the stage). When you are done, the test program prints:\n\n```\nSell row 1, seat 3 again? false\nSeats in the balcony (row 3): 4\nFree seats: 20\nRow with most free seats: 2\nStudio: 10 free, best row 0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor creates one row per element of `seatsPerRow` and gives row `r` exactly `seatsPerRow[r]` seats: a jagged array."
+    },
+    {
+     "id": "R2",
+     "text": "`freeSeats()` counts the unsold seats with nested loops: rows up to `taken.length`, seats up to that row's own `length`."
+    },
+    {
+     "id": "R3",
+     "text": "`bestRow()` returns the row with the most unsold seats, the lower row number on a tie."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "SeatMap.java",
+   "starter_code": "public class SeatMap\n{\n    private boolean[][] taken;   // taken[row][seat] is true once the seat is sold\n\n    // seatsPerRow[r] is the number of seats in row r; row 0 is nearest the stage.\n    public SeatMap(int[] seatsPerRow)\n    {\n        // TODO (R1): the rows are not all the same width. Create the rows\n        // first, then give each row exactly as many seats as it has.\n        taken = new boolean[seatsPerRow.length][10];\n    }\n\n    // Sells a seat; returns false if it was already sold.\n    public boolean book(int row, int seat)\n    {\n        if(taken[row][seat])\n            return false;\n        taken[row][seat] = true;\n        return true;\n    }\n\n    public int seatsInRow(int row)\n    {\n        return taken[row].length;\n    }\n\n    // Unsold seats in the whole theater.\n    public int freeSeats()\n    {\n        // TODO (R2): visit every seat of every row.\n        return 0;\n    }\n\n    // The row with the most unsold seats; on a tie, the row nearer the stage.\n    public int bestRow()\n    {\n        // TODO (R3)\n        return 0;\n    }\n}\n",
+   "solution": "public class SeatMap\n{\n    private boolean[][] taken;   // taken[row][seat] is true once the seat is sold\n\n    // seatsPerRow[r] is the number of seats in row r; row 0 is nearest the stage.\n    public SeatMap(int[] seatsPerRow)\n    {\n        taken = new boolean[seatsPerRow.length][];\n        for(int row = 0; row < taken.length; ++row)\n            taken[row] = new boolean[seatsPerRow[row]];\n    }\n\n    // Sells a seat; returns false if it was already sold.\n    public boolean book(int row, int seat)\n    {\n        if(taken[row][seat])\n            return false;\n        taken[row][seat] = true;\n        return true;\n    }\n\n    public int seatsInRow(int row)\n    {\n        return taken[row].length;\n    }\n\n    // Unsold seats in one row.\n    private int freeInRow(int row)\n    {\n        int free = 0;\n        for(int seat = 0; seat < taken[row].length; ++seat)\n            if(!taken[row][seat])\n                ++free;\n        return free;\n    }\n\n    // Unsold seats in the whole theater.\n    public int freeSeats()\n    {\n        int free = 0;\n        for(int row = 0; row < taken.length; ++row)\n            free += freeInRow(row);\n        return free;\n    }\n\n    // The row with the most unsold seats; on a tie, the row nearer the stage.\n    public int bestRow()\n    {\n        int best = 0;\n        for(int row = 1; row < taken.length; ++row)\n            if(freeInRow(row) > freeInRow(best))\n                best = row;\n        return best;\n    }\n}\n",
+   "solution_notes": "A two-dimensional array is an array of arrays: `taken[row]` is itself a one-dimensional array (p. 301). `taken.length` holds the number of rows and `taken[row].length` the number of seats in that row (p. 303), as in the book's DisplayRents (Figure 8-32). Because each row is a separate array, rows may have different lengths: declare the number of rows, leave the second size empty (`new boolean[seatsPerRow.length][]`), then create each row with its own size (p. 304, jagged arrays). New `boolean` elements start as `false`, so every seat starts unsold. Nested loops visit every element, and the inner limit must be the current row's length. The solution adds a private `freeInRow()` helper that both methods use. Comparing with `>` (not `>=`) in `bestRow()` keeps the lower row on a tie.",
+   "warmup": [
+    {
+     "question": "With the starter, `taken = new boolean[4][10]`. What are `taken.length` and `taken[3].length`, and what does `taken[3][9]` stand for in the real theater?",
+     "model_answer": "taken.length is 4, the number of rows, and taken[3].length is 10. taken[3][9] would be the tenth balcony seat, which doesn't exist: the balcony has only 4 seats."
+    },
+    {
+     "question": "In `taken[row][seat]`, which subscript picks the row and which picks the seat? What does `taken[0][5] = true` mean?",
+     "model_answer": "The first subscript is the row, the second is the seat in that row. taken[0][5] = true means seat 5 of row 0, the last seat of the front row, is sold."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Each row gets exactly the seats it has",
+     "within": "SeatMap.SeatMap",
+     "require": "^(?=[\\s\\S]*\\btaken\\s*=\\s*new\\s+boolean\\s*\\[\\s*seatsPerRow\\s*\\.\\s*length\\s*\\]\\s*\\[\\s*\\])(?=[\\s\\S]*\\btaken\\s*\\[\\s*(\\w+)\\s*\\]\\s*=\\s*new\\s+boolean\\s*\\[\\s*seatsPerRow\\s*\\[\\s*\\1\\s*\\]\\s*\\])",
+     "message": "Create the rows first with the second size left empty, `taken = new boolean[seatsPerRow.length][];`, then in a loop give each row its own size: `taken[row] = new boolean[seatsPerRow[row]];`. A rectangular `[4][10]` array invents seats the theater doesn't have."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "freeSeats() visits every row and each row's own seats",
+     "within": "SeatMap.freeSeats",
+     "require": "^(?=[\\s\\S]*<\\s*taken\\s*\\.\\s*length\\b)(?=[\\s\\S]*(?:<\\s*taken\\s*\\[\\s*\\w+\\s*\\]\\s*\\.\\s*length\\b|\\b\\w+\\s*\\(\\s*\\w+\\s*\\)))",
+     "forbid": "<\\s*taken\\s*\\[\\s*0\\s*\\]\\s*\\.\\s*length|<\\s*\\d+",
+     "message": "Loop over the rows with `row < taken.length`, and inside it over that row's seats with `seat < taken[row].length`. The rows differ in length, so neither a typed number nor `taken[0].length` works for every row. (Counting one row in a helper method is fine.)"
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "bestRow() compares every row",
+     "within": "SeatMap.bestRow",
+     "require": "<\\s*taken\\s*\\.\\s*length\\b",
+     "message": "Loop over every row (`row < taken.length`), count each row's unsold seats, and keep the row with the most. Start with row 0 and replace it only when a row has strictly more, so a tie keeps the row nearer the stage."
+    }
+   ],
+   "hints": [
+    "A two-dimensional array is an array of arrays. You can create the array of rows first, leaving the second size empty, and then create each row separately with its own size.",
+    "When rows differ in length, the inner loop's limit must be the current row's own length, not the first row's and not a typed number.",
+    "`bestRow()` is a search for the largest value: start with row 0 as the best so far and replace it only when another row has strictly more unsold seats. A helper method that counts one row's unsold seats keeps both methods short."
+   ],
+   "test_program": {
+    "file_name": "TestSeatMap.java",
+    "code": "public class TestSeatMap\n{\n    public static void main(String[] args)\n    {\n        int[] rows = {6, 8, 8, 4};   // row 3 is the narrow balcony\n        SeatMap hall = new SeatMap(rows);\n        hall.book(0, 0);\n        hall.book(0, 1);\n        hall.book(1, 3);\n        hall.book(3, 0);\n        hall.book(3, 1);\n        hall.book(3, 2);\n        System.out.println(\"Sell row 1, seat 3 again? \" + hall.book(1, 3));\n        System.out.println(\"Seats in the balcony (row 3): \" + hall.seatsInRow(3));\n        System.out.println(\"Free seats: \" + hall.freeSeats());\n        System.out.println(\"Row with most free seats: \" + hall.bestRow());\n\n        int[] studioRows = {5, 7};\n        SeatMap studio = new SeatMap(studioRows);\n        studio.book(1, 0);\n        studio.book(1, 1);\n        System.out.println(\"Studio: \" + studio.freeSeats() + \" free, best row \"\n            + studio.bestRow());\n    }\n}\n",
+    "expected_output": "Sell row 1, seat 3 again? false\nSeats in the balcony (row 3): 4\nFree seats: 20\nRow with most free seats: 2\nStudio: 10 free, best row 0\n",
+    "predict": "Before you change anything, predict the starter's *Seats in the balcony* line. Where does that number come from?",
+    "how_to_run": "Put `SeatMap.java` and `TestSeatMap.java` in the same folder, then run `javac *.java` and `java TestSeatMap`. In an IDE, add all of them to one project and run `TestSeatMap.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why can't a rectangular `new boolean[4][10]` model this theater correctly, even if nobody ever books a seat that doesn't exist?",
+     "model_answer": "Every row would have 10 elements, so anything that counts seats, such as freeSeats() or seatsInRow(), would count seats that don't exist: 4 extra in row 0, 2 in rows 1 and 2, and 6 in the balcony."
+    },
+    {
+     "question": "In a nested loop over `taken`, what would go wrong with `seat < taken[0].length` as the inner limit, given these rows?",
+     "model_answer": "Every row would be treated as 6 seats wide, the length of row 0. Seats 6 and 7 of rows 1 and 2 would be skipped, and the 4-seat balcony would throw an ArrayIndexOutOfBoundsException at seat 4."
+    },
+    {
+     "question": "The theater opens a second hall. Where would you add a third subscript, and what would `taken[1][3][0]` mean?",
+     "model_answer": "A hall number first: taken[hall][row][seat]. taken[1][3][0] would be seat 0 of row 3 in hall 1, the second hall."
+    }
+   ],
+   "extension": "Add `bookBlock(int row, int count)`, which sells the first `count` adjacent unsold seats in a row and returns `true`, or sells nothing and returns `false` when the row has no such block. A family buying 4 tickets wants to sit together.",
+   "worth_knowing": "In Java, `boolean[][]` is not one rectangular block of memory: it is an array of references to separate row arrays. That is why jagged arrays are possible, and why `taken[3] = taken[0];` would make two rows share the same seats. Languages such as C store a two-dimensional array as one rectangular block instead.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; loop variables named `row` and `seat` (not `i` and `j`) so the subscripts read clearly."
+    }
+   ]
+  },
+  {
+   "id": "8.9",
+   "title": "The guest list that turns away Amir",
+   "subtitle": "Arrays.sort(), binarySearch(), equals() and fill(): library methods with rules of their own",
+   "source": "Ch. 8, section 8.9 (pp. 307–311)",
+   "minutes": 25,
+   "objectives": [
+    "Use the static methods of `java.util.Arrays` with the class name",
+    "Explain why `binarySearch()` needs a sorted array, and read the position it returns",
+    "Compare the contents of two arrays with `Arrays.equals()` instead of `==`",
+    "Reset every element of an array with `Arrays.fill()`"
+   ],
+   "scenario": "The *Harbor Lights* gala checks guests in with `GuestList`. RSVPs arrive in any order, and the class uses `Arrays.binarySearch()` to find a name quickly. At the door tonight, Amir, Zoe and others were told they were not invited.\n\nThe RSVP array was never sorted, and `binarySearch()` only gives reliable answers on a sorted array. Even after sorting, `isInvited()` tests the position with `> 0`, so whoever comes first alphabetically would still be turned away. The check against the printed list uses `==`, and the reset for the next evening is a loop that one library method can replace.\n\nFix the four methods with the `Arrays` class. When you are done, the test program prints:\n\n```\nAmir invited? true\nZoe invited? true\nMax invited? false\nArrivals: 2\nMatches the printed list? true\nArrivals after reset: 0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor sorts the guest names with `Arrays.sort()` before any search."
+    },
+    {
+     "id": "R2",
+     "text": "`isInvited()` treats every position from 0 upward that `binarySearch()` returns as found, and a negative result as not found."
+    },
+    {
+     "id": "R3",
+     "text": "`sameList()` compares the contents of the two arrays with `Arrays.equals()`."
+    },
+    {
+     "id": "R4",
+     "text": "`clearCheckIns()` resets every element of `checkedIn` with `Arrays.fill()` instead of a loop."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "GuestList.java",
+   "starter_code": "import java.util.Arrays;\n\npublic class GuestList\n{\n    private String[] guests;\n    private boolean[] checkedIn;   // checkedIn[i] belongs to guests[i]\n\n    public GuestList(String[] names)\n    {\n        guests = names;\n        // TODO (R1): binarySearch() only gives reliable answers on a sorted\n        // array. Put the names in order once, before any search.\n        checkedIn = new boolean[guests.length];\n    }\n\n    public boolean isInvited(String name)\n    {\n        // TODO (R2): which positions can binarySearch() return for a guest\n        // who is on the list?\n        return Arrays.binarySearch(guests, name) > 0;\n    }\n\n    public boolean checkIn(String name)\n    {\n        int position = Arrays.binarySearch(guests, name);\n        if(position < 0)\n            return false;\n        checkedIn[position] = true;\n        return true;\n    }\n\n    public int arrivals()\n    {\n        int count = 0;\n        for(boolean arrived : checkedIn)\n            if(arrived)\n                ++count;\n        return count;\n    }\n\n    // True when other holds the same names in the same order as this list.\n    public boolean sameList(String[] other)\n    {\n        // TODO (R3): == compares the two array references.\n        return guests == other;\n    }\n\n    // Starts a new evening: nobody has checked in yet.\n    public void clearCheckIns()\n    {\n        // TODO (R4): one Arrays method replaces this whole loop.\n        for(int i = 0; i < checkedIn.length; ++i)\n            checkedIn[i] = false;\n    }\n}\n",
+   "solution": "import java.util.Arrays;\n\npublic class GuestList\n{\n    private String[] guests;\n    private boolean[] checkedIn;   // checkedIn[i] belongs to guests[i]\n\n    public GuestList(String[] names)\n    {\n        guests = names;\n        Arrays.sort(guests);\n        checkedIn = new boolean[guests.length];\n    }\n\n    public boolean isInvited(String name)\n    {\n        return Arrays.binarySearch(guests, name) >= 0;\n    }\n\n    public boolean checkIn(String name)\n    {\n        int position = Arrays.binarySearch(guests, name);\n        if(position < 0)\n            return false;\n        checkedIn[position] = true;\n        return true;\n    }\n\n    public int arrivals()\n    {\n        int count = 0;\n        for(boolean arrived : checkedIn)\n            if(arrived)\n                ++count;\n        return count;\n    }\n\n    // True when other holds the same names in the same order as this list.\n    public boolean sameList(String[] other)\n    {\n        return Arrays.equals(guests, other);\n    }\n\n    // Starts a new evening: nobody has checked in yet.\n    public void clearCheckIns()\n    {\n        Arrays.fill(checkedIn, false);\n    }\n}\n",
+   "solution_notes": "The `Arrays` class in `java.util` has static methods for common array tasks (p. 307, Table 8-3), so you call them with the class name. A binary search compares the key with the middle of the part still to search and discards the half that can't contain it (pp. 307–308). That only works if the array is in order (p. 309): on the unsorted RSVPs it threw away the half that held Amir, and then the half that held Zoe. `binarySearch()` returns the element's position, 0 or more, when the key is found, and a negative number when it isn't (p. 309), so `> 0` wrongly rejects position 0. `==` on arrays compares references (p. 289), while `Arrays.equals()` compares element by element. `Arrays.fill(checkedIn, false)` replaces the loop. Note that `Arrays.sort(guests)` also reorders the caller's `rsvps` array, because `guests` holds the same reference (section 8.6).",
+   "warmup": [
+    {
+     "question": "In a sorted list where Amir comes first, what does `Arrays.binarySearch(guests, \"Amir\")` return, and what does the starter's `> 0` then decide?",
+     "model_answer": "It returns 0, the first position. 0 > 0 is false, so the starter says Amir is not invited."
+    },
+    {
+     "question": "`guests == other` is false even when both arrays hold the same five names in the same order. What does `==` compare for arrays?",
+     "model_answer": "== compares the two references, the memory addresses. Two separate arrays have different addresses, so == is false even when their contents match."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The names are sorted before any search",
+     "within": "GuestList.GuestList",
+     "require": "\\bArrays\\s*\\.\\s*(?:sort|parallelSort)\\s*\\(\\s*(?:guests|names)\\s*\\)",
+     "message": "Sort the names once in the constructor with `Arrays.sort(guests);`. `binarySearch()` decides which half to keep by comparing with the middle element; on an unsorted array it can throw away the half the name is in."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Position 0 counts as found",
+     "within": "GuestList.isInvited",
+     "require": "\\bArrays\\s*\\.\\s*binarySearch\\s*\\([\\s\\S]*(?:>=\\s*0|>\\s*-\\s*1|<\\s*0)",
+     "forbid": ">\\s*0\\b",
+     "message": "Test the result with `>= 0`: position 0 is the first guest in alphabetical order, and `binarySearch()` returns a negative number only when the name is missing."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "sameList() compares contents",
+     "within": "GuestList.sameList",
+     "require": "\\bArrays\\s*\\.\\s*equals\\s*\\(",
+     "forbid": "==",
+     "message": "Return `Arrays.equals(guests, other)`. `==` compares the two arrays' addresses, so two separate arrays holding the same names are never `==`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "clearCheckIns() uses Arrays.fill()",
+     "within": "GuestList.clearCheckIns",
+     "require": "\\bArrays\\s*\\.\\s*fill\\s*\\(\\s*checkedIn\\s*,\\s*false\\s*\\)",
+     "forbid": "\\bfor\\s*\\(|\\bwhile\\s*\\(",
+     "message": "Replace the loop with `Arrays.fill(checkedIn, false);`: it assigns the same value to every element in one call."
+    }
+   ],
+   "hints": [
+    "The `Arrays` methods are `static`: you call them with the class name, as in `Arrays.methodName(theArray)`. Sorting happens in place, so there is nothing to assign.",
+    "`binarySearch()` returns a position (0 or more) when the key is found, and a negative number when it isn't. The test you need separates negative from non-negative.",
+    "Table 8-3 lists a method that returns `true` when two arrays of the same type hold equal elements, and one that assigns one value to every element."
+   ],
+   "test_program": {
+    "file_name": "TestGuestList.java",
+    "code": "public class TestGuestList\n{\n    public static void main(String[] args)\n    {\n        String[] rsvps = {\"Zoe\", \"Amir\", \"Lena\", \"Kofi\", \"Bea\"};\n        GuestList list = new GuestList(rsvps);\n\n        System.out.println(\"Amir invited? \" + list.isInvited(\"Amir\"));\n        System.out.println(\"Zoe invited? \" + list.isInvited(\"Zoe\"));\n        System.out.println(\"Max invited? \" + list.isInvited(\"Max\"));\n\n        list.checkIn(\"Zoe\");\n        list.checkIn(\"Kofi\");\n        list.checkIn(\"Max\");\n        System.out.println(\"Arrivals: \" + list.arrivals());\n\n        String[] printed = {\"Amir\", \"Bea\", \"Kofi\", \"Lena\", \"Zoe\"};\n        System.out.println(\"Matches the printed list? \" + list.sameList(printed));\n\n        list.clearCheckIns();\n        System.out.println(\"Arrivals after reset: \" + list.arrivals());\n    }\n}\n",
+    "expected_output": "Amir invited? true\nZoe invited? true\nMax invited? false\nArrivals: 2\nMatches the printed list? true\nArrivals after reset: 0\n",
+    "predict": "Before you change anything, predict the starter's first three lines. Is any name found in the unsorted array?",
+    "how_to_run": "Put `GuestList.java` and `TestGuestList.java` in the same folder, then run `javac *.java` and `java TestGuestList`. In an IDE, add all of them to one project and run `TestGuestList.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why did searching the unsorted RSVP list fail for Zoe, although she is in the array? Describe what `binarySearch()` did.",
+     "model_answer": "It compared Zoe with the middle element, Lena. Zoe comes after Lena, so it searched only the elements after the middle, Kofi and Bea, and found nothing. Zoe was in position 0 of the unsorted array, in the half it had thrown away."
+    },
+    {
+     "question": "`Arrays.sort(guests)` in the constructor also reorders the test program's `rsvps` array. Why, and when could that surprise the caller?",
+     "model_answer": "guests holds the same reference as rsvps, so sorting guests sorts the one shared array. A caller who later prints rsvps expecting the order the RSVPs arrived in would find it changed."
+    },
+    {
+     "question": "When is writing your own search or sort loop, as in sections 8.5 and 8.7, still worth it now that `Arrays` does both?",
+     "model_answer": "When the rule is something the library methods don't do directly, such as a range match, and while learning, because knowing how the algorithms work tells you when the library methods give reliable results, such as binarySearch() needing a sorted array."
+    }
+   ],
+   "extension": "In the constructor, copy the names into a new array before sorting it, so the caller's array keeps its order (use a loop, or look up `Arrays.copyOf()` in the Java API documentation). Test it by printing `rsvps` after creating the list.",
+   "worth_knowing": "In 2006 Joshua Bloch reported that the JDK's own `binarySearch()` had carried a bug since 1998: computing the middle as `(low + high) / 2` overflowed `int` on arrays of more than about a billion elements and produced a negative subscript. Java 6 fixed it by computing `(low + high) >>> 1`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; `java.util.Arrays` is imported once and its methods are called with the class name."
+    }
+   ]
+  },
+  {
+   "id": "8.10",
+   "title": "The help desk that answers URGENT tickets in 0 hours",
+   "subtitle": "Enum constants have a declared order: switch, compareTo(), values() and ordinal()",
+   "source": "Ch. 8, section 8.10 (pp. 311–316)",
+   "minutes": 25,
+   "objectives": [
+    "Use an enumerated type's constants in a `switch` structure",
+    "Compare enum constants by their declared order with `compareTo()`, not by their spelling",
+    "Build output from `values()` and `ordinal()` so it follows the enum when the enum changes",
+    "Explain what makes an enum type-safe compared with `int` or `String` codes"
+   ],
+   "scenario": "Tickets at the *Northwind* help desk carry a `Priority`: `LOW`, `NORMAL`, `HIGH` or `URGENT`, declared in that order in `Priority.java` (read-only). The desk promises an answer within 72, 24, 4 and 1 hours.\n\nThree complaints this week. `responseHours()` turns each constant's position into hours with a formula, and it promised URGENT tickets an answer within 0 hours. `moreUrgent()` decided that LOW beats HIGH, because it compares the names as text and L comes after H in the alphabet. And the agents' menu lists only three priorities: `URGENT` was added to the enum after the menu string was typed.\n\nWhen you are done, the test program prints:\n\n```\nLOW (position 0): answer within 72 h\nNORMAL (position 1): answer within 24 h\nHIGH (position 2): answer within 4 h\nURGENT (position 3): answer within 1 h\nMore urgent of LOW and HIGH: HIGH\nMore urgent of URGENT and NORMAL: URGENT\nMore urgent of NORMAL and NORMAL: NORMAL\nMenu: 1 LOW, 2 NORMAL, 3 HIGH, 4 URGENT\nAgent typed \"high\": HIGH, answer within 4 h\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`responseHours()` chooses the hours with a `switch` on the `Priority`, with a `case` for each priority (LOW may be the `default`), and no arithmetic on `ordinal()`."
+    },
+    {
+     "id": "R2",
+     "text": "`moreUrgent()` compares the two constants by their declared order with `compareTo()` (or their `ordinal()` values), not by their names."
+    },
+    {
+     "id": "R3",
+     "text": "`menu()` builds the list from `Priority.values()`, numbering each constant with `ordinal() + 1`, separated by commas: `1 LOW, 2 NORMAL, 3 HIGH, 4 URGENT`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "HelpDesk.java",
+     "starter": "public class HelpDesk\n{\n    // Hours the desk promises to answer within:\n    // URGENT 1, HIGH 4, NORMAL 24, LOW 72.\n    public static int responseHours(Priority p)\n    {\n        // TODO (R1): a constant's position in the list is not a number of\n        // hours. Choose the hours for each constant.\n        return 72 - p.ordinal() * 24;\n    }\n\n    // Whichever of the two priorities is more urgent (a, if they are equal).\n    public static Priority moreUrgent(Priority a, Priority b)\n    {\n        // TODO (R2): this compares how the names are spelled, not the order\n        // the constants are declared in.\n        if(a.toString().compareTo(b.toString()) >= 0)\n            return a;\n        return b;\n    }\n\n    // The menu agents see: every priority with its number, starting at 1.\n    public static String menu()\n    {\n        // TODO (R3): URGENT was added to Priority last month, and this menu\n        // never learned about it. Build it from the enum instead.\n        return \"1 LOW, 2 NORMAL, 3 HIGH\";\n    }\n}\n",
+     "solution": "public class HelpDesk\n{\n    // Hours the desk promises to answer within:\n    // URGENT 1, HIGH 4, NORMAL 24, LOW 72.\n    public static int responseHours(Priority p)\n    {\n        int hours = 72;\n        switch(p)\n        {\n            case URGENT:\n                hours = 1;\n                break;\n            case HIGH:\n                hours = 4;\n                break;\n            case NORMAL:\n                hours = 24;\n                break;\n            case LOW:\n                hours = 72;\n                break;\n        }\n        return hours;\n    }\n\n    // Whichever of the two priorities is more urgent (a, if they are equal).\n    public static Priority moreUrgent(Priority a, Priority b)\n    {\n        if(a.compareTo(b) >= 0)\n            return a;\n        return b;\n    }\n\n    // The menu agents see: every priority with its number, starting at 1.\n    public static String menu()\n    {\n        String text = \"\";\n        for(Priority p : Priority.values())\n        {\n            if(p.ordinal() > 0)\n                text += \", \";\n            text += (p.ordinal() + 1) + \" \" + p;\n        }\n        return text;\n    }\n}\n",
+     "editable": true
+    },
+    {
+     "name": "Priority.java",
+     "starter": "// The four priorities a help-desk ticket can have, least urgent first.\npublic enum Priority\n{\n    LOW, NORMAL, HIGH, URGENT\n}\n",
+     "solution": "// The four priorities a help-desk ticket can have, least urgent first.\npublic enum Priority\n{\n    LOW, NORMAL, HIGH, URGENT\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "HelpDesk.java",
+   "solution_notes": "An enumerated type has a fixed set of constants in a declared order, and the first position is 0, as in an array (p. 312). `ordinal()` returns that position, which is not a quantity, so arithmetic on it produced 48, 24 and 0 hours. A `switch` on the enum states each promise explicitly (Figure 8-42); the case labels are the constant names alone. `compareTo()` on enum constants compares declared positions (Table 8-4), so `a.compareTo(b) >= 0` means `a` is at least as urgent as `b`; comparing `toString()` values compares spelling instead. Despite the example on p. 314, the operators `<` and `>` do not compile with enum constants in Java (`bad operand types for binary operator`): use `compareTo()` or compare `ordinal()` values. `values()` returns an array of the constants in declared order (Table 8-5), so the menu now follows the enum automatically. `valueOf()` turns typed text into a constant, which is how the test program converts `\"high\"`.",
+   "warmup": [
+    {
+     "question": "What does `Priority.URGENT.ordinal()` return, and what does the starter's formula `72 - p.ordinal() * 24` give for it?",
+     "model_answer": "ordinal() returns 3, URGENT's position counting from 0. The formula gives 72 - 72 = 0 hours."
+    },
+    {
+     "question": "Is `Priority.LOW.compareTo(Priority.HIGH)` negative, 0 or positive? And `\"LOW\".compareTo(\"HIGH\")`?",
+     "model_answer": "Priority.LOW.compareTo(Priority.HIGH) is negative, because LOW is declared before HIGH. \"LOW\".compareTo(\"HIGH\") is positive, because L comes after H in the alphabet."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "responseHours() uses a switch on the priority",
+     "within": "HelpDesk.responseHours",
+     "require": "^(?=[\\s\\S]*\\bswitch\\s*\\(\\s*p\\s*\\))(?=[\\s\\S]*\\bcase\\s+(?:Priority\\s*\\.\\s*)?URGENT\\s*(?::|->))(?=[\\s\\S]*\\bcase\\s+(?:Priority\\s*\\.\\s*)?HIGH\\s*(?::|->))(?=[\\s\\S]*\\bcase\\s+(?:Priority\\s*\\.\\s*)?NORMAL\\s*(?::|->))",
+     "forbid": "\\bordinal\\s*\\(",
+     "message": "Use `switch(p)` with a `case` for each constant (`case URGENT:`, `case HIGH:`, ...) and the hours the desk promises. A constant's position is not a number of hours: URGENT is position 3, and the formula turned that into 0 hours."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "moreUrgent() compares declared order",
+     "within": "HelpDesk.moreUrgent",
+     "require": "(?:\\b[ab]\\s*\\.\\s*compareTo\\s*\\(\\s*[ab]\\s*\\)|\\b[ab]\\s*\\.\\s*ordinal\\s*\\(\\s*\\)\\s*[<>]=?\\s*[ab]\\s*\\.\\s*ordinal\\s*\\(\\s*\\))",
+     "forbid": "\\btoString\\s*\\(|\\bname\\s*\\(",
+     "message": "Compare the constants themselves: `a.compareTo(b) >= 0` is true when `a` is declared at the same place as `b` or later, so it is at least as urgent. Comparing `toString()` values compares spelling, and \"LOW\" comes after \"HIGH\" alphabetically."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "menu() is built from Priority.values()",
+     "within": "HelpDesk.menu",
+     "require": "^(?=[\\s\\S]*\\bPriority\\s*\\.\\s*values\\s*\\(\\s*\\))(?=[\\s\\S]*(?:\\.\\s*ordinal\\s*\\(\\s*\\)\\s*\\+\\s*1|\\b1\\s*\\+\\s*\\w+\\s*\\.\\s*ordinal\\s*\\(\\s*\\)))",
+     "message": "Loop over `Priority.values()` and add each constant as its `ordinal() + 1`, a space and the constant, with a comma and a space between items. A typed string can't notice when a constant is added to the enum; `values()` always does."
+    }
+   ],
+   "hints": [
+    "You can `switch` on an enum variable. The case labels are the constant names alone, such as `case LOW:` (older Java versions reject `Priority.` in front of them).",
+    "Every enum constant has a `compareTo()` method that compares positions in the declaration: negative when the calling constant comes first, 0 when they are the same, positive when it comes later.",
+    "`Priority.values()` returns an array of all the constants in declared order, so an enhanced for loop can visit them. Put the comma before every item except the first."
+   ],
+   "test_program": {
+    "file_name": "TestHelpDesk.java",
+    "code": "public class TestHelpDesk\n{\n    public static void main(String[] args)\n    {\n        for(Priority p : Priority.values())\n            System.out.println(p + \" (position \" + p.ordinal() + \"): answer within \"\n                + HelpDesk.responseHours(p) + \" h\");\n\n        System.out.println(\"More urgent of LOW and HIGH: \"\n            + HelpDesk.moreUrgent(Priority.LOW, Priority.HIGH));\n        System.out.println(\"More urgent of URGENT and NORMAL: \"\n            + HelpDesk.moreUrgent(Priority.URGENT, Priority.NORMAL));\n        System.out.println(\"More urgent of NORMAL and NORMAL: \"\n            + HelpDesk.moreUrgent(Priority.NORMAL, Priority.NORMAL));\n\n        System.out.println(\"Menu: \" + HelpDesk.menu());\n\n        String typed = \"high\";\n        Priority chosen = Priority.valueOf(typed.toUpperCase());\n        System.out.println(\"Agent typed \\\"\" + typed + \"\\\": \" + chosen\n            + \", answer within \" + HelpDesk.responseHours(chosen) + \" h\");\n    }\n}\n",
+    "expected_output": "LOW (position 0): answer within 72 h\nNORMAL (position 1): answer within 24 h\nHIGH (position 2): answer within 4 h\nURGENT (position 3): answer within 1 h\nMore urgent of LOW and HIGH: HIGH\nMore urgent of URGENT and NORMAL: URGENT\nMore urgent of NORMAL and NORMAL: NORMAL\nMenu: 1 LOW, 2 NORMAL, 3 HIGH, 4 URGENT\nAgent typed \"high\": HIGH, answer within 4 h\n",
+    "predict": "Before you change anything, predict the starter's answer for `moreUrgent(Priority.LOW, Priority.HIGH)`. Which comparison decides it?",
+    "how_to_run": "Put `HelpDesk.java` and `Priority.java` and `TestHelpDesk.java` in the same folder, then run `javac *.java` and `java TestHelpDesk`. In an IDE, add all of them to one project and run `TestHelpDesk.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why is arithmetic on `ordinal()` fragile even when the numbers happen to come out right? What would `72 - p.ordinal() * 24` give URGENT if someone inserted `CRITICAL` between `HIGH` and `URGENT`?",
+     "model_answer": "ordinal() is only a position, so any formula built on it changes meaning when the list changes. With CRITICAL inserted, URGENT moves to position 4 and the formula gives 72 - 96 = -24 hours."
+    },
+    {
+     "question": "Before this enum existed, priorities were `int` codes 1 to 4. Name two mistakes the `Priority` type now makes impossible.",
+     "model_answer": "A ticket can't get an invalid code such as 7 or 0, because only the four constants exist. And nobody can do meaningless arithmetic, such as adding two priorities, because the compiler rejects + on enum values: the type is type-safe."
+    },
+    {
+     "question": "Your `menu()` picked up `URGENT` with no extra work. Which method in `HelpDesk` would still need editing if a new priority were added, and why is that a good thing?",
+     "model_answer": "responseHours(), because a new priority needs its own promised hours, a business decision the code can't guess. The switch is the one place where that decision is written down."
+    }
+   ],
+   "extension": "In a copy of the project, add `CRITICAL` between `HIGH` and `URGENT` in `Priority.java`, with a promise of 2 hours. Which methods need changes? Does `moreUrgent()` still work without any?",
+   "worth_knowing": "Each enum constant is created exactly once, when the enum is loaded, so `==` is a safe way to compare enum values, unlike `==` on Strings in Chapter 7. Enums are full classes: Joshua Bloch's *Effective Java* recommends a one-constant enum as the simplest safe way to make a class that has a single instance.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; every `case` in the switch ends with `break` (or uses the arrow form), and no priority is identified by its spelling."
+    }
+   ]
+  }
+ ]
+}

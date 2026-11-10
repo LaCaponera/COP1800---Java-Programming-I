@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The print shop that charges every order the small-job price</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 8.5</div>
+  <h1>The print shop that charges every order the small-job price</h1>
+<h2>Objectives</h2><ul><li>Search an array for a value and use the same subscript in a parallel array</li><li>Stop a search as soon as the item is found</li><li>Find the range a number falls into by comparing it with the ranges&#x27; lower limits (a range match)</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>priceOf()</code> stops comparing as soon as it finds the code, and still returns -1.0 for a code that doesn&#x27;t exist.</li><li><strong>R2</strong> <code>perCopyPrice()</code> finds the order&#x27;s price break with a range match on <code>LIMITS</code> and returns the price at the same subscript of <code>PER_COPY</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>priceOf(204)</code> finds 204 in <code>CODES[0]</code>. How many comparisons does the starter still make, and why?</p><div class="answer"><p>Six. The for loop only stops when x reaches CODES.length, so it keeps comparing 204 with the five other codes after the match.</p></div></li><li><p>For an order of 750 copies, which lower limits in <code>LIMITS</code> does 750 reach? Which of them is the right price break?</p><div class="answer"><p>It reaches 1, 100 and 500, but not 1000. The right break is the highest limit it reaches, 500, so the price is PER_COPY[2], $0.08.</p></div></li></ol>
+<h2>Solution</h2><div class="file">PrintShop.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">PrintShop</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Paper stock codes and their prices per ream, in matching positions.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">CODES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">204</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">311</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">318</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">402</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">517</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">620</span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">PRICES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mf">6.25</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">8.75</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">9.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">12.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">15.25</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">21.75</span><span class="t-p">};</span>
+
+<span class="t-w">    </span><span class="t-c1">// Price breaks: the lowest copy count of each range, and the price per copy.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">LIMITS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">100</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">500</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1000</span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">PER_COPY</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mf">0.12</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.08</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.06</span><span class="t-p">};</span>
+
+<span class="t-w">    </span><span class="t-c1">// How many codes the last priceOf() call compared.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">steps</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Price per ream for a stock code, or -1.0 when the code does not exist.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">priceOf</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mf">1.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">found</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">steps</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">CODES</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-o">!</span><span class="t-n">found</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">steps</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">CODES</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">found</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">PRICES</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Price per copy for an order of the given number of copies (at least 1).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">perCopyPrice</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">copies</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">sub</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">LIMITS</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">while</span><span class="t-p">(</span><span class="t-n">sub</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">copies</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">LIMITS</span><span class="t-o">[</span><span class="t-n">sub</span><span class="t-o">]</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">--</span><span class="t-n">sub</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">PER_COPY</span><span class="t-o">[</span><span class="t-n">sub</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A parallel array has the same number of elements as another, with related values in corresponding positions (p. 284): when the search finds <code>CODES[x]</code>, the price is <code>PRICES[x]</code>. Once the code is found, every further comparison is wasted (p. 286). The solution uses the book&#x27;s compound condition, <code>x &lt; CODES.length &amp;&amp; !found</code> (Figure 8-12), so the loop counter changes only in the for clause; <code>return PRICES[x];</code> inside the <code>if</code>, or setting <code>x = CODES.length</code> (Figure 8-11), also stops early and passes. <code>perCopyPrice()</code> is a range match (pp. 286–287): store only each range&#x27;s low limit and compare the order with the limits. The starter&#x27;s forward loop returns at the first limit the order reaches, which is always 1. The book&#x27;s FindDiscount (Figure 8-13) starts at the top range and moves down while the order is below the limit; <code>sub &gt;= 0</code> is tested first, so the subscript is never used once it drops below 0. A forward loop that keeps updating the price while <code>copies &gt;= LIMITS[x]</code> is also correct.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestPrintShop.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestPrintShop</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">lookUp</span><span class="t-p">(</span><span class="t-mi">204</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">lookUp</span><span class="t-p">(</span><span class="t-mi">517</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">lookUp</span><span class="t-p">(</span><span class="t-mi">999</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mi">99</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mi">100</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mi">750</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mi">1000</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mi">5000</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">lookUp</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">PrintShop</span><span class="t-p">.</span><span class="t-na">priceOf</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Stock "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">price</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" after "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">PrintShop</span><span class="t-p">.</span><span class="t-na">steps</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" comparison(s)"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">quote</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">copies</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Order of "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">copies</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">PrintShop</span><span class="t-p">.</span><span class="t-na">perCopyPrice</span><span class="t-p">(</span><span class="t-n">copies</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per copy"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Stock 204: 6.25 after 1 comparison(s)
+Stock 517: 15.25 after 5 comparison(s)
+Stock 999: -1.0 after 6 comparison(s)
+Order of 1: $0.12 per copy
+Order of 99: $0.12 per copy
+Order of 100: $0.1 per copy
+Order of 750: $0.08 per copy
+Order of 1000: $0.06 per copy
+Order of 5000: $0.06 per copy
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The search stops at the first match<div class="small">in <code>PrintShop.priceOf</code></div></td><td><div><span class="tag">require</span> <code>(?:&amp;&amp;\s*!\s*\w+|\breturn\s+PRICES\s*\[|\bbreak\s*;|\b\w+\s*=\s*CODES\s*\.\s*length\s*;)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>perCopyPrice() is a range match<div class="small">in <code>PrintShop.perCopyPrice</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bLIMITS\s*\[)(?=[\s\S]*\bPER_COPY\s*\[\s*\w+\s*\])(?=[\s\S]*(?:\bLIMITS\s*\.\s*length\s*-\s*1|=\s*PER_COPY\s*\[))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The search stops at the first match</dt><dd><p>Stop the loop once the code is found, for example by adding <code>&amp;&amp; !found</code> to the for condition and setting <code>found = true</code> when the code matches. Every comparison after a match is wasted, and the first codes are the most popular ones.</p></dd><dt>C2 · perCopyPrice() is a range match</dt><dd><p>Use a range match: start at the last price break (<code>LIMITS.length - 1</code>) and move down while the order is below that limit, then return <code>PER_COPY</code> at the same subscript. The starter returns at the first limit the order reaches, and every order reaches 1.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>To stop a for loop early without changing its counter inside the body, add a second condition to the middle part of the for: keep going only while the code has not been found. A <code>boolean</code> flag can record that.</p></li><li><p>Parallel arrays share subscripts: when <code>CODES[x]</code> matches, the price is <code>PRICES[x]</code>. In the range match, when <code>LIMITS[x]</code> is the right break, the price is <code>PER_COPY[x]</code>.</p></li><li><p>For the range match, start at the highest limit and move down while the order is smaller than the current limit. Test that the subscript is still 0 or more before you use it.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The book suggests putting the most often ordered items first in a search array. Why does that only pay off after your change to <code>priceOf()</code>?</p><div class="answer"><p>Without an early stop, every search compares all six codes wherever the match is, so the order doesn&#x27;t matter. Once the loop stops at the match, codes near the front are found in fewer comparisons.</p></div></li><li><p>Why does a range match store only the low limit of each range, instead of one price for every possible copy count?</p><div class="answer"><p>One element per copy count would need thousands of elements, most repeating the same price. Four low limits describe every range, and changing a price break means editing one number.</p></div></li><li><p>The book notes that many programmers would replace parallel arrays with an array of objects. What could go wrong with <code>CODES</code> and <code>PRICES</code> that an array of <code>PaperStock</code> objects (a code and a price each) would prevent?</p><div class="answer"><p>Someone could add a code without its price, or insert a price at the wrong position, and every later code would get its neighbour&#x27;s price. An object keeps each code and its price together, so they can&#x27;t drift apart.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>quote(int copies)</code>, which returns the total for an order (copies times the price per copy). Which costs less: 99 copies or 100 copies? What does that tell you about price breaks? Then move the stock data into a <code>PaperStock</code> class and search a <code>PaperStock[]</code> instead of two parallel arrays.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; the loop counter is changed only in the for clause, or the early exit is otherwise easy to see.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

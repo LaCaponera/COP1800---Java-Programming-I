@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Chapter 8: Arrays</title>
+<style>
+:root{
+  --paper:#F6F5F1; --surface:#FFFFFF; --ink:#1B1B18; --ink-2:#4A4944; --ink-3:#6A6962;
+  --rule:#E2E0D8; --rule-2:#CFCCC2; --ok:#2C6A41; --focus:#2F6FB3;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1); --pat-clear:33rem;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#131312;--surface:#1B1B19;--ink:#ECEBE6;--ink-2:#BDBCB4;--ink-3:#9A9991;--rule:#2D2C29;--rule-2:#403F3A;--ok:#86C79B;--focus:#9CC0E6}
+}
+:root[data-theme="dark"]{--paper:#131312;--surface:#1B1B19;--ink:#ECEBE6;--ink-2:#BDBCB4;--ink-3:#9A9991;--rule:#2D2C29;--rule-2:#403F3A;--ok:#86C79B;--focus:#9CC0E6}
+:root{--paper:#F3F5F4;--accent:#0B5D58;--accent-soft:#E2F0EE;--accent-ink:#FFFFFF;--focus:#0B5D58;--sel:rgba(11,93,88,.18);--pat:rgba(27,27,24,.055);--pat-strong:rgba(27,27,24,.095);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--sel:rgba(126,211,200,.28);--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}}
+:root[data-theme="dark"]{--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--sel:rgba(126,211,200,.28);--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(var(--pat) 1.1px, transparent 1.4px) 0 0/22px 22px, var(--grain);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - var(--pat-clear) - 9rem),transparent calc(50% - var(--pat-clear)),transparent calc(50% + var(--pat-clear)),#000 calc(50% + var(--pat-clear) + 9rem),#000 100%);mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - var(--pat-clear) - 9rem),transparent calc(50% - var(--pat-clear)),transparent calc(50% + var(--pat-clear)),#000 calc(50% + var(--pat-clear) + 9rem),#000 100%)}
+@media print{body::before{display:none}}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans);-webkit-font-smoothing:antialiased;position:relative;z-index:0;min-height:100vh}
+a{color:var(--accent)}
+.wrap{max-width:64rem;margin:0 auto;padding:3rem 1rem 4rem}
+@media (min-width:40rem){.wrap{padding:4rem 1.5rem 5rem}}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+.top{display:flex;justify-content:flex-end;margin-bottom:2rem}
+.theme-btn{background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;padding:.3rem .75rem;font:inherit;font-size:.8rem;cursor:pointer}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:.65rem}
+.eyebrow::before{content:"";flex:none;width:1.6rem;height:2px;background:var(--accent);border-radius:1px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,5vw,2.75rem);line-height:1.12;letter-spacing:-.01em;margin:.5rem 0 1rem;max-width:24ch}
+.intro{color:var(--ink-2);max-width:40rem} .intro p{margin:0 0 .75rem}
+.overall{margin:2rem 0 2.5rem;padding-top:1rem;border-top:1px solid var(--rule);color:var(--ink-3);font-size:.9rem}
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.item a{display:grid;grid-template-columns:4.5rem minmax(0,1fr) auto;gap:.25rem 1.5rem;padding:1.4rem .25rem;border-bottom:1px solid var(--rule);text-decoration:none;color:inherit;align-items:baseline}
+.item a{transition:background-color .2s var(--ease)}
+.item a:hover{background:var(--accent-soft)}
+.item a:hover h2{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.item{animation:rise .4s var(--ease) both}
+.item:nth-child(2){animation-delay:.05s}.item:nth-child(3){animation-delay:.1s}.item:nth-child(n+4){animation-delay:.15s}
+.num{font:600 .8rem/1.4 var(--sans);color:var(--accent);letter-spacing:.04em}
+h2{font-family:var(--serif);font-weight:600;font-size:1.3rem;line-height:1.3;margin:0}
+.sub{color:var(--ink-2);font-size:.925rem;margin:.25rem 0 .5rem}
+.facts{display:flex;flex-wrap:wrap;gap:.15rem 1.1rem;color:var(--ink-3);font-size:.8rem}
+.state{font-size:.8rem;color:var(--ink-3);white-space:nowrap;text-align:right}
+.state strong{display:block;color:var(--accent);font-size:.85rem}
+.state.done strong{color:var(--ok)}
+@media (max-width:40rem){.item a{grid-template-columns:1fr}.state{text-align:left}}
+footer{margin-top:3rem;color:var(--ink-3);font-size:.8rem;border-top:1px solid var(--rule);padding-top:1rem}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+/* full screen */
+.tools{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.fs-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;
+  padding:.3rem .8rem .3rem .65rem;font:inherit;font-size:.8rem;cursor:pointer;transition:border-color .18s ease,color .18s ease}
+.fs-btn:hover{border-color:var(--accent);color:var(--ink)}
+.fs-btn svg{width:.95rem;height:.95rem;flex:none}
+.fs-btn .fs-out{display:none} .fs-btn.on .fs-in{display:none} .fs-btn.on .fs-out{display:inline}
+.fs-note{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);z-index:60;max-width:min(32rem,calc(100vw - 2rem));background:var(--ink);color:var(--surface);
+  border-radius:8px;padding:.7rem 1rem;font-size:.875rem;line-height:1.45;box-shadow:0 12px 32px -12px rgba(0,0,0,.4)}
+html:fullscreen{background:var(--paper);overflow-y:auto}
+html:-webkit-full-screen{background:var(--paper);overflow-y:auto}
+::backdrop{background:var(--paper)}
+@media print{.tools{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span class="tools"><button class="fs-btn" id="fsBtn" type="button" aria-pressed="false" hidden><svg class="fs-in" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><svg class="fs-out" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4"/></svg><span class="fs-t">Full screen</span></button><button class="theme-btn" id="themeBtn" type="button" aria-label="Switch colour theme">Theme</button></span></div>
+  <header><div class="eyebrow" id="course"></div><h1 id="title"></h1><div class="intro" id="intro"></div></header>
+  <p class="overall" id="overall"></p>
+  <ul class="list" id="list"></ul>
+  <footer>Your progress is kept in this browser. Submit each lab&rsquo;s report through Blackboard.</footer>
+</div>
+<script type="application/json" id="hub-data">{"course": "COP1800 · Java Programming I", "title": "Chapter 8: Arrays", "intro": "\u003cp>Hands-on labs for sections 8.1 to 8.10 of \u003cem>Java Programming\u003c/em>, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.\u003c/p>", "labs": [{"href": "8.1.html", "id": "8.1", "title": "The food-truck log that crashes on Sunday", "subtitle": "An array of n elements has subscripts 0 through n − 1, and its size can come from a variable", "source": "Ch. 8, section 8.1 (pp. 267–271)", "minutes": 20, "langLabel": "Java", "checks": 4, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.1"}, {"href": "8.2.html", "id": "8.2", "title": "The coffee board that sells a null for $0.0", "subtitle": "Initialization lists create and fill an array at once; a new array starts with default values", "source": "Ch. 8, section 8.2 (pp. 271–273)", "minutes": 20, "langLabel": "Java", "checks": 3, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.2"}, {"href": "8.3.html", "id": "8.3", "title": "The grade book that forgets the sixth student", "subtitle": "Loops with a variable subscript, the length field, and using only the filled part of an array", "source": "Ch. 8, section 8.3 (pp. 273–277)", "minutes": 25, "langLabel": "Java", "checks": 4, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.3"}, {"href": "8.4.html", "id": "8.4", "title": "The bike station with empty docks", "subtitle": "An array of objects holds references: every element needs its own new", "source": "Ch. 8, section 8.4 (pp. 277–283)", "minutes": 25, "langLabel": "Java", "checks": 3, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.4"}, {"href": "8.5.html", "id": "8.5", "title": "The print shop that charges every order the small-job price", "subtitle": "Searching parallel arrays, stopping early, and finding the range a value falls into", "source": "Ch. 8, section 8.5 (pp. 284–288)", "minutes": 30, "langLabel": "Java", "checks": 2, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.5"}, {"href": "8.6.html", "id": "8.6", "title": "The greenhouse log that loses its Celsius readings", "subtitle": "Array elements are passed by value; an array is passed as a copy of its reference", "source": "Ch. 8, section 8.6 (pp. 289–292)", "minutes": 25, "langLabel": "Java", "checks": 2, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.6"}, {"href": "8.7.html", "id": "8.7", "title": "The race results that give Dev's time to Ana", "subtitle": "A bubble sort compares neighbours and swaps whole objects, not just the field it sorts by", "source": "Ch. 8, section 8.7 (pp. 292–300)", "minutes": 25, "langLabel": "Java", "checks": 2, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.7"}, {"href": "8.8.html", "id": "8.8", "title": "The theater that sells balcony seats it doesn't have", "subtitle": "A two-dimensional array is an array of rows, and every row has its own length", "source": "Ch. 8, section 8.8 (pp. 300–306)", "minutes": 30, "langLabel": "Java", "checks": 3, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.8"}, {"href": "8.9.html", "id": "8.9", "title": "The guest list that turns away Amir", "subtitle": "Arrays.sort(), binarySearch(), equals() and fill(): library methods with rules of their own", "source": "Ch. 8, section 8.9 (pp. 307–311)", "minutes": 25, "langLabel": "Java", "checks": 4, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.9"}, {"href": "8.10.html", "id": "8.10", "title": "The help desk that answers URGENT tickets in 0 hours", "subtitle": "Enum constants have a declared order: switch, compareTo(), values() and ordinal()", "source": "Ch. 8, section 8.10 (pp. 311–316)", "minutes": 25, "langLabel": "Java", "checks": 3, "hasTest": true, "testLabel": "test program", "runs": false, "storageKey": "lab:COP1800 · Java Programming I:8.10"}]}</script>
+<script>
+(function(){
+  "use strict";
+  var D = JSON.parse(document.getElementById("hub-data").textContent), $ = function(i){ return document.getElementById(i); };
+  $("course").textContent = D.course; $("title").textContent = D.title; $("intro").innerHTML = D.intro || "";
+  var root = document.documentElement;
+  try { var th = localStorage.getItem("lab:theme"); if (th) root.setAttribute("data-theme", th); } catch(e){}
+  $("themeBtn").addEventListener("click", function(){
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark"; root.setAttribute("data-theme", next); try { localStorage.setItem("lab:theme", next); } catch(e){}
+  });
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  var done = 0, started = 0;
+  D.labs.forEach(function(l){
+    var st = null; try { var s = JSON.parse(localStorage.getItem(l.storageKey) || "null"); st = s && s.stats; } catch(e){}
+    var complete = st && st.all && (!l.hasTest || st.output === true);
+    var begun = st && (st.runs || st.passed);
+    if (begun) started++; if (complete) done++;
+    var state = !begun ? '<strong>Not started</strong>' :
+      complete ? '<strong>Complete</strong>' + st.total + ' of ' + st.total + ' checks' + (l.hasTest ? (l.testLabel === 'layout tests' ? ', layout tests pass' : ', output matches') : '') :
+      '<strong>In progress</strong>' + st.passed + ' of ' + st.total + ' checks' + (l.hasTest ? (l.testLabel === 'layout tests'
+        ? (st.output === true ? ', layout tests pass' : ', layout tests not yet passing') : (st.output === true ? ', output matches' : ', output not yet matched')) : '');
+    var li = document.createElement("li"); li.className = "item";
+    li.innerHTML = '<a href="' + encodeURI(l.href) + '"><span class="num">Lab ' + esc(l.id) + '</span><div><h2>' + esc(l.title) + '</h2>' +
+      (l.subtitle ? '<p class="sub">' + esc(l.subtitle) + '</p>' : '') +
+      '<div class="facts"><span>about ' + esc(l.minutes) + ' min</span><span>' + esc(l.langLabel) + '</span><span>' + l.checks + ' checks' + (l.hasTest ? ' + ' + (l.testLabel || 'test program') : '') + '</span>' + (l.runs ? '<span>runs in the browser</span>' : '') +
+      (l.source ? '<span>' + l.source + '</span>' : '') + '</div></div><div class="state' + (complete ? ' done' : '') + '">' + state + '</div></a>';
+    $("list").appendChild(li);
+  });
+  var n = D.labs.length;
+  $("overall").textContent = n + (n === 1 ? " lab" : " labs") + (started ? " · " + done + " complete, " + (started - done) + " in progress" : "");
+})();
+</script>
+<script>
+/* Full screen. Blackboard often shows an uploaded page inside a frame; when that frame doesn't allow full screen,
+   the button opens the page on its own in a new tab (same address, so saved progress comes along), where full
+   screen works. Hidden where the browser has no full screen for pages (iPhone). */
+(function(){
+  "use strict";
+  var btn = document.getElementById("fsBtn"); if (!btn) return;
+  var d = document, el = d.documentElement, txt = btn.querySelector(".fs-t"), timer;
+  var can = !!(d.fullscreenEnabled || d.webkitFullscreenEnabled);
+  var framed = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+  var KEYS = /Mac|iPad/.test(navigator.platform || navigator.userAgent) ? "Control+Command+F" : "F11";
+  function isFs(){ return !!(d.fullscreenElement || d.webkitFullscreenElement); }
+  function note(msg){
+    var n = d.getElementById("fsNote");
+    if (!n) { n = d.createElement("div"); n.id = "fsNote"; n.className = "fs-note"; n.setAttribute("role", "status"); d.body.appendChild(n); }
+    n.textContent = msg; n.hidden = false; clearTimeout(timer); timer = setTimeout(function(){ n.hidden = true; }, 7000);
+  }
+  function openPage(){
+    var w = null;
+    try { w = window.open(location.href, "_blank"); } catch(e){}
+    if (w) { try { w.opener = null; } catch(e){} }
+    else note("Your course page blocked the new tab. Open this page on its own, or press " + KEYS + " for full screen.");
+  }
+  function sync(){
+    var on = isFs();
+    btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on ? "true" : "false");
+    txt.textContent = on ? "Exit full screen" : "Full screen";
+    btn.title = on ? "Leave full screen (Esc)" : "Fill the screen with this page";
+  }
+  if (can) {
+    btn.hidden = false; sync();
+    btn.addEventListener("click", function(){
+      if (isFs()) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+      var req = el.requestFullscreen || el.webkitRequestFullscreen, p;
+      try { p = req.call(el, { navigationUI: "hide" }); } catch(e){ p = null; fail(); return; }
+      if (p && p.catch) p.catch(fail);
+    });
+    d.addEventListener("fullscreenchange", sync); d.addEventListener("webkitfullscreenchange", sync);
+  } else if (framed) {
+    btn.hidden = false; txt.textContent = "Open full page";
+    btn.title = "Open this page in its own tab, where it can go full screen";
+    btn.addEventListener("click", openPage);
+  }
+  function fail(){ if (framed) openPage(); else note("Full screen isn't available here. Press " + KEYS + " instead."); }
+})();
+</script>
+</body>
+</html>

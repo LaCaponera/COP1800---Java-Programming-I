@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The grade book that forgets the sixth student</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 8.3</div>
+  <h1>The grade book that forgets the sixth student</h1>
+<h2>Objectives</h2><ul><li>Process array elements in a loop whose subscript is a variable</li><li>Use the <code>length</code> field, not a typed number, as an array&#x27;s capacity</li><li>Keep a count to process only the part of an array that holds real data</li><li>Explain why an enhanced for loop cannot change the elements it visits</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>add()</code> compares <code>count</code> with the array&#x27;s <code>length</code> field (or the constant <code>MAX_QUIZZES</code>) instead of a typed 10.</li><li><strong>R2</strong> <code>curve()</code> adds the points to every entered score: its loop stops at <code>count</code>.</li><li><strong>R3</strong> <code>average()</code> totals only the entered scores and divides by <code>count</code>; it returns 0.0 when no score has been entered.</li><li><strong>R4</strong> <code>highest()</code> returns the highest entered score using a loop with a variable subscript, or 0 when no score has been entered.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>scores</code> has 10 elements and the test enters 6 scores. What is <code>scores.length</code>, what is <code>count</code>, and what do the elements after the sixth hold?</p><div class="answer"><p>scores.length is 10 and count is 6. Elements 6 through 9 still hold 0, the default value of an int array.</p></div></li><li><p>Which scores does the starter&#x27;s <code>curve()</code> loop change when 6 scores have been entered?</p><div class="answer"><p>Only scores[0] through scores[4], the first five. The sixth score, scores[5], is never curved.</p></div></li></ol>
+<h2>Solution</h2><div class="file">QuizBook.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">QuizBook</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_QUIZZES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">scores</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[</span><span class="t-n">MAX_QUIZZES</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// how many scores have been entered so far</span>
+
+<span class="t-w">    </span><span class="t-c1">// Stores a score if there is room; returns false when the book is full.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">add</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">scores</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">scores</span><span class="t-o">[</span><span class="t-n">count</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">score</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Adds points to every score entered so far.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">curve</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">points</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">i</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">scores</span><span class="t-o">[</span><span class="t-n">i</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">points</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The average of the entered scores, or 0.0 when none were entered.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">average</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">i</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">scores</span><span class="t-o">[</span><span class="t-n">i</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mf">1.0</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The highest entered score, or 0 when none were entered.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">highest</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">best</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">i</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">scores</span><span class="t-o">[</span><span class="t-n">i</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">best</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">best</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">scores</span><span class="t-o">[</span><span class="t-n">i</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">best</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">list</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">i</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">text</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">scores</span><span class="t-o">[</span><span class="t-n">i</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">.</span><span class="t-na">trim</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A loop whose subscript is a variable lets one statement process every element (p. 273). The <code>length</code> field holds the number of elements, so <code>count &lt; scores.length</code> keeps working if <code>MAX_QUIZZES</code> changes (pp. 274–275); <code>scores.length()</code> would not compile, because for arrays <code>length</code> is a field, not a method. Like the book&#x27;s AverageOfQuizzes (Figure 8-4), this class uses only <em>part of an array</em>: <code>count</code> says how many elements hold real data, so <code>curve()</code>, <code>average()</code> and <code>highest()</code> all stop at <code>count</code>. The starter&#x27;s enhanced for loop in <code>average()</code> visits all 10 elements; the empty ones add nothing to the total, but dividing by <code>length</code> counts them, which is why the average was 49.5 instead of 83.0. An enhanced for loop also can&#x27;t curve the scores: its variable is a copy of each element, so changing it leaves the array as it was. <code>average()</code> must test for <code>count == 0</code> first, or it computes 0 / 0.0, which is <code>NaN</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestQuizBook.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestQuizBook</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">QuizBook</span><span class="t-w"> </span><span class="t-n">book</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">QuizBook</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">70</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">84</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">92</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">65</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">88</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">81</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">curve</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Curved scores: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">list</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Average: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">average</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Highest: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">highest</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">77</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">90</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">59</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">83</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Room for an 11th quiz? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">book</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">95</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">QuizBook</span><span class="t-w"> </span><span class="t-n">empty</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">QuizBook</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Empty book: average "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">empty</span><span class="t-p">.</span><span class="t-na">average</span><span class="t-p">()</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", highest "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">empty</span><span class="t-p">.</span><span class="t-na">highest</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Curved scores: 73 87 95 68 91 84
+Average: 83.0
+Highest: 95
+Room for an 11th quiz? false
+Empty book: average 0.0, highest 0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>add() takes its limit from the array<div class="small">in <code>QuizBook.add</code></div></td><td><div><span class="tag">require</span> <code>\bcount\s*&lt;\s*(?:scores\s*\.\s*length|MAX_QUIZZES)\b</code></div><div><span class="tag">forbid</span> <code>[&lt;&gt;]=?\s*\d+|\blength\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>curve() changes every entered score<div class="small">in <code>QuizBook.curve</code></div></td><td><div><span class="tag">require</span> <code>&lt;\s*count\b</code></div><div><span class="tag">forbid</span> <code>&lt;\s*\d+|&lt;\s*scores\s*\.\s*length|:\s*scores\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>average() divides by the number of entered scores<div class="small">in <code>QuizBook.average</code></div></td><td><div><span class="tag">require</span> <code>/\s*count\b</code></div><div><span class="tag">forbid</span> <code>/\s*(?:scores\s*\.\s*length|MAX_QUIZZES|\d)</code></div></td></tr><tr><td>C4</td><td>R4</td><td>highest() loops over the entered scores<div class="small">in <code>QuizBook.highest</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bscores\s*\[\s*\w+\s*\])(?=[\s\S]*&lt;\s*count\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · add() takes its limit from the array</dt><dd><p>Compare <code>count</code> with <code>scores.length</code> (or <code>MAX_QUIZZES</code>), not with a typed 10. If the book grows to 12 quizzes, a typed number silently stays wrong; the <code>length</code> field always matches the array.</p><div class='small'><strong>Hint:</strong></div><p>Arrays have a <code>length</code> field with no parentheses; Strings have a <code>length()</code> method.</p></dd><dt>C2 · curve() changes every entered score</dt><dd><p>Loop while the subscript is below <code>count</code>, the number of entered scores. A typed 5 skips the sixth student, <code>scores.length</code> would also curve the empty slots, and an enhanced for loop can&#x27;t change the elements.</p></dd><dt>C3 · average() divides by the number of entered scores</dt><dd><p>Divide the total by <code>count</code>, the number of scores entered. Dividing by <code>scores.length</code> counts the empty slots as zeros, which is how the average dropped to 49.5. Return 0.0 first when <code>count</code> is 0.</p></dd><dt>C4 · highest() loops over the entered scores</dt><dd><p>Loop a subscript from 0 while it is below <code>count</code>, compare each <code>scores[i]</code> with the highest value so far, and keep the larger one. Stopping at <code>count</code> keeps the empty zeros out of the result.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>The array knows its own size: every array has a <code>length</code> field. Two different limits are in play here: <code>scores.length</code> is how many scores fit, <code>count</code> is how many were entered.</p></li><li><p>Loops that work on real scores need the second limit. Find every loop that uses a typed number or the whole array, and ask which limit it should use.</p></li><li><p>In <code>average()</code>, test for <code>count == 0</code> before you divide. For <code>highest()</code>, keep the best value seen so far in a variable and compare it with each entered score.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The starter&#x27;s average was 49.5 instead of 83.0. Explain exactly where the difference comes from.</p><div class="answer"><p>The starter adds the six entered scores and divides by scores.length, 10, so the four empty elements count as scores of 0. It also left the sixth score uncurved. Dividing the curved total by count, 6, gives the real average.</p></div></li><li><p>Why must <code>curve()</code> use a for loop with a subscript, and not <code>for(int s : scores) s += points;</code>?</p><div class="answer"><p>In an enhanced for loop, s is a copy of each element&#x27;s value. Adding to s changes the copy, not the array, so no score would be curved. It would also visit the empty elements.</p></div></li><li><p>The department raises <code>MAX_QUIZZES</code> to 12. What changes in your class, and what would have broken with the starter&#x27;s typed 10?</p><div class="answer"><p>Only the constant changes: the array gets 12 elements and add() accepts 12 scores because it compares with scores.length. With the typed 10, quizzes 11 and 12 would be rejected even though the array had room.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>aboveAverage()</code>, which returns how many entered scores are above the average. This is the problem the chapter opens with (p. 267): why can&#x27;t a program answer it while the scores are still arriving one at a time, without an array?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; every loop over scores has a limit that says what it means (<code>count</code> or <code>scores.length</code>), never a typed number.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The help desk that answers URGENT tickets in 0 hours</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 8.10</div>
+  <h1>The help desk that answers URGENT tickets in 0 hours</h1>
+<h2>Objectives</h2><ul><li>Use an enumerated type&#x27;s constants in a <code>switch</code> structure</li><li>Compare enum constants by their declared order with <code>compareTo()</code>, not by their spelling</li><li>Build output from <code>values()</code> and <code>ordinal()</code> so it follows the enum when the enum changes</li><li>Explain what makes an enum type-safe compared with <code>int</code> or <code>String</code> codes</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>responseHours()</code> chooses the hours with a <code>switch</code> on the <code>Priority</code>, with a <code>case</code> for each priority (LOW may be the <code>default</code>), and no arithmetic on <code>ordinal()</code>.</li><li><strong>R2</strong> <code>moreUrgent()</code> compares the two constants by their declared order with <code>compareTo()</code> (or their <code>ordinal()</code> values), not by their names.</li><li><strong>R3</strong> <code>menu()</code> builds the list from <code>Priority.values()</code>, numbering each constant with <code>ordinal() + 1</code>, separated by commas: <code>1 LOW, 2 NORMAL, 3 HIGH, 4 URGENT</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>What does <code>Priority.URGENT.ordinal()</code> return, and what does the starter&#x27;s formula <code>72 - p.ordinal() * 24</code> give for it?</p><div class="answer"><p>ordinal() returns 3, URGENT&#x27;s position counting from 0. The formula gives 72 - 72 = 0 hours.</p></div></li><li><p>Is <code>Priority.LOW.compareTo(Priority.HIGH)</code> negative, 0 or positive? And <code>&quot;LOW&quot;.compareTo(&quot;HIGH&quot;)</code>?</p><div class="answer"><p>Priority.LOW.compareTo(Priority.HIGH) is negative, because LOW is declared before HIGH. &quot;LOW&quot;.compareTo(&quot;HIGH&quot;) is positive, because L comes after H in the alphabet.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">HelpDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">HelpDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Hours the desk promises to answer within:</span>
+<span class="t-w">    </span><span class="t-c1">// URGENT 1, HIGH 4, NORMAL 24, LOW 72.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">responseHours</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): a constant's position in the list is not a number of</span>
+<span class="t-w">        </span><span class="t-c1">// hours. Choose the hours for each constant.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mi">72</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-p">.</span><span class="t-na">ordinal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mi">24</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Whichever of the two priorities is more urgent (a, if they are equal).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-nf">moreUrgent</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): this compares how the names are spelled, not the order</span>
+<span class="t-w">        </span><span class="t-c1">// the constants are declared in.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">a</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">().</span><span class="t-na">compareTo</span><span class="t-p">(</span><span class="t-n">b</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">())</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The menu agents see: every priority with its number, starting at 1.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">menu</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): URGENT was added to Priority last month, and this menu</span>
+<span class="t-w">        </span><span class="t-c1">// never learned about it. Build it from the enum instead.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"1 LOW, 2 NORMAL, 3 HIGH"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Priority.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// The four priorities a help-desk ticket can have, least urgent first.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">enum</span><span class="t-w"> </span><span class="t-n">Priority</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-n">LOW</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">NORMAL</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">HIGH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">URGENT</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">HelpDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">HelpDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Hours the desk promises to answer within:</span>
+<span class="t-w">    </span><span class="t-c1">// URGENT 1, HIGH 4, NORMAL 24, LOW 72.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">responseHours</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">72</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">switch</span><span class="t-p">(</span><span class="t-n">p</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-n">URGENT</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-n">HIGH</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-n">NORMAL</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">24</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-n">LOW</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">72</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Whichever of the two priorities is more urgent (a, if they are equal).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-nf">moreUrgent</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">a</span><span class="t-p">.</span><span class="t-na">compareTo</span><span class="t-p">(</span><span class="t-n">b</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The menu agents see: every priority with its number, starting at 1.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">menu</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">values</span><span class="t-p">())</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">p</span><span class="t-p">.</span><span class="t-na">ordinal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">text</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">text</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">p</span><span class="t-p">.</span><span class="t-na">ordinal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>An enumerated type has a fixed set of constants in a declared order, and the first position is 0, as in an array (p. 312). <code>ordinal()</code> returns that position, which is not a quantity, so arithmetic on it produced 48, 24 and 0 hours. A <code>switch</code> on the enum states each promise explicitly (Figure 8-42); the case labels are the constant names alone. <code>compareTo()</code> on enum constants compares declared positions (Table 8-4), so <code>a.compareTo(b) &gt;= 0</code> means <code>a</code> is at least as urgent as <code>b</code>; comparing <code>toString()</code> values compares spelling instead. Despite the example on p. 314, the operators <code>&lt;</code> and <code>&gt;</code> do not compile with enum constants in Java (<code>bad operand types for binary operator</code>): use <code>compareTo()</code> or compare <code>ordinal()</code> values. <code>values()</code> returns an array of the constants in declared order (Table 8-5), so the menu now follows the enum automatically. <code>valueOf()</code> turns typed text into a constant, which is how the test program converts <code>&quot;high&quot;</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestHelpDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestHelpDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">values</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">p</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" (position "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">p</span><span class="t-p">.</span><span class="t-na">ordinal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"): answer within "</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">.</span><span class="t-na">responseHours</span><span class="t-p">(</span><span class="t-n">p</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" h"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"More urgent of LOW and HIGH: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">.</span><span class="t-na">moreUrgent</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">LOW</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">HIGH</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"More urgent of URGENT and NORMAL: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">.</span><span class="t-na">moreUrgent</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">URGENT</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">NORMAL</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"More urgent of NORMAL and NORMAL: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">.</span><span class="t-na">moreUrgent</span><span class="t-p">(</span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">NORMAL</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">NORMAL</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Menu: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">.</span><span class="t-na">menu</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"high"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">Priority</span><span class="t-w"> </span><span class="t-n">chosen</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Priority</span><span class="t-p">.</span><span class="t-na">valueOf</span><span class="t-p">(</span><span class="t-n">typed</span><span class="t-p">.</span><span class="t-na">toUpperCase</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Agent typed \""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">chosen</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", answer within "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">.</span><span class="t-na">responseHours</span><span class="t-p">(</span><span class="t-n">chosen</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" h"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">LOW (position 0): answer within 72 h
+NORMAL (position 1): answer within 24 h
+HIGH (position 2): answer within 4 h
+URGENT (position 3): answer within 1 h
+More urgent of LOW and HIGH: HIGH
+More urgent of URGENT and NORMAL: URGENT
+More urgent of NORMAL and NORMAL: NORMAL
+Menu: 1 LOW, 2 NORMAL, 3 HIGH, 4 URGENT
+Agent typed &quot;high&quot;: HIGH, answer within 4 h
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>responseHours() uses a switch on the priority<div class="small">in <code>HelpDesk.responseHours</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bswitch\s*\(\s*p\s*\))(?=[\s\S]*\bcase\s+(?:Priority\s*\.\s*)?URGENT\s*(?::|-&gt;))(?=[\s\S]*\bcase\s+(?:Priority\s*\.\s*)?HIGH\s*(?::|-&gt;))(?=[\s\S]*\bcase\s+(?:Priority\s*\.\s*)?NORMAL\s*(?::|-&gt;))</code></div><div><span class="tag">forbid</span> <code>\bordinal\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>moreUrgent() compares declared order<div class="small">in <code>HelpDesk.moreUrgent</code></div></td><td><div><span class="tag">require</span> <code>(?:\b[ab]\s*\.\s*compareTo\s*\(\s*[ab]\s*\)|\b[ab]\s*\.\s*ordinal\s*\(\s*\)\s*[&lt;&gt;]=?\s*[ab]\s*\.\s*ordinal\s*\(\s*\))</code></div><div><span class="tag">forbid</span> <code>\btoString\s*\(|\bname\s*\(</code></div></td></tr><tr><td>C3</td><td>R3</td><td>menu() is built from Priority.values()<div class="small">in <code>HelpDesk.menu</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bPriority\s*\.\s*values\s*\(\s*\))(?=[\s\S]*(?:\.\s*ordinal\s*\(\s*\)\s*\+\s*1|\b1\s*\+\s*\w+\s*\.\s*ordinal\s*\(\s*\)))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · responseHours() uses a switch on the priority</dt><dd><p>Use <code>switch(p)</code> with a <code>case</code> for each constant (<code>case URGENT:</code>, <code>case HIGH:</code>, ...) and the hours the desk promises. A constant&#x27;s position is not a number of hours: URGENT is position 3, and the formula turned that into 0 hours.</p></dd><dt>C2 · moreUrgent() compares declared order</dt><dd><p>Compare the constants themselves: <code>a.compareTo(b) &gt;= 0</code> is true when <code>a</code> is declared at the same place as <code>b</code> or later, so it is at least as urgent. Comparing <code>toString()</code> values compares spelling, and &quot;LOW&quot; comes after &quot;HIGH&quot; alphabetically.</p></dd><dt>C3 · menu() is built from Priority.values()</dt><dd><p>Loop over <code>Priority.values()</code> and add each constant as its <code>ordinal() + 1</code>, a space and the constant, with a comma and a space between items. A typed string can&#x27;t notice when a constant is added to the enum; <code>values()</code> always does.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>You can <code>switch</code> on an enum variable. The case labels are the constant names alone, such as <code>case LOW:</code> (older Java versions reject <code>Priority.</code> in front of them).</p></li><li><p>Every enum constant has a <code>compareTo()</code> method that compares positions in the declaration: negative when the calling constant comes first, 0 when they are the same, positive when it comes later.</p></li><li><p><code>Priority.values()</code> returns an array of all the constants in declared order, so an enhanced for loop can visit them. Put the comma before every item except the first.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is arithmetic on <code>ordinal()</code> fragile even when the numbers happen to come out right? What would <code>72 - p.ordinal() * 24</code> give URGENT if someone inserted <code>CRITICAL</code> between <code>HIGH</code> and <code>URGENT</code>?</p><div class="answer"><p>ordinal() is only a position, so any formula built on it changes meaning when the list changes. With CRITICAL inserted, URGENT moves to position 4 and the formula gives 72 - 96 = -24 hours.</p></div></li><li><p>Before this enum existed, priorities were <code>int</code> codes 1 to 4. Name two mistakes the <code>Priority</code> type now makes impossible.</p><div class="answer"><p>A ticket can&#x27;t get an invalid code such as 7 or 0, because only the four constants exist. And nobody can do meaningless arithmetic, such as adding two priorities, because the compiler rejects + on enum values: the type is type-safe.</p></div></li><li><p>Your <code>menu()</code> picked up <code>URGENT</code> with no extra work. Which method in <code>HelpDesk</code> would still need editing if a new priority were added, and why is that a good thing?</p><div class="answer"><p>responseHours(), because a new priority needs its own promised hours, a business decision the code can&#x27;t guess. The switch is the one place where that decision is written down.</p></div></li></ol>
+<h2>Extension</h2><p>In a copy of the project, add <code>CRITICAL</code> between <code>HIGH</code> and <code>URGENT</code> in <code>Priority.java</code>, with a promise of 2 hours. Which methods need changes? Does <code>moreUrgent()</code> still work without any?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; every <code>case</code> in the switch ends with <code>break</code> (or uses the arrow form), and no priority is identified by its spelling.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

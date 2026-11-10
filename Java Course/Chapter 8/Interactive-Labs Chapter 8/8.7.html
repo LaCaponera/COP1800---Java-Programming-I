@@ -1,0 +1,2311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>The race results that give Dev&#x27;s time to Ana · Coding lab</title>
+<style>
+:root{
+  --paper:#F6F5F1; --surface:#FFFFFF; --ink:#1B1B18; --ink-2:#4A4944; --ink-3:#6A6962;
+  --rule:#E2E0D8; --rule-2:#CFCCC2; --accent:#1F4E79; --accent-soft:#EAF0F6;
+  --ok:#2C6A41; --ok-soft:#EBF3ED; --bad:#9B3127; --bad-soft:#F8EDEB; --focus:#2F6FB3;
+  --code-bg:#FBFAF7; --code-ink:#24231F; --gutter:#9A988F; --sel:rgba(31,78,121,.18);
+  --c-kw:#7A2E8E; --c-str:#2E6B3A; --c-com:#6E6D66; --c-num:#A14C12; --c-fn:#1F4E79; --c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Cascadia Code",Consolas,"Liberation Mono",monospace;
+  --accent-ink:#FFFFFF; --ease:cubic-bezier(.2,.7,.2,1); --pat-clear:44rem;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131312; --surface:#1B1B19; --ink:#ECEBE6; --ink-2:#BDBCB4; --ink-3:#9A9991;
+    --rule:#2D2C29; --rule-2:#403F3A; --accent:#9CC0E6; --accent-soft:#1C2732;
+    --ok:#86C79B; --ok-soft:#17261C; --bad:#E9A097; --bad-soft:#2D1B19; --focus:#9CC0E6;
+    --code-bg:#161615; --code-ink:#E4E3DD; --gutter:#6B6A63; --sel:rgba(156,192,230,.25);
+    --c-kw:#D3A3E3; --c-str:#9ED3A6; --c-com:#8C8B84; --c-num:#F0B27A; --c-fn:#9CC0E6; --c-type:#7FD1C7;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131312; --surface:#1B1B19; --ink:#ECEBE6; --ink-2:#BDBCB4; --ink-3:#9A9991;
+  --rule:#2D2C29; --rule-2:#403F3A; --accent:#9CC0E6; --accent-soft:#1C2732;
+  --ok:#86C79B; --ok-soft:#17261C; --bad:#E9A097; --bad-soft:#2D1B19; --focus:#9CC0E6;
+  --code-bg:#161615; --code-ink:#E4E3DD; --gutter:#6B6A63; --sel:rgba(156,192,230,.25);
+  --c-kw:#D3A3E3; --c-str:#9ED3A6; --c-com:#8C8B84; --c-num:#F0B27A; --c-fn:#9CC0E6; --c-type:#7FD1C7;
+}
+:root{--paper:#F3F5F4;--accent:#0B5D58;--accent-soft:#E2F0EE;--accent-ink:#FFFFFF;--focus:#0B5D58;--sel:rgba(11,93,88,.18);--pat:rgba(27,27,24,.055);--pat-strong:rgba(27,27,24,.095);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--sel:rgba(126,211,200,.28);--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}}
+:root[data-theme="dark"]{--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--sel:rgba(126,211,200,.28);--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(var(--pat) 1.1px, transparent 1.4px) 0 0/22px 22px, var(--grain);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - var(--pat-clear) - 9rem),transparent calc(50% - var(--pat-clear)),transparent calc(50% + var(--pat-clear)),#000 calc(50% + var(--pat-clear) + 9rem),#000 100%);mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - var(--pat-clear) - 9rem),transparent calc(50% - var(--pat-clear)),transparent calc(50% + var(--pat-clear)),#000 calc(50% + var(--pat-clear) + 9rem),#000 100%)}
+@media print{body::before{display:none}}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans);-webkit-font-smoothing:antialiased;position:relative;z-index:0;min-height:100vh}
+.wrap{max-width:86rem;margin:0 auto;padding:2.5rem 1rem 4rem}
+@media (min-width:40rem){.wrap{padding:3.5rem 1.5rem 5rem}}
+p{margin:0 0 .75rem} p:last-child{margin-bottom:0}
+ul,ol{margin:0 0 .75rem;padding-left:1.25rem} li+li{margin-top:.3rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);border:1px solid var(--rule);padding:.05em .3em;border-radius:4px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.small{font-size:.85rem;color:var(--ink-3)}
+[hidden]{display:none!important}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:2rem;font-size:.875rem}
+.topbar a{text-decoration:none;color:var(--ink-2)} .topbar a:hover{color:var(--ink)}
+.theme-btn{background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;padding:.3rem .75rem;font:inherit;font-size:.8rem;cursor:pointer}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:.65rem}
+.eyebrow::before{content:"";flex:none;width:1.6rem;height:2px;background:var(--accent);border-radius:1px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.8rem,4.5vw,2.6rem);line-height:1.12;letter-spacing:-.01em;margin:.5rem 0 .5rem;max-width:30ch}
+.subtitle{color:var(--ink-2);font-size:1.05rem;margin:0 0 1rem;max-width:60ch}
+.meta{display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;color:var(--ink-3);font-size:.875rem}
+header.mast{padding-bottom:2rem;border-bottom:1px solid var(--rule);margin-bottom:2.5rem}
+
+/* phones/tablets: brief, then the work, then help; wide screens: brief + help pinned beside the work */
+.layout{display:flex;flex-direction:column;gap:2.5rem}
+.side{display:contents}
+.brief{order:1} .work{order:2;min-width:0} .help{order:3}
+@media (min-width:72rem){
+  .layout{display:grid;grid-template-columns:minmax(0,29rem) minmax(0,1fr);gap:3.5rem;align-items:start}
+  .side{display:block;position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto;padding-right:.5rem;scrollbar-width:thin}
+  .help{border-top:1px solid var(--rule);margin-top:1.4rem}
+}
+.help section{padding:1.4rem 0;border-top:1px solid var(--rule)} .help section:first-child{border-top:0}
+h2{font:600 1.05rem/1.35 var(--sans);margin:0 0 .6rem;letter-spacing:-.005em}
+.brief section{padding:1.4rem 0;border-top:1px solid var(--rule)}
+.brief section:first-child{border-top:0;padding-top:0}
+.brief .lede{color:var(--ink-2)}
+.reqs{list-style:none;padding:0;margin:0}
+.reqs li{display:grid;grid-template-columns:2.4rem minmax(0,1fr) auto;gap:.5rem;padding:.55rem 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.reqs li:last-child{border-bottom:0}
+.reqs .rid{font:600 .75rem/1 var(--sans);color:var(--ink-3);letter-spacing:.04em}
+.reqs .rst{font-size:.75rem;font-weight:600;color:var(--ink-3);text-align:right;max-width:6.5rem;transition:color .3s var(--ease)}
+@media (max-width:40rem){.brief code,.help code,.chk code,.q code{overflow-wrap:anywhere}}
+.help-link{text-decoration:none;color:var(--ink);display:inline-flex;align-items:center}
+@media (min-width:72rem){.help-link{display:none}}
+.stale{font-size:.85rem;color:var(--ink-2);background:var(--accent-soft);border-radius:8px;padding:.6rem .9rem;margin-bottom:1rem}
+.reqs li.met .rst{color:var(--ok)} .reqs li.unmet .rst{color:var(--bad)}
+.hint{border-left:3px solid var(--accent);padding:.15rem 0 .15rem 1rem;margin:.9rem 0}
+.hint .hl{font-size:.75rem;font-weight:600;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:.25rem}
+
+.btn{font:600 .875rem/1 var(--sans);border-radius:8px;padding:.72rem 1.05rem;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--accent);color:var(--accent-ink)} .btn-primary:hover{filter:brightness(1.08)}
+.btn{transition:background-color .18s var(--ease),border-color .18s var(--ease),transform .12s var(--ease)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn-quiet{background:transparent;border-color:var(--rule-2);color:var(--ink)} .btn-quiet:hover{border-color:var(--accent)}
+.btn:disabled{background:transparent;border-color:var(--rule);color:var(--ink-3);cursor:not-allowed}
+.btn-sm{padding:.45rem .7rem;font-size:.8rem}
+
+/* steps */
+.step{margin-bottom:3rem}
+.step-h{display:flex;align-items:baseline;gap:.75rem;margin-bottom:1rem}
+.step-h .n{font:600 .8rem/1 var(--sans);color:var(--accent);border:1px solid var(--accent);border-radius:999px;width:1.7rem;height:1.7rem;display:inline-grid;place-items:center;flex:none;transform:translateY(-.1rem)}
+.step-h h2{font-family:var(--serif);font-size:1.4rem;margin:0}
+.step .intro{color:var(--ink-2);margin-bottom:1rem;max-width:62ch}
+
+/* editor */
+.edcard{border:1px solid var(--rule-2);border-radius:10px;background:var(--surface);overflow:hidden;box-shadow:0 1px 0 var(--rule),0 18px 40px -34px rgba(0,0,0,.35)}
+.edbar{display:flex;align-items:center;gap:.75rem;padding:.55rem .8rem;border-bottom:1px solid var(--rule);font-size:.8rem;color:var(--ink-3)}
+.edbar .file{font-family:var(--mono);color:var(--ink);font-size:.82rem}
+.edbar .saved{margin-left:auto}
+.ed{display:grid;grid-template-columns:auto minmax(0,1fr);background:var(--code-bg);font:400 14px/1.6 var(--mono);height:clamp(20rem,62vh,38rem)}
+@media (max-width:40rem){.ed{font-size:13px;height:24rem}}
+.ed:focus-within{box-shadow:inset 0 0 0 2px var(--focus)}
+.gutter{overflow:hidden;color:var(--gutter);text-align:right;user-select:none;border-right:1px solid var(--rule)}
+.gutter pre{margin:0;padding:12px 10px 60px 12px;font:inherit;min-width:2.5em}
+.area{position:relative;overflow:hidden}
+.area pre,.area textarea{position:absolute;inset:0;margin:0;padding:12px 14px 60px;font:inherit;white-space:pre;tab-size:4;-moz-tab-size:4;border:0;letter-spacing:0;word-spacing:0;overflow:auto;width:100%;height:100%}
+.area pre{pointer-events:none;overflow:hidden;color:var(--code-ink)}
+.area textarea{background:transparent;color:transparent;caret-color:var(--ink);resize:none;outline:none;-webkit-text-fill-color:transparent}
+.area textarea::selection{background:var(--sel)}
+.edfoot{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.65rem .8rem;border-top:1px solid var(--rule)}
+.edfoot .spacer{flex:1}
+.kbd{font-size:.75rem;color:var(--ink-3)}
+.confirm{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.65rem .8rem;border-top:1px solid var(--rule);background:var(--bad-soft);font-size:.875rem}
+.confirm span{flex:1;min-width:12rem}
+.kb{margin-top:.6rem}
+.status{font-size:.8rem;color:var(--ink-3);min-height:1.2em}
+
+/* results */
+.results{margin-top:1.5rem}
+.res-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;align-items:baseline;margin-bottom:.4rem}
+.res-head h3{font:600 1rem/1.4 var(--sans);margin:0}
+.res-note{font-size:.8rem;color:var(--ink-3);margin-bottom:.75rem}
+.chks{list-style:none;margin:0;padding:0;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.chk{display:grid;grid-template-columns:1.5rem 1fr;gap:.75rem;padding:.85rem 1rem;border-top:1px solid var(--rule)}
+.chk:first-child{border-top:0}
+.chk .mk{width:1.35rem;height:1.35rem;border-radius:50%;display:grid;place-items:center;font:700 .72rem/1 var(--sans);margin-top:.1rem;border:1.5px solid}
+.chk.pass .mk{color:var(--ok);border-color:var(--ok)} .chk.fail .mk{color:var(--bad);border-color:var(--bad)}
+.chk .t{font-weight:500}
+.chk .req{font-size:.72rem;font-weight:600;color:var(--ink-3);margin-left:.35rem;letter-spacing:.04em}
+.chk .msg{margin-top:.35rem;color:var(--ink-2);font-size:.925rem}
+.chk details{margin-top:.5rem;font-size:.9rem} .chk summary{cursor:pointer;color:var(--accent);font-weight:500}
+.banner{padding:.85rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.925rem}
+.banner.ok{background:var(--ok-soft);color:var(--ink)} .banner.ok strong{color:var(--ok)}
+.empty{padding:1rem;border:1px dashed var(--rule-2);border-radius:10px;color:var(--ink-3);font-size:.9rem}
+
+/* code blocks */
+.codebox{border:1px solid var(--rule-2);border-radius:10px;overflow:hidden;background:var(--surface);margin:1rem 0}
+.codebox .cb-bar{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem .45rem .8rem;border-bottom:1px solid var(--rule);font-size:.8rem;color:var(--ink-3)}
+.codebox .cb-bar .file{font-family:var(--mono);color:var(--ink);margin-right:auto}
+pre.code-block,.codebox pre{margin:0;padding:.9rem 1rem;overflow:auto;background:var(--code-bg);font:400 13.5px/1.6 var(--mono);color:var(--code-ink);tab-size:4;max-height:28rem}
+pre.code-block{border:1px solid var(--rule);border-radius:8px;margin:.6rem 0}
+pre code,.codebox code{background:none;border:0;padding:0;font-size:inherit}
+pre.output{margin:.6rem 0;padding:.8rem 1rem;background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;font:13.5px/1.6 var(--mono);overflow:auto;white-space:pre}
+details.plain{margin:.75rem 0} details.plain summary{cursor:pointer;font-weight:500}
+label.field{display:block;font-weight:500;margin:1rem 0 .4rem}
+textarea.box,input.box{width:100%;font:400 .95rem/1.55 var(--sans);color:var(--ink);background:var(--surface);border:1px solid var(--rule-2);border-radius:8px;padding:.7rem .8rem}
+textarea.box{min-height:7rem;resize:vertical}
+textarea.mono{font:13.5px/1.6 var(--mono);white-space:pre;min-height:9rem}
+textarea.box:focus,input.box:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:transparent}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.75rem}
+.predict{border-left:3px solid var(--accent);padding:.1rem 0 .1rem 1rem;margin:1rem 0;color:var(--ink-2)}
+
+/* diff */
+.diff{width:100%;border-collapse:collapse;font:13px/1.55 var(--mono);margin-top:.75rem;table-layout:fixed}
+.diff th{font:600 .72rem/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+.diff td{padding:.2rem .6rem;vertical-align:top;white-space:pre-wrap;word-break:break-word;border-bottom:1px solid var(--rule)}
+.diff td.n{width:2.5rem;color:var(--gutter);text-align:right}
+.diff tr.bad td{background:var(--bad-soft)} .diff tr.bad td.n{color:var(--bad);font-weight:700}
+.diff .none{color:var(--ink-3);font-style:italic;font-family:var(--sans)}
+.diffwrap{overflow-x:auto}
+
+/* file tabs */
+.tabs{display:flex;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:thin}
+.tab{font:500 .82rem/1 var(--mono);padding:.7rem .95rem;border:0;border-right:1px solid var(--rule);background:transparent;color:var(--ink-3);cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--code-bg);box-shadow:inset 0 -2px 0 var(--accent)}
+.tab .ro{font:600 .66rem/1 var(--sans);color:var(--ink-3);margin-left:.45rem;letter-spacing:.05em;text-transform:uppercase}
+.edbar .ro-note{font-size:.75rem;color:var(--ink-3);border:1px solid var(--rule-2);border-radius:999px;padding:.1rem .5rem}
+
+/* run console */
+.console{border-top:1px solid var(--rule)}
+.con-head{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem;padding:.55rem .8rem;font-size:.8rem;color:var(--ink-3)}
+.con-head .lbl{font-weight:600;color:var(--ink);letter-spacing:.02em}
+.con-head .spacer{flex:1}
+.chip{font:600 .72rem/1 var(--sans);letter-spacing:.03em;border-radius:999px;padding:.28rem .6rem;border:1px solid var(--rule-2);color:var(--ink-2)}
+.chip.ok{color:var(--ok);border-color:var(--ok)} .chip.bad{color:var(--bad);border-color:var(--bad)} .chip.busy{color:var(--accent);border-color:var(--accent)}
+pre.con-out{margin:0;padding:.8rem 1rem;min-height:4.5rem;max-height:20rem;overflow:auto;background:var(--code-bg);border-top:1px solid var(--rule);font:13px/1.55 var(--mono);color:var(--code-ink);white-space:pre-wrap;word-break:break-word}
+pre.con-out .err{color:var(--bad)}
+pre.con-out .note{color:var(--ink-3);font:italic .85rem/1.5 var(--sans)}
+.stdin{border-top:1px solid var(--rule);padding:.55rem .8rem}
+.stdin summary{cursor:pointer;font-size:.8rem;color:var(--ink-2);font-weight:500}
+.stdin textarea{margin-top:.5rem;min-height:4.5rem}
+.stdin .small{margin-top:.35rem}
+.console-card{border:1px solid var(--rule-2);border-radius:10px;background:var(--surface);overflow:hidden;margin-top:1rem}
+.console-card .console{border-top:0}
+
+/* live preview */
+.pvcard{border:1px solid var(--rule-2);border-radius:10px;background:var(--surface);overflow:hidden;margin-top:1.25rem}
+.pvbar{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem;padding:.55rem .8rem;border-bottom:1px solid var(--rule);font-size:.8rem;color:var(--ink-3)}
+.pvbar .lbl{font-weight:600;color:var(--ink)}
+.pvbar .spacer{flex:1}
+.seg{display:inline-flex;border:1px solid var(--rule-2);border-radius:8px;overflow:hidden}
+.seg button{font:500 .78rem/1 var(--sans);padding:.48rem .75rem;border:0;border-left:1px solid var(--rule-2);background:transparent;color:var(--ink-2);cursor:pointer}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.pvstage{position:relative;height:32rem;overflow:hidden;background:var(--paper)}
+@media (max-width:40rem){.pvstage{height:26rem}}
+.pvstage iframe{position:absolute;top:0;left:0;border:0;background:#fff;transform-origin:0 0;box-shadow:0 0 0 1px var(--rule-2)}
+.pvfoot{padding:.45rem .8rem;border-top:1px solid var(--rule);font-size:.75rem;color:var(--ink-3)}
+.chk .meas{margin-top:.45rem;font-size:.85rem;color:var(--ink-2)}
+.chk .meas ul{margin:.25rem 0 0;padding-left:1.1rem}
+.chk .meas code{font-size:.85em}
+.chk .w{font:600 .7rem/1 var(--sans);color:var(--ink-3);border:1px solid var(--rule-2);border-radius:999px;padding:.15rem .45rem;margin-left:.4rem;letter-spacing:.03em;white-space:nowrap}
+.solfile{font:500 .8rem/1 var(--mono);color:var(--ink-3);margin:1rem 0 .3rem}
+
+/* reflection, report */
+.q{padding:1.1rem 0;border-top:1px solid var(--rule)} .q:first-of-type{border-top:0}
+.answer{margin-top:.75rem;padding:.9rem 1rem;background:var(--accent-soft);border-radius:8px;font-size:.95rem}
+.answer .al{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:.3rem}
+.summary-list{list-style:none;padding:0;margin:.5rem 0 0;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+.summary-list li{display:flex;justify-content:space-between;gap:1rem;padding:.65rem 1rem;border-top:1px solid var(--rule);margin:0}
+.summary-list li:first-child{border-top:0}
+.summary-list .v{color:var(--ink-2);text-align:right}
+.worth{margin:0 0 1rem;background:var(--accent-soft);border-radius:8px;padding:.9rem 1.1rem;display:grid;grid-template-columns:auto 1fr;gap:.15rem .75rem}
+.worth svg{grid-row:1 / span 2;width:1.15rem;height:1.15rem;margin-top:.1rem;color:var(--accent)}
+.worth .lbl{font:600 .7rem/1.6 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.worth .body{font-size:.95rem}
+/* code completion and parameter hints */
+.ac{position:fixed;z-index:50;min-width:15rem;max-width:min(30rem,calc(100vw - 1.5rem));max-height:15.5rem;overflow:auto;margin:0;padding:.25rem;list-style:none;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule-2);border-radius:8px;box-shadow:0 12px 32px -12px rgba(0,0,0,.35);font:13px/1.35 var(--mono)}
+.ac li{display:grid;grid-template-columns:1.35rem minmax(0,auto) 1fr;gap:.5rem;align-items:center;padding:.32rem .45rem;border-radius:5px;cursor:pointer;margin:0}
+.ac li[aria-selected="true"]{background:var(--accent-soft)}
+.ac .ki{font:600 .66rem/1 var(--mono);border:1px solid var(--rule-2);border-radius:4px;height:1.2rem;display:grid;place-items:center;color:var(--ink-2)}
+.ac li[aria-selected="true"] .ki{border-color:var(--accent);color:var(--accent)}
+.ac .lb{white-space:nowrap} .ac .lb b{color:var(--accent);font-weight:700}
+.ac .dt{color:var(--ink-2);font:.72rem/1.3 var(--sans);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.sigtip{position:fixed;z-index:49;max-width:min(34rem,calc(100vw - 1.5rem));background:var(--surface);color:var(--ink-2);border:1px solid var(--rule-2);border-radius:6px;
+  padding:.3rem .6rem;font:12.5px/1.4 var(--mono);box-shadow:0 8px 24px -14px rgba(0,0,0,.35);pointer-events:none;white-space:pre-wrap}
+.sigtip b{color:var(--accent);font-weight:700}
+/* calm motion: results settle in; nothing bounces, flashes or celebrates */
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.results > *,.banner,.answer,.hint,.worth,#cmp > *{animation:rise .3s var(--ease) both}
+.chks .chk{animation:rise .3s var(--ease) both}
+.chks .chk:nth-child(2){animation-delay:.03s} .chks .chk:nth-child(3){animation-delay:.06s} .chks .chk:nth-child(4){animation-delay:.09s}
+.chks .chk:nth-child(n+5){animation-delay:.12s}
+footer{margin-top:3rem;color:var(--ink-3);font-size:.8rem;border-top:1px solid var(--rule);padding-top:1rem}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* full screen */
+.tools{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.fs-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;
+  padding:.3rem .8rem .3rem .65rem;font:inherit;font-size:.8rem;cursor:pointer;transition:border-color .18s ease,color .18s ease}
+.fs-btn:hover{border-color:var(--accent);color:var(--ink)}
+.fs-btn svg{width:.95rem;height:.95rem;flex:none}
+.fs-btn .fs-out{display:none} .fs-btn.on .fs-in{display:none} .fs-btn.on .fs-out{display:inline}
+.fs-note{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);z-index:60;max-width:min(32rem,calc(100vw - 2rem));background:var(--ink);color:var(--surface);
+  border-radius:8px;padding:.7rem 1rem;font-size:.875rem;line-height:1.45;box-shadow:0 12px 32px -12px rgba(0,0,0,.4)}
+html:fullscreen{background:var(--paper);overflow-y:auto}
+html:-webkit-full-screen{background:var(--paper);overflow-y:auto}
+::backdrop{background:var(--paper)}
+@media print{.tools{display:none}}
+@media print{.topbar,.edfoot,.row,footer,.kb,.theme-btn,.help,.gutter,.area textarea,.tabs,.pvcard,.stdin{display:none}
+  .side{position:static;max-height:none}.ed{display:block;height:auto}.area{overflow:visible}.area pre{position:static;overflow:visible;padding:12px}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+.hl-kw{color:var(--c-kw)} .hl-str{color:var(--c-str)} .hl-com{color:var(--c-com);font-style:italic} .hl-num{color:var(--c-num)} .hl-fn{color:var(--c-fn)} .hl-type{color:var(--c-type)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a id="hubLink" href="#" hidden>&larr; All labs</a><span class="tools"><button class="fs-btn" id="fsBtn" type="button" aria-pressed="false" hidden><svg class="fs-in" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><svg class="fs-out" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4"/></svg><span class="fs-t">Full screen</span></button><button class="theme-btn" id="themeBtn" type="button" aria-label="Switch colour theme">Theme</button></span>
+  </div>
+  <header class="mast">
+    <div class="eyebrow" id="kicker"></div>
+    <h1 id="title"></h1>
+    <p class="subtitle" id="subtitle"></p>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="layout">
+    <div class="side">
+    <aside class="brief" aria-label="Lab brief">
+      <section><h2>What you&rsquo;ll be able to do</h2><ul id="objectives"></ul></section>
+      <section><h2>The situation</h2><div class="lede" id="scenario"></div></section>
+      <section>
+        <h2>Requirements</h2>
+        <ol class="reqs" id="reqs"></ol>
+        <p class="small" style="margin-top:.6rem" id="reqNote">A requirement shows <em>met</em> when every check for it passes. Some are confirmed only by running the program.</p>
+      </section>
+    </aside>
+    <aside class="help" aria-label="Help">
+      <section id="hintSec">
+        <h2>Stuck?</h2>
+        <p class="small">Hints get more specific one at a time. Try the next step yourself before opening another.</p>
+        <div id="hints"></div>
+        <button class="btn btn-quiet btn-sm" id="nextHint" type="button"></button>
+      </section>
+      <section id="solSec"><h2>Solution</h2><div id="sol"></div></section>
+    </aside>
+    </div>
+
+    <main class="work" id="work">
+      <section class="step" id="warmStep" aria-labelledby="s0h" hidden>
+        <div class="step-h"><span class="n" aria-hidden="true">0</span><h2 id="s0h">Before you code</h2></div>
+        <p class="intro">Read the code you&rsquo;re given in the editor below and answer in a sentence or two. Knowing what is already there tells you what you need to write.</p>
+        <div id="warm"></div>
+      </section>
+      <section class="step" aria-labelledby="s1h">
+        <div class="step-h"><span class="n" aria-hidden="true">1</span><h2 id="s1h">Write the code</h2></div>
+        <p class="intro" id="s1intro">Work through the requirements in the editor. Your code saves in this browser as you type.</p>
+        <div class="edcard">
+          <div class="tabs" id="tabs" role="tablist" aria-label="Files" hidden></div>
+          <div class="edbar"><span class="file" id="edFile"></span><span id="edLang"></span><span class="ro-note" id="edRo" hidden>read-only</span><span class="saved" id="saved" aria-live="polite"></span></div>
+          <div id="editor"></div>
+          <div class="edfoot">
+            <button class="btn btn-primary" id="execBtn" type="button" hidden>Run</button>
+            <button class="btn btn-primary" id="runBtn" type="button">Check my code</button>
+            <span class="kbd" id="kbdHint">Ctrl+Enter</span>
+            <span class="spacer"></span>
+            <a class="btn btn-quiet btn-sm help-link" href="#hintSec">Hints</a>
+            <button class="btn btn-quiet btn-sm" id="copyBtn" type="button">Copy</button>
+            <button class="btn btn-quiet btn-sm" id="dlBtn" type="button">Download</button>
+            <button class="btn btn-quiet btn-sm" id="resetBtn" type="button">Reset</button>
+          </div>
+          <div class="confirm" id="resetConfirm" hidden>
+            <span id="resetMsg">Replace your code with the starter code? This can&rsquo;t be undone.</span>
+            <button class="btn btn-primary btn-sm" id="resetYes" type="button">Reset code</button>
+            <button class="btn btn-quiet btn-sm" id="resetNo" type="button">Keep my code</button>
+          </div>
+          <div class="console" id="console" hidden>
+            <div class="con-head"><span class="lbl">Output</span><span class="chip" id="conState">Not run yet</span><span class="spacer"></span>
+              <button class="btn btn-quiet btn-sm" id="stopBtn" type="button" hidden>Stop</button>
+              <button class="btn btn-quiet btn-sm" id="clearBtn" type="button">Clear</button></div>
+            <pre class="con-out" id="conOut" aria-live="polite" tabindex="0" aria-label="Program output"></pre>
+            <details class="stdin" id="stdinWrap"><summary>Program input (what you would type while it runs)</summary>
+              <textarea class="box mono" id="stdinBox" spellcheck="false" autocomplete="off" placeholder="One line per answer, for example&#10;Ana&#10;21"></textarea>
+              <p class="small" id="stdinNote"></p></details>
+          </div>
+        </div>
+        <p class="small kb" id="kbNote">Tab indents, Shift+Tab outdents, Ctrl+/ comments a line. To leave the editor with the keyboard, press Esc, then Tab.</p>
+        <div class="pvcard" id="pvCard" hidden>
+          <div class="pvbar"><span class="lbl">Preview</span>
+            <span class="seg" role="group" aria-label="Preview width" id="pvSeg"></span>
+            <span class="spacer"></span><span id="pvScale"></span>
+            <button class="btn btn-quiet btn-sm" id="pvRefresh" type="button">Refresh</button>
+            <button class="btn btn-quiet btn-sm" id="pvOpen" type="button">Open in a new tab</button></div>
+          <div class="pvstage" id="pvStage"></div>
+          <div class="pvfoot">The preview updates as you type. Scripts in your page run inside the preview only; it can&rsquo;t reach this lab or your saved work.</div>
+        </div>
+        <div class="status" id="status" aria-live="polite"></div>
+        <div class="results" id="results" aria-live="polite"></div>
+      </section>
+
+      <section class="step" id="layStep" aria-labelledby="sLh" hidden>
+        <div class="step-h"><span class="n" aria-hidden="true">2</span><h2 id="sLh">Test your page</h2></div>
+        <p class="intro">These tests open your page at phone, tablet and desktop widths, the way a browser really draws it, and measure the result: where boxes sit, how wide they are, what is visible. The checks above read your code; these test what it does.</p>
+        <div class="row" style="margin-top:0"><button class="btn btn-primary" id="layBtn" type="button">Run the layout tests</button><span class="small" id="layNote"></span></div>
+        <div class="results" id="layRes" aria-live="polite"></div>
+      </section>
+
+      <section class="step" id="runStep" aria-labelledby="s2h" hidden>
+        <div class="step-h"><span class="n" aria-hidden="true">2</span><h2 id="s2h">Run it for real</h2></div>
+        <p class="intro" id="s2intro">The checks above read your code; they can&rsquo;t run it. This test program uses your classes and prints what they do. Run it in a real environment and compare.</p>
+        <div id="predict"></div>
+        <div id="predWrap" hidden><label class="field" for="predBox" style="margin-top:0">Your prediction</label>
+          <textarea class="box mono" id="predBox" spellcheck="false" autocomplete="off" placeholder="What will the test program print?"></textarea></div>
+        <div id="howto"></div>
+        <div class="codebox">
+          <div class="cb-bar"><span class="file" id="tpFile"></span>
+            <button class="btn btn-quiet btn-sm" id="tpCopy" type="button">Copy</button>
+            <button class="btn btn-quiet btn-sm" id="tpDl" type="button">Download</button></div>
+          <pre><code id="tpCode"></code></pre>
+        </div>
+        <div id="tpRunWrap" hidden>
+          <div class="row"><button class="btn btn-primary" id="tpRun" type="button">Run the test program</button><span class="small" id="tpRunNote"></span></div>
+          <div class="console-card"><div class="console">
+            <div class="con-head"><span class="lbl">Test program output</span><span class="chip" id="tpState">Not run yet</span></div>
+            <pre class="con-out" id="tpOut" aria-live="polite" tabindex="0" aria-label="Test program output"></pre></div></div>
+        </div>
+        <details class="plain" id="expWrap" hidden><summary>Show the expected output</summary><pre class="output" id="expected"></pre></details>
+        <div id="pasteWrap">
+          <label class="field" for="outBox">Paste your program&rsquo;s output</label>
+          <textarea class="box mono" id="outBox" spellcheck="false" autocomplete="off" placeholder="Everything the program printed"></textarea>
+          <div class="row"><button class="btn btn-primary" id="cmpBtn" type="button">Compare with expected output</button></div>
+        </div>
+        <div id="cmp" aria-live="polite"></div>
+      </section>
+
+      <section class="step" id="reflStep" aria-labelledby="s3h" hidden>
+        <div class="step-h"><span class="n" aria-hidden="true">3</span><h2 id="s3h">Explain your thinking</h2></div>
+        <p class="intro">Answer in your own words before you compare. A model answer unlocks once you&rsquo;ve written a real answer (a few sentences).</p>
+        <div id="refl"></div>
+      </section>
+
+      <section class="step" aria-labelledby="s4h">
+        <div class="step-h"><span class="n" aria-hidden="true">4</span><h2 id="s4h">Hand it in</h2></div>
+        <p class="intro">The lab report collects your code, check results, program output and answers in one text file. Submit it, with your code file, to the assignment in Blackboard.</p>
+        <label class="field" for="nameBox">Your name</label>
+        <input class="box" id="nameBox" autocomplete="name" style="max-width:24rem">
+        <div id="worthBox" aria-live="polite"></div>
+        <ul class="summary-list" id="sumList"></ul>
+        <div class="row">
+          <button class="btn btn-primary" id="repDl" type="button">Download lab report</button>
+          <button class="btn btn-quiet" id="repCopy" type="button">Copy report</button>
+          <button class="btn btn-quiet" id="codeDl2" type="button">Download code file</button>
+        </div>
+        <p class="small" style="margin-top:.6rem">If nothing downloads (some course pages block downloads), use Copy and paste into the assignment&rsquo;s text box.</p>
+      </section>
+      <section class="step" id="extSec" hidden aria-labelledby="exh"><div class="step-h"><h2 id="exh">Going further</h2></div><div class="intro" id="ext"></div></section>
+    </main>
+  </div>
+  <footer>Practice environment. Nothing is sent anywhere; your work is kept in this browser until you submit your report.</footer>
+</div>
+
+<script>/* LabEngine - structure checks for student code. Shared by the lab page (browser) and
+   build_coding_labs.py check (run with Node when available). Plain ES5, no dependencies.
+
+   A check READS the code; it never runs it. Comments are always ignored. String/char literal
+   contents are blanked unless the check sets "strings": true. Matching is case-sensitive unless
+   "flags" contains "i".
+
+   check = { id, title, within?, require?: re|[re], forbid?: re|[re], flags?, strings?, file? }
+     within  : "Name" (class/struct/interface/record/enum, else method/constructor/function)
+               or "Outer.Inner" (e.g. "CheckingAccount.ApplyMonthlyFee")
+               or a list ["Outer", "Inner"] (the only form for CSS/HTML, whose names contain dots)
+               CSS/SCSS: a rule's selector or at-rule prelude, compared with whitespace normalized
+                         (".card", "nav ul", "@media (max-width: 480px)"), or "re:<regex>" on the prelude
+               HTML    : an element: "nav", "ul.menu", "section#cards" (first match, with its contents)
+     require : passes if ANY pattern matches (list alternatives for equivalent forms)
+     forbid  : fails if ANY pattern matches
+     file    : multi-file labs (HTML & CSS): which file the check reads (default: the lab's main file)
+
+   Languages: csharp java python javascript cpp c, plus css, scss and html (comments ignored the same
+   way: slash-star comments in CSS, also // in SCSS, <!-- --> in HTML; HTML attribute values are never blanked).
+*/
+(function (root) {
+  "use strict";
+  var CFAMILY = { csharp: 1, java: 1, javascript: 1, cpp: 1, c: 1, typescript: 1, kotlin: 1, swift: 1, go: 1, rust: 1 };
+
+  function blank(ch) { return ch === "\n" ? "\n" : " "; }
+
+  // HTML: only <!-- comments --> are removed; attribute values stay visible to every check.
+  function scrubHtml(src) {
+    var out = src.replace(/<!--[\s\S]*?(?:-->|$)/g, function (m) { return m.replace(/[^\n]/g, " "); });
+    return { code: out, strings: out };
+  }
+
+  // Returns {code, strings}: same length as src; comments blanked in both; string contents
+  // blanked in .code but kept in .strings.
+  function scrub(src, lang) {
+    src = String(src).replace(/\r\n?/g, "\n");
+    if (lang === "html") return scrubHtml(src);
+    var py = lang === "python", css = lang === "css", scss = lang === "scss", n = src.length, i = 0, a = [], b = [];
+    function push(ch, keepInStrings) { a.push(keepInStrings === "code" ? ch : blank(ch)); b.push(keepInStrings === "drop" ? blank(ch) : ch); }
+    while (i < n) {
+      var c = src[i], d = src[i + 1];
+      // comments (plain CSS has no // comments; in SCSS "http://" is not a comment)
+      if (!py && !css && c === "/" && d === "/" && !(scss && src[i - 1] === ":")) { while (i < n && src[i] !== "\n") { push(src[i], "drop"); i++; } continue; }
+      if (!py && c === "/" && d === "*") {
+        push(c, "drop"); push(d, "drop"); i += 2;
+        while (i < n && !(src[i] === "*" && src[i + 1] === "/")) { push(src[i], "drop"); i++; }
+        if (i < n) { push("*", "drop"); push("/", "drop"); i += 2; }
+        continue;
+      }
+      if (py && c === "#") { while (i < n && src[i] !== "\n") { push(src[i], "drop"); i++; } continue; }
+      // strings
+      var isQuote = c === '"' || c === "'" || (c === "`" && (lang === "javascript" || lang === "typescript"));
+      if (isQuote) {
+        var prev = i > 0 ? src[i - 1] : "", prev2 = i > 1 ? src[i - 2] : "";
+        var verbatim = lang === "csharp" && (prev === "@" || (prev === "$" && prev2 === "@"));
+        var rawPy = py && /[rR]/.test(prev + prev2) && /[A-Za-z]/.test(prev);
+        var triple = src.substr(i, 3) === c + c + c && (py || ((lang === "csharp" || lang === "java" || lang === "kotlin") && c === '"'));
+        if (triple) {
+          push(c, "code"); push(c, "code"); push(c, "code"); i += 3;
+          while (i < n && src.substr(i, 3) !== c + c + c) { if (py && !rawPy && src[i] === "\\") { push(src[i], "str"); i++; } if (i < n) { push(src[i], "str"); i++; } }
+          if (i < n) { push(c, "code"); push(c, "code"); push(c, "code"); i += 3; }
+          continue;
+        }
+        push(c, "code"); i++;
+        while (i < n) {
+          var e = src[i];
+          if (verbatim) { if (e === '"' && src[i + 1] === '"') { push(e, "str"); push(e, "str"); i += 2; continue; } if (e === '"') break; }
+          else {
+            if (e === "\\" && !rawPy) { push(e, "str"); i++; if (i < n) { push(src[i], "str"); i++; } continue; }
+            if (e === c) break;
+            if (e === "\n" && c !== "`") break; // unterminated: stop at end of line
+          }
+          push(e, "str"); i++;
+        }
+        if (i < n && src[i] === c) { push(c, "code"); i++; }
+        continue;
+      }
+      push(c, "code"); i++;
+    }
+    return { code: a.join(""), strings: b.join("") };
+  }
+
+  function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  // Find the end index (exclusive) of a brace block starting at text[open] === "{" (scrubbed text).
+  function matchBrace(text, open) {
+    var depth = 0;
+    for (var i = open; i < text.length; i++) {
+      if (text[i] === "{") depth++;
+      else if (text[i] === "}") { depth--; if (depth === 0) return i + 1; }
+    }
+    return -1;
+  }
+
+  // Start of the declaration containing idx: just after the previous ; { } or newline.
+  function declStart(text, idx) {
+    for (var i = idx - 1; i >= 0; i--) { var ch = text[i]; if (ch === ";" || ch === "{" || ch === "}" || ch === "\n") return i + 1; }
+    return 0;
+  }
+
+  // Locate a named block in scrubbed text. Returns [start, end] or null.
+  function findOne(scr, name, lang, from, to) {
+    from = from || 0; to = to == null ? scr.length : to;
+    var region = scr.slice(from, to), m, re;
+    if (lang === "python") {
+      re = new RegExp("^([ \\t]*)(?:async[ \\t]+)?(?:class|def)[ \\t]+" + escRe(name) + "\\b", "gm");
+      m = re.exec(region);
+      if (!m) return null;
+      var indent = m[1].length, start = m.index, lines = region.slice(start).split("\n"), len = lines[0].length + 1;
+      for (var k = 1; k < lines.length; k++) {
+        var ln = lines[k];
+        if (ln.trim() === "" || (ln.match(/^[ \t]*/)[0].length > indent)) { len += ln.length + 1; continue; }
+        break;
+      }
+      return [from + start, from + Math.min(region.length, start + len)];
+    }
+    // type declaration first
+    re = new RegExp("\\b(?:class|struct|interface|record|enum)\\s+" + escRe(name) + "\\b", "g");
+    m = re.exec(region);
+    if (m) {
+      var ob = region.indexOf("{", m.index);
+      var semi = region.indexOf(";", m.index);
+      if (ob >= 0 && (semi < 0 || ob < semi)) {
+        var end = matchBrace(region, ob);
+        var ls = declStart(region, m.index);
+        if (end > 0) return [from + ls, from + end];
+      }
+    }
+    // method / constructor / function definition: NAME ( ... ) [stuff] { ... }   or  => expr ;
+    re = new RegExp("\\b" + escRe(name) + "\\s*\\(", "g");
+    while ((m = re.exec(region))) {
+      var p = m.index + m[0].length - 1, depth = 0, j;
+      for (j = p; j < region.length; j++) {
+        if (region[j] === "(") depth++;
+        else if (region[j] === ")") { depth--; if (depth === 0) break; }
+      }
+      if (j >= region.length) continue;
+      var k2 = j + 1, pd = 0;
+      while (k2 < region.length) {
+        var ch = region[k2];
+        if (ch === "(") pd++; else if (ch === ")") { pd--; if (pd < 0) { k2 = -1; break; } }
+        else if (pd === 0 && ch === "{") break;
+        else if (pd === 0 && (ch === ";" || ch === "}" || ch === ",")) { k2 = -1; break; }
+        else if (pd === 0 && ch === "=" && region[k2 + 1] === ">") break;
+        k2++;
+      }
+      if (k2 < 0 || k2 >= region.length) continue;
+      var lineStart = declStart(region, m.index);
+      var before = region.slice(lineStart, m.index);
+      if (/[=.!&|+\-*\/%?:<>]\s*$|\breturn\s*$|\bnew\s+$/.test(before)) continue; // a call, not a definition
+      if (region[k2] === "{") { var e2 = matchBrace(region, k2); if (e2 > 0) return [from + lineStart, from + e2]; continue; }
+      var sc = region.indexOf(";", k2);
+      return [from + lineStart, from + (sc < 0 ? region.length : sc + 1)];
+    }
+    // property (C#/Kotlin/Swift style): Type NAME { get; ... }   or   Type NAME => expr;
+    re = new RegExp("\\b" + escRe(name) + "\\s*(\\{|=>)", "g");
+    while ((m = re.exec(region))) {
+      var ls2 = declStart(region, m.index), bf = region.slice(ls2, m.index);
+      if (!/[A-Za-z0-9_>\]?]\s+$/.test(bf) || /\bnew\s+$|\breturn\s+$/.test(bf)) continue;
+      if (m[1] === "{") { var e3 = matchBrace(region, m.index + m[0].length - 1); if (e3 > 0) return [from + ls2, from + e3]; continue; }
+      var sc2 = region.indexOf(";", m.index);
+      return [from + ls2, from + (sc2 < 0 ? region.length : sc2 + 1)];
+    }
+    return null;
+  }
+
+  // ---- CSS / SCSS: a block is found by its selector or at-rule prelude ----
+  function normSel(s) { return String(s).replace(/\s+/g, " ").trim().replace(/\s*([>+~,():])\s*/g, "$1"); }
+  function findCss(scr, target, from, to) {
+    var region = scr.slice(from, to), isRe = /^re:/.test(target), re = isRe ? new RegExp(target.slice(3)) : null, want = normSel(target);
+    for (var i = 0; i < region.length; i++) {
+      if (region[i] !== "{") continue;
+      var ps = Math.max(region.lastIndexOf(";", i - 1), region.lastIndexOf("{", i - 1), region.lastIndexOf("}", i - 1)) + 1;
+      var prelude = region.slice(ps, i);
+      if (isRe ? re.test(prelude.trim()) : normSel(prelude) === want) {
+        var end = matchBrace(region, i);
+        if (end > 0) return [from + ps, from + end];
+      }
+    }
+    return null;
+  }
+
+  // ---- HTML: an element "tag", "tag.class", "tag#id" (and combinations) with its contents ----
+  var VOID = { area: 1, base: 1, br: 1, col: 1, embed: 1, hr: 1, img: 1, input: 1, link: 1, meta: 1, source: 1, track: 1, wbr: 1 };
+  function findHtml(scr, target, from, to) {
+    var region = scr.slice(from, to), m = /^([A-Za-z][\w-]*)?((?:[.#][\w-]+)*)$/.exec(String(target).trim());
+    if (!m) return null;
+    var tag = (m[1] || "[A-Za-z][\\w-]*"), sel = m[2] || "", ids = [], cls = [], t;
+    var parts = sel.match(/[.#][\w-]+/g) || [];
+    for (var p = 0; p < parts.length; p++) (parts[p][0] === "#" ? ids : cls).push(parts[p].slice(1));
+    var open = new RegExp("<(" + tag + ")\\b([^>]*)>", "gi");
+    while ((t = open.exec(region))) {
+      var attrs = t[2], ok = true, cm = /\bclass\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(attrs), im = /\bid\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(attrs);
+      var classes = cm ? (" " + (cm[2] || cm[3] || cm[4] || "").replace(/\s+/g, " ") + " ") : " ";
+      for (var k = 0; k < cls.length; k++) if (classes.indexOf(" " + cls[k] + " ") < 0) ok = false;
+      if (ids.length && (!im || (im[2] || im[3] || im[4]) !== ids[0])) ok = false;
+      if (!ok) continue;
+      var name = t[1].toLowerCase(), start = t.index, afterOpen = t.index + t[0].length;
+      if (VOID[name] || /\/\s*>$/.test(t[0])) return [from + start, from + afterOpen];
+      var scan = new RegExp("<(/?)" + name + "\\b[^>]*>", "gi"), depth = 1, s2;
+      scan.lastIndex = afterOpen;
+      while ((s2 = scan.exec(region))) { depth += s2[1] ? -1 : 1; if (depth === 0) return [from + start, from + s2.index + s2[0].length]; }
+      return [from + start, from + region.length];
+    }
+    return null;
+  }
+
+  function findBlock(scr, path, lang) {
+    var markup = lang === "css" || lang === "scss" || lang === "html";
+    var parts = Array.isArray(path) ? path.map(String) : (markup ? [String(path)] : String(path).split(".")), from = 0, to = scr.length, r = null;
+    for (var i = 0; i < parts.length; i++) {
+      if (markup) {
+        r = lang === "html" ? findHtml(scr, parts[i], from, to) : findCss(scr, parts[i], from, to);
+        if (!r) return null;
+        from = r[0]; to = r[1];
+        if (i < parts.length - 1) { var ob2 = lang === "html" ? scr.indexOf(">", from) : scr.indexOf("{", from); if (ob2 >= 0 && ob2 < to) from = ob2 + 1; }
+        continue;
+      }
+      r = findOne(scr, parts[i], lang, from, to);
+      if (!r) return null;
+      from = r[0]; to = r[1];
+      if (i < parts.length - 1) { // search inside the body, not the header
+        var ob = lang === "python" ? scr.indexOf("\n", from) : scr.indexOf("{", from);
+        if (ob >= 0 && ob < to) from = ob + 1;
+      }
+    }
+    return r;
+  }
+
+  function list(x) { return x == null ? [] : (Array.isArray(x) ? x : [x]); }
+  function compile(p, flags) { return new RegExp(p, (flags || "").replace(/[^ims]/g, "")); }
+
+  function runCheck(check, code, lang) {
+    var s = scrub(code, lang), text = check.strings ? s.strings : s.code;
+    if (check.within) {
+      var r = findBlock(s.code, check.within, lang);
+      if (!r) return { pass: false, reason: "not_found", within: check.within };
+      text = text.slice(r[0], r[1]);
+    }
+    var req = list(check.require), forb = list(check.forbid), i;
+    if (req.length) {
+      var any = false;
+      for (i = 0; i < req.length; i++) if (compile(req[i], check.flags).test(text)) { any = true; break; }
+      if (!any) return { pass: false, reason: "missing" };
+    }
+    for (i = 0; i < forb.length; i++) if (compile(forb[i], check.flags).test(text)) return { pass: false, reason: "forbidden", pattern: forb[i] };
+    return { pass: true };
+  }
+
+  function runAll(checks, code, lang) {
+    return checks.map(function (c) {
+      try { var r = runCheck(c, code, lang); r.id = c.id; return r; }
+      catch (e) { return { id: c.id, pass: false, reason: "error", error: String(e && e.message || e) }; }
+    });
+  }
+
+  // Language of one file in a lab, from its extension (falls back to the lab's language).
+  function langFor(fileName, labLang) {
+    var m = /\.([A-Za-z0-9]+)$/.exec(String(fileName || "")), ext = m ? m[1].toLowerCase() : "";
+    return { css: "css", scss: "scss", html: "html", htm: "html", js: "javascript", mjs: "javascript", py: "python" }[ext] || labLang;
+  }
+
+  // Multi-file labs: each check reads the file it names (check.file), default mainFile.
+  function runAllFiles(checks, files, mainFile, labLang) {
+    return checks.map(function (c) {
+      var name = c.file || mainFile;
+      try {
+        if (!(name in files)) return { id: c.id, pass: false, reason: "no_file", file: name };
+        var r = runCheck(c, files[name], langFor(name, labLang)); r.id = c.id; return r;
+      } catch (e) { return { id: c.id, pass: false, reason: "error", error: String(e && e.message || e) }; }
+    });
+  }
+
+  function normalizeOutput(s) {
+    return String(s || "").replace(/\r\n?/g, "\n").split("\n").map(function (l) { return l.replace(/\s+$/, ""); })
+      .join("\n").replace(/^\n+|\n+$/g, "");
+  }
+
+  // Line-by-line comparison of program output. Returns {match, lines:[{n, expected, actual, ok}]}
+  function compareOutput(expected, actual) {
+    var e = normalizeOutput(expected).split("\n"), a = normalizeOutput(actual).split("\n");
+    if (normalizeOutput(actual) === "") a = [];
+    if (normalizeOutput(expected) === "") e = [];   // a program that should print nothing matches empty output
+    var n = Math.max(e.length, a.length), lines = [], ok = true;
+    for (var i = 0; i < n; i++) {
+      var ex = i < e.length ? e[i] : null, ac = i < a.length ? a[i] : null, same = ex === ac;
+      if (!same) ok = false;
+      lines.push({ n: i + 1, expected: ex, actual: ac, ok: same });
+    }
+    return { match: ok, lines: lines };
+  }
+
+  var api = { scrub: scrub, findBlock: findBlock, runCheck: runCheck, runAll: runAll, runAllFiles: runAllFiles, langFor: langFor,
+    compareOutput: compareOutput, normalizeOutput: normalizeOutput, CFAMILY: CFAMILY };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LabEngine = api;
+})(this);
+</script>
+<script></script>
+<script></script>
+<script>/*
+ * assist.js - code completion for the lab editor ("IntelliSense" without a language server or AI).
+ *
+ * Everything it suggests comes from three places, so it never reveals the solution:
+ *   1. the code the student can see: every file of the lab (as typed so far) and the test program;
+ *   2. a curated list of the standard members a course actually uses, per language (LIB below);
+ *   3. the language's keywords; for CSS and HTML, properties, values, tags and attributes.
+ *
+ * API (pure functions; the page wires them to the editor; tests run them in Node):
+ *   LabAssist.complete(files, fileName, code, pos, lang)  -> { items: [...], start, end, kind } | null
+ *   LabAssist.signature(files, fileName, code, pos, lang) -> { label, params: [..], active } | null
+ *   LabAssist.inCodeAt(code, pos, lang)                    -> false inside a comment or string
+ * An item is { label, insert, kind, detail, call } ; call = true means "insert name(" and show parameters.
+ */
+(function (root) {
+  "use strict";
+
+  // ------------------------------------------------------------------------------------------- library
+  // [name, params]: params null = property/field/constant, "" = method without parameters.
+  function M(spec) {
+    return spec.split("|").map(function (s) {
+      var m = /^([\w$]+)(?:\((.*)\))?$/.exec(s.trim());
+      return m ? [m[1], m[2] === undefined ? null : m[2]] : null;
+    }).filter(Boolean);
+  }
+  var LIB = {
+    csharp: {
+      globals: "Console|Math|Convert|string|int|decimal|double|bool|char|long|List|Dictionary|Exception|ArgumentException|ArgumentOutOfRangeException|InvalidOperationException|CultureInfo|DateTime|StringBuilder|Array",
+      statics: {
+        Console: M("WriteLine(value)|Write(value)|ReadLine()"),
+        Math: M("Round(value, decimals)|Max(a, b)|Min(a, b)|Abs(value)|Pow(x, y)|Sqrt(d)|Floor(d)|Ceiling(d)|Clamp(value, min, max)|PI"),
+        Convert: M("ToInt32(value)|ToDouble(value)|ToDecimal(value)|ToString(value)|ToBoolean(value)"),
+        string: M("IsNullOrEmpty(value)|IsNullOrWhiteSpace(value)|Join(separator, values)|Format(format, args)|Empty"),
+        int: M("Parse(s)|TryParse(s, out result)|MaxValue|MinValue"),
+        decimal: M("Parse(s)|TryParse(s, out result)|Round(d, decimals)|MaxValue|MinValue"),
+        double: M("Parse(s)|TryParse(s, out result)|IsNaN(d)|MaxValue|MinValue"),
+        CultureInfo: M("InvariantCulture|CurrentCulture"),
+        DateTime: M("Now|Today|Parse(s)"),
+        Array: M("Sort(array)|IndexOf(array, value)|Reverse(array)|Empty()")
+      },
+      types: {
+        string: M("Length|ToUpper()|ToLower()|Trim()|Contains(value)|StartsWith(value)|EndsWith(value)|Substring(startIndex, length)|IndexOf(value)|Replace(oldValue, newValue)|Split(separator)|PadLeft(totalWidth)|PadRight(totalWidth)|Equals(value)|ToString()"),
+        List: M("Count|Add(item)|AddRange(items)|Remove(item)|RemoveAt(index)|Contains(item)|Clear()|Insert(index, item)|IndexOf(item)|Sort()|ToArray()|Find(match)|Exists(match)|ForEach(action)"),
+        Dictionary: M("Count|Add(key, value)|ContainsKey(key)|TryGetValue(key, out value)|Remove(key)|Keys|Values|Clear()"),
+        StringBuilder: M("Append(value)|AppendLine(value)|Insert(index, value)|Clear()|Length|ToString()"),
+        array: M("Length|Clone()"),
+        number: M("ToString(format)|CompareTo(value)|Equals(obj)"),
+        Exception: M("Message|StackTrace|InnerException"),
+        object: M("ToString()|Equals(obj)|GetHashCode()|GetType()")
+      },
+      alias: { String: "string", Int32: "int", Decimal: "decimal", Double: "double", IList: "List", ICollection: "List", IEnumerable: "List",
+               decimal: "number", double: "number", int: "number", long: "number", float: "number",
+               ArgumentException: "Exception", InvalidOperationException: "Exception", ArgumentOutOfRangeException: "Exception" }
+    },
+    java: {
+      globals: "System|Math|String|Integer|Double|Boolean|Character|ArrayList|List|HashMap|Map|Scanner|Arrays|Collections|IllegalArgumentException|IllegalStateException|Exception|RuntimeException|Object|StringBuilder",
+      statics: {
+        System: M("out|in|err|exit(status)|currentTimeMillis()"),
+        "System.out": M("println(x)|print(x)|printf(format, args)"),
+        "System.err": M("println(x)|print(x)"),
+        Math: M("round(a)|max(a, b)|min(a, b)|abs(a)|pow(a, b)|sqrt(a)|floor(a)|ceil(a)|random()|PI"),
+        Integer: M("parseInt(s)|valueOf(i)|toString(i)|MAX_VALUE|MIN_VALUE"),
+        Double: M("parseDouble(s)|valueOf(d)|compare(a, b)|MAX_VALUE|MIN_VALUE"),
+        String: M("valueOf(x)|format(format, args)|join(delimiter, elements)"),
+        Arrays: M("toString(a)|sort(a)|asList(a)|fill(a, val)|copyOf(original, newLength)"),
+        Collections: M("sort(list)|max(coll)|min(coll)|reverse(list)|unmodifiableList(list)"),
+        Character: M("isDigit(ch)|isLetter(ch)|toUpperCase(ch)|isWhitespace(ch)")
+      },
+      types: {
+        String: M("length()|charAt(index)|equals(other)|equalsIgnoreCase(other)|substring(begin, end)|indexOf(str)|contains(s)|toUpperCase()|toLowerCase()|trim()|split(regex)|isEmpty()|startsWith(prefix)|endsWith(suffix)|replace(target, replacement)|compareTo(other)|strip()"),
+        ArrayList: M("add(e)|get(index)|set(index, e)|size()|remove(index)|contains(o)|clear()|isEmpty()|indexOf(o)|forEach(action)"),
+        HashMap: M("put(key, value)|get(key)|getOrDefault(key, defaultValue)|containsKey(key)|remove(key)|keySet()|values()|entrySet()|size()|isEmpty()"),
+        Scanner: M("nextLine()|nextInt()|nextDouble()|next()|hasNextLine()|hasNextInt()|close()"),
+        StringBuilder: M("append(x)|insert(offset, x)|reverse()|length()|toString()"),
+        array: M("length|clone()"),
+        Exception: M("getMessage()|printStackTrace()"),
+        object: M("toString()|equals(obj)|hashCode()|getClass()")
+      },
+      alias: { List: "ArrayList", Map: "HashMap", IllegalArgumentException: "Exception", IllegalStateException: "Exception", RuntimeException: "Exception" }
+    },
+    python: {
+      globals: "print|input|len|range|int|float|str|bool|list|dict|set|tuple|round|sum|min|max|abs|sorted|enumerate|zip|isinstance|type|open|map|filter|any|all|format|ValueError|TypeError|KeyError|IndexError|ZeroDivisionError|Exception|RuntimeError|math|random",
+      functions: {
+        print: "*values, sep=' ', end='\\n'", input: "prompt=''", len: "obj", range: "start, stop, step=1", int: "x", float: "x", str: "obj",
+        bool: "x", list: "iterable", dict: "**kwargs", set: "iterable", tuple: "iterable", round: "number, ndigits=None", sum: "iterable, start=0",
+        min: "iterable", max: "iterable", abs: "x", sorted: "iterable, key=None, reverse=False", enumerate: "iterable, start=0", zip: "*iterables",
+        isinstance: "obj, class_or_tuple", type: "obj", open: "file, mode='r'", map: "function, iterable", filter: "function, iterable",
+        any: "iterable", all: "iterable", format: "value, format_spec=''", ValueError: "message", TypeError: "message", KeyError: "key",
+        IndexError: "message", ZeroDivisionError: "message", Exception: "message", RuntimeError: "message"
+      },
+      statics: {
+        math: M("sqrt(x)|floor(x)|ceil(x)|pow(x, y)|isclose(a, b)|pi|inf"),
+        random: M("randint(a, b)|choice(seq)|random()|shuffle(x)")
+      },
+      types: {
+        str: M("upper()|lower()|strip(chars=None)|split(sep=None)|join(iterable)|replace(old, new)|startswith(prefix)|endswith(suffix)|find(sub)|count(sub)|format(*args, **kwargs)|isdigit()|title()|capitalize()"),
+        list: M("append(x)|extend(iterable)|insert(i, x)|pop(i=-1)|remove(x)|sort(key=None, reverse=False)|index(x)|count(x)|reverse()|copy()|clear()"),
+        dict: M("get(key, default=None)|keys()|values()|items()|pop(key)|update(other)|setdefault(key, default=None)|clear()"),
+        Exception: M("args")
+      },
+      alias: {}
+    },
+    javascript: {
+      globals: "console|Math|JSON|Object|Array|Number|String|parseInt|parseFloat|setTimeout|clearTimeout|prompt|require|module|process|Error|RangeError|TypeError|Promise|Date|isNaN|Map|Set",
+      functions: { parseInt: "string, radix", parseFloat: "string", setTimeout: "callback, ms", clearTimeout: "id", prompt: "message", require: "path", isNaN: "value",
+                   Error: "message", RangeError: "message", TypeError: "message" },
+      statics: {
+        console: M("log(...data)|error(...data)|warn(...data)|table(data)"),
+        Math: M("round(x)|floor(x)|ceil(x)|max(...values)|min(...values)|abs(x)|random()|pow(base, exponent)|sqrt(x)|trunc(x)|PI"),
+        JSON: M("stringify(value, replacer, space)|parse(text)"),
+        Object: M("keys(obj)|values(obj)|entries(obj)|assign(target, ...sources)|freeze(obj)"),
+        Array: M("isArray(value)|from(iterable)|of(...items)"),
+        Number: M("isInteger(value)|isNaN(value)|parseFloat(string)|parseInt(string, radix)|MAX_SAFE_INTEGER"),
+        module: M("exports"),
+        process: M("stdout|argv"),
+        "process.stdout": M("write(text)"),
+        Promise: M("resolve(value)|reject(reason)|all(promises)")
+      },
+      types: {
+        Array: M("length|push(...items)|pop()|shift()|unshift(...items)|map(callback)|filter(callback)|reduce(callback, initialValue)|forEach(callback)|find(callback)|findIndex(callback)|includes(value)|indexOf(value)|join(separator)|slice(start, end)|splice(start, deleteCount, ...items)|sort(compareFn)|some(callback)|every(callback)|concat(...arrays)|reverse()|at(index)"),
+        String: M("length|toUpperCase()|toLowerCase()|trim()|split(separator)|includes(search)|startsWith(search)|endsWith(search)|slice(start, end)|replace(pattern, replacement)|padStart(targetLength, padString)|padEnd(targetLength, padString)|repeat(count)|charAt(index)|indexOf(search)"),
+        Number: M("toFixed(digits)|toString(radix)"),
+        Error: M("message|name|stack"),
+        Map: M("get(key)|set(key, value)|has(key)|delete(key)|size|keys()|values()|entries()"),
+        Set: M("add(value)|has(value)|delete(value)|size")
+      },
+      alias: { RangeError: "Error", TypeError: "Error" }
+    },
+    cpp: {
+      globals: "std|cout|cin|endl|string|vector|printf|getline|to_string|stoi|stod|max|min|sort|map|setprecision|fixed",
+      functions: { printf: "format, ...", getline: "in, str", to_string: "value", stoi: "str", stod: "str", max: "a, b", min: "a, b", sort: "first, last", setprecision: "n" },
+      statics: { std: M("cout|cin|endl|string|vector|map|sort(first, last)|max(a, b)|min(a, b)|to_string(value)|stoi(str)|stod(str)|getline(in, str)|setprecision(n)|fixed|swap(a, b)") },
+      types: {
+        string: M("length()|size()|substr(pos, len)|find(str)|append(str)|empty()|c_str()|at(pos)|push_back(c)|clear()"),
+        vector: M("push_back(value)|pop_back()|size()|empty()|at(pos)|front()|back()|begin()|end()|clear()|insert(pos, value)|erase(pos)")
+      },
+      alias: { "std::string": "string", "std::vector": "vector" }
+    },
+    c: {
+      globals: "printf|scanf|strlen|strcpy|strcmp|strcat|malloc|free|fgets|puts|atoi|atof|sqrt|pow|stdin|stdout|NULL|sizeof",
+      functions: { printf: "format, ...", scanf: "format, ...", strlen: "s", strcpy: "dest, src", strcmp: "a, b", strcat: "dest, src", malloc: "size",
+                   free: "ptr", fgets: "buffer, size, stream", puts: "s", atoi: "s", atof: "s", sqrt: "x", pow: "x, y" },
+      statics: {}, types: {}, alias: {}
+    }
+  };
+
+  var CSS_PROPS = {
+    "display": "block|inline|inline-block|flex|inline-flex|grid|inline-grid|none|contents",
+    "flex-direction": "row|row-reverse|column|column-reverse", "flex-wrap": "nowrap|wrap|wrap-reverse", "flex": "1|auto|none|0 0 auto|1 1 0",
+    "flex-grow": "0|1", "flex-shrink": "0|1", "flex-basis": "auto|0|50%",
+    "justify-content": "flex-start|flex-end|center|space-between|space-around|space-evenly|start|end|stretch",
+    "align-items": "stretch|flex-start|flex-end|center|baseline|start|end", "align-self": "auto|stretch|flex-start|flex-end|center|baseline",
+    "align-content": "stretch|flex-start|flex-end|center|space-between|space-around", "place-items": "center|start|end|stretch",
+    "gap": "1rem|0.5rem|16px", "row-gap": "1rem", "column-gap": "1rem",
+    "grid-template-columns": "repeat(3, 1fr)|1fr 1fr|repeat(auto-fit, minmax(16rem, 1fr))|1fr", "grid-template-rows": "auto|auto 1fr auto",
+    "grid-column": "1 / -1|span 2", "grid-row": "1 / 3|span 2", "grid-template-areas": "\"header header\" \"nav main\"", "grid-area": "header|main",
+    "margin": "0|auto|0 auto|1rem", "margin-top": "0|auto|1rem", "margin-bottom": "0|1rem", "margin-left": "auto|0", "margin-right": "auto|0",
+    "padding": "0|1rem|0.5rem 1rem", "padding-top": "1rem", "padding-bottom": "1rem", "padding-left": "1rem", "padding-right": "1rem",
+    "width": "100%|auto|50%|fit-content", "max-width": "100%|60rem|none", "min-width": "0|auto", "height": "auto|100%|100vh", "max-height": "none|100%", "min-height": "100vh|0",
+    "box-sizing": "border-box|content-box", "position": "static|relative|absolute|fixed|sticky", "top": "0|auto", "right": "0|auto", "bottom": "0|auto", "left": "0|auto",
+    "z-index": "0|1|10|auto", "overflow": "visible|hidden|auto|scroll", "overflow-x": "visible|hidden|auto", "overflow-y": "visible|hidden|auto",
+    "color": "inherit|currentColor|#333|white", "background": "none|white|transparent", "background-color": "white|transparent|#f5f5f5",
+    "background-image": "none|url()|linear-gradient()", "background-size": "cover|contain|auto", "background-position": "center|top|bottom",
+    "border": "none|1px solid #ccc|0", "border-radius": "0|4px|8px|50%", "border-bottom": "1px solid #ccc", "border-top": "1px solid #ccc", "outline": "none|2px solid",
+    "box-shadow": "none|0 1px 3px rgba(0, 0, 0, 0.2)", "opacity": "0|0.5|1", "visibility": "visible|hidden",
+    "font-family": "system-ui, sans-serif|Georgia, serif|monospace", "font-size": "1rem|0.875rem|1.25rem|2rem", "font-weight": "400|600|700|normal|bold",
+    "font-style": "normal|italic", "line-height": "1.5|1.2|normal", "letter-spacing": "0|0.05em", "text-align": "left|center|right|justify|start|end",
+    "text-decoration": "none|underline", "text-transform": "none|uppercase|lowercase|capitalize", "white-space": "normal|nowrap|pre|pre-wrap",
+    "list-style": "none|disc|decimal", "cursor": "pointer|default|not-allowed", "transition": "all 0.2s ease|color 0.2s|transform 0.2s ease-out",
+    "transform": "none|translateY(-2px)|scale(1.05)|rotate(45deg)", "object-fit": "cover|contain|fill", "aspect-ratio": "16 / 9|1 / 1|4 / 3",
+    "content": "\"\"|none", "animation": "name 1s ease infinite", "vertical-align": "middle|top|baseline"
+  };
+  var CSS_GLOBAL_VALUES = "inherit|initial|unset";
+  var HTML_TAGS = "html|head|body|title|meta|link|style|script|header|nav|main|section|article|aside|footer|div|span|h1|h2|h3|h4|h5|h6|p|a|img|ul|ol|li|figure|figcaption|button|form|label|input|select|option|textarea|table|thead|tbody|tr|th|td|strong|em|small|br|hr|picture|source|video|audio|iframe|blockquote|code|pre|time|address|dl|dt|dd|details|summary|fieldset|legend";
+  var HTML_ATTRS = {
+    "*": "class|id|style|title|lang|hidden|role|aria-label|tabindex",
+    a: "href|target|rel", img: "src|alt|width|height|loading", input: "type|name|value|placeholder|required|checked|disabled|min|max|id",
+    label: "for", button: "type|disabled|name", form: "action|method", link: "rel|href", meta: "name|content|charset", script: "src|defer|type",
+    select: "name|required", option: "value|selected", textarea: "name|rows|cols|placeholder", source: "srcset|media|type", td: "colspan|rowspan", th: "scope|colspan",
+    html: "lang", ol: "start|reversed", time: "datetime", iframe: "src|title|width|height", video: "src|controls|autoplay|muted|loop|poster", audio: "src|controls"
+  };
+  var VOID = /^(area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i;
+  var SCSS_AT = "use|forward|mixin|include|extend|if|else|each|for|while|function|return|media|import|debug|warn|error";
+  var KEYWORDS = {
+    csharp: "abstract as base bool break byte case catch char class const continue decimal default do double else enum false finally float for foreach if in int interface internal is long namespace new null object override private protected public readonly return sealed short static string struct switch this throw true try using var virtual void while get set init value record async await nameof",
+    java: "abstract boolean break byte case catch char class continue default do double else enum extends final finally float for if implements import instanceof int interface long new null package private protected public return short static super switch this throw throws true false try void while var record",
+    python: "and as assert break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield self",
+    javascript: "async await break case catch class const continue default delete do else export extends false finally for function if import in instanceof let new null return static super switch this throw true try typeof undefined var while of",
+    cpp: "auto bool break case catch char class const continue default delete do double else enum false float for if include int long namespace new nullptr private protected public return short static struct switch template this throw true try using virtual void while",
+    c: "break case char const continue default do double else enum float for if include int long return short sizeof static struct switch typedef unsigned void while"
+  };
+
+  // ------------------------------------------------------------------------------------------- helpers
+  function list(s) { return s ? s.split("|") : []; }
+  function langOfFile(name, lab) {
+    var ext = (/\.([^.]+)$/.exec(name || "") || [])[1];
+    ext = (ext || "").toLowerCase();
+    return { css: "css", scss: "scss", html: "html", htm: "html", js: "javascript", mjs: "javascript", py: "python", cs: "csharp",
+             java: "java", cpp: "cpp", cc: "cpp", hpp: "cpp", h: lab === "c" ? "c" : "cpp", c: "c" }[ext] || lab;
+  }
+  // Comments and strings replaced by spaces (newlines kept), so positions still line up with the source.
+  function blank(code, lang) {
+    var rx = lang === "python"
+      ? /#[^\n]*|[rRbBfFuU]{0,2}("""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)/g
+      : (lang === "css" ? /\/\*[\s\S]*?(?:\*\/|$)|"(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?/g
+      : /\/\/[^\n]*|\/\*[\s\S]*?(?:\*\/|$)|@?\$?"(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?|`(?:[^`\\]|\\.)*`?/g);
+    return code.replace(rx, function (m) { return m.replace(/[^\n]/g, " "); });
+  }
+  // A sentinel after the cursor survives blanking only when the cursor is in code, not in a comment or string.
+  function inCodeAt(code, pos, lang) {
+    if (lang === "html") return true;
+    return blank(code.slice(0, pos) + "\u0001", lang).slice(-1) === "\u0001";
+  }
+  function matchBrace(text, open) {
+    var d = 0;
+    for (var i = open; i < text.length; i++) {
+      if (text[i] === "{") d++;
+      else if (text[i] === "}") { d--; if (!d) return i; }
+    }
+    return text.length;
+  }
+  function depthOne(body) { // the text at nesting depth 1 of a class body; member bodies become "{   }"
+    var out = "", d = 0;
+    for (var i = 0; i < body.length; i++) {
+      var ch = body[i];
+      if (ch === "{") { d++; out += d <= 2 ? ch : " "; continue; }
+      if (ch === "}") { out += d <= 2 ? ch : " "; d--; continue; }
+      out += d <= 1 ? ch : (ch === "\n" ? "\n" : " ");
+    }
+    return out;
+  }
+  function cleanParams(p) { return (p || "").replace(/\s+/g, " ").trim(); }
+
+  // ------------------------------------------------------------------------------------------- index
+  // Symbols declared in the visible code: classes (members, constructor), functions, variables -> type.
+  function index(files, lab) {
+    var idx = { classes: {}, functions: {}, vars: {}, words: {}, modules: {}, keys: {} };
+    Object.keys(files || {}).forEach(function (name) {
+      var lang = langOfFile(name, lab), src = String(files[name] || "");
+      if (lang === "css" || lang === "scss" || lang === "html") return;
+      var code = blank(src, lang);
+      (code.match(/[A-Za-z_]\w{2,}/g) || []).forEach(function (w) { idx.words[w] = (idx.words[w] || 0) + 1; });
+      if (lang === "javascript") {   // object-literal keys: { title: "Clean Code", price: 39.5 } -> item.price
+        var km, rxKey = /[{,]\s*([A-Za-z_$][\w$]*)\s*:(?!:)/g;
+        while ((km = rxKey.exec(code))) idx.keys[km[1]] = 1;
+        // the same shapes are often described in comments ("Each item looks like: { title: ..., price: ... }")
+        var cm, rxCom = /\/\/[^\n]*|\/\*[\s\S]*?\*\//g;
+        while ((cm = rxCom.exec(src))) { var km2, rk = /[{,]\s*([A-Za-z_$][\w$]*)\s*:(?!:)/g; while ((km2 = rk.exec(cm[0]))) idx.keys[km2[1]] = 1; }
+      }
+      if (lang === "python") indexPython(code, idx);
+      else indexCLike(code, lang, idx, name, src);
+    });
+    return idx;
+  }
+  function addMember(cls, name, params, kind) {
+    if (!cls.members.some(function (m) { return m[0] === name; })) cls.members.push([name, params, kind]);
+  }
+  function indexCLike(code, lang, idx, fileName, src) {
+    var rxClass = /\b(class|struct|record|interface)\s+([A-Za-z_]\w*)[^{;]*\{/g, m, spans = [];
+    while ((m = rxClass.exec(code))) {
+      var open = code.indexOf("{", m.index + m[0].length - 1), close = matchBrace(code, open), name = m[2];
+      var body = depthOne(code.slice(open, close + 1)), cls = idx.classes[name] || (idx.classes[name] = { members: [], ctor: null });
+      var base = /:\s*([A-Z]\w*)|\bextends\s+([A-Z]\w*)/.exec(code.slice(m.index, open));
+      if (base) cls.base = base[1] || base[2];
+      spans.push([open, close]);
+      var rm, rxMeth = lang === "javascript"
+        ? /(?:^|[;{}\n])\s*(?:static\s+|async\s+|get\s+|set\s+)*([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g
+        : /(?:^|[;{}\n])\s*(?:\[[^\]]*\]\s*)*((?:public|private|protected|internal|static|virtual|override|abstract|sealed|async|final|synchronized|const|inline|explicit|friend|unsafe|new)\s+)*([\w<>\[\],.?:*& ]+?\s+)?([A-Za-z_]\w*)\s*\(([^)]*)\)\s*(?:const\s*)?(?:throws\s+[\w., ]+)?\s*(?:\{|=>|;|:)/g;
+      while ((rm = rxMeth.exec(body))) {
+        var mn = lang === "javascript" ? rm[1] : rm[3], ps = cleanParams(lang === "javascript" ? rm[2] : rm[4]);
+        if (/^(if|for|while|switch|catch|return|using|lock|foreach|new|base|this|super)$/.test(mn)) continue;
+        if (mn === name || mn === "constructor") { cls.ctor = ps; continue; }
+        var priv = lang !== "javascript" && /\bprivate\b/.test(rm[1] || "");
+        if (!priv) addMember(cls, mn, ps, "method");
+      }
+      var rf, rxField = lang === "javascript" ? /this\.([A-Za-z_$][\w$]*)\s*=/g
+        : /(?:^|[;{}\n])\s*((?:public|private|protected|internal|static|readonly|final|const|required|virtual|override)\s+)*([\w<>\[\],.?]+)\s+([A-Za-z_]\w*)\s*(=[^;{]*;|;|\{|=>)/g;
+      var fieldSrc = lang === "javascript" ? code.slice(open, close) : body;
+      while ((rf = rxField.exec(fieldSrc))) {
+        var fname = lang === "javascript" ? rf[1] : rf[3];
+        if (lang !== "javascript" && (/^(return|new|throw|else|case|using|import|package)$/.test(rf[2]) || /\bprivate\b/.test(rf[1] || ""))) continue;
+        if (lang !== "javascript") idx.vars[name + "." + fname] = rf[2];
+        addMember(cls, fname, null, lang === "javascript" ? "field" : (/\{/.test(rf[4]) || rf[4] === "=>" ? "property" : "field"));
+      }
+    }
+    // free functions (JavaScript, C, C++) and exports
+    var rf2, rxFn = lang === "javascript"
+      ? /\bfunction\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)|\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:function\s*)?\(([^)]*)\)\s*(?:=>|\{)/g
+      : (lang === "c" || lang === "cpp") ? /(?:^|\n)\s*(?:static\s+|inline\s+)*[\w:<>*& ]+?\s+[*&]?([A-Za-z_]\w*)\s*\(([^)]*)\)\s*\{/g : null;
+    if (rxFn) while ((rf2 = rxFn.exec(code))) {
+      var inClass = spans.some(function (s) { return rf2.index > s[0] && rf2.index < s[1]; });
+      var fn = rf2[1] || rf2[3], fp = cleanParams(rf2[2] != null ? rf2[2] : rf2[4]);
+      if (!inClass && !/^(if|for|while|switch)$/.test(fn)) idx.functions[fn] = fp;
+    }
+    if (lang === "javascript") {
+      var ex = /module\.exports\s*=\s*\{([^}]*)\}/.exec(code), base2 = fileName.replace(/\.[^.]+$/, "");
+      var names = ex ? ex[1].split(",").map(function (s) { return s.split(":")[0].trim(); }).filter(Boolean) : Object.keys(idx.functions);
+      idx.modules[base2] = names;
+    }
+    // variables -> declared type
+    var rv, rxVar = lang === "javascript"
+      ? /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:new\s+([A-Za-z_$][\w$]*)|(\[)|(["'`])|(\d))?/g
+      : /\b([A-Za-z_][\w.:]*(?:\s*<[^<>;()]*(?:<[^<>;()]*>[^<>;()]*)?>)?(?:\s*\[\s*\])*)\s+([A-Za-z_]\w*)\s*(?==|;|,|\)|:(?!:))/g;
+    if (lang === "javascript") {   // require("./cart") needs the string, which blank() removed
+      var rq, rxReq = /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\s*\(\s*["'`]\.\/([\w.-]+?)(?:\.js)?["'`]\s*\)/g;
+      while ((rq = rxReq.exec(src))) idx.vars[rq[1]] = "module:" + rq[2];
+    }
+    while ((rv = rxVar.exec(code))) {
+      if (lang === "javascript") {
+        if (/^module:/.test(idx.vars[rv[1]] || "")) continue;
+        idx.vars[rv[1]] = rv[2] || (rv[3] ? "Array" : rv[4] ? "String" : rv[5] ? "Number" : "");
+      } else {
+        var t = rv[1].replace(/\s+/g, "");
+        if (/^(return|new|throw|else|case|using|import|package|class|struct|namespace|public|private|protected|static|goto|delete)$/.test(t)) continue;
+        if (t === "var" || t === "auto") {
+          var nw = /^\s*=\s*new\s+([A-Za-z_][\w.:]*)/.exec(code.slice(rv.index + rv[0].length)) ;
+          t = nw ? nw[1] : (/^\s*=\s*"/.test(code.slice(rv.index + rv[0].length)) ? "string" : "");
+        }
+        if (t) idx.vars[rv[2]] = t;
+      }
+    }
+  }
+  function indexPython(code, idx) {
+    var lines = code.split("\n"), cur = null, curIndent = -1, m;
+    lines.forEach(function (line) {
+      var ind = line.match(/^\s*/)[0].length;
+      if (cur && line.trim() && ind <= curIndent) cur = null;
+      if ((m = /^(\s*)class\s+([A-Za-z_]\w*)\s*(?:\(([^)]*)\))?\s*:/.exec(line))) {
+        cur = idx.classes[m[2]] || (idx.classes[m[2]] = { members: [], ctor: null });
+        if (m[3]) cur.base = m[3].split(",")[0].trim();
+        curIndent = m[1].length; return;
+      }
+      if ((m = /^(\s*)def\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/.exec(line))) {
+        var params = cleanParams(m[3]).split(",").map(function (p) { return p.trim(); }).filter(Boolean);
+        if (cur && m[1].length > curIndent) {
+          if (params[0] === "self" || params[0] === "cls") params.shift();
+          if (m[2] === "__init__") cur.ctor = params.join(", ");
+          else if (!/^__/.test(m[2])) addMember(cur, m[2], params.join(", "), "method");
+        } else if (!m[1].length) idx.functions[m[2]] = params.join(", ");
+        return;
+      }
+      if (cur && (m = /self\.([A-Za-z_]\w*)\s*(?::\s*([A-Za-z_]\w*))?\s*=\s*(?:([A-Z]\w*)\s*\(|(\[)|(\{)|(["']))?/.exec(line))) {
+        addMember(cur, m[1], null, "field");
+        var cname = Object.keys(idx.classes).filter(function (k) { return idx.classes[k] === cur; })[0];
+        var st = m[2] || m[3] || (m[4] ? "list" : m[5] ? "dict" : m[6] ? "str" : "");
+        if (st && cname) idx.vars[cname + "." + m[1]] = st;
+      }
+      if ((m = /^\s*([A-Za-z_]\w*)\s*=\s*(?:([A-Z]\w*)\s*\(|(\[)|(\{)|(["'])|(input)\s*\()/.exec(line))) {
+        idx.vars[m[1]] = m[2] || (m[3] ? "list" : m[4] ? "dict" : (m[5] || m[6]) ? "str" : "");
+      }
+      if ((m = /^\s*from\s+([\w.]+)\s+import\s+(.+)$/.exec(line))) {
+        m[2].split(",").forEach(function (n) { idx.words[n.trim()] = 1; });
+      }
+    });
+  }
+
+  // ------------------------------------------------------------------------------------------- resolve types
+  function libFor(lang) { return LIB[lang] || { globals: "", statics: {}, types: {}, alias: {} }; }
+  function normType(t, lang) {
+    if (!t) return "";
+    var L = libFor(lang), raw = String(t).replace(/^std::/, "");
+    if (/\[\]$/.test(raw)) return "array";
+    var baseName = raw.replace(/<.*$/, "").replace(/\?$/, "").split(".").pop();
+    return L.alias[baseName] || L.alias[raw] || baseName;
+  }
+  function membersOfType(t, lang, idx, seen) {
+    seen = seen || {};
+    if (!t || seen[t]) return [];
+    seen[t] = 1;
+    var L = libFor(lang), out = [];
+    if (idx.classes[t]) {
+      idx.classes[t].members.forEach(function (m) { out.push({ name: m[0], params: m[1], kind: m[2], from: t }); });
+      if (idx.classes[t].base) out = out.concat(membersOfType(normType(idx.classes[t].base, lang), lang, idx, seen));
+      if (lang === "csharp" || lang === "java") out = out.concat(membersOfType("object", lang, idx, seen));
+    }
+    var key = L.types[t] ? t : L.alias[t];
+    if (key && L.types[key]) L.types[key].forEach(function (m) { out.push({ name: m[0], params: m[1], kind: m[1] == null ? "property" : "method", from: key }); });
+    return out;
+  }
+  function typeOfExpr(expr, lang, idx, code, pos) {
+    expr = expr.replace(/\s+/g, "");
+    var L = libFor(lang), parts = expr.split(/\.|->|::/);
+    if (L.statics[expr]) return { statics: expr };
+    if ((parts[0] === "this" || parts[0] === "self") && parts.length === 1) return { type: enclosingClass(code, pos, lang) };
+    var t = "";
+    if (parts[0] === "this" || parts[0] === "self") {
+      var c = enclosingClass(code, pos, lang);
+      t = idx.vars[c + "." + parts[1]] || "";
+      parts = parts.slice(2);
+      if (!parts.length) return { type: normType(t, lang) || "?" };
+    } else if (parts.length === 1 && idx.classes[parts[0]] && lang !== "python") {
+      return { type: parts[0], staticOf: true };
+    } else {
+      t = idx.vars[parts[0]] || "";
+      if (!t && /^"/.test(expr)) t = lang === "python" ? "str" : "string";
+      parts = parts.slice(1);
+    }
+    if (/^module:/.test(t)) return { module: t.slice(7) };
+    t = normType(t, lang);
+    parts.forEach(function (p) {
+      var mem = membersOfType(t, lang, idx).filter(function (m) { return m.name === p; })[0];
+      t = mem ? normType(idx.vars[(mem.from || t) + "." + p] || "", lang) : "";
+    });
+    return { type: t || "?" };
+  }
+  function enclosingClass(code, pos, lang) {
+    var before = blank(code.slice(0, pos), lang), m, last = "";
+    if (lang === "python") {
+      var rx = /^(\s*)class\s+([A-Za-z_]\w*)/gm;
+      while ((m = rx.exec(before))) last = m[2];
+      return last;
+    }
+    var rx2 = /\b(?:class|struct|record)\s+([A-Za-z_]\w*)[^{;]*\{/g;
+    while ((m = rx2.exec(before))) {
+      var open = before.indexOf("{", m.index + m[0].length - 1);
+      if (matchBrace(before + "}".repeat(50), open) >= before.length) last = m[1];
+    }
+    return last;
+  }
+
+  // ------------------------------------------------------------------------------------------- completion
+  function rank(items, prefix) {
+    var p = prefix.toLowerCase(), seen = {}, out = [];
+    items.forEach(function (it, i) {
+      if (seen[it.label]) return;
+      var l = it.label.toLowerCase(), score;
+      if (prefix && it.label === prefix) score = -1;       // what you typed is complete: listed first, Enter keeps it
+      else if (it.label.indexOf(prefix) === 0) score = 0;
+      else if (l.indexOf(p) === 0) score = 1;
+      else if (p.length >= 3 && l.indexOf(p) > 0) score = 3;
+      else if (p.length >= 2 && camelMatch(it.label, prefix)) score = 2;
+      else return;
+      seen[it.label] = 1;
+      out.push({ it: it, s: score * 1000 + (it.order || 0) * 100 + i });
+    });
+    return out.sort(function (a, b) { return a.s - b.s; }).slice(0, 14).map(function (x) { return x.it; });
+  }
+  function camelMatch(label, prefix) { // "wl" matches "WriteLine"
+    var caps = label.replace(/[^A-Z]/g, "").toLowerCase();
+    return caps.indexOf(prefix.toLowerCase()) === 0;
+  }
+  function item(name, params, kind, detail, order) {
+    var call = params != null;
+    return { label: name, insert: name, kind: kind || (call ? "method" : "field"), detail: detail || (call ? name + "(" + params + ")" : ""),
+             call: call, params: call ? params : null, order: order || 0 };
+  }
+
+  function complete(files, fileName, code, pos, lab, force) {
+    var lang = langOfFile(fileName, lab);
+    if (lang === "html") return completeHtml(code, pos);
+    if (lang === "css" || lang === "scss") return completeCss(code, 0, pos, lang === "scss", files);
+    if (!inCodeAt(code, pos, lang)) return null;
+    var before = code.slice(0, pos), wm = /[A-Za-z_$][\w$]*$/.exec(before), prefix = wm ? wm[0] : "", start = pos - prefix.length;
+    var all = {}; Object.keys(files || {}).forEach(function (k) { all[k] = files[k]; });
+    all[fileName] = code;
+    var idx = index(all, lab), L = libFor(lang);
+    // member access: receiver.prefix (also -> and :: in C/C++)
+    var mm = /([A-Za-z_$][\w$]*(?:\s*(?:\.|->|::)\s*[A-Za-z_$][\w$]*)*|"[^"]*"|\))\s*(\.|->|::)\s*$/.exec(before.slice(0, start));
+    if (mm) {
+      var items = [];
+      if (mm[1] === ")") items = genericMembers(lang, idx);
+      else {
+        var r = typeOfExpr(mm[1], lang, idx, code, pos);
+        if (r.statics) items = L.statics[r.statics].map(function (m) { return item(m[0], m[1], m[1] == null ? "constant" : "method", "", 0); });
+        else if (r.module) (idx.modules[r.module] || []).forEach(function (n) { items.push(item(n, idx.functions[n] != null ? idx.functions[n] : null, "function")); });
+        else if (r.staticOf) items = membersOfType(r.type, lang, idx).map(function (m) { return item(m.name, m.params, m.kind); });
+        else if (r.type && r.type !== "?") items = membersOfType(r.type, lang, idx).map(function (m) { return item(m.name, m.params, m.kind, "", m.from === r.type ? 0 : 1); });
+        if (!items.length) items = genericMembers(lang, idx);
+      }
+      var ranked = prefix ? rank(items, prefix) : items.filter(uniqueLabels()).slice(0, 14);
+      return ranked.length ? { items: ranked, start: start, end: pos, kind: "member" } : null;
+    }
+    if (prefix.length < (force ? 0 : 2)) return null;
+    var cands = [];
+    Object.keys(idx.vars).forEach(function (v) { if (v.indexOf(".") < 0) cands.push(item(v, null, "variable", idx.vars[v], 0)); });
+    Object.keys(idx.functions).forEach(function (f) { cands.push(item(f, idx.functions[f], "function", "", 0)); });
+    Object.keys(idx.classes).forEach(function (c) { cands.push(item(c, null, "class", "class " + c, 1)); });
+    list(L.globals).forEach(function (g) {
+      var fp = L.functions && L.functions[g];
+      cands.push(item(g, fp != null ? fp : null, fp != null ? "function" : (L.statics[g] ? "class" : "type"), "", 2));
+    });
+    (KEYWORDS[lang] || "").split(" ").forEach(function (k) { cands.push(item(k, null, "keyword", "", 3)); });
+    // the word being typed counts once; it is a real name only if it also appears somewhere else
+    Object.keys(idx.words).forEach(function (w) { if (w !== prefix || idx.words[w] > 1) cands.push(item(w, null, "word", "", 4)); });
+    if (idx.words[prefix] === 1) cands = cands.filter(function (c) { return c.label !== prefix || c.kind !== "variable"; });
+    var res = rank(cands.filter(function (c) { return prefix || c.kind !== "word"; }), prefix);
+    return res.length ? { items: res, start: start, end: pos, kind: "word" } : null;
+  }
+  function uniqueLabels() { var seen = {}; return function (it) { if (seen[it.label]) return false; seen[it.label] = 1; return true; }; }
+  function genericMembers(lang, idx) {
+    var L = libFor(lang), out = [];
+    Object.keys(idx.keys || {}).forEach(function (k) { out.push(item(k, null, "property", "object property", 0)); });
+    Object.keys(idx.classes).forEach(function (c) { idx.classes[c].members.forEach(function (m) { out.push(item(m[0], m[1], m[2], "", 0)); }); });
+    var common = { javascript: ["Array", "String", "Number"], python: ["str", "list", "dict"], csharp: ["string", "List"], java: ["String", "ArrayList"], cpp: ["string", "vector"] }[lang] || [];
+    common.forEach(function (t) { (L.types[t] || []).forEach(function (m) { out.push(item(m[0], m[1], m[1] == null ? "property" : "method", "", 1)); }); });
+    return out;
+  }
+
+  function completeCss(code, offset, pos, scss, files) {
+    var text = code.slice(offset, pos);
+    if (blank(text + "\u0001", "css").slice(-1) !== "\u0001") return null;     // inside a comment or string
+    var wm = /[\w$@-]*$/.exec(text), prefix = wm[0], start = pos - prefix.length;
+    if (scss && /^\$/.test(prefix)) {
+      var vars = {}; Object.keys(files || {}).forEach(function (f) { (String(files[f]).match(/\$[\w-]+(?=\s*:)/g) || []).forEach(function (v) { vars[v] = 1; }); });
+      (code.match(/\$[\w-]+(?=\s*:)/g) || []).forEach(function (v) { vars[v] = 1; });
+      var vi = rank(Object.keys(vars).map(function (v) { return item(v, null, "variable"); }), prefix);
+      return vi.length ? { items: vi, start: start, end: pos, kind: "css-var" } : null;
+    }
+    if (scss && /^@/.test(prefix)) {
+      var ai = rank(list(SCSS_AT).map(function (a) { return item("@" + a, null, "keyword"); }), prefix);
+      return ai.length ? { items: ai, start: start, end: pos, kind: "css-at" } : null;
+    }
+    if (scss && /@include\s+[\w-]*$/.test(text)) {
+      var mixins = {}; Object.keys(files || {}).concat([null]).forEach(function (f) { var mm, src = f === null ? code : String(files[f]), rx = /@mixin\s+([\w-]+)\s*(\(([^)]*)\))?/g; while ((mm = rx.exec(src))) mixins[mm[1]] = mm[3] || ""; });
+      var mi = rank(Object.keys(mixins).map(function (n) { return item(n, mixins[n] || null, "function"); }), prefix);
+      return mi.length ? { items: mi, start: start, end: pos, kind: "css-mixin" } : null;
+    }
+    // where are we: selector, property name or value? Walk the open blocks.
+    var seg = blank(text, "css"), stack = [], last = 0;
+    for (var i = 0; i < seg.length; i++) {
+      if (seg[i] === "{") { stack.push(seg.slice(last, i).trim()); last = i + 1; }
+      else if (seg[i] === "}") { stack.pop(); last = i + 1; }
+      else if (seg[i] === ";") last = i + 1;
+    }
+    var innermost = stack.length ? stack[stack.length - 1] : null;
+    var selectorPos = innermost === null || /^@(media|supports|container|layer|document)\b/.test(innermost);
+    var decl = seg.slice(last);
+    if (!selectorPos && decl.indexOf(":") >= 0 && !/[{}]/.test(decl)) {
+      var prop = decl.slice(0, decl.indexOf(":")).trim().split(/\s+/).pop();
+      if (scss && /&/.test(decl)) return null;                                   // &:hover { ... } is a selector
+      var vals = list(CSS_PROPS[prop] || "").concat(list(CSS_GLOBAL_VALUES));
+      var vpre = /[\w-]*$/.exec(text)[0];
+      var vitems = vals.map(function (v) { return item(v, null, "value", prop); });
+      var vi2 = vpre ? rank(vitems, vpre) : vitems.slice(0, 14);
+      return vi2.length && CSS_PROPS[prop] ? { items: vi2, start: pos - vpre.length, end: pos, kind: "css-value", prop: prop } : null;
+    }
+    if (selectorPos) {
+      if (prefix.length < 2 || /[.#:\[]$/.test(text.slice(0, text.length - prefix.length))) return null;
+      var ti = rank(list(HTML_TAGS).map(function (t) { return item(t, null, "tag"); }), prefix);
+      return ti.length ? { items: ti, start: start, end: pos, kind: "css-selector" } : null;
+    }
+    if (prefix.length < 1 || /[.#:&]/.test(decl.trim().charAt(0))) return null;
+    var pi = rank(Object.keys(CSS_PROPS).map(function (p) { return { label: p, insert: p + ": ", kind: "property", detail: CSS_PROPS[p].split("|").slice(0, 3).join(" | "), call: false, reopen: true, order: 0 }; }), prefix);
+    return pi.length ? { items: pi, start: start, end: pos, kind: "css-prop" } : null;
+  }
+
+  function completeHtml(code, pos) {
+    var before = code.slice(0, pos), low = before.toLowerCase();
+    var so = low.lastIndexOf("<style"), sc = low.lastIndexOf("<\/style");
+    if (so > sc) { var o = before.indexOf(">", so); if (o >= 0) return completeCss(code, o + 1, pos, false, {}); }
+    var jo = low.lastIndexOf("<script"), jc = low.lastIndexOf("<\/script");
+    if (jo > jc) return null;
+    if (low.lastIndexOf("<!--") > low.lastIndexOf("-->")) return null;
+    var lt = before.lastIndexOf("<"), gt = before.lastIndexOf(">");
+    if (lt <= gt) return null;                                   // in text content
+    var inTag = before.slice(lt);
+    var tm = /^<\/?([\w-]*)$/.exec(inTag);
+    if (tm) {
+      var closing = inTag[1] === "/";
+      var cands = closing ? openTags(before.slice(0, lt)).reverse() : list(HTML_TAGS);
+      var ti = rank(cands.map(function (t) { return { label: t, insert: t, kind: "tag", detail: closing ? "close <" + t + ">" : (VOID.test(t) ? "<" + t + ">" : "<" + t + "><\/" + t + ">"), call: false, order: 0 }; }), tm[1]);
+      if (!tm[1]) ti = cands.slice(0, 14).map(function (t) { return { label: t, insert: t, kind: "tag", detail: "", call: false }; });
+      return ti.length ? { items: ti, start: pos - tm[1].length, end: pos, kind: closing ? "html-close" : "html-tag" } : null;
+    }
+    if (/=\s*("[^"]*|'[^']*)$/.test(inTag)) return null;          // inside an attribute value
+    var am = /^<([\w-]+)[\s\S]*?\s([\w-]*)$/.exec(inTag);
+    if (!am) return null;
+    var tag = am[1].toLowerCase(), have = {};
+    (inTag.match(/\s([\w-]+)(?==|\s|$)/g) || []).forEach(function (a) { have[a.trim()] = 1; });
+    var attrs = list(HTML_ATTRS[tag] || "").concat(list(HTML_ATTRS["*"])).filter(function (a) { return !have[a] || a === am[2]; });
+    var boolA = /^(hidden|required|checked|disabled|selected|controls|autoplay|muted|loop|defer|reversed)$/;
+    var ai = attrs.map(function (a) { return { label: a, insert: boolA.test(a) ? a : a + '=""', kind: "attribute", detail: tag, call: false, caretBack: boolA.test(a) ? 0 : 1, order: 0 }; });
+    ai = am[2] ? rank(ai, am[2]) : ai.slice(0, 14);
+    return ai.length ? { items: ai, start: pos - am[2].length, end: pos, kind: "html-attr" } : null;
+  }
+  function openTags(html) {
+    var stack = [], m, rx = /<(\/?)([A-Za-z][\w-]*)[^>]*?(\/?)>/g;
+    html = html.replace(/<!--[\s\S]*?-->/g, "");
+    while ((m = rx.exec(html))) {
+      var t = m[2].toLowerCase();
+      if (VOID.test(t) || m[3]) continue;
+      if (m[1]) { var i = stack.lastIndexOf(t); if (i >= 0) stack.length = i; }
+      else stack.push(t);
+    }
+    return stack;
+  }
+
+  // ------------------------------------------------------------------------------------------- signature help
+  function signature(files, fileName, code, pos, lab) {
+    var lang = langOfFile(fileName, lab);
+    if (lang === "html" || lang === "css" || lang === "scss") return null;
+    var b = blank(code.slice(0, pos), lang), depth = 0, commas = 0, i;
+    for (i = pos - 1; i >= 0 && pos - i < 600; i--) {
+      var ch = b[i];
+      if (ch === ")" || ch === "]") depth++;
+      else if (ch === "(" || ch === "[") { if (!depth) break; depth--; }
+      else if (ch === "," && !depth) commas++;
+      else if ((ch === ";" || ch === "{" || ch === "}") && !depth) return null;
+    }
+    if (i < 0 || b[i] !== "(") return null;
+    var head = b.slice(0, i), m = /(new\s+)?([A-Za-z_$][\w$]*(?:\s*(?:\.|->|::)\s*[A-Za-z_$][\w$]*)*)\s*$/.exec(head);
+    if (!m || /^(if|for|while|switch|catch|return|foreach|using|lock|elif|sizeof|typeof|nameof|function)$/.test(m[2])) return null;
+    var all = {}; Object.keys(files || {}).forEach(function (k) { all[k] = files[k]; }); all[fileName] = code;
+    var unknownRecv = /[\])"'`]\s*\.\s*$/.test(head.slice(0, head.length - m[0].length + (m[1] ? m[1].length : 0)));
+    var idx = index(all, lab), L = libFor(lang), chain = m[2].replace(/\s+/g, ""), parts = chain.split(/\.|->|::/), name = parts.pop(), params = null, label = name;
+    if (m[1] || (lang === "python" && idx.classes[name])) {
+      if (idx.classes[name]) params = idx.classes[name].ctor != null ? idx.classes[name].ctor : "";
+      label = (m[1] ? "new " : "") + name;
+    } else if (!parts.length && unknownRecv) {
+      var gm = genericMembers(lang, idx).filter(function (x) { return x.label === name && x.params != null; })[0];
+      if (gm) params = gm.params;
+    } else if (!parts.length) {
+      if (idx.functions[name] != null) params = idx.functions[name];
+      else if (L.functions && L.functions[name] != null) params = L.functions[name];
+      else {
+        var ec = enclosingClass(code, pos, lang), own = ec && membersOfType(ec, lang, idx).filter(function (x) { return x.name === name && x.params != null; })[0];
+        if (own) params = own.params;
+      }
+    } else {
+      var recv = parts.join("."), r = typeOfExpr(recv, lang, idx, code, pos), mem = null;
+      if (r.statics) mem = (L.statics[r.statics] || []).filter(function (x) { return x[0] === name; }).map(function (x) { return { params: x[1] }; })[0];
+      else if (r.module) mem = idx.functions[name] != null ? { params: idx.functions[name] } : null;
+      else if (r.type && r.type !== "?") mem = membersOfType(r.type, lang, idx).filter(function (x) { return x.name === name; })[0];
+      if (!mem) mem = genericMembers(lang, idx).filter(function (x) { return x.label === name && x.params != null; })[0];
+      if (mem) params = mem.params;
+      label = recv + "." + name;
+    }
+    if (params == null) return null;
+    var list2 = params ? splitParams(params) : [];
+    var active = list2.length ? Math.min(commas, list2.length - 1) : 0;
+    for (var k = 0; k < list2.length; k++) {           // *values / ...items soak up every later argument
+      if (/^(\*(?!\*)|\.\.\.)/.test(list2[k]) && commas >= k) { active = k; break; }
+    }
+    return { label: label, params: list2, active: active };
+  }
+  function splitParams(p) {
+    var out = [], d = 0, cur = "";
+    for (var i = 0; i < p.length; i++) {
+      var ch = p[i];
+      if ("<([{".indexOf(ch) >= 0) d++;
+      if (">)]}".indexOf(ch) >= 0) d--;
+      if (ch === "," && !d) { out.push(cur.trim()); cur = ""; } else cur += ch;
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out;
+  }
+
+  var API = { complete: complete, signature: signature, inCodeAt: inCodeAt, index: index, blank: blank, langOfFile: langOfFile, VOID: VOID, LIB: LIB };
+  if (typeof module !== "undefined" && module.exports) module.exports = API;
+  root.LabAssist = API;
+})(typeof self !== "undefined" ? self : this);
+</script>
+<script type="application/json" id="lab-data">{"course": "COP1800 · Java Programming I", "collection": "Chapter 8: Arrays", "id": "8.7", "title": "The race results that give Dev's time to Ana", "subtitle": "A bubble sort compares neighbours and swaps whole objects, not just the field it sorts by", "source": "Ch. 8, section 8.7 (pp. 292–300)", "minutes": 25, "language": "java", "langLabel": "Java", "comment": "//", "fileName": "Leaderboard.java", "mainFile": "Leaderboard.java", "files": [{"name": "Leaderboard.java", "starter": "public class Leaderboard\n{\n    // How many pairs the last sortByTime() call compared.\n    public static int comparisons = 0;\n\n    // Sorts the runners from fastest (fewest seconds) to slowest.\n    public static void sortByTime(Runner[] runners)\n    {\n        comparisons = 0;\n        for(int a = 0; a \u003c runners.length - 1; ++a)\n        {\n            // TODO (R2): after each pass, the slowest runner left has sunk\n            // to the end. Stop comparing pairs that are already in place.\n            for(int b = 0; b \u003c runners.length - 1; ++b)\n            {\n                ++comparisons;\n                if(runners[b].getSeconds() > runners[b + 1].getSeconds())\n                {\n                    // TODO (R1): this swaps the times and leaves the names\n                    // behind. Swap the two Runner objects instead.\n                    int temp = runners[b].getSeconds();\n                    runners[b].setSeconds(runners[b + 1].getSeconds());\n                    runners[b + 1].setSeconds(temp);\n                }\n            }\n        }\n    }\n\n    public static String board(Runner[] runners)\n    {\n        String text = \"\";\n        for(int x = 0; x \u003c runners.length; ++x)\n        {\n            int min = runners[x].getSeconds() / 60;\n            int sec = runners[x].getSeconds() % 60;\n            text += (x + 1) + \". \" + runners[x].getName() + \" \"\n                + min + \":\" + (sec \u003c 10 ? \"0\" : \"\") + sec + \"\\n\";\n        }\n        return text;\n    }\n}\n", "editable": true}, {"name": "Runner.java", "starter": "public class Runner\n{\n    private String name;\n    private int seconds;   // finishing time\n\n    public Runner(String runnerName, int finishSeconds)\n    {\n        name = runnerName;\n        seconds = finishSeconds;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public int getSeconds()\n    {\n        return seconds;\n    }\n\n    // Used by the timing desk to correct a mistyped time.\n    public void setSeconds(int finishSeconds)\n    {\n        seconds = finishSeconds;\n    }\n}\n", "editable": false}], "indent": "    ", "objectives": ["Swap two array elements with a temporary variable", "Trace a bubble sort and explain why each pass can make one comparison fewer", "Sort an array of objects by one field while swapping the objects as units"], "scenario": "\u003cp>The \u003cem>Riverside 5K\u003c/em> leaderboard sorts the runners by finishing time with a bubble sort. This morning&#x27;s board put the times in perfect order, but beside the wrong names:\u003c/p>\u003cpre class=\"code-block\">\u003ccode>\u003cspan class=\"t-mf\">1.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Ana\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">24\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mi\">35\u003c/span>\n\u003cspan class=\"t-mf\">2.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Ben\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">24\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mi\">55\u003c/span>\n\u003cspan class=\"t-mf\">3.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Cleo\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">25\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mo\">02\u003c/span>\u003c/code>\u003c/pre>\u003cp>Dev ran 24:35. The sort compares \u003ccode>getSeconds()\u003c/code> correctly, but when two runners are out of order it swaps only their \u003cem>times\u003c/em> with \u003ccode>setSeconds()\u003c/code>, so every name stays where it was. The timing desk also noticed that each pass keeps comparing runners who have already sunk into their final places at the end: \u003ccode>comparisons\u003c/code> counts 16 pairs for 5 runners.\u003c/p>\u003cp>\u003ccode>Runner.java\u003c/code> is read-only. Make the sort swap whole \u003ccode>Runner\u003c/code> objects, and shorten each pass so pairs already in place are not compared again. When you are done, the test program prints:\u003c/p>\u003cpre class=\"code-block\">\u003ccode>\u003cspan class=\"t-mf\">1.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Dev\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">24\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mi\">35\u003c/span>\n\u003cspan class=\"t-mf\">2.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Ben\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">24\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mi\">55\u003c/span>\n\u003cspan class=\"t-mf\">3.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Eli\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">25\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mo\">02\u003c/span>\n\u003cspan class=\"t-mf\">4.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Ana\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">25\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mi\">20\u003c/span>\n\u003cspan class=\"t-mf\">5.\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Cleo\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">26\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-mi\">50\u003c/span>\n\u003cspan class=\"t-n\">Pairs\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">compared\u003c/span>\u003cspan class=\"t-p\">:\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-mi\">10\u003c/span>\u003c/code>\u003c/pre>", "requirements": [{"id": "R1", "html": "When two runners are out of order, \u003ccode>sortByTime()\u003c/code> swaps the two \u003ccode>Runner\u003c/code> objects using a temporary \u003ccode>Runner\u003c/code> variable; it no longer calls \u003ccode>setSeconds()\u003c/code>.", "byOutput": false}, {"id": "R2", "html": "Each pass compares one pair fewer than the pass before, because the slowest remaining runner is already at the end: 10 comparisons for 5 runners.", "byOutput": false}, {"id": "R3", "html": "Running the test program prints exactly what it expects.", "byOutput": true}], "checks": [{"id": "C1", "requirement": "R1", "title": "The swap moves whole Runner objects", "within": "Leaderboard.sortByTime", "require": "\\bRunner\\s+\\w+\\s*=\\s*runners\\s*\\[\\s*\\w+(?:\\s*\\+\\s*1)?\\s*\\]", "forbid": "\\bsetSeconds\\s*\\(", "flags": "", "strings": false, "file": null, "message": "\u003cp>Swap the elements themselves through a \u003ccode>Runner\u003c/code> temporary: \u003ccode>Runner temp = runners[b];\u003c/code>, then copy \u003ccode>runners[b + 1]\u003c/code> into \u003ccode>runners[b]\u003c/code>, and \u003ccode>temp\u003c/code> into \u003ccode>runners[b + 1]\u003c/code>. Swapping only the seconds leaves every name where it was.\u003c/p>", "hint": ""}, {"id": "C2", "requirement": "R2", "title": "Each pass makes one comparison fewer", "within": "Leaderboard.sortByTime", "require": "(?:-\\s*1\\s*-\\s*a\\b|-\\s*a\\s*-\\s*1\\b|\u003c\\s*\\w+\\s*-\\s*a\\b|--\\s*\\w+|\\b\\w+\\s*--|-=\\s*1)", "forbid": null, "flags": "", "strings": false, "file": null, "message": "\u003cp>Shorten the inner loop on each pass, for example \u003ccode>b &lt; runners.length - 1 - a\u003c/code>. After pass \u003ccode>a\u003c/code>, the last \u003ccode>a\u003c/code> runners are already in their final places, so comparing them again only wastes work.\u003c/p>", "hint": ""}], "test": {"fileName": "TestLeaderboard.java", "code": "public class TestLeaderboard\n{\n    public static void main(String[] args)\n    {\n        Runner[] field = new Runner[5];\n        field[0] = new Runner(\"Ana\", 1520);\n        field[1] = new Runner(\"Ben\", 1495);\n        field[2] = new Runner(\"Cleo\", 1610);\n        field[3] = new Runner(\"Dev\", 1475);\n        field[4] = new Runner(\"Eli\", 1502);\n\n        Leaderboard.sortByTime(field);\n        System.out.print(Leaderboard.board(field));\n        System.out.println(\"Pairs compared: \" + Leaderboard.comparisons);\n    }\n}\n", "expected": "MS4gRGV2IDI0OjM1CjIuIEJlbiAyNDo1NQozLiBFbGkgMjU6MDIKNC4gQW5hIDI1OjIwCjUuIENsZW8gMjY6NTAKUGFpcnMgY29tcGFyZWQ6IDEwCg==", "howToRun": "\u003cp>Put \u003ccode>Leaderboard.java\u003c/code> and \u003ccode>Runner.java\u003c/code> and \u003ccode>TestLeaderboard.java\u003c/code> in the same folder, then run \u003ccode>javac *.java\u003c/code> and \u003ccode>java TestLeaderboard\u003c/code>. In an IDE, add all of them to one project and run \u003ccode>TestLeaderboard.java\u003c/code>. You don&#x27;t type anything: the test program supplies the data.\u003c/p>", "predict": "\u003cp>Before you change anything, predict the starter&#x27;s leaderboard: will the times be in order? Will the names?\u003c/p>", "inBrowser": false, "stdin": ""}, "run": null, "layout": null, "preview": null, "hints": ["\u003cp>The temporary variable must be able to hold what is in an array element. The elements of \u003ccode>runners\u003c/code> are not \u003ccode>int\u003c/code> values.\u003c/p>", "\u003cp>A swap takes three assignments: copy one element to the temporary, copy the other element into the first, copy the temporary into the second. Use the elements themselves, not getters and setters.\u003c/p>", "\u003cp>On pass \u003ccode>a\u003c/code> (counting from 0), the last \u003ccode>a\u003c/code> runners are already in place. Subtract the outer counter from the inner loop&#x27;s limit.\u003c/p>"], "solutionPolicy": "after_attempts", "solutionAfter": 3, "solution": "W3sibmFtZSI6ICJMZWFkZXJib2FyZC5qYXZhIiwgImNvZGUiOiAicHVibGljIGNsYXNzIExlYWRlcmJvYXJkXG57XG4gICAgLy8gSG93IG1hbnkgcGFpcnMgdGhlIGxhc3Qgc29ydEJ5VGltZSgpIGNhbGwgY29tcGFyZWQuXG4gICAgcHVibGljIHN0YXRpYyBpbnQgY29tcGFyaXNvbnMgPSAwO1xuXG4gICAgLy8gU29ydHMgdGhlIHJ1bm5lcnMgZnJvbSBmYXN0ZXN0IChmZXdlc3Qgc2Vjb25kcykgdG8gc2xvd2VzdC5cbiAgICBwdWJsaWMgc3RhdGljIHZvaWQgc29ydEJ5VGltZShSdW5uZXJbXSBydW5uZXJzKVxuICAgIHtcbiAgICAgICAgY29tcGFyaXNvbnMgPSAwO1xuICAgICAgICBmb3IoaW50IGEgPSAwOyBhIDwgcnVubmVycy5sZW5ndGggLSAxOyArK2EpXG4gICAgICAgIHtcbiAgICAgICAgICAgIGZvcihpbnQgYiA9IDA7IGIgPCBydW5uZXJzLmxlbmd0aCAtIDEgLSBhOyArK2IpXG4gICAgICAgICAgICB7XG4gICAgICAgICAgICAgICAgKytjb21wYXJpc29ucztcbiAgICAgICAgICAgICAgICBpZihydW5uZXJzW2JdLmdldFNlY29uZHMoKSA+IHJ1bm5lcnNbYiArIDFdLmdldFNlY29uZHMoKSlcbiAgICAgICAgICAgICAgICB7XG4gICAgICAgICAgICAgICAgICAgIFJ1bm5lciB0ZW1wID0gcnVubmVyc1tiXTtcbiAgICAgICAgICAgICAgICAgICAgcnVubmVyc1tiXSA9IHJ1bm5lcnNbYiArIDFdO1xuICAgICAgICAgICAgICAgICAgICBydW5uZXJzW2IgKyAxXSA9IHRlbXA7XG4gICAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgfVxuICAgICAgICB9XG4gICAgfVxuXG4gICAgcHVibGljIHN0YXRpYyBTdHJpbmcgYm9hcmQoUnVubmVyW10gcnVubmVycylcbiAgICB7XG4gICAgICAgIFN0cmluZyB0ZXh0ID0gXCJcIjtcbiAgICAgICAgZm9yKGludCB4ID0gMDsgeCA8IHJ1bm5lcnMubGVuZ3RoOyArK3gpXG4gICAgICAgIHtcbiAgICAgICAgICAgIGludCBtaW4gPSBydW5uZXJzW3hdLmdldFNlY29uZHMoKSAvIDYwO1xuICAgICAgICAgICAgaW50IHNlYyA9IHJ1bm5lcnNbeF0uZ2V0U2Vjb25kcygpICUgNjA7XG4gICAgICAgICAgICB0ZXh0ICs9ICh4ICsgMSkgKyBcIi4gXCIgKyBydW5uZXJzW3hdLmdldE5hbWUoKSArIFwiIFwiXG4gICAgICAgICAgICAgICAgKyBtaW4gKyBcIjpcIiArIChzZWMgPCAxMCA/IFwiMFwiIDogXCJcIikgKyBzZWMgKyBcIlxcblwiO1xuICAgICAgICB9XG4gICAgICAgIHJldHVybiB0ZXh0O1xuICAgIH1cbn1cbiJ9XQ==", "solutionNotes": "PHA+U3dhcHBpbmcgdHdvIHZhbHVlcyBuZWVkcyBhIHRlbXBvcmFyeSB2YXJpYWJsZTogY29weSBvbmUsIG92ZXJ3cml0ZSBpdCB3aXRoIHRoZSBvdGhlciwgdGhlbiBwdXQgdGhlIGNvcHkgaW4gdGhlIHNlY29uZCBwbGFjZSAocHAuIDI5MuKAkzI5MykuIEEgYnViYmxlIHNvcnQgcmVwZWF0ZWRseSBjb21wYXJlcyBuZWlnaGJvdXJzIGFuZCBzd2FwcyB0aGUgcGFpcnMgdGhhdCBhcmUgb3V0IG9mIG9yZGVyLCBzbyB0aGUgbGFyZ2VzdCByZW1haW5pbmcgdmFsdWUgc2lua3MgdG8gdGhlIGVuZCBvbiBldmVyeSBwYXNzIChwcC4gMjkz4oCTMjk0KS4gQmVjYXVzZSB0aGUgbGFzdCA8Y29kZT5hPC9jb2RlPiBlbGVtZW50cyBhcmUgaW4gdGhlaXIgZmluYWwgcGxhY2VzIGFmdGVyIDxjb2RlPmE8L2NvZGU+IHBhc3NlcywgdGhlIGlubmVyIGxpbWl0IGNhbiBzaHJpbmsgYnkgb25lIGVhY2ggcGFzczsgRmlndXJlIDgtMjIgZG9lcyB0aGlzIHdpdGggYSA8Y29kZT5jb21wYXJpc29uc1RvTWFrZTwvY29kZT4gdmFyaWFibGUgdGhhdCBkZWNyZWFzZXMgYWZ0ZXIgZWFjaCBwYXNzLCBhbmQgPGNvZGU+cnVubmVycy5sZW5ndGggLSAxIC0gYTwvY29kZT4gaXMgdGhlIHNhbWUgaWRlYTogNCArIDMgKyAyICsgMSA9IDEwIGNvbXBhcmlzb25zIGluc3RlYWQgb2YgNCDDlyA0ID0gMTYuIFdoZW4gc29ydGluZyBvYmplY3RzLCB5b3UgY29tcGFyZSBvbmUgZmllbGQgYnV0IHN3YXAgdGhlIHdob2xlIG9iamVjdCAocHAuIDI5NeKAkzI5Nik6IHRoZSB0ZW1wb3JhcnkgdmFyaWFibGUgaGFzIHR5cGUgPGNvZGU+UnVubmVyPC9jb2RlPiwgYW5kIHRoZSBzd2FwIG1vdmVzIHJlZmVyZW5jZXMsIHNvIGVhY2ggbmFtZSB0cmF2ZWxzIHdpdGggaXRzIG93biB0aW1lLiBUaGUgc3RhcnRlciYjeDI3O3MgPGNvZGU+c2V0U2Vjb25kcygpPC9jb2RlPiBzd2FwIGNoYW5nZWQgdGhlIGRhdGEgaW5zaWRlIHRoZSBvYmplY3RzIGFuZCBhdHRhY2hlZCB0aGUgdGltZXMgdG8gdGhlIHdyb25nIHBlb3BsZS48L3A+", "reflection": [{"q": "\u003cp>The starter sorted the times correctly and still produced a wrong leaderboard. In one or two sentences, what is the difference between sorting one field and sorting the records?\u003c/p>", "a": "PHA+U29ydGluZyBvbmx5IHRoZSBzZWNvbmRzIHJlYXJyYW5nZXMgb25lIGZpZWxkIGFuZCBzZXBhcmF0ZXMgaXQgZnJvbSB0aGUgcmVzdCBvZiBlYWNoIHJlY29yZC4gU29ydGluZyB0aGUgUnVubmVyIG9iamVjdHMgbW92ZXMgZWFjaCBydW5uZXImI3gyNztzIG5hbWUgYW5kIHRpbWUgdG9nZXRoZXIsIHNvIGV2ZXJ5IHJlY29yZCBzdGF5cyBpbnRhY3QuPC9wPg=="}, {"q": "\u003cp>With your shorter passes, how many comparisons would a field of 100 runners need? How many did the starter&#x27;s version need?\u003c/p>", "a": "PHA+OTkgKyA5OCArIC4uLiArIDEgPSA0LDk1MCBjb21wYXJpc29ucy4gVGhlIHN0YXJ0ZXIgbWFrZXMgOTkgcGFzc2VzIG9mIDk5IGNvbXBhcmlzb25zIGVhY2gsIDksODAxLjwvcD4="}, {"q": "\u003cp>The swap moves references, not the objects themselves. How many \u003ccode>Runner\u003c/code> objects exist before and after \u003ccode>sortByTime()\u003c/code> runs?\u003c/p>", "a": "PHA+Rml2ZSBpbiBib3RoIGNhc2VzLiBUaGUgc29ydCBvbmx5IGNoYW5nZXMgd2hpY2ggYXJyYXkgZWxlbWVudCByZWZlcnMgdG8gd2hpY2ggUnVubmVyOyBubyBSdW5uZXIgaXMgY3JlYXRlZCwgY29waWVkIG9yIGRlc3Ryb3llZC48L3A+"}], "extension": "\u003cp>Rewrite the sort as an insertion sort (Figure 8-25) and count its comparisons for the same five runners. Then give both sorts a field that is already in order. Which one does less work?\u003c/p>", "worth": "\u003cp>Java&#x27;s own \u003ccode>Arrays.sort()\u003c/code> (section 8.9) doesn&#x27;t use a bubble sort. For objects it uses TimSort, designed by Tim Peters for Python in 2002, which finds runs that are already in order and merges them. Like your fixed sort it is \u003cem>stable\u003c/em>: runners with equal times keep their original order.\u003c/p>", "assist": true, "storageKey": "lab:COP1800 · Java Programming I:8.7", "version": "7e9fcd6728", "warmup": [{"q": "\u003cp>Why does a swap need a third variable? What would \u003ccode>runners[b] = runners[b + 1]; runners[b + 1] = runners[b];\u003c/code> do?\u003c/p>", "a": "PHA+VGhlIGZpcnN0IGFzc2lnbm1lbnQgb3ZlcndyaXRlcyBydW5uZXJzW2JdLCBzbyBpdHMgb2xkIHZhbHVlIGlzIGxvc3QuIEJvdGggZWxlbWVudHMgd291bGQgZW5kIHVwIHJlZmVycmluZyB0byB0aGUgc2FtZSBydW5uZXIsIHRoZSBvbmUgZnJvbSBiICsgMS4gQSB0ZW1wb3JhcnkgdmFyaWFibGUga2VlcHMgdGhlIGZpcnN0IHZhbHVlIHdoaWxlIHRoZSBzZWNvbmQgaXMgY29waWVkLjwvcD4="}, {"q": "\u003cp>After the first pass of a bubble sort over these 5 runners, which runner is certain to be in the final place, and where?\u003c/p>", "a": "PHA+VGhlIHNsb3dlc3QgcnVubmVyLCBDbGVvLCBpcyBpbiB0aGUgbGFzdCBlbGVtZW50LCBydW5uZXJzWzRdLCBiZWNhdXNlIGV2ZXJ5IGNvbXBhcmlzb24gY2FycmllZCB0aGUgbGFyZ2VyIHRpbWUgb25lIHBsYWNlIGZ1cnRoZXIgZG93bi48L3A+"}], "minWords": 15, "hubHref": "index.html"}</script>
+<script>
+(function(){
+  "use strict";
+  var D = JSON.parse(document.getElementById("lab-data").textContent);
+  var E = window.LabEngine, RUNNER = window.LabRunner, WEB = window.LabWeb;
+  var $ = function(id){ return document.getElementById(id); };
+  var LANG = D.language, FILES = D.files, MAIN = D.mainFile, MULTI = FILES.length > 1;
+  var IS_WEB = LANG === "web", CAN_RUN = !!(D.run && D.run.inBrowser && RUNNER), TEST_IN_PAGE = !!(D.test && D.test.inBrowser && CAN_RUN);
+  var LAYOUT = IS_WEB && D.layout && D.layout.tests.length ? D.layout : null;
+  function fileInfo(name){ return FILES.filter(function(f){ return f.name === name; })[0] || FILES[0]; }
+  function langOf(name){ return E.langFor(name, LANG === "web" ? "html" : LANG); }
+  function starterMap(){ var m = {}; FILES.forEach(function(f){ m[f.name] = f.starter; }); return m; }
+
+  // ---------------- state ----------------
+  function fresh(){ return { v:2, ver: D.version, code: fileInfo(MAIN).starter, files: starterMap(), cur: MAIN, runs: 0, attempts: 0, checkedCode: null, results: null, lastDetail: null,
+    hints: 0, solutionViewed: false, output: "", outputMatch: null, outputSource: null, compared: false, expectedSeen: false, matchedAfterSeen: false,
+    refl: [], shown: [], warm: [], warmShown: [], name: "", stdin: (D.run && D.run.stdin) || "", predict: "", execs: 0,
+    layout: null, layoutDetail: null, layoutRuns: 0, layoutChecked: null, pvWidth: null, outputChecked: null }; }
+  var updatedNotice = false;
+  var S = (function(){
+    try {
+      var s = JSON.parse(localStorage.getItem(D.storageKey) || "null");
+      if (!s || s.v !== 2) return null;
+      var f = fresh(); for (var k in f) if (!(k in s)) s[k] = f[k];
+      if (!s.files || typeof s.files !== "object") { s.files = {}; s.files[MAIN] = s.code; }   // saved before labs had several files
+      FILES.forEach(function(fi){ if (!(fi.name in s.files) || !fi.editable) s.files[fi.name] = fi.starter; });
+      Object.keys(s.files).forEach(function(n){ if (!FILES.some(function(fi){ return fi.name === n; })) delete s.files[n]; });
+      if (!FILES.some(function(fi){ return fi.name === s.cur; })) s.cur = MAIN;
+      if (s.ver !== D.version) {
+        // The lab changed after it was posted: keep the student's code and answers, re-run everything else.
+        s.ver = D.version; s.results = null; s.lastDetail = null; s.checkedCode = null; s.outputMatch = null; s.matchedAfterSeen = false;
+        s.layout = null; s.layoutDetail = null; s.layoutChecked = null;
+        updatedNotice = true;
+      }
+      return s;
+    } catch(e){ return null; }
+  })() || fresh();
+  var storageOK = true;
+  function snapshot(){ return MULTI ? JSON.stringify(S.files) : S.files[MAIN]; }
+  function layoutAll(){ return !!S.layout && LAYOUT.tests.every(function(t){ return S.layout[t.id]; }); }
+  function save(){
+    var all = S.results ? D.checks.every(function(c){ return S.results[c.id]; }) : false;
+    var outState = LAYOUT ? (S.layout ? layoutAll() : null) : S.outputMatch;
+    S.stats = { passed: S.results ? D.checks.filter(function(c){ return S.results[c.id]; }).length : 0, total: D.checks.length, all: all, output: outState, runs: S.runs, at: Date.now() };
+    S.code = S.files[MAIN];
+    try { localStorage.setItem(D.storageKey, JSON.stringify(S)); storageOK = true; } catch(e){ storageOK = false; }
+    $("saved").textContent = storageOK ? "Saved in this browser" : "Not saved: storage is blocked here. Download your code before leaving.";
+  }
+  try { var nm = S.name || localStorage.getItem("lab:name") || ""; S.name = nm; } catch(e){}
+
+  // ---------------- helpers ----------------
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function unb64(s){ if (!s) return ""; try { var b = atob(s), u = new Uint8Array(b.length); for (var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return new TextDecoder().decode(u); } catch(e){ return ""; } }
+  var statusTimer;
+  function flash(msg){ $("status").textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(function(){ $("status").textContent = ""; }, 4000); }
+  function copy(text, what){
+    function fallback(){
+      var t = document.createElement("textarea"); t.value = text; t.setAttribute("readonly",""); t.style.position="fixed"; t.style.opacity="0";
+      document.body.appendChild(t); t.select(); var ok = false; try { ok = document.execCommand("copy"); } catch(e){}
+      document.body.removeChild(t); flash(ok ? what + " copied." : "Copy was blocked. Select the text and copy it manually.");
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function(){ flash(what + " copied."); }, fallback); else fallback();
+  }
+  function download(name, text, type){
+    try {
+      var blob = new Blob([type ? text : text.replace(/\n/g, "\r\n")], { type: type || "text/plain;charset=utf-8" });
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      flash("Downloading " + name + ". If nothing appears, use Copy instead.");
+    } catch(e){ flash("Download is blocked here. Use Copy instead."); }
+  }
+
+  // ---------------- syntax highlighting (editor and code blocks) ----------------
+  var KW = {
+    csharp: "abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof static string struct switch this throw true try typeof uint ulong unchecked ushort using virtual void volatile while var get set init value record async await nameof when where yield dynamic required",
+    java: "abstract assert boolean break byte case catch char class const continue default do double else enum extends final finally float for if implements import instanceof int interface long native new null package private protected public return short static super switch synchronized this throw throws transient true false try void volatile while var record sealed permits yield",
+    python: "and as assert async await break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield self match case",
+    javascript: "async await break case catch class const continue debugger default delete do else export extends false finally for function if import in instanceof let new null return static super switch this throw true try typeof undefined var void while with yield of",
+    cpp: "auto bool break case catch char class const constexpr continue default delete do double else enum explicit false float for friend if inline int long namespace new nullptr operator private protected public return short signed sizeof static struct switch template this throw true try typedef typename unsigned using virtual void while override final std string vector",
+    c: "auto break case char const continue default do double else enum extern float for goto if int long register return short signed sizeof static struct switch typedef union unsigned void volatile while NULL bool true false"
+  };
+  var KWSETS = {};
+  function kwset(lang){ if (!KWSETS[lang]) { var o = {}; (KW[lang] || "").split(" ").forEach(function(k){ o[k] = 1; }); KWSETS[lang] = o; } return KWSETS[lang]; }
+  var RX_PY = /(#[^\n]*)|([rRbBfFuU]{0,2}(?:"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'))|(\b\d[\d_]*(?:\.\d+)?(?:[eE][+-]?\d+)?j?\b)|([A-Za-z_]\w*)/g;
+  var RX_C = /(\/\/[^\n]*|\/\*[\s\S]*?(?:\*\/|$))|(@"(?:[^"]|"")*"|\$?@?"""[\s\S]*?(?:"""|$)|\$?"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d[\d_]*(?:\.\d+)?(?:[eE][+-]?\d+)?[fFdDmMlLuU]*\b|\b0[xX][0-9a-fA-F]+\b)|([A-Za-z_]\w*)/g;
+  function span(cls, t){ return cls ? '<span class="' + cls + '">' + esc(t) + "</span>" : esc(t); }
+  function hlCode(code, lang){
+    var RX = lang === "python" ? RX_PY : RX_C, KWS = kwset(lang), out = "", last = 0, m; RX.lastIndex = 0;
+    while ((m = RX.exec(code))) {
+      if (m[0] === "") { RX.lastIndex++; continue; }
+      out += esc(code.slice(last, m.index));
+      var cls = "";
+      if (m[1]) cls = "hl-com"; else if (m[2]) cls = "hl-str"; else if (m[3]) cls = "hl-num";
+      else if (KWS[m[4]]) cls = "hl-kw";
+      else if (/^\s*\(/.test(code.slice(RX.lastIndex, RX.lastIndex + 40))) cls = "hl-fn";
+      else if (/^[A-Z]/.test(m[4]) && lang !== "c") cls = "hl-type";
+      out += span(cls, m[0]);
+      last = RX.lastIndex;
+    }
+    return out + esc(code.slice(last));
+  }
+  // CSS / SCSS: selectors, properties, values, at-rules, comments, strings
+  function hlCss(code, scss){
+    var RX = scss ? /(\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(@[\w-]+)|([{};])|(#[0-9a-fA-F]{3,8}\b)|(\$[\w-]+)|(-?\d*\.?\d+(?:[a-zA-Z]+|%)?)|(!important)|([\w-]+)(?=\s*:(?!:|hover|focus|active|visited|first|last|nth|not|is|where|has|before|after|root|checked|disabled|link))|([^\s{};:"'@#$0-9-][^\s{};"'@]*)/g
+                   : /(\/\*[\s\S]*?(?:\*\/|$))|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(@[\w-]+)|([{};])|(#[0-9a-fA-F]{3,8}\b)|(\$[\w-]+)|(-?\d*\.?\d+(?:[a-zA-Z]+|%)?)|(!important)|([\w-]+)(?=\s*:(?!:|hover|focus|active|visited|first|last|nth|not|is|where|has|before|after|root|checked|disabled|link))|([^\s{};:"'@#$0-9-][^\s{};"'@]*)/g;
+    var out = "", last = 0, m, stack = [], prelude = "", inDecl = function(){ return stack.length && stack[stack.length - 1] === "d"; };
+    RX.lastIndex = 0;
+    while ((m = RX.exec(code))) {
+      if (m[0] === "") { RX.lastIndex++; continue; }
+      out += esc(code.slice(last, m.index));
+      var t = m[0], cls = "";
+      if (m[1]) cls = "hl-com";
+      else if (m[2]) cls = "hl-str";
+      else if (m[3]) { cls = "hl-kw"; prelude += t; }
+      else if (m[4]) {
+        if (t === "{") { stack.push(/^\s*@(media|supports|layer|container|document|keyframes|-webkit-keyframes)/.test(prelude) ? "g" : "d"); prelude = ""; }
+        else if (t === "}") { stack.pop(); prelude = ""; } else prelude = "";
+      }
+      else if (m[5]) cls = inDecl() ? "hl-num" : "hl-type";
+      else if (m[6]) cls = "hl-fn";
+      else if (m[7]) cls = inDecl() ? "hl-num" : "";
+      else if (m[8]) cls = "hl-kw";
+      else if (m[9]) { cls = inDecl() ? "hl-fn" : "hl-type"; if (!inDecl()) prelude += t; }
+      else if (m[10]) { cls = inDecl() ? "" : "hl-type"; if (!inDecl()) prelude += t + " "; }
+      out += span(cls, t);
+      last = RX.lastIndex;
+    }
+    return out + esc(code.slice(last));
+  }
+  // HTML: tags, attributes, values, comments; <style> and <script> contents in their own colours
+  function hlHtml(code){
+    var out = "", i = 0, n = code.length;
+    while (i < n) {
+      if (code.substr(i, 4) === "<!--") { var e = code.indexOf("-->", i + 4); e = e < 0 ? n : e + 3; out += span("hl-com", code.slice(i, e)); i = e; continue; }
+      var m = /^<\/?([A-Za-z][\w-]*)|^<!doctype[^>]*>/i.exec(code.slice(i, i + 40));
+      if (code[i] === "<" && m) {
+        if (m[0][1] === "!" || /^<!/i.test(m[0])) { out += span("hl-com", m[0]); i += m[0].length; continue; }
+        out += esc(m[0].slice(0, m[0].indexOf(m[1]))) + span("hl-kw", m[1]); i += m[0].length;
+        var tag = m[1].toLowerCase(), closing = m[0][1] === "/";
+        while (i < n && code[i] !== ">") {
+          var a = /^([^\s=>\/"']+)|^("[^"]*"?|'[^']*'?)|^(\s+|=|\/)/.exec(code.slice(i));
+          if (!a) { out += esc(code[i]); i++; continue; }
+          out += a[1] ? span("hl-fn", a[0]) : a[2] ? span("hl-str", a[0]) : esc(a[0]); i += a[0].length;
+        }
+        if (i < n) { out += esc(">"); i++; }
+        if (!closing && (tag === "style" || tag === "script")) {
+          var endIdx = code.toLowerCase().indexOf("</" + tag, i); if (endIdx < 0) endIdx = n;
+          var inner = code.slice(i, endIdx);
+          out += tag === "style" ? hlCss(inner) : hlCode(inner, "javascript"); i = endIdx;
+        }
+        continue;
+      }
+      var amp = /^&[#\w]+;/.exec(code.slice(i, i + 12));
+      if (amp) { out += span("hl-num", amp[0]); i += amp[0].length; continue; }
+      out += esc(code[i]); i++;
+    }
+    return out;
+  }
+  function hl(code, lang){
+    lang = lang || LANG;
+    if (lang === "css") return hlCss(code, false);
+    if (lang === "scss") return hlCss(code, true);
+    if (lang === "html" || lang === "web") return hlHtml(code);
+    return hlCode(code, lang);
+  }
+
+  // ---------------- editor ----------------
+  var ta, hlPre, gutter, IND = D.indent || "    ";
+  var COMMENT = { css: ["/*", "*/"], html: ["<!--", "-->"], python: ["#", ""], scss: ["//", ""] };
+  function curLang(){ return langOf(S.cur); }
+  function buildEditor(){
+    var ed = document.createElement("div"); ed.className = "ed";
+    var g = document.createElement("div"); g.className = "gutter"; g.setAttribute("aria-hidden", "true");
+    gutter = document.createElement("pre"); g.appendChild(gutter);
+    var area = document.createElement("div"); area.className = "area";
+    hlPre = document.createElement("pre"); hlPre.setAttribute("aria-hidden", "true");
+    ta = document.createElement("textarea");
+    ta.setAttribute("spellcheck", "false"); ta.setAttribute("autocapitalize", "off"); ta.setAttribute("autocomplete", "off");
+    ta.setAttribute("autocorrect", "off"); ta.setAttribute("wrap", "off");
+    area.appendChild(hlPre); area.appendChild(ta); ed.appendChild(g); ed.appendChild(area);
+    $("editor").appendChild(ed);
+    var t;
+    ta.addEventListener("input", function(e){
+      render(); assistInput(e); clearTimeout(t);
+      t = setTimeout(function(){ if (!ta.readOnly) { S.files[S.cur] = ta.value; save(); markStale(); schedulePreview(); } }, 350);
+    });
+    ta.addEventListener("scroll", sync);
+    ta.addEventListener("keydown", onKey);
+    openFile(S.cur, true);
+    buildAssist();
+  }
+  function commit(){ if (ta && !ta.readOnly) S.files[S.cur] = ta.value; }
+  function openFile(name, initial){
+    if (!initial) commit();
+    S.cur = name; var fi = fileInfo(name);
+    ta.value = S.files[name]; ta.readOnly = !fi.editable;
+    ta.setAttribute("aria-label", "Code editor, " + name + (fi.editable ? "" : " (read-only)"));
+    $("edFile").textContent = name; $("edRo").hidden = fi.editable;
+    $("edLang").textContent = ({ css: "CSS", scss: "SCSS", html: "HTML", javascript: "JavaScript", python: "Python" })[langOf(name)] || D.langLabel;
+    document.querySelectorAll("#tabs .tab").forEach(function(b){ var on = b.getAttribute("data-file") === name; b.setAttribute("aria-selected", on ? "true" : "false"); b.tabIndex = on ? 0 : -1; });
+    ta.scrollTop = 0; ta.scrollLeft = 0; render();
+    if (!initial) save();
+  }
+  function buildTabs(){
+    if (!MULTI) return;
+    var bar = $("tabs"); bar.hidden = false;
+    bar.innerHTML = FILES.map(function(f){
+      return '<button class="tab" role="tab" type="button" data-file="' + esc(f.name) + '">' + esc(f.name) + (f.editable ? "" : '<span class="ro">read-only</span>') + '</button>';
+    }).join("");
+    bar.addEventListener("click", function(e){ var b = e.target.closest(".tab"); if (b) openFile(b.getAttribute("data-file")); });
+    bar.addEventListener("keydown", function(e){
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      var names = FILES.map(function(f){ return f.name; }), i = names.indexOf(S.cur) + (e.key === "ArrowRight" ? 1 : -1);
+      i = (i + names.length) % names.length; openFile(names[i]); bar.querySelector('[data-file="' + names[i] + '"]').focus();
+    });
+  }
+  function render(){
+    hlPre.innerHTML = hl(ta.value, curLang()) + "\n ";
+    var n = ta.value.split("\n").length, s = "";
+    for (var i = 1; i <= n; i++) s += i + "\n";
+    gutter.textContent = s;
+    sync();
+  }
+  function sync(){ hlPre.scrollTop = ta.scrollTop; hlPre.scrollLeft = ta.scrollLeft; gutter.parentNode.scrollTop = ta.scrollTop; }
+  // ---------------- code completion and parameter hints (assist.js; off when "autocomplete": false) ----------------
+  var ASSIST = !!D.assist && typeof LabAssist !== "undefined", AC = null, acBox = null, sigBox = null, acTimer = null;
+  var KIND = { method: "m", "function": "f", property: "p", field: "p", constant: "c", "class": "C", type: "T", keyword: "k", variable: "v",
+               word: "w", value: "=", tag: "<>", attribute: "a" };
+  function assistFiles(){ var f = {}; FILES.forEach(function(x){ if (x.name !== S.cur) f[x.name] = S.files[x.name]; }); if (D.test && D.test.code) f[D.test.fileName] = D.test.code; return f; }
+  function caretXY(pos){
+    var cs = getComputedStyle(ta), r = ta.getBoundingClientRect(), v = ta.value.slice(0, pos);
+    var line = v.split("\n").length - 1, lastLine = v.slice(v.lastIndexOf("\n") + 1), col = 0;
+    for (var i = 0; i < lastLine.length; i++) col = lastLine[i] === "\t" ? col + 4 - (col % 4) : col + 1;
+    if (!caretXY.cw || caretXY.font !== cs.font) { var c = document.createElement("canvas").getContext("2d"); c.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily; caretXY.cw = c.measureText("0000000000").width / 10; caretXY.font = cs.font; }
+    var lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.6;
+    return { x: r.left + parseFloat(cs.paddingLeft) + col * caretXY.cw - ta.scrollLeft, top: r.top + parseFloat(cs.paddingTop) + line * lh - ta.scrollTop, lh: lh, r: r };
+  }
+  function acClose(){
+    AC = null; if (acBox) acBox.hidden = true;
+    ta.setAttribute("aria-expanded", "false"); ta.removeAttribute("aria-activedescendant");
+  }
+  function sigClose(){ if (sigBox) sigBox.hidden = true; ta.removeAttribute("aria-describedby"); }
+  function acRender(){
+    var pre = ta.value.slice(AC.start, ta.selectionStart);
+    acBox.innerHTML = AC.items.map(function(it, i){
+      var lb = esc(it.label), k = it.label.toLowerCase().indexOf(pre.toLowerCase());
+      if (pre && k >= 0) lb = esc(it.label.slice(0, k)) + "<b>" + esc(it.label.slice(k, k + pre.length)) + "</b>" + esc(it.label.slice(k + pre.length));
+      return '<li role="option" id="ac-' + i + '" aria-selected="' + (i === AC.sel) + '" data-i="' + i + '"><span class="ki" aria-hidden="true">' + esc(KIND[it.kind] || "·") + '</span>' +
+        '<span class="lb">' + lb + (it.call ? '<span aria-hidden="true">()</span>' : '') + '</span><span class="dt">' + esc(it.detail || it.kind) + '</span></li>';
+    }).join("");
+    ta.setAttribute("aria-activedescendant", "ac-" + AC.sel);
+    var cur = acBox.children[AC.sel]; if (cur) { var top = cur.offsetTop, bottom = top + cur.offsetHeight; if (top < acBox.scrollTop) acBox.scrollTop = top; else if (bottom > acBox.scrollTop + acBox.clientHeight) acBox.scrollTop = bottom - acBox.clientHeight; }
+  }
+  function acPlace(){
+    var p = caretXY(AC.start), w = acBox.offsetWidth, h = acBox.offsetHeight;
+    var x = Math.max(8, Math.min(p.x - 30, innerWidth - w - 8)), y = p.top + p.lh + 2;
+    if (y + h > innerHeight - 8) y = Math.max(8, p.top - h - 2);
+    acBox.style.left = x + "px"; acBox.style.top = y + "px";
+  }
+  function acUpdate(force){
+    if (!ASSIST || ta.readOnly || ta.selectionStart !== ta.selectionEnd) { acClose(); return; }
+    var res = null;
+    try { res = LabAssist.complete(assistFiles(), S.cur, ta.value, ta.selectionStart, LANG === "web" ? "html" : LANG, !!force); } catch(e){ res = null; }
+    if (!res || !res.items.length) { acClose(); return; }
+    var keep = AC && AC.items[AC.sel] ? AC.items[AC.sel].label : null;
+    AC = { items: res.items, start: res.start, end: res.end, sel: 0, kind: res.kind };
+    if (keep) for (var i = 0; i < res.items.length; i++) if (res.items[i].label === keep) { AC.sel = i; break; }
+    acBox.hidden = false; ta.setAttribute("aria-expanded", "true");
+    acRender(); acPlace();
+    $("acLive").textContent = res.items.length + " suggestion" + (res.items.length === 1 ? "" : "s") + ". Up and down to choose, Enter to insert.";
+  }
+  function acAccept(i){
+    var it = AC.items[i == null ? AC.sel : i], s0 = AC.start, e0 = ta.selectionStart, text = it.insert, caret = null;
+    var after = ta.value.slice(e0);
+    while (/[\w$-]/.test(after.charAt(0)) && it.kind !== "value") { e0++; after = after.slice(1); }   // replace the rest of the word too
+    if (it.call && after.charAt(0) !== "(") { text = it.insert + "()"; caret = s0 + it.insert.length + (it.params ? 1 : 2); }
+    else if (it.caretBack) caret = s0 + text.length - it.caretBack;
+    if (AC.kind === "html-close" && after.charAt(0) !== ">") text += ">";
+    acClose();
+    replace(s0, e0, text, caret);
+    if (it.reopen) setTimeout(function(){ acUpdate(true); }, 0);
+    if (it.call && it.params) sigUpdate();
+  }
+  function sigUpdate(){
+    if (!ASSIST) return;
+    var r = null;
+    try { r = LabAssist.signature(assistFiles(), S.cur, ta.value, ta.selectionStart, LANG === "web" ? "html" : LANG); } catch(e){}
+    if (!r) { sigClose(); return; }
+    sigBox.innerHTML = esc(r.label) + "(" + r.params.map(function(p, i){ return i === r.active ? "<b>" + esc(p) + "</b>" : esc(p); }).join(", ") + ")";
+    sigBox.hidden = false; ta.setAttribute("aria-describedby", "sigTip");
+    var p = caretXY(ta.selectionStart), h = sigBox.offsetHeight, w = sigBox.offsetWidth;
+    sigBox.style.left = Math.max(8, Math.min(p.x - 20, innerWidth - w - 8)) + "px";
+    sigBox.style.top = (p.top - h - 4 > 8 ? p.top - h - 4 : p.top + p.lh + 4) + "px";
+  }
+  function assistInput(e){
+    if (!ASSIST) return;
+    clearTimeout(acTimer);
+    var typed = e && e.inputType === "insertText" ? e.data || "" : "", del = e && /^delete/.test(e.inputType || "");
+    if (!typed && !del) { acClose(); sigClose(); return; }
+    acTimer = setTimeout(function(){
+      if (typed && /[\w$@.<\/:>#-]$/.test(typed) || (del && AC)) acUpdate(false); else acClose();
+      if (typed && /[(,]$/.test(typed) || (sigBox && !sigBox.hidden)) sigUpdate();
+      if (typed === ")") sigClose();
+    }, 30);
+  }
+  function buildAssist(){
+    if (!ASSIST) return;
+    acBox = document.createElement("ul"); acBox.className = "ac"; acBox.id = "acList"; acBox.setAttribute("role", "listbox"); acBox.setAttribute("aria-label", "Suggestions"); acBox.hidden = true;
+    sigBox = document.createElement("div"); sigBox.className = "sigtip"; sigBox.id = "sigTip"; sigBox.setAttribute("role", "tooltip"); sigBox.hidden = true;
+    var live = document.createElement("div"); live.className = "sr"; live.id = "acLive"; live.setAttribute("aria-live", "polite");
+    document.body.appendChild(acBox); document.body.appendChild(sigBox); document.body.appendChild(live);
+    ta.setAttribute("aria-autocomplete", "list"); ta.setAttribute("aria-controls", "acList"); ta.setAttribute("aria-expanded", "false");
+    acBox.addEventListener("mousedown", function(e){ e.preventDefault(); var li = e.target.closest("li"); if (li && AC) acAccept(+li.getAttribute("data-i")); });
+    ta.addEventListener("blur", function(){ acClose(); sigClose(); });
+    ta.addEventListener("mousedown", function(){ acClose(); sigClose(); });
+    ta.addEventListener("scroll", function(){ if (AC) acPlace(); if (sigBox && !sigBox.hidden) sigUpdate(); });
+    window.addEventListener("scroll", function(){   // the list and the hint follow the caret; they close when it leaves the screen
+      if (!AC && (!sigBox || sigBox.hidden)) return;
+      var p = caretXY(ta.selectionStart);
+      if (p.top < 0 || p.top > innerHeight) { acClose(); sigClose(); return; }
+      if (AC) acPlace(); if (sigBox && !sigBox.hidden) sigUpdate();
+    }, { passive: true });
+    window.addEventListener("resize", function(){ acClose(); sigClose(); });
+    $("kbNote").textContent = "Suggestions appear as you type (Ctrl+Space shows them any time; Enter or Tab inserts one, Esc closes the list). Tab indents, Shift+Tab outdents, Ctrl+/ comments a line. To leave the editor with the keyboard, press Esc, then Tab.";
+  }
+  // Auto-closing pairs: ( [ { " ' (and ` in JavaScript); typing the closer steps over it; Backspace removes an empty pair.
+  var PAIRS = { "(": ")", "[": "]", "{": "}", '"': '"', "'": "'", "`": "`" };
+  function assistKey(e, v, s, en, lang){
+    if (!ASSIST || e.ctrlKey || e.metaKey || e.altKey) return false;
+    var k = e.key, next = v.charAt(en), prev = v.charAt(s - 1), code = lang !== "html" || /<[^>]*$/.test(v.slice(0, s));
+    if (k === "Backspace" && s === en && s > 0 && PAIRS[prev] && PAIRS[prev] === next) { e.preventDefault(); replace(s - 1, s + 1, "", s - 1); return true; }
+    if ((k === ")" || k === "]" || k === "}" || k === '"' || k === "'" || k === "`") && s === en && next === k && (k !== "'" || lang !== "html")) {
+      if (k === '"' || k === "'" || k === "`") { if (prev === "\\") return false; }
+      e.preventDefault(); ta.setSelectionRange(s + 1, s + 1); if (k === ")") sigClose(); return true;
+    }
+    if (!PAIRS[k] || (k === "`" && lang !== "javascript")) return false;
+    if (s !== en) { e.preventDefault(); replace(s, en, k + v.slice(s, en) + PAIRS[k], s + 1, en + 1); return true; }     // wrap the selection
+    if (lang === "html" && !code) return false;
+    var quote = k === '"' || k === "'" || k === "`";
+    if (quote) {
+      if (/[\w$\\]/.test(prev) || (lang !== "html" && !LabAssist.inCodeAt(v, s, lang))) return false;   // don't, it's an apostrophe or an escape
+      if (k === "'" && (lang === "css" || lang === "scss") && /\w/.test(prev)) return false;
+    }
+    if (next && !/[\s)\]};,:>]/.test(next)) return false;
+    if (!quote && lang !== "html" && !LabAssist.inCodeAt(v, s, lang)) return false;
+    e.preventDefault(); replace(s, en, k + PAIRS[k], s + 1);
+    if (k === "(") sigUpdate();
+    return true;
+  }
+  // HTML: typing ">" to finish an opening tag adds its closing tag after the caret.
+  function htmlCloseTag(e, v, s, en){
+    if (!ASSIST || e.key !== ">" || s !== en) return false;
+    var m = /<([A-Za-z][\w-]*)(\s[^<>]*)?$/.exec(v.slice(0, s));
+    if (!m || LabAssist.VOID.test(m[1]) || /\/$/.test(m[2] || "") || /=\s*("[^"]*|'[^']*)$/.test(m[2] || "")) return false;
+    var close = "</" + m[1] + ">";
+    if (v.slice(en, en + close.length).toLowerCase() === close.toLowerCase()) return false;
+    e.preventDefault(); replace(s, en, ">" + close, s + 1); acClose(); return true;
+  }
+  function replace(start, end, text, selStart, selEnd){
+    ta.focus(); ta.setSelectionRange(start, end);
+    var ok = false;
+    try { ok = document.execCommand("insertText", false, text); } catch(e){}
+    if (!ok || ta.value.slice(start, start + text.length) !== text) { ta.setRangeText(text, start, end, "end"); }
+    ta.setSelectionRange(selStart == null ? start + text.length : selStart, selEnd == null ? (selStart == null ? start + text.length : selStart) : selEnd);
+    ta.dispatchEvent(new Event("input"));
+  }
+  var VOIDS = /^(area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr)$/i;
+  var escaped = false;
+  function onKey(e){
+    var v = ta.value, s = ta.selectionStart, en = ta.selectionEnd, lang = curLang();
+    if (AC) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); AC.sel = (AC.sel + (e.key === "ArrowDown" ? 1 : -1) + AC.items.length) % AC.items.length; acRender(); return; }
+      if ((e.key === "Enter" || e.key === "Tab") && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        var chosen = AC.items[AC.sel], typedWord = ta.value.slice(AC.start, s);
+        // the word is already complete (e.g. "return", or a variable typed in full): Enter makes a new line as usual
+        if (chosen.label === typedWord && !(chosen.call && ta.value.charAt(s) !== "(")) acClose();
+        else { e.preventDefault(); escaped = false; acAccept(); return; }
+      }
+      if (e.key === "Escape") { e.preventDefault(); acClose(); return; }
+      if (/^(ArrowLeft|ArrowRight|Home|End|PageUp|PageDown)$/.test(e.key)) acClose();
+    }
+    if (e.key === "Escape" && sigBox && !sigBox.hidden) { e.preventDefault(); sigClose(); return; }
+    if (ASSIST && (e.ctrlKey || e.metaKey) && (e.key === " " || e.code === "Space")) { e.preventDefault(); clearTimeout(acTimer); acUpdate(true); if (!AC) sigUpdate(); return; }
+    if (e.key === "Escape") { escaped = true; return; }
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); if (e.shiftKey && CAN_RUN) execute(); else runChecks(false); return; }
+    if (ta.readOnly) return;
+    if (e.key === "Tab") {
+      if (escaped) { escaped = false; return; }
+      e.preventDefault();
+      var ls = v.lastIndexOf("\n", s - 1) + 1;
+      if (s === en && !e.shiftKey) { replace(s, en, IND); return; }
+      var le = v.indexOf("\n", en - (en > s && v[en - 1] === "\n" ? 1 : 0)); if (le < 0) le = v.length;
+      var block = v.slice(ls, le), lines = block.split("\n"), first = 0, total = 0;
+      var out = lines.map(function(l, i){
+        if (e.shiftKey) { var m = l.match(new RegExp("^( {1," + IND.length + "}|\\t)")), r = m ? m[0].length : 0; if (i === 0) first = -r; total -= r; return l.slice(r); }
+        if (i === 0) first = IND.length; total += IND.length; return IND + l;
+      }).join("\n");
+      replace(ls, le, out, Math.max(ls, s + first), en + total);
+      return;
+    }
+    escaped = false;
+    if (assistKey(e, v, s, en, lang) || (lang === "html" && htmlCloseTag(e, v, s, en))) return;
+    if ((e.ctrlKey || e.metaKey) && (e.key === "/" || e.code === "Slash")) {
+      e.preventDefault();
+      var a0 = v.lastIndexOf("\n", s - 1) + 1, b0 = v.indexOf("\n", en); if (b0 < 0) b0 = v.length;
+      var ls2 = v.slice(a0, b0).split("\n"), cm = COMMENT[lang] || ["//", ""], open = cm[0], close = cm[1];
+      var allC = ls2.every(function(l){ return !l.trim() || (l.trim().indexOf(open) === 0 && (!close || l.trim().slice(-close.length) === close)); });
+      var res = ls2.map(function(l){
+        if (!l.trim()) return l;
+        if (allC) { var r2 = l.replace(new RegExp("^(\\s*)" + open.replace(/[.*+?^${}()|[\]\\\/]/g, "\\$&") + " ?"), "$1"); return close ? r2.replace(new RegExp(" ?" + close.replace(/[.*+?^${}()|[\]\\\/]/g, "\\$&") + "\\s*$"), "") : r2; }
+        return l.replace(/^(\s*)/, "$1" + open + " ") + (close ? " " + close : "");
+      }).join("\n");
+      replace(a0, b0, res, a0, a0 + res.length);
+      return;
+    }
+    if (e.key === "Enter" && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      var lstart = v.lastIndexOf("\n", s - 1) + 1, cur = v.slice(lstart, s), ind = cur.match(/^[ \t]*/)[0];
+      var before = cur.replace(/\s+$/, ""), after = v.slice(en), opens;
+      if (lang === "python") opens = /:$/.test(before);
+      else if (lang === "html") { var tm = /<([A-Za-z][\w-]*)[^<>]*>$/.exec(before); opens = !!tm && !VOIDS.test(tm[1]) && !/\/>$/.test(before) && before.indexOf("</" + tm[1]) < 0; }
+      else opens = /[{\[(]$/.test(before);
+      var closesNext = lang === "html" ? /^\s*<\//.test(after) : /^\s*[}\])]/.test(after);
+      if (opens && lang !== "python" && closesNext) {
+        var ins = "\n" + ind + IND + "\n" + ind;
+        replace(s, en, ins, s + 1 + ind.length + IND.length);
+      } else replace(s, en, "\n" + ind + (opens ? IND : ""));
+      return;
+    }
+    if ((e.key === "}" || e.key === "]" || e.key === ")") && s === en && lang !== "python" && lang !== "html") {
+      var ls3 = v.lastIndexOf("\n", s - 1) + 1, lead = v.slice(ls3, s);
+      if (/^[ \t]+$/.test(lead) && lead.length >= IND.length) { e.preventDefault(); replace(ls3, s, lead.slice(IND.length) + e.key); }
+    }
+  }
+
+  // ---------------- masthead ----------------
+  $("kicker").textContent = [D.course, D.collection].filter(Boolean).join("  ·  ");
+  $("title").textContent = D.title;
+  if (D.subtitle) $("subtitle").textContent = D.subtitle; else $("subtitle").remove();
+  $("meta").innerHTML = ["Lab " + esc(D.id), "about " + esc(D.minutes) + " minutes", esc(D.langLabel)].map(function(x){ return "<span>" + x + "</span>"; }).join("") +
+    (D.source ? "<span>" + D.source + "</span>" : "");
+  document.title = D.title + " · Coding lab";
+  if (D.hubHref) { $("hubLink").href = D.hubHref; $("hubLink").hidden = false; }
+  var root = document.documentElement;
+  try { var th = localStorage.getItem("lab:theme"); if (th) root.setAttribute("data-theme", th); } catch(e){}
+  $("themeBtn").addEventListener("click", function(){
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark"; root.setAttribute("data-theme", next);
+    try { localStorage.setItem("lab:theme", next); } catch(e){}
+  });
+
+  // ---------------- brief ----------------
+  $("objectives").innerHTML = D.objectives.map(function(o){ return "<li>" + o + "</li>"; }).join("");
+  $("scenario").innerHTML = D.scenario;
+  function reqStatus(r){
+    // returns "met" | "unmet" | "" (not known yet)
+    var cs = D.checks.filter(function(c){ return c.requirement === r.id; }), states = [];
+    if (cs.length) states.push(!S.results ? null : cs.every(function(c){ return S.results[c.id]; }));
+    if (LAYOUT) { var ts = LAYOUT.tests.filter(function(t){ return t.requirement === r.id; }); if (ts.length) states.push(!S.layout ? null : ts.every(function(t){ return S.layout[t.id]; })); }
+    if (r.byOutput) states.push(S.outputMatch === true ? true : S.outputMatch === false ? false : null);
+    if (states.indexOf(false) >= 0) return "unmet";
+    if (states.length && states.every(function(x){ return x === true; })) return "met";
+    return "";
+  }
+  function renderReqs(){
+    $("reqs").innerHTML = D.requirements.map(function(r){
+      var st = reqStatus(r), lab = st === "met" ? "Met" : st === "unmet" ? "Not yet" : (r.byOutput ? "Run to confirm" : "");
+      return '<li class="' + st + '"><span class="rid">' + esc(r.id) + '</span><span>' + r.html + '</span><span class="rst">' + lab + '</span></li>';
+    }).join("");
+  }
+  function renderHints(){
+    var n = D.hints.length;
+    if (!n) { $("hintSec").hidden = true; document.querySelector(".help-link").hidden = true; return; }
+    $("hints").innerHTML = D.hints.slice(0, S.hints).map(function(h, i){ return '<div class="hint"><div class="hl">Hint ' + (i+1) + ' of ' + n + '</div>' + h + '</div>'; }).join("");
+    $("nextHint").hidden = S.hints >= n;
+    $("nextHint").textContent = S.hints ? "Show hint " + (S.hints + 1) + " of " + n : "Show the first hint";
+  }
+  $("nextHint").addEventListener("click", function(){ S.hints = Math.min(D.hints.length, S.hints + 1); save(); renderHints(); renderSummary(); });
+  function allPass(){ return !!S.results && D.checks.every(function(c){ return S.results[c.id]; }) && (!LAYOUT || layoutAll()); }
+  function renderSolution(){
+    var p = D.solutionPolicy;
+    if (p === "never" || !D.solution) { $("solSec").hidden = true; return; }
+    var open = p === "always" || allPass() || (p === "after_attempts" && S.attempts >= D.solutionAfter);
+    if (!open) {
+      $("sol").innerHTML = '<p class="small">' + (p === "after_pass"
+        ? "Available once every check" + (LAYOUT ? " and layout test" : "") + " passes, so you can compare approaches."
+        : "Available after " + D.solutionAfter + " real attempts (checks run on changed code; so far " + S.attempts + "), or once every check" + (LAYOUT ? " and layout test" : "") + " passes. Use the hints first.") + "</p>";
+      return;
+    }
+    if (!S.solutionViewed) {
+      $("sol").innerHTML = '<p class="small">Opening the solution is noted in your lab report. Compare it with your own approach rather than copying it.</p>' +
+        '<button class="btn btn-quiet btn-sm" id="solBtn" type="button">Show the solution</button>';
+      $("solBtn").addEventListener("click", function(){ S.solutionViewed = true; save(); renderSolution(); renderSummary(); });
+      return;
+    }
+    var notes = unb64(D.solutionNotes), sol = [];
+    try { sol = JSON.parse(unb64(D.solution)); } catch(e){}
+    $("sol").innerHTML = (notes ? notes : "") + sol.map(function(f){
+      return (sol.length > 1 ? '<div class="solfile">' + esc(f.name) + '</div>' : '') + '<pre class="code-block"><code>' + hl(f.code, langOf(f.name)) + "</code></pre>";
+    }).join("");
+  }
+  if (D.extension) { $("ext").innerHTML = D.extension; $("extSec").hidden = false; }
+
+  // ---------------- structure checks ----------------
+  function runChecks(focusResults){
+    commit();
+    var res = E.runAllFiles(D.checks, S.files, MAIN, LANG === "web" ? "html" : LANG), map = {}, snap = snapshot();
+    res.forEach(function(r){ map[r.id] = !!r.pass; });
+    if (S.checkedCode !== snap) S.attempts++;   // re-checking unchanged code is not a new attempt
+    S.results = map; S.runs++; S.lastDetail = res; S.checkedCode = snap; save();
+    renderResults(res, focusResults !== false); renderReqs(); renderSolution(); renderSummary();
+  }
+  function markStale(){
+    var el = $("staleNote"); if (el) el.hidden = !(S.results && S.checkedCode !== null && snapshot() !== S.checkedCode);
+    var el2 = $("layStale"); if (el2) el2.hidden = !(S.layout && S.layoutChecked !== null && snapshot() !== S.layoutChecked);
+  }
+  function whereText(c){
+    var parts = Array.isArray(c.within) ? c.within.map(String) : (/^(css|scss|html|web)$/.test(langOf(c.file || MAIN)) ? [String(c.within)] : String(c.within).split("."));
+    var what = parts.length > 1 ? "<code>" + esc(parts[parts.length - 1]) + "</code> inside <code>" + esc(parts.slice(0, -1).join(" › ")) + "</code>" : "<code>" + esc(parts[0]) + "</code>";
+    return what + (MULTI ? " in <code>" + esc(c.file || MAIN) + "</code>" : "");
+  }
+  function renderResults(res, focus){
+    var box = $("results");
+    if (!res) { box.innerHTML = (updatedNotice ? '<div class="stale">Your instructor updated this lab. Your code was kept; run the checks again.</div>' : '') + '<div class="empty">Run <strong>Check my code</strong> to see which requirements your code meets. The checks read your code; they don&rsquo;t run it.</div>'; return; }
+    var byId = {}; res.forEach(function(r){ byId[r.id] = r; });
+    var passed = res.filter(function(r){ return r.pass; }).length, total = res.length;
+    var note = IS_WEB ? "Structure checks read your HTML and CSS (comments are ignored). The layout tests in the next step measure what the browser draws."
+      : CAN_RUN ? "Structure checks read your code (comments are ignored). Use Run" + (TEST_IN_PAGE ? " and the test program" : "") + " to see what it does."
+      : "Structure checks read your code (comments are ignored). They can&rsquo;t tell whether it compiles or produces the right result.";
+    var h = '<div class="stale" id="staleNote" hidden>You&rsquo;ve changed the code since this check. Run <strong>Check my code</strong> again to update the results.</div>' +
+      '<div class="res-head"><h3 tabindex="-1" id="resH">' + passed + ' of ' + total + ' checks pass</h3><span class="small">Check ' + S.runs + '</span></div>' +
+      '<p class="res-note">' + note + '</p>';
+    if (passed === total) h += '<div class="banner ok"><strong>Every structure check passes.</strong> ' + (LAYOUT ? "Next, run the layout tests to confirm the page looks right at every width." : D.test ? "Next, run the test program to confirm the behaviour." : "Read through your code once more, then reflect and hand it in.") + '</div>';
+    h += '<ul class="chks">';
+    D.checks.forEach(function(c){
+      var r = byId[c.id] || {}, ok = !!r.pass;
+      h += '<li class="chk ' + (ok ? "pass" : "fail") + '"><span class="mk" aria-hidden="true">' + (ok ? "✓" : "✕") + '</span><div>' +
+        '<div class="t"><span class="sr">' + (ok ? "Passes: " : "Not yet: ") + '</span>' + c.title + (c.requirement ? '<span class="req">' + esc(c.requirement) + '</span>' : '') + '</div>';
+      if (!ok) {
+        if (r.reason === "not_found") h += '<div class="msg">Couldn&rsquo;t find ' + whereText(c) + ' yet. If you&rsquo;ve written it, check the spelling and capitalisation, and that its ' + (/^(html)$/.test(langOf(c.file || MAIN)) ? "tags are closed" : "braces are balanced") + '.</div>';
+        else if (r.reason === "no_file") h += '<div class="msg">This check reads <code>' + esc(r.file) + '</code>, which isn&rsquo;t part of this lab. Tell your instructor.</div>';
+        else if (r.reason === "error") h += '<div class="msg">This check could not run (' + esc(r.error) + '). Tell your instructor.</div>';
+        else h += '<div class="msg">' + c.message + '</div>';
+        if (c.hint) h += '<details><summary>A hint for this one</summary>' + c.hint + '</details>';
+      }
+      h += '</div></li>';
+    });
+    box.innerHTML = h + '</ul>';
+    markStale();
+    if (focus) $("resH").focus({ preventScroll: false });
+  }
+
+  // ---------------- run in the browser (JavaScript, Python) ----------------
+  var running = null;
+  function conWrite(pre, stream, text){
+    var sp = document.createElement("span"); if (stream === "stderr") sp.className = "err"; sp.textContent = text; pre.appendChild(sp);
+    pre.scrollTop = pre.scrollHeight;
+  }
+  function conNote(pre, text){ var sp = document.createElement("span"); sp.className = "note"; sp.textContent = (pre.textContent && !/\n$/.test(pre.textContent) ? "\n" : "") + text; pre.appendChild(sp); }
+  function setChip(el, cls, text){ el.className = "chip" + (cls ? " " + cls : ""); el.textContent = text; }
+  function describeEnd(r){
+    if (r.status === "ok") return ["ok", "Finished in " + r.ms + " ms"];
+    if (r.status === "error") return ["bad", r.exitCode != null && r.exitCode !== 1 ? "Exited with code " + r.exitCode : "Stopped by an error"];
+    if (r.status === "timeout") return ["bad", "Time limit reached"];
+    if (r.status === "stopped") return ["", "Stopped"];
+    return ["bad", "Couldn’t run"];
+  }
+  function execProgram(files, entry, stdin, pre, chip, onDone){
+    if (running) return;
+    pre.textContent = ""; setChip(chip, "busy", "Running…");
+    var outText = "";
+    running = RUNNER.run({ lang: LANG, files: files, entry: entry, stdin: stdin, timeoutMs: D.run.timeoutMs, pyodideURL: D.run.pyodideURL,
+      onOutput: function(s, t){ if (s === "stdout") outText += t; conWrite(pre, s, t); },
+      onStatus: function(st){ if (st === "loading") setChip(chip, "busy", "Starting Python…"); else if (st === "running") setChip(chip, "busy", "Running…"); } });
+    $("stopBtn").hidden = pre !== $("conOut");
+    running.then(function(r){
+      running = null; $("stopBtn").hidden = true;
+      var d = describeEnd(r); setChip(chip, d[0], d[1]);
+      if (r.message) conNote(pre, r.message);
+      onDone(r, outText);
+    });
+  }
+  function execute(){
+    if (!CAN_RUN || running) return;
+    commit(); save();
+    var files = {}; FILES.forEach(function(f){ files[f.name] = S.files[f.name]; });
+    S.execs++; save();
+    execProgram(files, D.run.entry || MAIN, $("stdinBox").value, $("conOut"), $("conState"), function(r){
+      if (r.status === "ok" && !$("conOut").textContent) conNote($("conOut"), D.run.silentNote || "Your code ran without printing anything." + (D.test ? " It is meant to be used by the test program in the next step; add a print to see values while you work." : ""));
+      renderSummary();
+    });
+  }
+  if (CAN_RUN) {
+    $("execBtn").hidden = false; $("console").hidden = false;
+    $("runBtn").className = "btn btn-quiet"; $("kbdHint").textContent = "Ctrl+Shift+Enter runs · Ctrl+Enter checks";
+    $("execBtn").addEventListener("click", execute);
+    $("stdinBox").value = S.stdin || "";
+    if (S.stdin) $("stdinWrap").open = true;
+    $("stdinBox").addEventListener("input", function(){ S.stdin = $("stdinBox").value; save(); });
+    $("stdinNote").textContent = LANG === "python" ? "Each call to input() reads the next line." : "Each prompt() or readline question reads the next line.";
+    $("clearBtn").addEventListener("click", function(){ $("conOut").textContent = ""; setChip($("conState"), "", "Cleared"); });
+    $("stopBtn").addEventListener("click", function(){ RUNNER.stop(); });
+    $("s1intro").textContent = "Work through the requirements in the editor. Run your code whenever you like to see what it does; Check my code compares it with the requirements. Your work saves in this browser as you type.";
+  }
+
+  // ---------------- test program ----------------
+  if (D.test) {
+    $("runStep").hidden = false;
+    if (D.test.predict) $("predict").innerHTML = '<div class="predict"><strong>Predict first.</strong> ' + D.test.predict + '</div>';
+    $("tpFile").textContent = D.test.fileName;
+    $("tpCode").innerHTML = hl(D.test.code, langOf(D.test.fileName));
+    D.test.expected = unb64(D.test.expected);
+    $("expected").textContent = D.test.expected;
+    $("expWrap").hidden = !S.compared;
+    $("expWrap").addEventListener("toggle", function(){ if ($("expWrap").open && !S.expectedSeen && S.outputMatch !== true) { S.expectedSeen = true; save(); } });
+    $("tpCopy").addEventListener("click", function(){ copy(D.test.code, "Test program"); });
+    $("tpDl").addEventListener("click", function(){ download(D.test.fileName, D.test.code); });
+    if (TEST_IN_PAGE) {
+      $("s2h").textContent = "Run the test program";
+      $("s2intro").textContent = "The checks above read your code. This test program uses it and prints what it does; it runs right here, in your browser. Write down what you expect, run it, and compare.";
+      $("howto").innerHTML = ""; $("pasteWrap").hidden = true; $("tpRunWrap").hidden = false; $("predWrap").hidden = false;
+      $("predBox").value = S.predict || "";
+      $("predBox").addEventListener("input", function(){ S.predict = $("predBox").value; save(); });
+      if (D.test.stdin) $("tpRunNote").textContent = "It types this input for you: " + D.test.stdin.replace(/\n$/, "").split("\n").join(" ⏎ ");
+      if (S.output && S.outputSource === "browser") { $("tpOut").textContent = S.output; setChip($("tpState"), S.outputMatch ? "ok" : "", "Last run"); }
+      $("tpRun").addEventListener("click", function(){
+        commit(); save();
+        var files = {}; FILES.forEach(function(f){ files[f.name] = S.files[f.name]; }); files[D.test.fileName] = D.test.code;
+        execProgram(files, D.test.fileName, D.test.stdin || "", $("tpOut"), $("tpState"), function(r, out){
+          if (r.status === "unavailable") { $("pasteWrap").hidden = false; $("howto").innerHTML = D.test.howToRun; return; }
+          S.output = out; S.outputSource = "browser"; save(); compare(true, out);
+        });
+      });
+    } else {
+      $("howto").innerHTML = D.test.howToRun;
+    }
+    $("outBox").value = S.outputSource === "browser" ? "" : (S.output || "");
+    $("outBox").addEventListener("input", function(){ S.output = $("outBox").value; S.outputSource = "pasted"; if (S.outputMatch !== null) { S.outputMatch = null; renderReqs(); renderSummary(); } save(); });
+    $("cmpBtn").addEventListener("click", function(){ compare(true); });
+  }
+  function compare(focus, given){
+    var actual = given != null ? given : $("outBox").value;
+    if (given == null && !actual.trim()) { $("cmp").innerHTML = '<p class="small" style="margin-top:.75rem">Paste the output first.</p>'; return; }
+    var r = E.compareOutput(D.test.expected, actual);
+    if (focus) {
+      if (r.match && S.expectedSeen && S.outputMatch !== true) S.matchedAfterSeen = true;
+      if (!r.match) S.expectedSeen = true;   // the difference table shows the expected lines
+      S.compared = true; $("expWrap").hidden = false;
+      S.outputChecked = snapshot();          // which code this output belongs to (the report flags later edits)
+    }
+    S.outputMatch = r.match; S.output = actual; save();
+    var first = r.lines.filter(function(l){ return !l.ok; })[0];
+    var h = r.match
+      ? '<div class="banner ok" style="margin-top:1rem" tabindex="-1" id="cmpH"><strong>Your output matches</strong> the expected output line for line.</div>'
+      : '<p style="margin-top:1rem" tabindex="-1" id="cmpH"><strong>Not the same yet.</strong> ' + (first ? 'The first difference is on line ' + first.n + '. ' : '') + 'Trailing spaces and blank lines at the ends are ignored; everything else, including capitalisation and punctuation, must match.</p>';
+    if (!r.match) {
+      h += '<div class="diffwrap"><table class="diff"><thead><tr><th class="n">#</th><th>Expected</th><th>Yours</th></tr></thead><tbody>';
+      r.lines.forEach(function(l){
+        h += '<tr class="' + (l.ok ? "" : "bad") + '"><td class="n">' + l.n + '</td><td>' + (l.expected == null ? '<span class="none">(no line)</span>' : esc(l.expected)) +
+          '</td><td>' + (l.actual == null ? '<span class="none">(missing)</span>' : esc(l.actual)) + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+    $("cmp").innerHTML = h;
+    renderReqs(); renderSummary();
+    if (focus) $("cmpH").focus();
+  }
+
+  // ---------------- live preview and layout tests (HTML & CSS) ----------------
+  var pvFrame = null, pvTimer = null;
+  function composed(){ commit(); return WEB.compose(S.files, D.preview.entry, D.preview.assets, false); }
+  function pvWidths(){ return D.preview.widths; }
+  function layoutPreview(){
+    if (!pvFrame) return;
+    var stage = $("pvStage"), cw = stage.clientWidth, ch = stage.clientHeight;
+    if (cw < 4) return;   // not laid out yet (hidden panel or tab): a negative scale would mirror the preview
+    var w = S.pvWidth || (cw < 600 ? pvWidths()[0] : pvWidths()[pvWidths().length - 1]);   // phones start at phone width
+    var scale = Math.min(1, (cw - 2) / w), h = Math.round(ch / scale);
+    pvFrame.style.width = w + "px"; pvFrame.style.height = h + "px";
+    pvFrame.style.transform = "scale(" + scale + ")";
+    pvFrame.style.left = Math.max(0, Math.round((cw - w * scale) / 2)) + "px";
+    $("pvScale").textContent = w + " px wide" + (scale < 0.999 ? " · shown at " + Math.round(scale * 100) + "%" : "");
+    document.querySelectorAll("#pvSeg button").forEach(function(b){ b.setAttribute("aria-pressed", Number(b.getAttribute("data-w")) === w ? "true" : "false"); });
+  }
+  function refreshPreview(){
+    if (!pvFrame) return;
+    pvFrame.srcdoc = composed();
+  }
+  function schedulePreview(){ if (!pvFrame) return; clearTimeout(pvTimer); pvTimer = setTimeout(refreshPreview, 450); }
+  if (IS_WEB) {
+    $("pvCard").hidden = false;
+    var names = { 375: "Phone", 390: "Phone", 414: "Phone", 768: "Tablet", 820: "Tablet", 1024: "Laptop", 1280: "Desktop", 1440: "Desktop" };
+    $("pvSeg").innerHTML = pvWidths().map(function(w){ return '<button type="button" data-w="' + w + '" aria-pressed="false">' + (names[w] || w + " px") + '</button>'; }).join("");
+    $("pvSeg").addEventListener("click", function(e){ var b = e.target.closest("button"); if (!b) return; S.pvWidth = Number(b.getAttribute("data-w")); save(); layoutPreview(); });
+    pvFrame = document.createElement("iframe");
+    pvFrame.setAttribute("sandbox", "allow-scripts"); pvFrame.setAttribute("title", "Preview of your page");
+    $("pvStage").appendChild(pvFrame);
+    window.addEventListener("resize", layoutPreview);
+    $("pvRefresh").addEventListener("click", refreshPreview);
+    $("pvOpen").addEventListener("click", function(){
+      var url = URL.createObjectURL(new Blob([composed()], { type: "text/html" }));
+      var w = window.open(url, "_blank"); if (!w) flash("Your browser blocked the new tab. Use Download page in the last step instead.");
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+    });
+    $("s1intro").textContent = "Edit the files in the tabs. The preview below updates as you type: switch between phone, tablet and desktop widths to see how your page responds. Your work saves in this browser.";
+    $("kbNote").textContent = "Tab indents, Shift+Tab outdents, Ctrl+/ comments a line, Ctrl+Enter checks your code. To leave the editor with the keyboard, press Esc, then Tab.";
+  }
+  if (IS_WEB) $("reqNote").innerHTML = "A requirement shows <em>met</em> when every check and layout test for it passes.";
+  if (MULTI) $("edFile").hidden = true;
+  if (LAYOUT) {
+    $("layStep").hidden = false;
+    $("layBtn").addEventListener("click", function(){ runLayout(true); });
+  }
+  function runLayout(focus){
+    commit(); save();
+    $("layBtn").disabled = true; $("layNote").textContent = "Rendering your page at " + uniq(LAYOUT.tests.map(function(t){ return (t.width || 1280) + " px"; })).join(", ") + "…";
+    var snap = snapshot();
+    WEB.runTests(S.files, LAYOUT.entry, LAYOUT.assets, LAYOUT.tests).then(function(res){
+      var map = {}; res.forEach(function(r){ map[r.id] = !!(r && r.pass); });
+      S.layout = map; S.layoutDetail = res; S.layoutRuns++; S.layoutChecked = snap; save();
+      $("layBtn").disabled = false; $("layNote").textContent = "";
+      renderLayout(res, focus); renderReqs(); renderSolution(); renderSummary();
+    });
+  }
+  function uniq(a){ return a.filter(function(x, i){ return a.indexOf(x) === i; }); }
+  function renderLayout(res, focus){
+    var box = $("layRes");
+    if (!res) { box.innerHTML = '<div class="empty">Run the layout tests when your page looks right in the preview. Each test says what it measured, so a failure tells you what to look at.</div>'; return; }
+    var byId = {}; res.forEach(function(r){ if (r) byId[r.id] = r; });
+    var passed = LAYOUT.tests.filter(function(t){ return byId[t.id] && byId[t.id].pass; }).length, total = LAYOUT.tests.length;
+    var h = '<div class="stale" id="layStale" hidden>You&rsquo;ve changed the code since these tests ran. Run them again to update the results.</div>' +
+      '<div class="res-head"><h3 tabindex="-1" id="layH">' + passed + ' of ' + total + ' layout tests pass</h3><span class="small">Run ' + S.layoutRuns + '</span></div>';
+    if (passed === total) h += '<div class="banner ok"><strong>Every layout test passes.</strong> Your page renders the way the requirements describe at every width tested.</div>';
+    h += '<ul class="chks">';
+    LAYOUT.tests.forEach(function(t){
+      var r = byId[t.id] || { pass: false, details: ["the test did not run"] }, ok = !!r.pass;
+      h += '<li class="chk ' + (ok ? "pass" : "fail") + '"><span class="mk" aria-hidden="true">' + (ok ? "✓" : "✕") + '</span><div>' +
+        '<div class="t"><span class="sr">' + (ok ? "Passes: " : "Not yet: ") + '</span>' + t.title + '<span class="w">at ' + (t.width || 1280) + ' px</span>' + (t.requirement ? '<span class="req">' + esc(t.requirement) + '</span>' : '') + '</div>';
+      if (!ok) {
+        h += '<div class="msg">' + t.message + '</div>';
+        if (r.details && r.details.length) h += '<div class="meas">What the test measured:<ul>' + r.details.map(function(d){ return "<li>" + esc(d).replace(/`([^`]+)`/g, "<code>$1</code>") + "</li>"; }).join("") + '</ul></div>';
+        if (t.hint) h += '<details><summary>A hint for this one</summary>' + t.hint + '</details>';
+      }
+      h += '</div></li>';
+    });
+    box.innerHTML = h + '</ul>';
+    markStale();
+    if (focus) $("layH").focus();
+  }
+
+  // ---------------- warm-up and reflection (same mechanics) ----------------
+  function words(t){ return (t.trim().match(/\S+/g) || []).length; }
+  function renderQA(box, items, answers, shown, prefix){
+    box.innerHTML = items.map(function(r, i){
+      return '<div class="q"><label class="field" for="' + prefix + 'q' + i + '" style="margin-top:0"><span class="sr">Question ' + (i+1) + ': </span>' + r.q + '</label>' +
+        '<textarea class="box" id="' + prefix + 'q' + i + '"></textarea>' +
+        (r.a ? '<div class="row"><button class="btn btn-quiet btn-sm" id="' + prefix + 'a' + i + '" type="button" disabled>Compare with a model answer</button><span class="small" id="' + prefix + 'n' + i + '"></span></div><div id="' + prefix + 'm' + i + '"></div>' : '') + '</div>';
+    }).join("");
+    items.forEach(function(r, i){
+      var ta2 = $(prefix + "q" + i); ta2.value = answers[i] || "";
+      function upd(){
+        answers[i] = ta2.value; save(); renderSummary();
+        if (!r.a || shown[i]) return;
+        var left = D.minWords - words(ta2.value);
+        $(prefix + "a" + i).disabled = left > 0;
+        $(prefix + "n" + i).textContent = left > 0 ? "Write " + left + " more word" + (left === 1 ? "" : "s") + " to unlock it." : "";
+      }
+      ta2.addEventListener("input", upd); upd();
+      if (r.a) {
+        var show = function(){ $(prefix + "m" + i).innerHTML = '<div class="answer"><div class="al">Model answer</div>' + unb64(r.a) + '</div>'; $(prefix + "a" + i).hidden = true; $(prefix + "n" + i).textContent = ""; };
+        $(prefix + "a" + i).addEventListener("click", function(){ shown[i] = true; save(); show(); });
+        if (shown[i]) show();
+      }
+    });
+  }
+  if (D.warmup.length) { $("warmStep").hidden = false; renderQA($("warm"), D.warmup, S.warm, S.warmShown, "w"); }
+  if (D.reflection.length) { $("reflStep").hidden = false; renderQA($("refl"), D.reflection, S.refl, S.shown, "r"); }
+  // renumber visible steps
+  (function(){ var k = 0; document.querySelectorAll(".step").forEach(function(s){ var n = s.querySelector(".n"); if (!s.hidden && n) n.textContent = ++k; }); })();
+
+  // ---------------- hand-in ----------------
+  $("nameBox").value = S.name || "";
+  $("nameBox").addEventListener("input", function(){ S.name = $("nameBox").value; save(); try { localStorage.setItem("lab:name", S.name); } catch(e){} });
+  function renderSummary(){
+    var p = S.results ? D.checks.filter(function(c){ return S.results[c.id]; }).length : null;
+    var items = [["Structure checks", p == null ? "not run yet" : p + " of " + D.checks.length + " pass"]];
+    if (LAYOUT) items.push(["Layout tests", S.layout ? LAYOUT.tests.filter(function(t){ return S.layout[t.id]; }).length + " of " + LAYOUT.tests.length + " pass" : "not run yet"]);
+    if (D.test) items.push(["Program output", S.outputMatch === true ? "matches" : S.outputMatch === false ? "differs" : "not compared yet"]);
+    if (CAN_RUN) items.push(["Runs of your code", String(S.execs || 0)]);
+    if (D.warmup.length) items.push(["Warm-up", D.warmup.filter(function(r, i){ return (S.warm[i] || "").trim(); }).length + " of " + D.warmup.length + " answered"]);
+    if (D.reflection.length) items.push(["Reflection", D.reflection.filter(function(r, i){ return (S.refl[i] || "").trim(); }).length + " of " + D.reflection.length + " answered"]);
+    items.push(["Help used", (D.hints.length ? S.hints + " of " + D.hints.length + " hints" : "no hints") + (S.solutionViewed ? ", solution viewed" : "")]);
+    $("sumList").innerHTML = items.map(function(x){ return '<li><span>' + x[0] + '</span><span class="v">' + x[1] + '</span></li>'; }).join("");
+    // "Worth knowing": a curious fact that appears once the work is done (every check, and the behaviour, confirmed)
+    var done = p === D.checks.length && (!LAYOUT || (S.layout && LAYOUT.tests.every(function(t){ return S.layout[t.id]; }))) && (!D.test || S.outputMatch === true);
+    var wb = $("worthBox"), want = !!(D.worth && done);
+    if (want && !wb.firstChild) wb.innerHTML = '<aside class="worth" aria-label="Worth knowing"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M10 1.5c.5 4.6 2.6 7.4 8.5 8.5-5.9 1.1-8 3.9-8.5 8.5-.5-4.6-2.6-7.4-8.5-8.5 5.9-1.1 8-3.9 8.5-8.5z"/></svg><span class="lbl">Worth knowing</span><div class="body">' + D.worth + '</div></aside>';
+    else if (!want && wb.firstChild) wb.innerHTML = "";
+  }
+  function strip(h){ var d = document.createElement("div"); d.innerHTML = h; return (d.textContent || "").trim(); }
+  function report(){
+    commit();
+    var res = E.runAllFiles(D.checks, S.files, MAIN, LANG === "web" ? "html" : LANG), L = [], line = new Array(61).join("-");
+    L.push("LAB REPORT", line, "Lab " + D.id + ": " + D.title, [D.course, D.collection].filter(Boolean).join(" / "),
+      "Student: " + (S.name || "(not given)"), "Generated: " + new Date().toLocaleString(), "");
+    L.push("STRUCTURE CHECKS: " + res.filter(function(r){ return r.pass; }).length + " of " + res.length + " pass");
+    D.checks.forEach(function(c){ var r = res.filter(function(x){ return x.id === c.id; })[0]; L.push("  [" + (r && r.pass ? "pass" : "    ") + "] " + (c.requirement ? c.requirement + " " : "") + strip(c.title)); });
+    L.push("  Checks run: " + S.runs + " (" + S.attempts + " with changed code)", "");
+    if (LAYOUT) {
+      var stale = S.layout && S.layoutChecked !== snapshot();
+      L.push("LAYOUT TESTS: " + (S.layout ? LAYOUT.tests.filter(function(t){ return S.layout[t.id]; }).length + " of " + LAYOUT.tests.length + " pass" + (stale ? " (code changed since the last run)" : "") : "not run"));
+      LAYOUT.tests.forEach(function(t){ L.push("  [" + (S.layout && S.layout[t.id] ? "pass" : "    ") + "] " + (t.requirement ? t.requirement + " " : "") + strip(t.title) + " (at " + (t.width || 1280) + " px)"); });
+      L.push("  Test runs: " + S.layoutRuns, "");
+    }
+    if (D.test) {
+      L.push("PROGRAM OUTPUT: " + (S.outputMatch === true ? "matches the expected output" : S.outputMatch === false ? "DIFFERS from the expected output" : "not compared") +
+        (S.outputSource === "browser" ? " (produced by running the test program in this page)" : S.outputSource === "pasted" ? " (pasted by the student)" : "") +
+        (S.outputMatch !== null && S.outputChecked !== null && S.outputChecked !== snapshot() ? " (code changed since the output was compared)" : ""));
+      if (S.outputMatch === true && S.matchedAfterSeen) L.push("  Note: the expected output had been shown before this output matched.");
+      if ((S.predict || "").trim()) L.push("  Prediction written before running:", S.predict.replace(/\s+$/, "").split("\n").map(function(x){ return "    " + x; }).join("\n"));
+      if ((S.output || "").trim()) L.push(S.output.replace(/\s+$/, ""));
+      L.push("");
+    }
+    if (CAN_RUN) L.push("CODE RUNS IN THE PAGE: " + (S.execs || 0), "");
+    if (D.warmup.length) {
+      L.push("WARM-UP");
+      D.warmup.forEach(function(r, i){ L.push("W" + (i+1) + ". " + strip(r.q), (S.warm[i] || "(no answer)").trim(), (S.warmShown[i] ? "(model answer viewed after answering)" : null), ""); });
+    }
+    if (D.reflection.length) {
+      L.push("REFLECTION");
+      D.reflection.forEach(function(r, i){ L.push("Q" + (i+1) + ". " + strip(r.q), (S.refl[i] || "(no answer)").trim(), (S.shown[i] ? "(model answer viewed after answering)" : null), ""); });
+    }
+    L.push("HELP USED: " + S.hints + " of " + D.hints.length + " hints; solution " + (S.solutionViewed ? "viewed" : "not viewed"), "");
+    FILES.forEach(function(f){ if (f.editable) L.push("CODE (" + f.name + ")", line, String(S.files[f.name]).replace(/\s+$/, ""), line, ""); });
+    return L.filter(function(x){ return x !== null; }).join("\n") + "\n";
+  }
+  function reportName(){ return "Lab_" + String(D.id).replace(/[^\w.-]+/g, "-") + "_report" + (S.name ? "_" + S.name.trim().replace(/\s+/g, "_").replace(/[^\w.-]/g, "") : "") + ".txt"; }
+  $("repDl").addEventListener("click", function(){ download(reportName(), report()); });
+  $("repCopy").addEventListener("click", function(){ copy(report(), "Report"); });
+  function dlCurrent(){ commit(); save(); download(S.cur, S.files[S.cur]); }
+  function dlAll(){
+    commit(); save();
+    var eds = FILES.filter(function(f){ return f.editable; });
+    eds.forEach(function(f, i){ setTimeout(function(){ download(f.name, S.files[f.name]); }, i * 400); });
+  }
+  $("codeDl2").addEventListener("click", dlAll);
+  if (MULTI) $("codeDl2").textContent = "Download code files";
+  if (IS_WEB) {
+    var pg = document.createElement("button"); pg.className = "btn btn-quiet"; pg.type = "button"; pg.textContent = "Download page (one HTML file)";
+    pg.addEventListener("click", function(){ download(D.preview.entry.replace(/\.html?$/i, "") + "_complete.html", composed(), "text/html;charset=utf-8"); });
+    $("codeDl2").parentNode.appendChild(pg);
+  }
+
+  // ---------------- toolbar ----------------
+  $("runBtn").addEventListener("click", runChecks);
+  $("copyBtn").addEventListener("click", function(){ copy(ta.value, S.cur); });
+  $("dlBtn").addEventListener("click", dlCurrent);
+  $("resetBtn").addEventListener("click", function(){
+    if (MULTI) $("resetMsg").textContent = "Replace the code in every file with the starter code? This can’t be undone.";
+    $("resetConfirm").hidden = false; $("resetNo").focus();
+  });
+  $("resetNo").addEventListener("click", function(){ $("resetConfirm").hidden = true; $("resetBtn").focus(); });
+  $("resetYes").addEventListener("click", function(){
+    $("resetConfirm").hidden = true; S.files = starterMap(); S.results = null; S.lastDetail = null; S.layout = null; S.layoutDetail = null;
+    // results that belonged to the old code must not survive the reset ("output matches" for starter code)
+    S.checkedCode = null; S.layoutChecked = null; S.outputMatch = null; S.outputChecked = null; S.output = ""; S.outputSource = null; save();
+    if (D.test) { $("cmp").innerHTML = ""; $("outBox").value = ""; if ($("tpOut")) $("tpOut").textContent = ""; if ($("tpState")) setChip($("tpState"), "", ""); }
+    openFile(S.cur, true); refreshPreview();
+    renderResults(null); if (LAYOUT) renderLayout(null); renderReqs(); renderSummary(); ta.focus(); flash("Code reset to the starter.");
+  });
+
+  buildTabs();
+  buildEditor();
+  renderReqs(); renderHints(); renderSolution(); renderSummary();
+  renderResults(S.results && S.lastDetail ? S.lastDetail : null, false);
+  if (LAYOUT) renderLayout(S.layout && S.layoutDetail ? S.layoutDetail : null, false);
+  if (IS_WEB) { layoutPreview(); refreshPreview(); }
+  if (D.test && S.output && S.outputMatch !== null) compare(false, S.outputSource === "browser" ? S.output : null);
+  // Typing is saved after a short pause; flush it when the page is hidden or closed (LMS navigation,
+  // closing the tab), so the last keystrokes are never lost.
+  function flush(){ try { commit(); save(); } catch(e){} }
+  window.addEventListener("pagehide", flush);
+  document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") flush(); });
+  save();
+})();
+</script>
+<script>
+/* Full screen. Blackboard often shows an uploaded page inside a frame; when that frame doesn't allow full screen,
+   the button opens the page on its own in a new tab (same address, so saved progress comes along), where full
+   screen works. Hidden where the browser has no full screen for pages (iPhone). */
+(function(){
+  "use strict";
+  var btn = document.getElementById("fsBtn"); if (!btn) return;
+  var d = document, el = d.documentElement, txt = btn.querySelector(".fs-t"), timer;
+  var can = !!(d.fullscreenEnabled || d.webkitFullscreenEnabled);
+  var framed = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+  var KEYS = /Mac|iPad/.test(navigator.platform || navigator.userAgent) ? "Control+Command+F" : "F11";
+  function isFs(){ return !!(d.fullscreenElement || d.webkitFullscreenElement); }
+  function note(msg){
+    var n = d.getElementById("fsNote");
+    if (!n) { n = d.createElement("div"); n.id = "fsNote"; n.className = "fs-note"; n.setAttribute("role", "status"); d.body.appendChild(n); }
+    n.textContent = msg; n.hidden = false; clearTimeout(timer); timer = setTimeout(function(){ n.hidden = true; }, 7000);
+  }
+  function openPage(){
+    var w = null;
+    try { w = window.open(location.href, "_blank"); } catch(e){}
+    if (w) { try { w.opener = null; } catch(e){} }
+    else note("Your course page blocked the new tab. Open this page on its own, or press " + KEYS + " for full screen.");
+  }
+  function sync(){
+    var on = isFs();
+    btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on ? "true" : "false");
+    txt.textContent = on ? "Exit full screen" : "Full screen";
+    btn.title = on ? "Leave full screen (Esc)" : "Fill the screen with this page";
+  }
+  if (can) {
+    btn.hidden = false; sync();
+    btn.addEventListener("click", function(){
+      if (isFs()) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+      var req = el.requestFullscreen || el.webkitRequestFullscreen, p;
+      try { p = req.call(el, { navigationUI: "hide" }); } catch(e){ p = null; fail(); return; }
+      if (p && p.catch) p.catch(fail);
+    });
+    d.addEventListener("fullscreenchange", sync); d.addEventListener("webkitfullscreenchange", sync);
+  } else if (framed) {
+    btn.hidden = false; txt.textContent = "Open full page";
+    btn.title = "Open this page in its own tab, where it can go full screen";
+    btn.addEventListener("click", openPage);
+  }
+  function fail(){ if (framed) openPage(); else note("Full screen isn't available here. Press " + KEYS + " instead."); }
+})();
+</script>
+</body>
+</html>

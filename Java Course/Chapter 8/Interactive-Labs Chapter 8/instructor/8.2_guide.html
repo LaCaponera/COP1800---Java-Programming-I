@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The coffee board that sells a null for $0.0</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 8.2</div>
+  <h1>The coffee board that sells a null for $0.0</h1>
+<h2>Objectives</h2><ul><li>Create and fill an array in one statement with an initialization list</li><li>Predict the default value of the elements of a new <code>int</code>, <code>double</code> and <code>String</code> array</li><li>Decide when an array should be filled with a list and when its default values are exactly right</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>sizes</code> is created and filled in one statement with an initialization list of the four size names; no statement assigns a single <code>sizes</code> element.</li><li><strong>R2</strong> <code>prices</code> is created and filled in one statement with an initialization list of the four prices, in the same order as the sizes.</li><li><strong>R3</strong> <code>cupsSold</code> is still created with <code>new int[4]</code>, and no statement assigns 0 to its elements: a new <code>int</code> array already holds zeros.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, nothing is ever assigned to <code>sizes[3]</code> or <code>prices[3]</code>. So what does <code>describe(3)</code> put on the board, and where do those values come from?</p><div class="answer"><p>It shows null and 0.0. They are the default values Java gives every element of a new String array (null) and a new double array (0.0).</p></div></li><li><p><code>cupsSold[3]</code> is never set to 0 either. What does it hold, and why?</p><div class="answer"><p>It holds 0, because every element of a new int array is set to 0 automatically.</p></div></li></ol>
+<h2>Solution</h2><div class="file">CoffeeMenu.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">CoffeeMenu</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">sizes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"Small"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Medium"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Large"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Extra Large"</span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">prices</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mf">2.25</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">2.75</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">3.25</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">3.75</span><span class="t-p">};</span>
+
+<span class="t-w">    </span><span class="t-c1">// Cups sold of each size since the cart opened this morning.</span>
+<span class="t-w">    </span><span class="t-c1">// Every element of a new int array already starts at 0.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">cupsSold</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[</span><span class="t-mi">4</span><span class="t-o">]</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">sell</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">sizeIndex</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">cupsSold</span><span class="t-o">[</span><span class="t-n">sizeIndex</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">describe</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">sizeIndex</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">sizes</span><span class="t-o">[</span><span class="t-n">sizeIndex</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">prices</span><span class="t-o">[</span><span class="t-n">sizeIndex</span><span class="t-o">]</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" ("</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">cupsSold</span><span class="t-o">[</span><span class="t-n">sizeIndex</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" sold)"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>An initialization list both sizes and fills an array (p. 272), so an element can&#x27;t be forgotten the way the starter forgot Extra Large: four values give exactly four elements, and <code>new</code> is not needed. The starter&#x27;s <code>null $0.0</code> line shows the default values at work: elements of an array of objects, including <code>String</code>, start as <code>null</code>; <code>double</code> elements start as <code>0.0</code>; <code>int</code> elements as <code>0</code>; <code>boolean</code> elements as <code>false</code> (p. 272). Those defaults are exactly what <code>cupsSold</code> needs, so <code>new int[4]</code> with no assignments is the right choice; the three <code>= 0</code> statements only repeated what Java had already done. Once the constructor is empty you can delete it: Java then supplies a default constructor, and <code>new CoffeeMenu()</code> still compiles.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestCoffeeMenu.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestCoffeeMenu</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">CoffeeMenu</span><span class="t-w"> </span><span class="t-n">menu</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">CoffeeMenu</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Opening board:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">sell</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">sell</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">sell</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"After three sales:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">menu</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Opening board:
+Small $2.25 (0 sold)
+Medium $2.75 (0 sold)
+Large $3.25 (0 sold)
+Extra Large $3.75 (0 sold)
+After three sales:
+Medium $2.75 (2 sold)
+Extra Large $3.75 (1 sold)
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>sizes is created with an initialization list<div class="small">in <code>CoffeeMenu</code></div></td><td><div><span class="tag">require</span> <code>\bString\s*\[\s*\]\s*sizes\s*=\s*(?:new\s+String\s*\[\s*\]\s*)?\{</code></div><div><span class="tag">forbid</span> <code>\bsizes\s*\[\s*\d+\s*\]\s*=(?!=)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>prices is created with an initialization list<div class="small">in <code>CoffeeMenu</code></div></td><td><div><span class="tag">require</span> <code>\bdouble\s*\[\s*\]\s*prices\s*=\s*(?:new\s+double\s*\[\s*\]\s*)?\{</code></div><div><span class="tag">forbid</span> <code>\bprices\s*\[\s*\d+\s*\]\s*=(?!=)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>cupsSold relies on the default value 0<div class="small">in <code>CoffeeMenu</code></div></td><td><div><span class="tag">require</span> <code>\bint\s*\[\s*\]\s*cupsSold\s*=\s*new\s+int\s*\[</code></div><div><span class="tag">forbid</span> <code>\bcupsSold\s*\[\s*\d+\s*\]\s*=\s*0\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · sizes is created with an initialization list</dt><dd><p>Declare <code>sizes</code> with an initialization list, <code>String[] sizes = {...};</code>, holding the four names. The list sets the array&#x27;s size to the number of values, so no element can be left out (and left <code>null</code>).</p></dd><dt>C2 · prices is created with an initialization list</dt><dd><p>Declare <code>prices</code> with an initialization list of the four prices, in the same order as the sizes. An element you never assign in a <code>double</code> array stays <code>0.0</code>, which is how Extra Large ended up free.</p></dd><dt>C3 · cupsSold relies on the default value 0</dt><dd><p>Keep <code>int[] cupsSold = new int[4];</code> and delete the <code>cupsSold[...] = 0;</code> statements: every element of a new <code>int</code> array already starts at 0. (<code>cupsSold[3]</code> was never set, and it showed 0 anyway.)</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>An initialization list is a pair of curly braces holding the values, separated by commas, after the <code>=</code> in the declaration. The list decides the array&#x27;s size, so no number goes in the brackets.</p></li><li><p>Once both arrays are filled where they are declared, the constructor has nothing left to assign. You may delete the whole constructor: Java then supplies a default one.</p></li><li><p>For <code>cupsSold</code>, the right starting value is 0 for every size, and that is what creating the array with <code>new</code> already gives you.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why can an initialization list never produce the <code>null $0.0</code> line that the starter produced?</p><div class="answer"><p>The list sets the array&#x27;s size to the number of values in it, so every element gets a value from the list. With new String[4] and separate assignments, any element you forget keeps its default.</p></div></li><li><p>Java gave <code>cupsSold</code> its zeros for free. Describe a situation where relying on a default value would hide a bug instead of helping.</p><div class="answer"><p>When 0 is not a real value, such as a price: an unassigned price shows 0.0 and the item looks free, instead of the program failing where the mistake is.</p></div></li><li><p>Next season the cart adds a fifth size. With your version, which lines must change, and what keeps each price next to the right size?</p><div class="answer"><p>One value in the sizes list, one in the prices list at the same position, and the 4 in new int[4]. Only keeping the two lists in the same order lines them up; nothing checks it for you.</p></div></li></ol>
+<h2>Extension</h2><p>Make <code>cupsSold</code> follow the menu automatically with <code>new int[sizes.length]</code> (the <code>length</code> field is in section 8.3). Then add a fifth size, Kids $1.50, by editing only the two initialization lists. Do the existing lines of the test program still print the same?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; each initialization list is readable, with the sizes and prices in matching order.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
