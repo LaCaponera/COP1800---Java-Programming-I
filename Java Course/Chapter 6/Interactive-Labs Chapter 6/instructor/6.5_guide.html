@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The parking kiosk that never shows its menu</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 6.5</div>
+  <h1>The parking kiosk that never shows its menu</h1>
+<h2>Objectives</h2><ul><li>Distinguish pretest loops (<code>while</code>, <code>for</code>) from the posttest <code>do…while</code> loop</li><li>Write a <code>do…while</code> loop with a braced body and the test at the bottom, ending in a semicolon</li><li>Recognize when a fake starting value is a sign that the loop&#x27;s test is in the wrong place</li><li>Explain why the compiler accepts a variable declared without a value when a <code>do…while</code> body assigns it</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The menu loop is a <code>do…while</code>: it starts with <code>do</code>, its body is in braces, and the test <code>} while(choice != QUIT);</code> comes after the body. No <code>while</code> loop tests <code>choice</code> before the body.</li><li><strong>R2</strong> <code>choice</code> is declared without a starting value (<code>int choice;</code>): the body always assigns it before the test uses it.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, how many times is the menu printed for any driver? Why?</p><div class="answer"><p>Zero. choice starts at QUIT, so choice != QUIT is false at the top of the while loop and the body is skipped; only the 0-minute ticket prints.</p></div></li><li><p>Where is the test of a <code>do…while</code> loop, and what does that guarantee about its body?</p><div class="answer"><p>At the bottom, after the body. The body always executes at least once.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ParkingKiosk.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ParkingKiosk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ADD_TIME</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SHOW_TIME</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">QUIT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">BLOCK</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">30</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// minutes bought with each press of 1</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">runKiosk</span><span class="t-p">(</span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">choice</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-k">do</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"1 add, 2 time, 3 ticket &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">choice</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextInt</span><span class="t-p">();</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">choice</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">ADD_TIME</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">BLOCK</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Added "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BLOCK</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">choice</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">SHOW_TIME</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Time bought: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">choice</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-n">QUIT</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Choose 1, 2 or 3"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span><span class="t-w"> </span><span class="t-k">while</span><span class="t-p">(</span><span class="t-n">choice</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-n">QUIT</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Ticket printed: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">runKiosk</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">in</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>while</code> and <code>for</code> are <strong>pretest</strong> loops: the test is evaluated before the body, so the body may run zero times. A menu must be shown before there is any choice to test, which is the definition of a <strong>posttest</strong> loop: <code>do { ... } while(test);</code> runs the body once and evaluates the test at the bottom (Figure 6-22). Giving <code>choice</code> the value <code>QUIT</code> silenced the compiler but made the pretest false at once, so the body never ran and the kiosk printed a 0-minute ticket. A fake starting value that exists only to get into a loop is a sign the test belongs at the bottom. With <code>do…while</code>, <code>int choice;</code> compiles: the compiler can see that the body, which always runs first, assigns <code>choice</code> before the test reads it. Note the semicolon after <code>while(choice != QUIT)</code>, and the closing brace on the same line, which keeps a reader from mistaking that <code>while</code> for the start of a new loop.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestParkingKiosk.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestParkingKiosk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Each Scanner "presses" the driver's choices, one per line.</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"-- Driver 1 --"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParkingKiosk</span><span class="t-p">.</span><span class="t-na">runKiosk</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-s">"1\n1\n2\n3\n"</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"-- Driver 2 --"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParkingKiosk</span><span class="t-p">.</span><span class="t-na">runKiosk</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-s">"3\n"</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"-- Driver 3 --"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParkingKiosk</span><span class="t-p">.</span><span class="t-na">runKiosk</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-s">"7\n1\n3\n"</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">-- Driver 1 --
+1 add, 2 time, 3 ticket &gt;&gt; Added 30 min
+1 add, 2 time, 3 ticket &gt;&gt; Added 30 min
+1 add, 2 time, 3 ticket &gt;&gt; Time bought: 60 min
+1 add, 2 time, 3 ticket &gt;&gt; Ticket printed: 60 min
+-- Driver 2 --
+1 add, 2 time, 3 ticket &gt;&gt; Ticket printed: 0 min
+-- Driver 3 --
+1 add, 2 time, 3 ticket &gt;&gt; Choose 1, 2 or 3
+1 add, 2 time, 3 ticket &gt;&gt; Added 30 min
+1 add, 2 time, 3 ticket &gt;&gt; Ticket printed: 30 min
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>A do…while loop tests choice at the bottom<div class="small">in <code>ParkingKiosk.runKiosk</code></div></td><td><div><span class="tag">require</span> <code>\bdo\s*\{[\s\S]*\}\s*while\s*\(\s*(?:choice\s*!=\s*QUIT|QUIT\s*!=\s*choice)\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>\bwhile\s*\([^)]*\)\s*\{</code></div></td></tr><tr><td>C2</td><td>R2</td><td>choice has no fake starting value<div class="small">in <code>ParkingKiosk.runKiosk</code></div></td><td><div><span class="tag">require</span> <code>\bint\s+choice\s*;</code></div><div><span class="tag">forbid</span> <code>\bint\s+choice\s*=</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · A do…while loop tests choice at the bottom</dt><dd><p>Start the loop with <code>do {</code>, keep the menu code in the braces, and end it with <code>} while(choice != QUIT);</code>. The body then runs once before the test is evaluated, so the menu always appears; remove the <code>while</code> at the top.</p><div class='small'><strong>Hint:</strong></div><p>A posttest loop asks its question after the body: the keyword <code>do</code> opens it.</p></dd><dt>C2 · choice has no fake starting value</dt><dd><p>Declare <code>int choice;</code> with no value. The do…while body always assigns <code>choice</code> before the test reads it, so the compiler accepts it, and no made-up value can decide whether the loop starts.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>With the starter, evaluate <code>choice != QUIT</code> once, before anything is printed. Is the menu ever shown?</p></li><li><p>The menu must run once before there is a choice to test. Which loop puts its test after the body?</p></li><li><p>Once the test is at the bottom, ask whether <code>choice</code> still needs a value when it&#x27;s declared.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why does <code>int choice;</code> (no value) compile with your <code>do…while</code>, when the starter&#x27;s programmer had to give it a value for the <code>while</code> version?</p><div class="answer"><p>In the do…while, the body runs before the test and always assigns choice with input.nextInt(), so the compiler knows choice has a value when the test reads it. In the while version, the test reads choice before anything assigns it.</p></div></li><li><p>The book says you are never required to use <code>do…while</code>. How could you get the same behaviour with a <code>while</code> loop, and what does that cost?</p><div class="answer"><p>Show the menu and read a choice once before the loop (a priming input), handle it, then loop while choice != QUIT, repeating the same menu code at the end of the body. It works but duplicates code, so a later change to the menu has to be made in two places.</p></div></li><li><p>Driver 2 chose 3 on the first try. How many times did your loop body run, and how many times was the test evaluated?</p><div class="answer"><p>The body ran once (the menu appeared and 3 was read) and the test was evaluated once, at the bottom; it was false, so the loop ended.</p></div></li></ol>
+<h2>Extension</h2><p>Add choice 4, <em>cancel</em>, that resets <code>minutes</code> to 0 and prints <code>Cancelled</code>. Then make the kiosk refuse to print a ticket for 0 minutes: if the driver chooses 3 with no time bought, print <code>Add time first</code> and keep the loop going. Which part of the <code>while(...)</code> test has to change?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; the do…while body in braces with <code>} while(...);</code> on one line; named constants instead of bare numbers in the menu tests.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

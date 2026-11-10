@@ -1,0 +1,813 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 6: Looping",
+ "collection_intro": "Hands-on labs for each section of Chapter 6 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the loop and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "6.1",
+   "title": "The harbor pump that stops after one stroke",
+   "subtitle": "The loop structure: test, body, test again, and the iteration that never comes",
+   "source": "Ch. 6, section 6.1 (pp. 201–202)",
+   "minutes": 20,
+   "objectives": [
+    "Describe the loop structure: a Boolean expression is evaluated, the body runs while it is true, and the expression is evaluated again after every iteration",
+    "Explain the difference between a decision, which asks its question once, and a loop, which asks it again after each pass",
+    "Count iterations with a counter that starts at 0 before the loop",
+    "Show with output that a loop body can run zero times, and that it does not run one last time when the test becomes false"
+   ],
+   "scenario": "After a storm, seawater collects in the boat-hoist pits along Pelican Harbor's docks. Each dock has a pump. One pump cycle lowers the water by `PUMP_CM` centimetres, and the pump must keep cycling while the water is above `SAFE_LEVEL`.\n\nThe control program was written with an `if`, so the North dock pump ran once, reported 110 cm, and stopped with the pit still flooded. Make `drain()` keep pumping, number each cycle, and report how many cycles ran. This morning's log must read:\n\n```\nNorth dock: water at 130 cm\n  cycle 1: water now 110 cm\n  cycle 2: water now 90 cm\n  cycle 3: water now 70 cm\n  stopped at 70 cm after 3 cycle(s)\nEast dock: water at 60 cm\n  stopped at 60 cm after 0 cycle(s)\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Replace the `if` with a `while` loop that tests the same Boolean expression, `levelCm > SAFE_LEVEL`, so the pump cycles until the water is at or below the safe level."
+    },
+    {
+     "id": "R2",
+     "text": "Count the iterations: `cycles` starts at 0 before the loop, increases by 1 in the loop body, numbers each cycle line, and appears in the `stopped at ... after N cycle(s)` line printed **after** the loop."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "PumpStation.java",
+   "starter_code": "public class PumpStation\n{\n    public static final int SAFE_LEVEL = 80;   // cm of water the pit can hold safely\n    public static final int PUMP_CM = 20;      // one pump cycle lowers the water this much\n\n    public static void drain(String dock, int levelCm)\n    {\n        System.out.println(dock + \" dock: water at \" + levelCm + \" cm\");\n        int cycles = 0;\n\n        // TODO (R1): keep pumping, cycle after cycle, while the water is above SAFE_LEVEL.\n        // TODO (R2): count each cycle and number its line.\n        if(levelCm > SAFE_LEVEL)\n        {\n            levelCm = levelCm - PUMP_CM;\n            System.out.println(\"  cycle: water now \" + levelCm + \" cm\");\n        }\n\n        // TODO (R2): report how many cycles ran.\n        System.out.println(\"  stopped at \" + levelCm + \" cm\");\n    }\n\n    public static void main(String[] args)\n    {\n        drain(\"North\", 130);\n        drain(\"East\", 60);\n    }\n}\n",
+   "solution": "public class PumpStation\n{\n    public static final int SAFE_LEVEL = 80;   // cm of water the pit can hold safely\n    public static final int PUMP_CM = 20;      // one pump cycle lowers the water this much\n\n    public static void drain(String dock, int levelCm)\n    {\n        System.out.println(dock + \" dock: water at \" + levelCm + \" cm\");\n        int cycles = 0;\n\n        while(levelCm > SAFE_LEVEL)\n        {\n            levelCm = levelCm - PUMP_CM;\n            cycles = cycles + 1;\n            System.out.println(\"  cycle \" + cycles + \": water now \" + levelCm + \" cm\");\n        }\n\n        System.out.println(\"  stopped at \" + levelCm + \" cm after \" + cycles + \" cycle(s)\");\n    }\n\n    public static void main(String[] args)\n    {\n        drain(\"North\", 130);\n        drain(\"East\", 60);\n    }\n}\n",
+   "solution_notes": "An `if` evaluates its Boolean expression once: true or false, the program moves on. A `while` evaluates the same expression, runs the body if it is true, and then **evaluates it again**. Each pass is one iteration. For the North dock the test is true at 130, 110 and 90 cm and false at 70 cm, so there are three iterations and no fourth: when the test is false the loop ends immediately (the false statement in the book's *Two Truths & a Lie* for 6.1). The East dock shows the other edge: 60 is not above 80, so the body runs zero times and `cycles` stays 0. The counter has to start at 0 **before** the loop (inside it, it would be reset every pass) and be reported **after** the closing brace, where the final value is known. `levelCm = levelCm - PUMP_CM` is what makes the test eventually false; section 6.2 names this the loop control variable.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A while loop tests levelCm > SAFE_LEVEL",
+     "within": "PumpStation.drain",
+     "require": "\\bwhile\\s*\\(\\s*(?:levelCm\\s*>\\s*SAFE_LEVEL|SAFE_LEVEL\\s*<\\s*levelCm)\\s*\\)\\s*\\{",
+     "forbid": "\\bif\\s*\\(\\s*(?:levelCm\\s*>\\s*SAFE_LEVEL|SAFE_LEVEL\\s*<\\s*levelCm)\\s*\\)",
+     "message": "Change `if(levelCm > SAFE_LEVEL)` to `while(levelCm > SAFE_LEVEL)` and keep the braces. A decision asks its question once; a loop asks it again after every pass, so the pump keeps cycling until the water is safe.",
+     "hint": "Same question, different keyword."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "cycles goes up by 1 inside the loop body",
+     "within": "PumpStation.drain",
+     "require": "\\bwhile\\s*\\([^)]*\\)\\s*\\{[^}]*(?:\\bcycles\\s*=\\s*cycles\\s*\\+\\s*1\\s*;|\\bcycles\\s*\\+=\\s*1\\s*;|\\bcycles\\s*\\+\\+|\\+\\+\\s*cycles\\b)",
+     "message": "Add 1 to `cycles` inside the loop's braces (for example `cycles = cycles + 1;`). Each pass through the body is one iteration, so that is the only place where counting it is correct."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The counter starts at 0 before the loop and is reported after it",
+     "within": "PumpStation.drain",
+     "require": "^(?=[\\s\\S]*\\bint\\s+cycles\\s*=\\s*0\\s*;[\\s\\S]*\\bwhile\\b)(?=[\\s\\S]*\\bwhile\\b[\\s\\S]*\\}\\s*System\\.out\\.println\\s*\\([^;]*\\bcycles\\b)",
+     "message": "Keep `int cycles = 0;` above the loop and print `cycles` in the `stopped at` line after the loop's closing brace. Declared inside the loop, the count would restart every pass; printed inside it, you would get a summary after every cycle."
+    }
+   ],
+   "hints": [
+    "An `if` asks its question once. Which Java structure asks the same question again after every pass through its body?",
+    "Keep the Boolean expression exactly as it is; only the keyword changes. Then decide which line marks \"one more pass\".",
+    "The cycle number belongs in the line printed inside the loop; the total belongs in the line printed after the closing brace."
+   ],
+   "test_program": {
+    "file_name": "TestPumpStation.java",
+    "code": "public class TestPumpStation\n{\n    public static void main(String[] args)\n    {\n        // This morning's log, exactly as \"java PumpStation\" prints it.\n        PumpStation.main(new String[0]);\n\n        // One centimetre over the limit, and exactly at the limit.\n        PumpStation.drain(\"South\", 81);\n        PumpStation.drain(\"West\", 80);\n    }\n}\n",
+    "expected_output": "North dock: water at 130 cm\n  cycle 1: water now 110 cm\n  cycle 2: water now 90 cm\n  cycle 3: water now 70 cm\n  stopped at 70 cm after 3 cycle(s)\nEast dock: water at 60 cm\n  stopped at 60 cm after 0 cycle(s)\nSouth dock: water at 81 cm\n  cycle 1: water now 61 cm\n  stopped at 61 cm after 1 cycle(s)\nWest dock: water at 80 cm\n  stopped at 80 cm after 0 cycle(s)\n",
+    "predict": "Before you run it: how many cycle lines will the South dock (81 cm) print, and how many will the West dock (80 cm) print? Write both numbers down."
+   },
+   "warmup": [
+    {
+     "question": "With the starter, how many times does the body under `if(levelCm > SAFE_LEVEL)` run for the North dock (130 cm), and what level does it report?",
+     "model_answer": "Once. It lowers the water to 110 cm and stops, even though 110 is still above 80, because an if never asks its question a second time."
+    },
+    {
+     "question": "In a loop, what happens immediately after the last statement of the body runs?",
+     "model_answer": "Control goes back to the top and the Boolean expression is evaluated again. If it is still true, the body runs again; if it is false, the loop ends."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "When the North dock reaches 70 cm, `levelCm > SAFE_LEVEL` is false. Does the loop body run one last time? Use your output as evidence.",
+     "model_answer": "No. The log stops at cycle 3 (70 cm); there is no cycle 4. When the test is false the loop ends at once and the next statement after the closing brace runs."
+    },
+    {
+     "question": "The East dock printed 0 cycles. What does that tell you about where a while loop's test is evaluated relative to its body?",
+     "model_answer": "The test is evaluated before the body ever runs. If it is false the first time, the body is skipped completely, so a while loop can execute zero times."
+    },
+    {
+     "question": "Suppose a technician set `PUMP_CM` to 0. What would `drain(\"North\", 130)` do, and why?",
+     "model_answer": "It would loop forever. levelCm would never change, so levelCm > SAFE_LEVEL would stay true and the program would keep printing cycle lines. Something in the body must move the test toward false."
+    }
+   ],
+   "extension": "The harbor wants an alarm: when a pit needs more than 5 cycles, print `  ALARM: check the pump` once, after pumping stops. Write the `if` for it. Why does it belong after the loop rather than inside it? Test it with `drain(\"Dry dock\", 250)`.",
+   "worth_knowing": "Almost every video game is built around one loop, often called the *game loop*: while the game is running, read the controls, update the world, draw the screen. At 60 frames per second that body runs 60 times every second, and the game ends when the loop's test becomes false.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions."
+    }
+   ]
+  },
+  {
+   "id": "6.2",
+   "title": "The ferry kiosk that accepts a party of 12",
+   "subtitle": "while loops for validating input: priming input, a compound test, and re-reading at the end of the body",
+   "source": "Ch. 6, section 6.2 (pp. 202–210)",
+   "minutes": 25,
+   "objectives": [
+    "Write an indefinite (event-controlled) `while` loop whose number of iterations depends on what the user types",
+    "Validate input with a priming input before the loop and a new input as the last statement of the loop body",
+    "Identify the three actions that keep a `while` loop from running forever: initialize, test and alter the loop control variable",
+    "Explain why a decision is the wrong structure for validating input"
+   ],
+   "scenario": "The self-service kiosk at the Gull Island ferry terminal books tables in the upper lounge for parties of `MIN_PARTY` to `MAX_PARTY` people. Yesterday a traveller typed 0, then 12, and the kiosk booked a table for twelve. The validation was written with an `if`, so it gives the traveller exactly one second chance and then trusts whatever comes next.\n\nRewrite `readPartySize()` so it keeps asking until the entry is in range, however many tries that takes, and reports how many entries it rejected. With the entries 0, 12 and 3 the kiosk must print:\n\n```\nParty size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Rejected entries: 2\nBooked: party of 3\n```\n\nThe typed values don't appear in the output because the test program types them for the traveller: it gives `readPartySize()` a `Scanner` that reads from a `String` instead of the keyboard.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The `if` becomes a `while` loop that repeats while `partySize` is less than `MIN_PARTY` **or** greater than `MAX_PARTY`."
+    },
+    {
+     "id": "R2",
+     "text": "Keep the priming input before the loop. Inside the loop, show the message, reprompt, and read the next entry as the **last** statement of the body, so the loop control variable is altered before it is tested again."
+    },
+    {
+     "id": "R3",
+     "text": "Count the rejected entries in a variable that starts at 0 and print `Rejected entries: N` after the loop, before returning the valid size."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "FerryKiosk.java",
+   "starter_code": "import java.util.Scanner;\n\npublic class FerryKiosk\n{\n    public static final int MIN_PARTY = 1;\n    public static final int MAX_PARTY = 8;\n\n    public static int readPartySize(Scanner input)\n    {\n        int partySize;\n\n        System.out.print(\"Party size (\" + MIN_PARTY + \"-\" + MAX_PARTY + \") >> \");\n        partySize = input.nextInt();\n\n        // TODO (R1, R2): keep asking while the entry is out of range,\n        // however many times the traveller gets it wrong.\n        // TODO (R3): count the rejected entries and report them.\n        if(partySize < MIN_PARTY || partySize > MAX_PARTY)\n        {\n            System.out.println(\"Parties of \" + MIN_PARTY + \" to \" + MAX_PARTY + \" only.\");\n            System.out.print(\"Party size (\" + MIN_PARTY + \"-\" + MAX_PARTY + \") >> \");\n            partySize = input.nextInt();\n        }\n\n        return partySize;\n    }\n\n    public static void main(String[] args)\n    {\n        Scanner keyboard = new Scanner(System.in);\n        int party = readPartySize(keyboard);\n        System.out.println(\"Booked: party of \" + party);\n    }\n}\n",
+   "solution": "import java.util.Scanner;\n\npublic class FerryKiosk\n{\n    public static final int MIN_PARTY = 1;\n    public static final int MAX_PARTY = 8;\n\n    public static int readPartySize(Scanner input)\n    {\n        int partySize;\n        int rejected = 0;\n\n        System.out.print(\"Party size (\" + MIN_PARTY + \"-\" + MAX_PARTY + \") >> \");\n        partySize = input.nextInt();\n\n        while(partySize < MIN_PARTY || partySize > MAX_PARTY)\n        {\n            rejected = rejected + 1;\n            System.out.println(\"Parties of \" + MIN_PARTY + \" to \" + MAX_PARTY + \" only.\");\n            System.out.print(\"Party size (\" + MIN_PARTY + \"-\" + MAX_PARTY + \") >> \");\n            partySize = input.nextInt();\n        }\n\n        System.out.println(\"Rejected entries: \" + rejected);\n        return partySize;\n    }\n\n    public static void main(String[] args)\n    {\n        Scanner keyboard = new Scanner(System.in);\n        int party = readPartySize(keyboard);\n        System.out.println(\"Booked: party of \" + party);\n    }\n}\n",
+   "solution_notes": "This is the book's EnterSmallValue and CustomerSurvey pattern (Figures 6-10 and 6-12). The input before the loop is the **priming input**: it gives the loop control variable its first value, and if that value is valid the loop body never runs. The `while` test checks the variable, and the last statement of the body reads a new value, which is the *alter* step that lets the test eventually become false. With an `if`, the second entry was never checked, so 12 slipped through; a loop checks every entry, however many there are. The loop is **indefinite** (event-controlled): while writing it you can't know whether it will run 0 or 200 times. The test needs `||`, not `&&`: no number is both below 1 and above 8, so an `&&` test would never be true and every entry would be accepted. Counting where the message is shown (inside the body) gives the number of rejected entries.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A while loop repeats while the size is out of range",
+     "within": "FerryKiosk.readPartySize",
+     "require": "\\bwhile\\s*\\(\\s*(?=[^{]*\\bpartySize\\s*<\\s*MIN_PARTY|[^{]*\\bMIN_PARTY\\s*>\\s*partySize)(?=[^{]*\\bpartySize\\s*>\\s*MAX_PARTY|[^{]*\\bMAX_PARTY\\s*<\\s*partySize)[^{]*\\|\\|[^{]*\\)\\s*\\{",
+     "forbid": "\\bif\\s*\\(\\s*partySize\\s*<\\s*MIN_PARTY",
+     "message": "Replace the `if` with `while(partySize < MIN_PARTY || partySize > MAX_PARTY)`. A decision checks only the first entry; a loop checks every entry, so a traveller who types 0 and then 12 is asked again.",
+     "hint": "Use `||`: no number is below 1 and above 8 at the same time."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Priming input before the loop, new input last in the body",
+     "within": "FerryKiosk.readPartySize",
+     "require": "\\bpartySize\\s*=\\s*input\\.nextInt\\s*\\(\\s*\\)\\s*;[^{}]*?\\bwhile\\s*\\([^{]*\\)\\s*\\{[^}]*\\bpartySize\\s*=\\s*input\\.nextInt\\s*\\(\\s*\\)\\s*;\\s*\\}",
+     "message": "Read the first entry before the `while` (the priming input) and make `partySize = input.nextInt();` the last statement inside the loop's braces. Then every new entry is tested by the `while` before it can be used."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Rejected entries are counted in the loop and reported after it",
+     "within": "FerryKiosk.readPartySize",
+     "require": "^(?=[\\s\\S]*\\bint\\s+(\\w+)\\s*=\\s*0\\s*;[\\s\\S]*\\bwhile\\b)(?=[\\s\\S]*\\bwhile\\s*\\([^{]*\\)\\s*\\{[^}]*(?:\\b\\1\\s*=\\s*\\1\\s*\\+\\s*1|\\b\\1\\s*\\+=\\s*1|\\b\\1\\s*\\+\\+|\\+\\+\\s*\\1\\b))(?=[\\s\\S]*\\}\\s*System\\.out\\.println\\s*\\([^;]*\\b\\1\\b[^;]*\\)\\s*;\\s*return\\b)",
+     "message": "Declare a counter set to 0 before the loop, add 1 to it inside the loop body (once per rejected entry), and print it as `Rejected entries: N` after the loop, just before `return`."
+    }
+   ],
+   "hints": [
+    "Trace the starter with the entries 0, 12, 3. Which entry is never compared with the limits?",
+    "The only structural change is one keyword; the body already does the right things in the right order (message, prompt, read).",
+    "The counter goes up each time the body runs, because the body runs exactly once per rejected entry."
+   ],
+   "test_program": {
+    "file_name": "TestFerryKiosk.java",
+    "code": "import java.util.Scanner;\n\npublic class TestFerryKiosk\n{\n    public static void main(String[] args)\n    {\n        // Each Scanner reads its \"typed\" entries from a String, one per line.\n        int party = FerryKiosk.readPartySize(new Scanner(\"0\\n12\\n3\\n\"));\n        System.out.println(\"Booked: party of \" + party);\n\n        party = FerryKiosk.readPartySize(new Scanner(\"4\\n\"));\n        System.out.println(\"Booked: party of \" + party);\n\n        party = FerryKiosk.readPartySize(new Scanner(\"9\\n-1\\n20\\n8\\n\"));\n        System.out.println(\"Booked: party of \" + party);\n    }\n}\n",
+    "expected_output": "Party size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Rejected entries: 2\nBooked: party of 3\nParty size (1-8) >> Rejected entries: 0\nBooked: party of 4\nParty size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Parties of 1 to 8 only.\nParty size (1-8) >> Rejected entries: 3\nBooked: party of 8\n",
+    "predict": "Before you change anything: with the starter, which party size does the first traveller (entries 0, 12, 3) get booked for? Then predict how many times your loop body runs for the third traveller (9, -1, 20, 8).",
+    "how_to_run": "Put `FerryKiosk.java` and `TestFerryKiosk.java` in the same folder, then run `javac *.java` and `java TestFerryKiosk`. In an IDE, add both to one project and run `TestFerryKiosk.java`. You don't type anything: the test program supplies the entries."
+   },
+   "warmup": [
+    {
+     "question": "Trace the starter with the entries 0, 12 and 3. Which value does `readPartySize()` return, and which entry is never checked?",
+     "model_answer": "It returns 12. The if rejects 0 and reads again, but nothing checks the second entry, so 12 is returned and 3 is never read."
+    },
+    {
+     "question": "Is the validation loop you will write definite or indefinite? Why?",
+     "model_answer": "Indefinite (event-controlled). How many times it runs depends on what the traveller types, which is unknown when the program is written."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Name the three actions that keep a while loop from running forever, and point to the line in your `readPartySize()` that does each one.",
+     "model_answer": "Initialize: the priming input before the loop gives partySize its first value. Test: while(partySize < MIN_PARTY || partySize > MAX_PARTY). Alter: partySize = input.nextInt(); as the last statement of the body."
+    },
+    {
+     "question": "A classmate wrote the test as `partySize < MIN_PARTY && partySize > MAX_PARTY`. What does the kiosk do with an entry of 12, and why?",
+     "model_answer": "It accepts 12. No number can be below 1 and above 8 at the same time, so the && test is always false, the body never runs and every entry is accepted."
+    },
+    {
+     "question": "What would happen if you moved `partySize = input.nextInt();` out of the loop body to just after the closing brace?",
+     "model_answer": "An invalid first entry would loop forever: partySize never changes inside the loop, so the test stays true and the message prints endlessly."
+    }
+   ],
+   "extension": "Add a limit: after `MAX_TRIES` rejected entries (say 5), stop asking, print `Please see the ticket office.` and return 0. You'll need a compound test that involves both the entry and your counter. Try it with `new Scanner(\"0\\n0\\n0\\n0\\n0\\n0\\n\")`.",
+   "worth_knowing": "A `Scanner` doesn't care where its text comes from: `new Scanner(System.in)` reads the keyboard, and `new Scanner(\"0\\n12\\n3\\n\")` reads a `String`. Automated tests use exactly this trick, so a program that \"asks the user\" can be checked thousands of times without anyone typing a key.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions."
+    }
+   ]
+  },
+  {
+   "id": "6.3",
+   "title": "The fish market's ticket that starts at 2",
+   "subtitle": "Shortcut arithmetic operators: += for accumulating, and when prefix and postfix ++ give different values",
+   "source": "Ch. 6, section 6.3 (pp. 210–214)",
+   "minutes": 20,
+   "objectives": [
+    "Use the add and assign operator `+=` to accumulate a total",
+    "Use `++` as a stand-alone statement to count events",
+    "Explain the value a prefix `++x` and a postfix `x++` produce inside a larger expression",
+    "Explain why `count = count++;` leaves `count` unchanged"
+   ],
+   "scenario": "The fish counter at Pelican Harbor's market hands out numbered tickets and records every sale on the scale. On opening day the first customer was called as **number 2**, and at closing the counter reported **0 sales** even though the scale recorded 2.25 kg.\n\nFix `FishMarketCounter` so the first ticket of the day is 1, every sale is counted, and the kilos are accumulated with the add and assign operator. The opening-day run must print:\n\n```\nNow serving 1\nNow serving 2\nSales: 2, total 2.25 kg\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`takeTicket()` returns the **current** value of `nextTicket` and then increases it by 1, using the postfix increment operator. The first ticket of the day is 1."
+    },
+    {
+     "id": "R2",
+     "text": "`recordSale()` increases `salesCount` by exactly 1 with a stand-alone increment statement (`salesCount++;`, `++salesCount;` or `salesCount += 1;`)."
+    },
+    {
+     "id": "R3",
+     "text": "`recordSale()` accumulates the kilos with the add and assign operator: `totalKg += kg;`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "FishMarketCounter.java",
+   "starter_code": "public class FishMarketCounter\n{\n    private int nextTicket = 1;\n    private int salesCount = 0;\n    private double totalKg = 0.0;\n\n    // Hands out a ticket and gets the dispenser ready for the next customer.\n    public int takeTicket()\n    {\n        // TODO (R1): the first customer of the day must get ticket 1.\n        return ++nextTicket;\n    }\n\n    // Records one sale on the scale.\n    public void recordSale(double kg)\n    {\n        // TODO (R2): count this sale.\n        salesCount = salesCount++;\n        // TODO (R3): accumulate with the add and assign operator.\n        totalKg = totalKg + kg;\n    }\n\n    public void printSummary()\n    {\n        System.out.println(\"Sales: \" + salesCount + \", total \" + totalKg + \" kg\");\n    }\n\n    public static void main(String[] args)\n    {\n        FishMarketCounter counter = new FishMarketCounter();\n        System.out.println(\"Now serving \" + counter.takeTicket());\n        counter.recordSale(1.5);\n        System.out.println(\"Now serving \" + counter.takeTicket());\n        counter.recordSale(0.75);\n        counter.printSummary();\n    }\n}\n",
+   "solution": "public class FishMarketCounter\n{\n    private int nextTicket = 1;\n    private int salesCount = 0;\n    private double totalKg = 0.0;\n\n    // Hands out a ticket and gets the dispenser ready for the next customer.\n    public int takeTicket()\n    {\n        return nextTicket++;\n    }\n\n    // Records one sale on the scale.\n    public void recordSale(double kg)\n    {\n        salesCount++;\n        totalKg += kg;\n    }\n\n    public void printSummary()\n    {\n        System.out.println(\"Sales: \" + salesCount + \", total \" + totalKg + \" kg\");\n    }\n\n    public static void main(String[] args)\n    {\n        FishMarketCounter counter = new FishMarketCounter();\n        System.out.println(\"Now serving \" + counter.takeTicket());\n        counter.recordSale(1.5);\n        System.out.println(\"Now serving \" + counter.takeTicket());\n        counter.recordSale(0.75);\n        counter.printSummary();\n    }\n}\n",
+   "solution_notes": "**Prefix vs postfix in an expression.** `++nextTicket` increases the variable and then produces the *new* value, so the first ticket was 2. `nextTicket++` produces the *old* value and then increases the variable, so the customer gets 1 and the dispenser is ready with 2: exactly what a ticket dispenser does. The book's rule: a prefix operator returns the value after the calculation, a postfix operator the value before it (b = 4; c = b++; leaves c at 4 and b at 5).\n\n**`salesCount = salesCount++;`** is evaluated in three steps: the postfix expression produces the old value 0; `salesCount` is increased to 1; then the assignment stores the expression's value, 0, back into `salesCount`. The increment is overwritten every time. On its own line, `salesCount++;`, `++salesCount;` and `salesCount += 1;` are identical because nobody uses the expression's value.\n\n**Accumulating.** `totalKg += kg;` means `totalKg = totalKg + kg;`: the add and assign operator adds and assigns in one step. The starter's line already worked; the shortcut is a convenience that makes the intent (\"add to the running total\") obvious, and it pairs with `-=`, `*=`, `/=` and `%=`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "takeTicket() returns the value before the increment",
+     "within": "FishMarketCounter.takeTicket",
+     "require": [
+      "\\breturn\\s+nextTicket\\s*\\+\\+\\s*;",
+      "\\bint\\s+\\w+\\s*=\\s*nextTicket\\s*\\+\\+\\s*;"
+     ],
+     "forbid": "\\+\\+\\s*nextTicket\\b",
+     "message": "Use the postfix form: `return nextTicket++;`. The postfix expression produces the current number (1 for the first customer) and only then moves the dispenser to the next one. The prefix form `++nextTicket` produces the new value, which skipped ticket 1.",
+     "hint": "Which form returns the value *before* the calculation?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "salesCount is increased by a stand-alone statement",
+     "within": "FishMarketCounter.recordSale",
+     "require": "(?:^|[;{}])\\s*(?:salesCount\\s*\\+\\+|\\+\\+\\s*salesCount|salesCount\\s*\\+=\\s*1|salesCount\\s*=\\s*salesCount\\s*\\+\\s*1)\\s*;",
+     "forbid": "\\bsalesCount\\s*=\\s*salesCount\\s*\\+\\+",
+     "message": "Replace `salesCount = salesCount++;` with `salesCount++;`. In the starter, the postfix expression produces the old value, the variable is increased, and then the assignment stores the old value back, so the count never moves."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The kilos are accumulated with +=",
+     "within": "FishMarketCounter.recordSale",
+     "require": "\\btotalKg\\s*\\+=\\s*kg\\s*;",
+     "forbid": "\\btotalKg\\s*=\\s*totalKg\\s*\\+",
+     "message": "Write `totalKg += kg;`. The add and assign operator adds `kg` to the running total and stores the result in one step; that is the shortcut this section introduces for accumulating."
+    }
+   ],
+   "hints": [
+    "Write down what each expression *produces* and what the variable *holds* afterwards: `++nextTicket` when nextTicket is 1, and `nextTicket++` when it is 1.",
+    "For `salesCount = salesCount++;`, do the three steps in order: evaluate the right side, apply the increment, then assign. Which value is assigned last?",
+    "When the result of `++` isn't used in a larger expression, prefix and postfix behave the same; the problem only appears when the value is returned or assigned."
+   ],
+   "test_program": {
+    "file_name": "TestFishMarketCounter.java",
+    "code": "public class TestFishMarketCounter\n{\n    public static void main(String[] args)\n    {\n        // Opening day, exactly as \"java FishMarketCounter\" prints it.\n        FishMarketCounter.main(new String[0]);\n\n        // A busy Saturday on a new counter.\n        FishMarketCounter saturday = new FishMarketCounter();\n        System.out.println(\"Ticket \" + saturday.takeTicket());\n        System.out.println(\"Ticket \" + saturday.takeTicket());\n        System.out.println(\"Ticket \" + saturday.takeTicket());\n        saturday.recordSale(2.25);\n        saturday.recordSale(0.5);\n        saturday.recordSale(1.25);\n        saturday.printSummary();\n    }\n}\n",
+    "expected_output": "Now serving 1\nNow serving 2\nSales: 2, total 2.25 kg\nTicket 1\nTicket 2\nTicket 3\nSales: 3, total 4.0 kg\n",
+    "predict": "Before you change anything, predict the starter's three Saturday ticket numbers and its Saturday `Sales:` count. Then run it and compare."
+   },
+   "warmup": [
+    {
+     "question": "`nextTicket` starts at 1. What number does the starter's `takeTicket()` return the first time it is called, and why?",
+     "model_answer": "2. The prefix ++ increases nextTicket to 2 first and then produces the new value, 2, which is returned."
+    },
+    {
+     "question": "`salesCount` is 0. Predict its value after `salesCount = salesCount++;` runs once.",
+     "model_answer": "Still 0. salesCount++ produces the old value 0, salesCount becomes 1, then the assignment stores 0 back into it."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Explain in your own words, step by step, why `salesCount = salesCount++;` loses the increment.",
+     "model_answer": "The right side is evaluated first: the postfix expression's value is the old count, and as a side effect the variable is increased. Then the assignment runs last and overwrites the variable with that old value, so the increase is lost."
+    },
+    {
+     "question": "If `d` is 5, what is `2 * ++d`? What is `2 * d++`? What does `d` hold after each?",
+     "model_answer": "2 * ++d is 12 (d becomes 6 first). 2 * d++ is 10 (the old value 5 is used). In both cases d holds 6 afterwards."
+    },
+    {
+     "question": "In `recordSale()`, would `++salesCount;` work as well as `salesCount++;`? When does the choice between prefix and postfix matter?",
+     "model_answer": "Yes. On its own line the value of the expression isn't used, so both just add 1. The choice matters only when the expression is part of something larger: returned, assigned, compared or used in arithmetic."
+    }
+   ],
+   "extension": "The market raises its price per kilo by 5% every hour. Add a `double pricePerKg` field and a method `hourPassed()` that uses the multiply and assign operator. Then add `refund(double kg)` that uses `-=` on `totalKg` and decreases `salesCount` with `--`.",
+   "worth_knowing": "Java's `++` and `--` come from C, which took them from Ken Thompson's language B. A popular story says they copied the PDP-11's auto-increment hardware, but Dennis Ritchie wrote that B's operators were invented before the PDP-11 existed. The name C++ is itself a postfix joke: C, incremented.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; increments and accumulations written as stand-alone statements unless their value is needed; no assignment of a variable to its own postfix expression."
+    }
+   ]
+  },
+  {
+   "id": "6.4",
+   "title": "The timetable with no last ferry",
+   "subtitle": "for loops: initialize, test and update in one header, and why the body shouldn't change the loop control variable",
+   "source": "Ch. 6, section 6.4 (pp. 214–217)",
+   "minutes": 25,
+   "objectives": [
+    "Write a `for` loop whose header initializes, tests and updates the loop control variable",
+    "Convert a counter-controlled `while` loop into an equivalent `for` loop",
+    "Choose the relational operator that includes or excludes the final value",
+    "Explain why altering the loop control variable inside a `for` loop's body skips iterations"
+   ],
+   "scenario": "Gull Island Ferries prints its departure board from a program. Ferries leave every `INTERVAL` minutes from the first sailing up to and including the last one, but the board for 6:00 to 9:00 is missing the 9:00 ferry. At the gangway, the boarding countdown calls out 5, 3, 1 instead of every number.\n\nThe timetable loop is a counter-controlled `while`, a job the `for` loop was made for. Rewrite it as a `for` loop that includes the last sailing, and make the countdown call every number. Times are minutes after midnight (360 is 6:00); the given `clock()` method formats them. The morning board must print:\n\n```\n6:00 6:45 7:30 8:15 9:00\n5 4 3 2 1 Gangway up\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`printDepartures()` uses one `for` loop and no `while`. Its header initializes `time` to `first`, tests it, and updates it with `INTERVAL` (`time += INTERVAL`)."
+    },
+    {
+     "id": "R2",
+     "text": "The test includes a ferry that leaves exactly at `last`, so 9:00 appears on the 6:00–9:00 board."
+    },
+    {
+     "id": "R3",
+     "text": "`boardingCountdown()` calls every number from `from` down to 1: the loop control variable `s` is changed only in the `for` header, never in the body."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "FerrySchedule.java",
+   "starter_code": "public class FerrySchedule\n{\n    public static final int INTERVAL = 45;   // minutes between departures\n\n    // Given: turns minutes after midnight into a clock time, e.g. 405 -> \"6:45\".\n    public static String clock(int minutes)\n    {\n        int hours = minutes / 60;\n        int mins = minutes % 60;\n        if(mins < 10)\n            return hours + \":0\" + mins;\n        else\n            return hours + \":\" + mins;\n    }\n\n    public static void printDepartures(int first, int last)\n    {\n        // TODO (R1): rewrite as one for loop: start, test and update in its header.\n        // TODO (R2): a ferry that leaves exactly at 'last' belongs on the board.\n        int time = first;\n        while(time < last)\n        {\n            System.out.print(clock(time) + \" \");\n            time = time + INTERVAL;\n        }\n        System.out.println();\n    }\n\n    public static void boardingCountdown(int from)\n    {\n        // TODO (R3): call every number from 'from' down to 1, then \"Gangway up\".\n        for(int s = from; s >= 1; --s)\n        {\n            System.out.print(s + \" \");\n            s = s - 1;\n        }\n        System.out.println(\"Gangway up\");\n    }\n\n    public static void main(String[] args)\n    {\n        printDepartures(360, 540);   // 6:00 to 9:00\n        boardingCountdown(5);\n    }\n}\n",
+   "solution": "public class FerrySchedule\n{\n    public static final int INTERVAL = 45;   // minutes between departures\n\n    // Given: turns minutes after midnight into a clock time, e.g. 405 -> \"6:45\".\n    public static String clock(int minutes)\n    {\n        int hours = minutes / 60;\n        int mins = minutes % 60;\n        if(mins < 10)\n            return hours + \":0\" + mins;\n        else\n            return hours + \":\" + mins;\n    }\n\n    public static void printDepartures(int first, int last)\n    {\n        for(int time = first; time <= last; time += INTERVAL)\n        {\n            System.out.print(clock(time) + \" \");\n        }\n        System.out.println();\n    }\n\n    public static void boardingCountdown(int from)\n    {\n        for(int s = from; s >= 1; --s)\n        {\n            System.out.print(s + \" \");\n        }\n        System.out.println(\"Gangway up\");\n    }\n\n    public static void main(String[] args)\n    {\n        printDepartures(360, 540);   // 6:00 to 9:00\n        boardingCountdown(5);\n    }\n}\n",
+   "solution_notes": "A `for` header holds the three actions a `while` loop spreads over three places: `int time = first` runs once, `time <= last` is tested before every iteration, and `time += INTERVAL` runs after every body. Declaring `time` in the header limits its scope to the loop, which is all it is needed for. The missing 9:00 ferry came from `<`: when `time` reaches 540, `540 < 540` is false, so the last sailing was never printed; `<=` includes it. The countdown skipped numbers because `s` was changed twice per iteration: once by `s = s - 1` in the body and once by `--s` in the header, so it went 5, 3, 1. The book advises using the same variable in all three header sections and not altering it in the body; once the header updates it, the body only uses it. Like a `while`, a `for` is a pretest loop: `printDepartures(600, 590)` prints an empty line because the test is false before the first iteration.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "One for loop drives the timetable",
+     "within": "FerrySchedule.printDepartures",
+     "require": "\\bfor\\s*\\(\\s*(?:int\\s+)?time\\s*=\\s*first\\s*;[^;]*;\\s*(?:time\\s*\\+=\\s*INTERVAL|time\\s*=\\s*time\\s*\\+\\s*INTERVAL|time\\s*=\\s*INTERVAL\\s*\\+\\s*time)\\s*\\)",
+     "forbid": "\\bwhile\\b",
+     "message": "Write the timetable as `for(int time = first; ...; time += INTERVAL)` and remove the `while`. The header puts the start, the test and the step in one place, so a reader sees the whole count at a glance.",
+     "hint": "The three statements that controlled the while loop each move into one section of the for header."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The last sailing is included",
+     "within": "FerrySchedule.printDepartures",
+     "require": "\\bfor\\s*\\([^;]*;\\s*(?:time\\s*<=\\s*last|last\\s*>=\\s*time)\\s*;",
+     "message": "Test `time <= last`. With `<`, a ferry that leaves exactly at `last` makes the test false (540 < 540), so the 9:00 departure never prints."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The countdown changes s only in its header",
+     "within": "FerrySchedule.boardingCountdown",
+     "require": "\\bfor\\s*\\(\\s*int\\s+s\\s*=\\s*from\\s*;\\s*(?:s\\s*>=\\s*1|s\\s*>\\s*0|1\\s*<=\\s*s|0\\s*<\\s*s)\\s*;\\s*(?:--\\s*s|s\\s*--|s\\s*-=\\s*1)\\s*\\)",
+     "forbid": "\\bfor\\s*\\([^)]*\\)\\s*\\{[^}]*(?:\\bs\\s*(?:=|-=|\\+=)(?!=)|\\bs\\s*--|\\bs\\s*\\+\\+|--\\s*s\\b|\\+\\+\\s*s\\b)",
+     "message": "Delete `s = s - 1;` from the countdown's body and keep `--s` in the header. The header already moves `s` down by one after each body, so changing it in the body as well skips every other number."
+    }
+   ],
+   "hints": [
+    "Find the three lines that initialize, test and change `time` in the while version. Each one has a place inside the for header's parentheses.",
+    "Trace the last sailing: when `time` is 540 and `last` is 540, is your test true or false?",
+    "In the countdown, count how many times `s` decreases during one iteration."
+   ],
+   "test_program": {
+    "file_name": "TestFerrySchedule.java",
+    "code": "public class TestFerrySchedule\n{\n    public static void main(String[] args)\n    {\n        // The morning board, exactly as \"java FerrySchedule\" prints it.\n        FerrySchedule.main(new String[0]);\n\n        FerrySchedule.printDepartures(1215, 1260);   // evening: 20:15 to 21:00\n        FerrySchedule.printDepartures(600, 600);     // a single special sailing\n        FerrySchedule.boardingCountdown(3);\n    }\n}\n",
+    "expected_output": "6:00 6:45 7:30 8:15 9:00\n5 4 3 2 1 Gangway up\n20:15 21:00\n10:00\n3 2 1 Gangway up\n",
+    "predict": "Before you change anything: write down the starter's output for the morning board and for `boardingCountdown(3)`. Which departure is missing, and which numbers are skipped?"
+   },
+   "warmup": [
+    {
+     "question": "Trace the starter's `boardingCountdown(5)`. Which numbers does it print, and why?",
+     "model_answer": "5 3 1. Each iteration decreases s twice, once with s = s - 1 in the body and once with --s in the header."
+    },
+    {
+     "question": "In the starter's `printDepartures(360, 540)`, is the 9:00 ferry (540) printed? Explain using the loop's test.",
+     "model_answer": "No. After 8:15, time becomes 540, and 540 < 540 is false, so the loop ends before printing it."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Name the three sections of your `for` header in `printDepartures()` and say when each one runs.",
+     "model_answer": "int time = first runs once, before anything else. time <= last is tested before every iteration, including the first. time += INTERVAL runs after each execution of the body, then the test is evaluated again."
+    },
+    {
+     "question": "How many times does the body run for `printDepartures(600, 590)`? What does that tell you about `for` loops?",
+     "model_answer": "Zero times: 600 <= 590 is false at the start. A for loop, like a while loop, is a pretest loop; its body might never execute."
+    },
+    {
+     "question": "You declared `time` inside the `for` header. Could a statement after the loop print `time`? Why might that be a good thing?",
+     "model_answer": "No. A variable declared in the header goes out of scope when the loop ends. That's good when it's only a counter: nothing else can misuse it, and the name can be reused for another loop."
+    }
+   ],
+   "extension": "Add `printReturnTrips(int first, int last)` that lists the same sailings from the latest to the earliest, with a `for` loop that decreases its control variable. Then try a header with two variables, `for(int time = first, trip = 1; time <= last; time += INTERVAL, ++trip)`, to print `Trip 1 6:00`, `Trip 2 6:45`, and so on.",
+   "worth_knowing": "FORTRAN (1957), the first widely used high-level language, already had a counted loop: `DO 10 I = 1, 10`. C generalised it into the three-part `for` header Java inherited, where the start, test and update can be any expressions, which is why `for(;;)` is legal and loops forever.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions."
+    }
+   ]
+  },
+  {
+   "id": "6.5",
+   "title": "The parking kiosk that never shows its menu",
+   "subtitle": "do…while: a posttest loop for work that must happen at least once",
+   "source": "Ch. 6, section 6.5 (pp. 217–219)",
+   "minutes": 20,
+   "objectives": [
+    "Distinguish pretest loops (`while`, `for`) from the posttest `do…while` loop",
+    "Write a `do…while` loop with a braced body and the test at the bottom, ending in a semicolon",
+    "Recognize when a fake starting value is a sign that the loop's test is in the wrong place",
+    "Explain why the compiler accepts a variable declared without a value when a `do…while` body assigns it"
+   ],
+   "scenario": "The pay-and-display kiosk at Pelican Harbor's car park shows a menu, reads the driver's choice, and repeats until the driver asks for a ticket. Drivers complain that the kiosk prints a ticket for 0 minutes before they can press anything.\n\nThe menu loop was written as a `while`. The compiler complained that `choice` might not have been initialized, so someone gave it the value `QUIT`, and now the loop's test is false before the menu is ever shown. Rewrite the loop so the menu appears at least once and repeats until the driver chooses `QUIT`. With the choices 1, 1, 2, 3 the kiosk must print:\n\n```\n1 add, 2 time, 3 ticket >> Added 30 min\n1 add, 2 time, 3 ticket >> Added 30 min\n1 add, 2 time, 3 ticket >> Time bought: 60 min\n1 add, 2 time, 3 ticket >> Ticket printed: 60 min\n```\n\nAs in lab 6.2, the test program types the choices with a `Scanner` that reads from a `String`.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The menu loop is a `do…while`: it starts with `do`, its body is in braces, and the test `} while(choice != QUIT);` comes after the body. No `while` loop tests `choice` before the body."
+    },
+    {
+     "id": "R2",
+     "text": "`choice` is declared without a starting value (`int choice;`): the body always assigns it before the test uses it."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "ParkingKiosk.java",
+   "starter_code": "import java.util.Scanner;\n\npublic class ParkingKiosk\n{\n    public static final int ADD_TIME = 1;\n    public static final int SHOW_TIME = 2;\n    public static final int QUIT = 3;\n    public static final int BLOCK = 30;   // minutes bought with each press of 1\n\n    public static void runKiosk(Scanner input)\n    {\n        int minutes = 0;\n        // TODO (R2): the compiler wanted a value here, so someone used QUIT.\n        int choice = QUIT;\n\n        // TODO (R1): show the menu at least once, and repeat until QUIT.\n        while(choice != QUIT)\n        {\n            System.out.print(\"1 add, 2 time, 3 ticket >> \");\n            choice = input.nextInt();\n            if(choice == ADD_TIME)\n            {\n                minutes += BLOCK;\n                System.out.println(\"Added \" + BLOCK + \" min\");\n            }\n            else if(choice == SHOW_TIME)\n                System.out.println(\"Time bought: \" + minutes + \" min\");\n            else if(choice != QUIT)\n                System.out.println(\"Choose 1, 2 or 3\");\n        }\n\n        System.out.println(\"Ticket printed: \" + minutes + \" min\");\n    }\n\n    public static void main(String[] args)\n    {\n        runKiosk(new Scanner(System.in));\n    }\n}\n",
+   "solution": "import java.util.Scanner;\n\npublic class ParkingKiosk\n{\n    public static final int ADD_TIME = 1;\n    public static final int SHOW_TIME = 2;\n    public static final int QUIT = 3;\n    public static final int BLOCK = 30;   // minutes bought with each press of 1\n\n    public static void runKiosk(Scanner input)\n    {\n        int minutes = 0;\n        int choice;\n\n        do\n        {\n            System.out.print(\"1 add, 2 time, 3 ticket >> \");\n            choice = input.nextInt();\n            if(choice == ADD_TIME)\n            {\n                minutes += BLOCK;\n                System.out.println(\"Added \" + BLOCK + \" min\");\n            }\n            else if(choice == SHOW_TIME)\n                System.out.println(\"Time bought: \" + minutes + \" min\");\n            else if(choice != QUIT)\n                System.out.println(\"Choose 1, 2 or 3\");\n        } while(choice != QUIT);\n\n        System.out.println(\"Ticket printed: \" + minutes + \" min\");\n    }\n\n    public static void main(String[] args)\n    {\n        runKiosk(new Scanner(System.in));\n    }\n}\n",
+   "solution_notes": "`while` and `for` are **pretest** loops: the test is evaluated before the body, so the body may run zero times. A menu must be shown before there is any choice to test, which is the definition of a **posttest** loop: `do { ... } while(test);` runs the body once and evaluates the test at the bottom (Figure 6-22). Giving `choice` the value `QUIT` silenced the compiler but made the pretest false at once, so the body never ran and the kiosk printed a 0-minute ticket. A fake starting value that exists only to get into a loop is a sign the test belongs at the bottom. With `do…while`, `int choice;` compiles: the compiler can see that the body, which always runs first, assigns `choice` before the test reads it. Note the semicolon after `while(choice != QUIT)`, and the closing brace on the same line, which keeps a reader from mistaking that `while` for the start of a new loop.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A do…while loop tests choice at the bottom",
+     "within": "ParkingKiosk.runKiosk",
+     "require": "\\bdo\\s*\\{[\\s\\S]*\\}\\s*while\\s*\\(\\s*(?:choice\\s*!=\\s*QUIT|QUIT\\s*!=\\s*choice)\\s*\\)\\s*;",
+     "forbid": "\\bwhile\\s*\\([^)]*\\)\\s*\\{",
+     "message": "Start the loop with `do {`, keep the menu code in the braces, and end it with `} while(choice != QUIT);`. The body then runs once before the test is evaluated, so the menu always appears; remove the `while` at the top.",
+     "hint": "A posttest loop asks its question after the body: the keyword `do` opens it."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "choice has no fake starting value",
+     "within": "ParkingKiosk.runKiosk",
+     "require": "\\bint\\s+choice\\s*;",
+     "forbid": "\\bint\\s+choice\\s*=",
+     "message": "Declare `int choice;` with no value. The do…while body always assigns `choice` before the test reads it, so the compiler accepts it, and no made-up value can decide whether the loop starts."
+    }
+   ],
+   "hints": [
+    "With the starter, evaluate `choice != QUIT` once, before anything is printed. Is the menu ever shown?",
+    "The menu must run once before there is a choice to test. Which loop puts its test after the body?",
+    "Once the test is at the bottom, ask whether `choice` still needs a value when it's declared."
+   ],
+   "test_program": {
+    "file_name": "TestParkingKiosk.java",
+    "code": "import java.util.Scanner;\n\npublic class TestParkingKiosk\n{\n    public static void main(String[] args)\n    {\n        // Each Scanner \"presses\" the driver's choices, one per line.\n        System.out.println(\"-- Driver 1 --\");\n        ParkingKiosk.runKiosk(new Scanner(\"1\\n1\\n2\\n3\\n\"));\n\n        System.out.println(\"-- Driver 2 --\");\n        ParkingKiosk.runKiosk(new Scanner(\"3\\n\"));\n\n        System.out.println(\"-- Driver 3 --\");\n        ParkingKiosk.runKiosk(new Scanner(\"7\\n1\\n3\\n\"));\n    }\n}\n",
+    "expected_output": "-- Driver 1 --\n1 add, 2 time, 3 ticket >> Added 30 min\n1 add, 2 time, 3 ticket >> Added 30 min\n1 add, 2 time, 3 ticket >> Time bought: 60 min\n1 add, 2 time, 3 ticket >> Ticket printed: 60 min\n-- Driver 2 --\n1 add, 2 time, 3 ticket >> Ticket printed: 0 min\n-- Driver 3 --\n1 add, 2 time, 3 ticket >> Choose 1, 2 or 3\n1 add, 2 time, 3 ticket >> Added 30 min\n1 add, 2 time, 3 ticket >> Ticket printed: 30 min\n",
+    "predict": "Before you change anything: how many times does the starter print the menu for Driver 1? Predict the whole starter output, then run it.",
+    "how_to_run": "Put `ParkingKiosk.java` and `TestParkingKiosk.java` in the same folder, then run `javac *.java` and `java TestParkingKiosk`. In an IDE, add both to one project and run `TestParkingKiosk.java`. You don't type anything: the test program presses the keys."
+   },
+   "warmup": [
+    {
+     "question": "With the starter, how many times is the menu printed for any driver? Why?",
+     "model_answer": "Zero. choice starts at QUIT, so choice != QUIT is false at the top of the while loop and the body is skipped; only the 0-minute ticket prints."
+    },
+    {
+     "question": "Where is the test of a `do…while` loop, and what does that guarantee about its body?",
+     "model_answer": "At the bottom, after the body. The body always executes at least once."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why does `int choice;` (no value) compile with your `do…while`, when the starter's programmer had to give it a value for the `while` version?",
+     "model_answer": "In the do…while, the body runs before the test and always assigns choice with input.nextInt(), so the compiler knows choice has a value when the test reads it. In the while version, the test reads choice before anything assigns it."
+    },
+    {
+     "question": "The book says you are never required to use `do…while`. How could you get the same behaviour with a `while` loop, and what does that cost?",
+     "model_answer": "Show the menu and read a choice once before the loop (a priming input), handle it, then loop while choice != QUIT, repeating the same menu code at the end of the body. It works but duplicates code, so a later change to the menu has to be made in two places."
+    },
+    {
+     "question": "Driver 2 chose 3 on the first try. How many times did your loop body run, and how many times was the test evaluated?",
+     "model_answer": "The body ran once (the menu appeared and 3 was read) and the test was evaluated once, at the bottom; it was false, so the loop ended."
+    }
+   ],
+   "extension": "Add choice 4, *cancel*, that resets `minutes` to 0 and prints `Cancelled`. Then make the kiosk refuse to print a ticket for 0 minutes: if the driver chooses 3 with no time bought, print `Add time first` and keep the loop going. Which part of the `while(...)` test has to change?",
+   "worth_knowing": "Python has no do…while loop. A proposal to add one (PEP 315) was rejected, so Python programmers write `while True:` with an `if ...: break` at the end of the body. Java, C, C++, C# and JavaScript all kept the posttest loop.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the do…while body in braces with `} while(...);` on one line; named constants instead of bare numbers in the menu tests."
+    }
+   ]
+  },
+  {
+   "id": "6.6",
+   "title": "The boatyard's empty docks and nine paint changes",
+   "subtitle": "Nested loops: resetting the inner loop, and choosing which loop goes outside",
+   "source": "Ch. 6, section 6.6 (pp. 220–223)",
+   "minutes": 30,
+   "objectives": [
+    "Write a nested loop in which the inner loop is entirely contained in the outer loop and restarts for every outer iteration",
+    "Trace how many times an inner loop body runs: outer iterations times inner iterations",
+    "Decide which variable should control the outer loop: the one that should change least often",
+    "Explain why two nestings can do the same work in a different, and differently costly, order"
+   ],
+   "scenario": "Heron Point Boatyard prints a slip map: for each dock, a line listing every slip as `dock-slip`. Today's map shows the slips for Dock 1 and nothing for Docks 2 and 3.\n\nThe paint shop has a second problem. Every hull gets three racing stripes: red, white and blue. Loading a different paint into the spray gun takes 20 minutes, and the given `paintStripe()` method counts every change. The current program paints each boat completely before moving to the next one, so the gun is reloaded for almost every stripe.\n\nFix the slip map, and reorder the painting so each boat still gets all three stripes but each paint is loaded only once. The boatyard's run must start like this and end with `Paint changes: 3`:\n\n```\nDock 1: 1-1 1-2 1-3 1-4\nDock 2: 2-1 2-2 2-3 2-4\nDock 3: 3-1 3-2 3-3 3-4\n  (load red paint)\n  boat 1: red stripe\n  boat 2: red stripe\n  boat 3: red stripe\n  (load white paint)\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "In `printSlipMap()`, the inner loop's control variable starts again at 1 **inside** the outer loop, so every dock lists all of its slips. (A `for` loop nested in the `for` loop is the clearest way.)"
+    },
+    {
+     "id": "R2",
+     "text": "In `paintAllStripes()`, the outer loop varies the color and the inner loop varies the boat, so all stripes of one color are painted before the next paint is loaded."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "Boatyard.java",
+   "starter_code": "public class Boatyard\n{\n    public static final int COLORS = 3;   // 1 red, 2 white, 3 blue\n\n    // Given: which paint is in the spray gun, and how many times it was changed.\n    private static int loadedColor = 0;\n    private static int paintChanges = 0;\n\n    public static String colorName(int color)\n    {\n        if(color == 1)\n            return \"red\";\n        else if(color == 2)\n            return \"white\";\n        else\n            return \"blue\";\n    }\n\n    // Given: paints one stripe, loading a new paint only when the color changes.\n    public static void paintStripe(int boat, int color)\n    {\n        if(color != loadedColor)\n        {\n            loadedColor = color;\n            ++paintChanges;\n            System.out.println(\"  (load \" + colorName(color) + \" paint)\");\n        }\n        System.out.println(\"  boat \" + boat + \": \" + colorName(color) + \" stripe\");\n    }\n\n    public static void printSlipMap(int docks, int slipsPerDock)\n    {\n        // TODO (R1): every dock must list all of its slips.\n        int slip = 1;\n        for(int dock = 1; dock <= docks; ++dock)\n        {\n            System.out.print(\"Dock \" + dock + \":\");\n            while(slip <= slipsPerDock)\n            {\n                System.out.print(\" \" + dock + \"-\" + slip);\n                ++slip;\n            }\n            System.out.println();\n        }\n    }\n\n    public static void paintAllStripes(int boats)\n    {\n        loadedColor = 0;\n        paintChanges = 0;\n\n        // TODO (R2): every boat still gets every stripe, but load each paint only once.\n        for(int boat = 1; boat <= boats; ++boat)\n        {\n            for(int color = 1; color <= COLORS; ++color)\n            {\n                paintStripe(boat, color);\n            }\n        }\n\n        System.out.println(\"Paint changes: \" + paintChanges);\n    }\n\n    public static void main(String[] args)\n    {\n        printSlipMap(3, 4);\n        paintAllStripes(3);\n    }\n}\n",
+   "solution": "public class Boatyard\n{\n    public static final int COLORS = 3;   // 1 red, 2 white, 3 blue\n\n    // Given: which paint is in the spray gun, and how many times it was changed.\n    private static int loadedColor = 0;\n    private static int paintChanges = 0;\n\n    public static String colorName(int color)\n    {\n        if(color == 1)\n            return \"red\";\n        else if(color == 2)\n            return \"white\";\n        else\n            return \"blue\";\n    }\n\n    // Given: paints one stripe, loading a new paint only when the color changes.\n    public static void paintStripe(int boat, int color)\n    {\n        if(color != loadedColor)\n        {\n            loadedColor = color;\n            ++paintChanges;\n            System.out.println(\"  (load \" + colorName(color) + \" paint)\");\n        }\n        System.out.println(\"  boat \" + boat + \": \" + colorName(color) + \" stripe\");\n    }\n\n    public static void printSlipMap(int docks, int slipsPerDock)\n    {\n        for(int dock = 1; dock <= docks; ++dock)\n        {\n            System.out.print(\"Dock \" + dock + \":\");\n            for(int slip = 1; slip <= slipsPerDock; ++slip)\n            {\n                System.out.print(\" \" + dock + \"-\" + slip);\n            }\n            System.out.println();\n        }\n    }\n\n    public static void paintAllStripes(int boats)\n    {\n        loadedColor = 0;\n        paintChanges = 0;\n\n        for(int color = 1; color <= COLORS; ++color)\n        {\n            for(int boat = 1; boat <= boats; ++boat)\n            {\n                paintStripe(boat, color);\n            }\n        }\n\n        System.out.println(\"Paint changes: \" + paintChanges);\n    }\n\n    public static void main(String[] args)\n    {\n        printSlipMap(3, 4);\n        paintAllStripes(3);\n    }\n}\n",
+   "solution_notes": "**Slip map.** In the starter, `slip` was set to 1 once, before the outer loop. Dock 1's inner loop raised it to 5; for Dock 2 the test `5 <= 4` was false at once, so the inner body never ran again. An inner loop's control variable must be initialized every time the outer loop starts a new iteration. Declaring it in an inner `for` header does that automatically and limits its scope to the inner loop. The inner loop is entirely inside the outer loop's braces; loops can be nested but can never overlap.\n\n**Paint order.** Both versions call `paintStripe()` 3 × 3 = 9 times and paint the same 9 stripes. The difference is which variable changes least often: the outer loop's variable changes once per full run of the inner loop. With boats outside, the color changed on every call (9 loads, 3 hours of reloading); with colors outside, it changes 3 times. This is the book's mailing-label example: when switching something is costly, put that variable in the outer loop.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The inner counter restarts for every dock",
+     "within": "Boatyard.printSlipMap",
+     "require": "\\bfor\\s*\\([^)]*\\bdock\\b[^)]*\\)\\s*\\{[^{}]*?(?:\\bfor\\s*\\(\\s*(?:int\\s+)?\\w+\\s*=\\s*1\\s*;|(?:^|[;{}])\\s*\\w+\\s*=\\s*1\\s*;)",
+     "message": "Start the slip counter at 1 inside the dock loop, for example with `for(int slip = 1; slip <= slipsPerDock; ++slip)` as the inner loop. Initialized once before the outer loop, the counter is already past the last slip when Dock 2 begins, so the inner body never runs again.",
+     "hint": "Where is `slip` when Dock 2 starts?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Colors in the outer loop, boats in the inner loop",
+     "within": "Boatyard.paintAllStripes",
+     "require": "\\bfor\\s*\\([^)]*\\bcolor\\b[^)]*\\)\\s*\\{?\\s*for\\s*\\([^)]*\\bboat\\b",
+     "forbid": "\\bfor\\s*\\([^)]*\\bboat\\b[^)]*\\)\\s*\\{?\\s*for\\s*\\([^)]*\\bcolor\\b",
+     "message": "Swap the loops: the outer loop varies `color` and the inner loop varies `boat`. The outer loop's variable changes least often, so the paint is loaded once per color instead of once per stripe."
+    }
+   ],
+   "hints": [
+    "Trace `slip` through the starter: what value does it hold when the outer loop begins its second iteration?",
+    "For the paint, list the calls to `paintStripe()` in order for both nestings. In which list does the color change least often?",
+    "Swapping two nested `for` headers keeps the body the same; only the order of the calls changes."
+   ],
+   "test_program": {
+    "file_name": "TestBoatyard.java",
+    "code": "public class TestBoatyard\n{\n    public static void main(String[] args)\n    {\n        // Today's run, exactly as \"java Boatyard\" prints it.\n        Boatyard.main(new String[0]);\n\n        // A small yard: two docks of two slips, and two boats.\n        Boatyard.printSlipMap(2, 2);\n        Boatyard.paintAllStripes(2);\n    }\n}\n",
+    "expected_output": "Dock 1: 1-1 1-2 1-3 1-4\nDock 2: 2-1 2-2 2-3 2-4\nDock 3: 3-1 3-2 3-3 3-4\n  (load red paint)\n  boat 1: red stripe\n  boat 2: red stripe\n  boat 3: red stripe\n  (load white paint)\n  boat 1: white stripe\n  boat 2: white stripe\n  boat 3: white stripe\n  (load blue paint)\n  boat 1: blue stripe\n  boat 2: blue stripe\n  boat 3: blue stripe\nPaint changes: 3\nDock 1: 1-1 1-2\nDock 2: 2-1 2-2\n  (load red paint)\n  boat 1: red stripe\n  boat 2: red stripe\n  (load white paint)\n  boat 1: white stripe\n  boat 2: white stripe\n  (load blue paint)\n  boat 1: blue stripe\n  boat 2: blue stripe\nPaint changes: 3\n",
+    "predict": "Before you change anything: predict the starter's `Paint changes:` number for 3 boats, and what the line for Dock 3 shows."
+   },
+   "warmup": [
+    {
+     "question": "Trace the starter's `printSlipMap(3, 4)`. What is `slip` when the outer loop begins its second iteration, and what does Dock 2's line show?",
+     "model_answer": "slip is 5. The inner test 5 <= 4 is false immediately, so Dock 2's line is just \"Dock 2:\" with no slips (and the same for Dock 3)."
+    },
+    {
+     "question": "In the starter's `paintAllStripes(3)`, how many times is `paintStripe()` called, and how many times does the paint change?",
+     "model_answer": "9 calls and 9 paint changes: red, white, blue for boat 1, then red again for boat 2, and so on, so every call loads a different paint."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your `paintAllStripes()` calls `paintStripe()` the same number of times as the starter. What changed, and what is it worth if each paint change takes 20 minutes?",
+     "model_answer": "The order of the calls. With colors outside, the paint changes 3 times instead of 9: 6 fewer loads, which saves 120 minutes (2 hours) on a 3-boat job. The outer loop's variable changes least often."
+    },
+    {
+     "question": "How many times does `System.out.println(\"Hi\");` run in `for(int x = 0; x < 4; ++x) for(int y = 0; y < 5; ++y) System.out.println(\"Hi\");`? Explain.",
+     "model_answer": "20 times: the inner loop runs its 5 iterations for each of the outer loop's 4 iterations, 4 × 5."
+    },
+    {
+     "question": "In the slip map, does it matter which loop is outside? What would the map look like with slips in the outer loop?",
+     "model_answer": "Yes. Each println ends a line, so the outer loop decides what a line means. With slips outside, each line would hold one slip number across every dock (1-1 2-1 3-1), which is not a map of docks."
+    }
+   ],
+   "extension": "Add `printSlipCount(int docks, int slipsPerDock)` that counts every slip with a nested loop and prints the total. Check it against `docks * slipsPerDock`. Then make Dock 1 the short dock: it has only 2 slips, the others have `slipsPerDock`. Which loop's test has to change?",
+   "worth_knowing": "In her 1843 notes on Babbage's Analytical Engine, Ada Lovelace described repeating a group of operations, which she called a *cycle*, and a \"cycle of cycles\": a repetition inside a repetition. That is a nested loop, described about a century before the first electronic computers ran one.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions."
+    }
+   ]
+  },
+  {
+   "id": "6.7",
+   "title": "The cargo ferry that asks the same question 20 times",
+   "subtitle": "Improving loop performance: no repeated work in the test, and the cheaper, likelier-false condition first",
+   "source": "Ch. 6, section 6.7 (pp. 223–227)",
+   "minutes": 25,
+   "objectives": [
+    "Recognize a loop test that repeats work whose result doesn't change, and move that work before the loop",
+    "Order the operands of `&&` so the condition most likely to be false (and cheapest) is evaluated first",
+    "Use counts of calls, not guesses, to show that an optimized loop does the same job with less work",
+    "Weigh performance against readability, as the book's final note on loop performance advises"
+   ],
+   "scenario": "Every evening the cargo yard at Gull Island loads crates onto the last ferry. The ferry has room for a few crates; a crate goes aboard only if customs has cleared it and it weighs no more than `MAX_KG`. Two of the given methods are slow in real life, so the yard counts their calls: `getCapacity()` asks the booking database, and `customsCleared()` calls the customs service. `weightOf()` just reads the crate's label.\n\nMost crates are too heavy for the evening ferry, yet the program asks customs about every one of them, and it asks the database for the capacity before every iteration. Make `loadFerry()` load **exactly the same crates** with fewer lookups. For 20 waiting crates it must print:\n\n```\n  crate 12 loaded (740 kg)\n  crate 17 loaded (790 kg)\n  crate 19 loaded (730 kg)\nLoaded 3 crates\nCapacity lookups: 1, customs lookups: 5\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Call `getCapacity()` **once**, before the loop, and store the result in a local variable; the loop's test uses that variable. The capacity doesn't change while the ferry is being loaded."
+    },
+    {
+     "id": "R2",
+     "text": "In the loading decision, test the weight first: `weightOf(crate) <= MAX_KG && customsCleared(crate)`. Most crates fail the cheap weight test, so `&&` skips the customs call for them."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects: the same crates as before, with fewer lookups.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "CargoLoader.java",
+   "starter_code": "public class CargoLoader\n{\n    public static final int MAX_KG = 800;\n\n    // Given: these lookups are slow in real life, so the yard counts them.\n    private static int capacityLookups = 0;\n    private static int customsLookups = 0;\n\n    // Asks the booking database how many crates fit on tonight's ferry.\n    public static int getCapacity()\n    {\n        ++capacityLookups;\n        return 3;\n    }\n\n    // Asks the customs service whether a crate is cleared (every fifth crate is held).\n    public static boolean customsCleared(int crate)\n    {\n        ++customsLookups;\n        return crate % 5 != 0;\n    }\n\n    // Reads the weight from the crate's label (fast).\n    public static int weightOf(int crate)\n    {\n        return 700 + (crate * 170) % 400;\n    }\n\n    public static void loadFerry(int crates)\n    {\n        capacityLookups = 0;\n        customsLookups = 0;\n        int loaded = 0;\n\n        // TODO (R1): the capacity can't change while loading; look it up once.\n        // TODO (R2): most crates are too heavy; let the cheap test go first.\n        for(int crate = 1; crate <= crates && loaded < getCapacity(); ++crate)\n        {\n            if(customsCleared(crate) && weightOf(crate) <= MAX_KG)\n            {\n                System.out.println(\"  crate \" + crate + \" loaded (\" + weightOf(crate) + \" kg)\");\n                ++loaded;\n            }\n        }\n\n        System.out.println(\"Loaded \" + loaded + \" crates\");\n        System.out.println(\"Capacity lookups: \" + capacityLookups\n            + \", customs lookups: \" + customsLookups);\n    }\n\n    public static void main(String[] args)\n    {\n        loadFerry(20);\n    }\n}\n",
+   "solution": "public class CargoLoader\n{\n    public static final int MAX_KG = 800;\n\n    // Given: these lookups are slow in real life, so the yard counts them.\n    private static int capacityLookups = 0;\n    private static int customsLookups = 0;\n\n    // Asks the booking database how many crates fit on tonight's ferry.\n    public static int getCapacity()\n    {\n        ++capacityLookups;\n        return 3;\n    }\n\n    // Asks the customs service whether a crate is cleared (every fifth crate is held).\n    public static boolean customsCleared(int crate)\n    {\n        ++customsLookups;\n        return crate % 5 != 0;\n    }\n\n    // Reads the weight from the crate's label (fast).\n    public static int weightOf(int crate)\n    {\n        return 700 + (crate * 170) % 400;\n    }\n\n    public static void loadFerry(int crates)\n    {\n        capacityLookups = 0;\n        customsLookups = 0;\n        int loaded = 0;\n        int capacity = getCapacity();\n\n        for(int crate = 1; crate <= crates && loaded < capacity; ++crate)\n        {\n            if(weightOf(crate) <= MAX_KG && customsCleared(crate))\n            {\n                System.out.println(\"  crate \" + crate + \" loaded (\" + weightOf(crate) + \" kg)\");\n                ++loaded;\n            }\n        }\n\n        System.out.println(\"Loaded \" + loaded + \" crates\");\n        System.out.println(\"Capacity lookups: \" + capacityLookups\n            + \", customs lookups: \" + customsLookups);\n    }\n\n    public static void main(String[] args)\n    {\n        loadFerry(20);\n    }\n}\n",
+   "solution_notes": "**Unnecessary operations in the test.** The middle section of a `for` header runs before every iteration. With `loaded < getCapacity()` in it, the database was asked 20 times for a number that never changed (the book's `getNumberOfEmployees()` example). Calling it once before the loop and testing a local variable gives the same result with 1 lookup. If the capacity *could* change during loading, the call would have to stay in the loop.\n\n**Order of short-circuit evaluation.** `&&` evaluates its right operand only when the left one is true. Customs was asked first, so all 19 crates examined triggered a customs call; only 5 of the 20 crates are light enough. With the weight test first, a heavy crate makes the whole expression false without calling customs: 5 lookups instead of 19. For `&&`, put the condition most likely to be false first; for `||`, the one most likely to be true. Cheaper first is a second reason here: reading a label costs less than a web-service call.\n\nThe loaded crates are identical (12, 17, 19), which is the rule for any optimization: same behaviour, less work. Both changes also make the code clearer, which matters more: the book's final note says that saving milliseconds at the cost of readability is not a success.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "getCapacity() is called once, before the loop",
+     "within": "CargoLoader.loadFerry",
+     "require": "\\bint\\s+\\w+\\s*=\\s*getCapacity\\s*\\(\\s*\\)\\s*;[\\s\\S]*\\bfor\\s*\\(",
+     "forbid": "\\b(?:for|while)\\s*\\([^{]*getCapacity\\s*\\(",
+     "message": "Store the capacity before the loop (`int capacity = getCapacity();`) and test `loaded < capacity`. The test section of a `for` runs before every iteration, so a method call there is repeated every time, even though its answer never changes.",
+     "hint": "Count how many times the middle section of the for header is evaluated for 20 crates."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The weight test comes before the customs call",
+     "within": "CargoLoader.loadFerry",
+     "require": "\\bif\\s*\\(\\s*(?:weightOf\\s*\\(\\s*\\w+\\s*\\)|\\w+)\\s*<=\\s*MAX_KG\\s*&&\\s*customsCleared\\s*\\(\\s*\\w+\\s*\\)\\s*\\)",
+     "forbid": "\\bcustomsCleared\\s*\\([^)]*\\)\\s*&&",
+     "message": "Put the weight test on the left of `&&`: `weightOf(crate) <= MAX_KG && customsCleared(crate)`. `&&` skips its right operand when the left one is false, and most crates are too heavy, so customs is asked only about the light ones."
+    }
+   ],
+   "hints": [
+    "Run the starter and read the two lookup counts. Which loop part is responsible for each number?",
+    "The capacity is the same number every time it's asked for. Where could you ask once and remember the answer?",
+    "With `&&`, if the left operand is false, the right one is never evaluated. Which condition is false for most crates?"
+   ],
+   "test_program": {
+    "file_name": "TestCargoLoader.java",
+    "code": "public class TestCargoLoader\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"-- 20 crates waiting --\");\n        CargoLoader.main(new String[0]);\n\n        System.out.println(\"-- 12 crates waiting --\");\n        CargoLoader.loadFerry(12);\n\n        System.out.println(\"-- 4 crates waiting --\");\n        CargoLoader.loadFerry(4);\n    }\n}\n",
+    "expected_output": "-- 20 crates waiting --\n  crate 12 loaded (740 kg)\n  crate 17 loaded (790 kg)\n  crate 19 loaded (730 kg)\nLoaded 3 crates\nCapacity lookups: 1, customs lookups: 5\n-- 12 crates waiting --\n  crate 12 loaded (740 kg)\nLoaded 1 crates\nCapacity lookups: 1, customs lookups: 3\n-- 4 crates waiting --\nLoaded 0 crates\nCapacity lookups: 1, customs lookups: 0\n",
+    "predict": "Before you change anything, run the starter and write down its two lookup counts for 20 crates. Then predict both counts for your version before you run it again."
+   },
+   "warmup": [
+    {
+     "question": "In the starter, is `getCapacity()` called once, or once per iteration? Point to the part of the `for` header that decides it.",
+     "model_answer": "Once per evaluation of the test, the middle section of the header, which runs before every iteration (plus the final test that ends the loop)."
+    },
+    {
+     "question": "In `customsCleared(crate) && weightOf(crate) <= MAX_KG`, when is `weightOf()` skipped? Is `customsCleared()` ever skipped?",
+     "model_answer": "weightOf() is skipped when customsCleared() returns false (a held crate). customsCleared() is never skipped because it is the left operand, so customs is asked about every crate."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your version loads the same three crates. Using the lookup counts, explain where each saving came from.",
+     "model_answer": "Capacity lookups fell from 20 to 1 because the call moved out of the loop test, which is evaluated before every iteration. Customs lookups fell from 19 to 5 because the weight test now comes first and && skips the customs call for the 14 heavy crates."
+    },
+    {
+     "question": "For `&&` the book says test the condition most likely to be false first. Why? What is the matching rule for `||`?",
+     "model_answer": "With &&, one false operand decides the result, so a likely-false first operand lets Java skip the second most often. With ||, one true operand decides, so put the condition most likely to be true first."
+    },
+    {
+     "question": "When would moving `getCapacity()` out of the loop be wrong?",
+     "model_answer": "If its answer could change during the loop, for example if another clerk could book space on the ferry while it is loading. Then the loop must ask again each time to stay correct; correctness comes before speed."
+    }
+   ],
+   "extension": "Add `yardReport(int crates)` that prints the total weight of all crates and how many weigh more than `MAX_KG`. Write it first with two loops, then fuse them into one loop (loop fusion). When would fusing two loops be wrong? Hint: think about a second loop that needs a total the first loop finishes computing.",
+   "worth_knowing": "Donald Knuth's 1974 paper *Structured Programming with go to Statements* contains the famous line \"premature optimization is the root of all evil\". The same sentence says programmers should still not pass up the critical 3% of cases. Measuring first, as the lookup counters do here, is how you find that 3%.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; named constants and descriptive local variables (such as `capacity`) instead of repeated calls or bare numbers."
+    }
+   ]
+  }
+ ]
+}

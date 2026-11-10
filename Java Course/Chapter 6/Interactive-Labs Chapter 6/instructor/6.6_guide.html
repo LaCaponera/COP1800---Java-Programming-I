@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The boatyard&#x27;s empty docks and nine paint changes</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 6.6</div>
+  <h1>The boatyard&#x27;s empty docks and nine paint changes</h1>
+<h2>Objectives</h2><ul><li>Write a nested loop in which the inner loop is entirely contained in the outer loop and restarts for every outer iteration</li><li>Trace how many times an inner loop body runs: outer iterations times inner iterations</li><li>Decide which variable should control the outer loop: the one that should change least often</li><li>Explain why two nestings can do the same work in a different, and differently costly, order</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> In <code>printSlipMap()</code>, the inner loop&#x27;s control variable starts again at 1 <strong>inside</strong> the outer loop, so every dock lists all of its slips. (A <code>for</code> loop nested in the <code>for</code> loop is the clearest way.)</li><li><strong>R2</strong> In <code>paintAllStripes()</code>, the outer loop varies the color and the inner loop varies the boat, so all stripes of one color are painted before the next paint is loaded.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter&#x27;s <code>printSlipMap(3, 4)</code>. What is <code>slip</code> when the outer loop begins its second iteration, and what does Dock 2&#x27;s line show?</p><div class="answer"><p>slip is 5. The inner test 5 &lt;= 4 is false immediately, so Dock 2&#x27;s line is just &quot;Dock 2:&quot; with no slips (and the same for Dock 3).</p></div></li><li><p>In the starter&#x27;s <code>paintAllStripes(3)</code>, how many times is <code>paintStripe()</code> called, and how many times does the paint change?</p><div class="answer"><p>9 calls and 9 paint changes: red, white, blue for boat 1, then red again for boat 2, and so on, so every call loads a different paint.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Boatyard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Boatyard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">COLORS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// 1 red, 2 white, 3 blue</span>
+
+<span class="t-w">    </span><span class="t-c1">// Given: which paint is in the spray gun, and how many times it was changed.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">loadedColor</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">paintChanges</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">colorName</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">color</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"red"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"white"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"blue"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Given: paints one stripe, loading a new paint only when the color changes.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">paintStripe</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">boat</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">color</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-n">loadedColor</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">loadedColor</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">color</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">paintChanges</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  (load "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">colorName</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" paint)"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  boat "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">boat</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">colorName</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" stripe"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printSlipMap</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">docks</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">slipsPerDock</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">docks</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">dock</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Dock "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">slip</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">slip</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">slipsPerDock</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">slip</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">" "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"-"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">slip</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">paintAllStripes</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">boats</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">loadedColor</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">paintChanges</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">color</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">color</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">COLORS</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">color</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">boat</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">boat</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">boats</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">boat</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">paintStripe</span><span class="t-p">(</span><span class="t-n">boat</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">color</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Paint changes: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">paintChanges</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printSlipMap</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">paintAllStripes</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><strong>Slip map.</strong> In the starter, <code>slip</code> was set to 1 once, before the outer loop. Dock 1&#x27;s inner loop raised it to 5; for Dock 2 the test <code>5 &lt;= 4</code> was false at once, so the inner body never ran again. An inner loop&#x27;s control variable must be initialized every time the outer loop starts a new iteration. Declaring it in an inner <code>for</code> header does that automatically and limits its scope to the inner loop. The inner loop is entirely inside the outer loop&#x27;s braces; loops can be nested but can never overlap.</p><p><strong>Paint order.</strong> Both versions call <code>paintStripe()</code> 3 × 3 = 9 times and paint the same 9 stripes. The difference is which variable changes least often: the outer loop&#x27;s variable changes once per full run of the inner loop. With boats outside, the color changed on every call (9 loads, 3 hours of reloading); with colors outside, it changes 3 times. This is the book&#x27;s mailing-label example: when switching something is costly, put that variable in the outer loop.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBoatyard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBoatyard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Today's run, exactly as "java Boatyard" prints it.</span>
+<span class="t-w">        </span><span class="t-n">Boatyard</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// A small yard: two docks of two slips, and two boats.</span>
+<span class="t-w">        </span><span class="t-n">Boatyard</span><span class="t-p">.</span><span class="t-na">printSlipMap</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Boatyard</span><span class="t-p">.</span><span class="t-na">paintAllStripes</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Dock 1: 1-1 1-2 1-3 1-4
+Dock 2: 2-1 2-2 2-3 2-4
+Dock 3: 3-1 3-2 3-3 3-4
+  (load red paint)
+  boat 1: red stripe
+  boat 2: red stripe
+  boat 3: red stripe
+  (load white paint)
+  boat 1: white stripe
+  boat 2: white stripe
+  boat 3: white stripe
+  (load blue paint)
+  boat 1: blue stripe
+  boat 2: blue stripe
+  boat 3: blue stripe
+Paint changes: 3
+Dock 1: 1-1 1-2
+Dock 2: 2-1 2-2
+  (load red paint)
+  boat 1: red stripe
+  boat 2: red stripe
+  (load white paint)
+  boat 1: white stripe
+  boat 2: white stripe
+  (load blue paint)
+  boat 1: blue stripe
+  boat 2: blue stripe
+Paint changes: 3
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The inner counter restarts for every dock<div class="small">in <code>Boatyard.printSlipMap</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\([^)]*\bdock\b[^)]*\)\s*\{[^{}]*?(?:\bfor\s*\(\s*(?:int\s+)?\w+\s*=\s*1\s*;|(?:^|[;{}])\s*\w+\s*=\s*1\s*;)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Colors in the outer loop, boats in the inner loop<div class="small">in <code>Boatyard.paintAllStripes</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\([^)]*\bcolor\b[^)]*\)\s*\{?\s*for\s*\([^)]*\bboat\b</code></div><div><span class="tag">forbid</span> <code>\bfor\s*\([^)]*\bboat\b[^)]*\)\s*\{?\s*for\s*\([^)]*\bcolor\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The inner counter restarts for every dock</dt><dd><p>Start the slip counter at 1 inside the dock loop, for example with <code>for(int slip = 1; slip &lt;= slipsPerDock; ++slip)</code> as the inner loop. Initialized once before the outer loop, the counter is already past the last slip when Dock 2 begins, so the inner body never runs again.</p><div class='small'><strong>Hint:</strong></div><p>Where is <code>slip</code> when Dock 2 starts?</p></dd><dt>C2 · Colors in the outer loop, boats in the inner loop</dt><dd><p>Swap the loops: the outer loop varies <code>color</code> and the inner loop varies <code>boat</code>. The outer loop&#x27;s variable changes least often, so the paint is loaded once per color instead of once per stripe.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Trace <code>slip</code> through the starter: what value does it hold when the outer loop begins its second iteration?</p></li><li><p>For the paint, list the calls to <code>paintStripe()</code> in order for both nestings. In which list does the color change least often?</p></li><li><p>Swapping two nested <code>for</code> headers keeps the body the same; only the order of the calls changes.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your <code>paintAllStripes()</code> calls <code>paintStripe()</code> the same number of times as the starter. What changed, and what is it worth if each paint change takes 20 minutes?</p><div class="answer"><p>The order of the calls. With colors outside, the paint changes 3 times instead of 9: 6 fewer loads, which saves 120 minutes (2 hours) on a 3-boat job. The outer loop&#x27;s variable changes least often.</p></div></li><li><p>How many times does <code>System.out.println(&quot;Hi&quot;);</code> run in <code>for(int x = 0; x &lt; 4; ++x) for(int y = 0; y &lt; 5; ++y) System.out.println(&quot;Hi&quot;);</code>? Explain.</p><div class="answer"><p>20 times: the inner loop runs its 5 iterations for each of the outer loop&#x27;s 4 iterations, 4 × 5.</p></div></li><li><p>In the slip map, does it matter which loop is outside? What would the map look like with slips in the outer loop?</p><div class="answer"><p>Yes. Each println ends a line, so the outer loop decides what a line means. With slips outside, each line would hold one slip number across every dock (1-1 2-1 3-1), which is not a map of docks.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>printSlipCount(int docks, int slipsPerDock)</code> that counts every slip with a nested loop and prints the total. Check it against <code>docks * slipsPerDock</code>. Then make Dock 1 the short dock: it has only 2 slips, the others have <code>slipsPerDock</code>. Which loop&#x27;s test has to change?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

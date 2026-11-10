@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The cargo ferry that asks the same question 20 times</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 6.7</div>
+  <h1>The cargo ferry that asks the same question 20 times</h1>
+<h2>Objectives</h2><ul><li>Recognize a loop test that repeats work whose result doesn&#x27;t change, and move that work before the loop</li><li>Order the operands of <code>&amp;&amp;</code> so the condition most likely to be false (and cheapest) is evaluated first</li><li>Use counts of calls, not guesses, to show that an optimized loop does the same job with less work</li><li>Weigh performance against readability, as the book&#x27;s final note on loop performance advises</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Call <code>getCapacity()</code> <strong>once</strong>, before the loop, and store the result in a local variable; the loop&#x27;s test uses that variable. The capacity doesn&#x27;t change while the ferry is being loaded.</li><li><strong>R2</strong> In the loading decision, test the weight first: <code>weightOf(crate) &lt;= MAX_KG &amp;&amp; customsCleared(crate)</code>. Most crates fail the cheap weight test, so <code>&amp;&amp;</code> skips the customs call for them.</li><li><strong>R3</strong> Running the test program prints exactly what it expects: the same crates as before, with fewer lookups. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, is <code>getCapacity()</code> called once, or once per iteration? Point to the part of the <code>for</code> header that decides it.</p><div class="answer"><p>Once per evaluation of the test, the middle section of the header, which runs before every iteration (plus the final test that ends the loop).</p></div></li><li><p>In <code>customsCleared(crate) &amp;&amp; weightOf(crate) &lt;= MAX_KG</code>, when is <code>weightOf()</code> skipped? Is <code>customsCleared()</code> ever skipped?</p><div class="answer"><p>weightOf() is skipped when customsCleared() returns false (a held crate). customsCleared() is never skipped because it is the left operand, so customs is asked about every crate.</p></div></li></ol>
+<h2>Solution</h2><div class="file">CargoLoader.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">CargoLoader</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_KG</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">800</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Given: these lookups are slow in real life, so the yard counts them.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">capacityLookups</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">customsLookups</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Asks the booking database how many crates fit on tonight's ferry.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getCapacity</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">capacityLookups</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Asks the customs service whether a crate is cleared (every fifth crate is held).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">customsCleared</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">crate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">customsLookups</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">crate</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">5</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Reads the weight from the crate's label (fast).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">weightOf</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">crate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mi">700</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">crate</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mi">170</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">400</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">loadFerry</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">crates</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">capacityLookups</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">customsLookups</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">capacity</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">getCapacity</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">crate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">crate</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">crates</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">capacity</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">crate</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">weightOf</span><span class="t-p">(</span><span class="t-n">crate</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_KG</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">customsCleared</span><span class="t-p">(</span><span class="t-n">crate</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  crate "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">crate</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" loaded ("</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">weightOf</span><span class="t-p">(</span><span class="t-n">crate</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" kg)"</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">loaded</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Loaded "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" crates"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Capacity lookups: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">capacityLookups</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", customs lookups: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">customsLookups</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">loadFerry</span><span class="t-p">(</span><span class="t-mi">20</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><strong>Unnecessary operations in the test.</strong> The middle section of a <code>for</code> header runs before every iteration. With <code>loaded &lt; getCapacity()</code> in it, the database was asked 20 times for a number that never changed (the book&#x27;s <code>getNumberOfEmployees()</code> example). Calling it once before the loop and testing a local variable gives the same result with 1 lookup. If the capacity <em>could</em> change during loading, the call would have to stay in the loop.</p><p><strong>Order of short-circuit evaluation.</strong> <code>&amp;&amp;</code> evaluates its right operand only when the left one is true. Customs was asked first, so all 19 crates examined triggered a customs call; only 5 of the 20 crates are light enough. With the weight test first, a heavy crate makes the whole expression false without calling customs: 5 lookups instead of 19. For <code>&amp;&amp;</code>, put the condition most likely to be false first; for <code>||</code>, the one most likely to be true. Cheaper first is a second reason here: reading a label costs less than a web-service call.</p><p>The loaded crates are identical (12, 17, 19), which is the rule for any optimization: same behaviour, less work. Both changes also make the code clearer, which matters more: the book&#x27;s final note says that saving milliseconds at the cost of readability is not a success.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestCargoLoader.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestCargoLoader</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"-- 20 crates waiting --"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">CargoLoader</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"-- 12 crates waiting --"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">CargoLoader</span><span class="t-p">.</span><span class="t-na">loadFerry</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"-- 4 crates waiting --"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">CargoLoader</span><span class="t-p">.</span><span class="t-na">loadFerry</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">-- 20 crates waiting --
+  crate 12 loaded (740 kg)
+  crate 17 loaded (790 kg)
+  crate 19 loaded (730 kg)
+Loaded 3 crates
+Capacity lookups: 1, customs lookups: 5
+-- 12 crates waiting --
+  crate 12 loaded (740 kg)
+Loaded 1 crates
+Capacity lookups: 1, customs lookups: 3
+-- 4 crates waiting --
+Loaded 0 crates
+Capacity lookups: 1, customs lookups: 0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>getCapacity() is called once, before the loop<div class="small">in <code>CargoLoader.loadFerry</code></div></td><td><div><span class="tag">require</span> <code>\bint\s+\w+\s*=\s*getCapacity\s*\(\s*\)\s*;[\s\S]*\bfor\s*\(</code></div><div><span class="tag">forbid</span> <code>\b(?:for|while)\s*\([^{]*getCapacity\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The weight test comes before the customs call<div class="small">in <code>CargoLoader.loadFerry</code></div></td><td><div><span class="tag">require</span> <code>\bif\s*\(\s*(?:weightOf\s*\(\s*\w+\s*\)|\w+)\s*&lt;=\s*MAX_KG\s*&amp;&amp;\s*customsCleared\s*\(\s*\w+\s*\)\s*\)</code></div><div><span class="tag">forbid</span> <code>\bcustomsCleared\s*\([^)]*\)\s*&amp;&amp;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · getCapacity() is called once, before the loop</dt><dd><p>Store the capacity before the loop (<code>int capacity = getCapacity();</code>) and test <code>loaded &lt; capacity</code>. The test section of a <code>for</code> runs before every iteration, so a method call there is repeated every time, even though its answer never changes.</p><div class='small'><strong>Hint:</strong></div><p>Count how many times the middle section of the for header is evaluated for 20 crates.</p></dd><dt>C2 · The weight test comes before the customs call</dt><dd><p>Put the weight test on the left of <code>&amp;&amp;</code>: <code>weightOf(crate) &lt;= MAX_KG &amp;&amp; customsCleared(crate)</code>. <code>&amp;&amp;</code> skips its right operand when the left one is false, and most crates are too heavy, so customs is asked only about the light ones.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter and read the two lookup counts. Which loop part is responsible for each number?</p></li><li><p>The capacity is the same number every time it&#x27;s asked for. Where could you ask once and remember the answer?</p></li><li><p>With <code>&amp;&amp;</code>, if the left operand is false, the right one is never evaluated. Which condition is false for most crates?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your version loads the same three crates. Using the lookup counts, explain where each saving came from.</p><div class="answer"><p>Capacity lookups fell from 20 to 1 because the call moved out of the loop test, which is evaluated before every iteration. Customs lookups fell from 19 to 5 because the weight test now comes first and &amp;&amp; skips the customs call for the 14 heavy crates.</p></div></li><li><p>For <code>&amp;&amp;</code> the book says test the condition most likely to be false first. Why? What is the matching rule for <code>||</code>?</p><div class="answer"><p>With &amp;&amp;, one false operand decides the result, so a likely-false first operand lets Java skip the second most often. With ||, one true operand decides, so put the condition most likely to be true first.</p></div></li><li><p>When would moving <code>getCapacity()</code> out of the loop be wrong?</p><div class="answer"><p>If its answer could change during the loop, for example if another clerk could book space on the ferry while it is loading. Then the loop must ask again each time to stay correct; correctness comes before speed.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>yardReport(int crates)</code> that prints the total weight of all crates and how many weigh more than <code>MAX_KG</code>. Write it first with two loops, then fuse them into one loop (loop fusion). When would fusing two loops be wrong? Hint: think about a second loop that needs a total the first loop finishes computing.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; named constants and descriptive local variables (such as <code>capacity</code>) instead of repeated calls or bare numbers.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

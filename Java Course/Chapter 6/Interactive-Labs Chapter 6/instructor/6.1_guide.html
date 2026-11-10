@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The harbor pump that stops after one stroke</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 6.1</div>
+  <h1>The harbor pump that stops after one stroke</h1>
+<h2>Objectives</h2><ul><li>Describe the loop structure: a Boolean expression is evaluated, the body runs while it is true, and the expression is evaluated again after every iteration</li><li>Explain the difference between a decision, which asks its question once, and a loop, which asks it again after each pass</li><li>Count iterations with a counter that starts at 0 before the loop</li><li>Show with output that a loop body can run zero times, and that it does not run one last time when the test becomes false</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Replace the <code>if</code> with a <code>while</code> loop that tests the same Boolean expression, <code>levelCm &gt; SAFE_LEVEL</code>, so the pump cycles until the water is at or below the safe level.</li><li><strong>R2</strong> Count the iterations: <code>cycles</code> starts at 0 before the loop, increases by 1 in the loop body, numbers each cycle line, and appears in the <code>stopped at ... after N cycle(s)</code> line printed <strong>after</strong> the loop.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, how many times does the body under <code>if(levelCm &gt; SAFE_LEVEL)</code> run for the North dock (130 cm), and what level does it report?</p><div class="answer"><p>Once. It lowers the water to 110 cm and stops, even though 110 is still above 80, because an if never asks its question a second time.</p></div></li><li><p>In a loop, what happens immediately after the last statement of the body runs?</p><div class="answer"><p>Control goes back to the top and the Boolean expression is evaluated again. If it is still true, the body runs again; if it is false, the loop ends.</p></div></li></ol>
+<h2>Solution</h2><div class="file">PumpStation.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">PumpStation</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SAFE_LEVEL</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">80</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// cm of water the pit can hold safely</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">PUMP_CM</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">20</span><span class="t-p">;</span><span class="t-w">      </span><span class="t-c1">// one pump cycle lowers the water this much</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">drain</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">levelCm</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" dock: water at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">levelCm</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cm"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">cycles</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-k">while</span><span class="t-p">(</span><span class="t-n">levelCm</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">SAFE_LEVEL</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">levelCm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">levelCm</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-n">PUMP_CM</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">cycles</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">cycles</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  cycle "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">cycles</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": water now "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">levelCm</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cm"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  stopped at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">levelCm</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cm after "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">cycles</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cycle(s)"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">drain</span><span class="t-p">(</span><span class="t-s">"North"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">130</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">drain</span><span class="t-p">(</span><span class="t-s">"East"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>An <code>if</code> evaluates its Boolean expression once: true or false, the program moves on. A <code>while</code> evaluates the same expression, runs the body if it is true, and then <strong>evaluates it again</strong>. Each pass is one iteration. For the North dock the test is true at 130, 110 and 90 cm and false at 70 cm, so there are three iterations and no fourth: when the test is false the loop ends immediately (the false statement in the book&#x27;s <em>Two Truths &amp; a Lie</em> for 6.1). The East dock shows the other edge: 60 is not above 80, so the body runs zero times and <code>cycles</code> stays 0. The counter has to start at 0 <strong>before</strong> the loop (inside it, it would be reset every pass) and be reported <strong>after</strong> the closing brace, where the final value is known. <code>levelCm = levelCm - PUMP_CM</code> is what makes the test eventually false; section 6.2 names this the loop control variable.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestPumpStation.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestPumpStation</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// This morning's log, exactly as "java PumpStation" prints it.</span>
+<span class="t-w">        </span><span class="t-n">PumpStation</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// One centimetre over the limit, and exactly at the limit.</span>
+<span class="t-w">        </span><span class="t-n">PumpStation</span><span class="t-p">.</span><span class="t-na">drain</span><span class="t-p">(</span><span class="t-s">"South"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">81</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">PumpStation</span><span class="t-p">.</span><span class="t-na">drain</span><span class="t-p">(</span><span class="t-s">"West"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">80</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">North dock: water at 130 cm
+  cycle 1: water now 110 cm
+  cycle 2: water now 90 cm
+  cycle 3: water now 70 cm
+  stopped at 70 cm after 3 cycle(s)
+East dock: water at 60 cm
+  stopped at 60 cm after 0 cycle(s)
+South dock: water at 81 cm
+  cycle 1: water now 61 cm
+  stopped at 61 cm after 1 cycle(s)
+West dock: water at 80 cm
+  stopped at 80 cm after 0 cycle(s)
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>A while loop tests levelCm &gt; SAFE_LEVEL<div class="small">in <code>PumpStation.drain</code></div></td><td><div><span class="tag">require</span> <code>\bwhile\s*\(\s*(?:levelCm\s*&gt;\s*SAFE_LEVEL|SAFE_LEVEL\s*&lt;\s*levelCm)\s*\)\s*\{</code></div><div><span class="tag">forbid</span> <code>\bif\s*\(\s*(?:levelCm\s*&gt;\s*SAFE_LEVEL|SAFE_LEVEL\s*&lt;\s*levelCm)\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>cycles goes up by 1 inside the loop body<div class="small">in <code>PumpStation.drain</code></div></td><td><div><span class="tag">require</span> <code>\bwhile\s*\([^)]*\)\s*\{[^}]*(?:\bcycles\s*=\s*cycles\s*\+\s*1\s*;|\bcycles\s*\+=\s*1\s*;|\bcycles\s*\+\+|\+\+\s*cycles\b)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The counter starts at 0 before the loop and is reported after it<div class="small">in <code>PumpStation.drain</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bint\s+cycles\s*=\s*0\s*;[\s\S]*\bwhile\b)(?=[\s\S]*\bwhile\b[\s\S]*\}\s*System\.out\.println\s*\([^;]*\bcycles\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · A while loop tests levelCm &gt; SAFE_LEVEL</dt><dd><p>Change <code>if(levelCm &gt; SAFE_LEVEL)</code> to <code>while(levelCm &gt; SAFE_LEVEL)</code> and keep the braces. A decision asks its question once; a loop asks it again after every pass, so the pump keeps cycling until the water is safe.</p><div class='small'><strong>Hint:</strong></div><p>Same question, different keyword.</p></dd><dt>C2 · cycles goes up by 1 inside the loop body</dt><dd><p>Add 1 to <code>cycles</code> inside the loop&#x27;s braces (for example <code>cycles = cycles + 1;</code>). Each pass through the body is one iteration, so that is the only place where counting it is correct.</p></dd><dt>C3 · The counter starts at 0 before the loop and is reported after it</dt><dd><p>Keep <code>int cycles = 0;</code> above the loop and print <code>cycles</code> in the <code>stopped at</code> line after the loop&#x27;s closing brace. Declared inside the loop, the count would restart every pass; printed inside it, you would get a summary after every cycle.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>An <code>if</code> asks its question once. Which Java structure asks the same question again after every pass through its body?</p></li><li><p>Keep the Boolean expression exactly as it is; only the keyword changes. Then decide which line marks &quot;one more pass&quot;.</p></li><li><p>The cycle number belongs in the line printed inside the loop; the total belongs in the line printed after the closing brace.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>When the North dock reaches 70 cm, <code>levelCm &gt; SAFE_LEVEL</code> is false. Does the loop body run one last time? Use your output as evidence.</p><div class="answer"><p>No. The log stops at cycle 3 (70 cm); there is no cycle 4. When the test is false the loop ends at once and the next statement after the closing brace runs.</p></div></li><li><p>The East dock printed 0 cycles. What does that tell you about where a while loop&#x27;s test is evaluated relative to its body?</p><div class="answer"><p>The test is evaluated before the body ever runs. If it is false the first time, the body is skipped completely, so a while loop can execute zero times.</p></div></li><li><p>Suppose a technician set <code>PUMP_CM</code> to 0. What would <code>drain(&quot;North&quot;, 130)</code> do, and why?</p><div class="answer"><p>It would loop forever. levelCm would never change, so levelCm &gt; SAFE_LEVEL would stay true and the program would keep printing cycle lines. Something in the body must move the test toward false.</p></div></li></ol>
+<h2>Extension</h2><p>The harbor wants an alarm: when a pit needs more than 5 cycles, print <code>  ALARM: check the pump</code> once, after pumping stops. Write the <code>if</code> for it. Why does it belong after the loop rather than inside it? Test it with <code>drain(&quot;Dry dock&quot;, 250)</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

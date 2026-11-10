@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The timetable with no last ferry</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 6.4</div>
+  <h1>The timetable with no last ferry</h1>
+<h2>Objectives</h2><ul><li>Write a <code>for</code> loop whose header initializes, tests and updates the loop control variable</li><li>Convert a counter-controlled <code>while</code> loop into an equivalent <code>for</code> loop</li><li>Choose the relational operator that includes or excludes the final value</li><li>Explain why altering the loop control variable inside a <code>for</code> loop&#x27;s body skips iterations</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>printDepartures()</code> uses one <code>for</code> loop and no <code>while</code>. Its header initializes <code>time</code> to <code>first</code>, tests it, and updates it with <code>INTERVAL</code> (<code>time += INTERVAL</code>).</li><li><strong>R2</strong> The test includes a ferry that leaves exactly at <code>last</code>, so 9:00 appears on the 6:00–9:00 board.</li><li><strong>R3</strong> <code>boardingCountdown()</code> calls every number from <code>from</code> down to 1: the loop control variable <code>s</code> is changed only in the <code>for</code> header, never in the body.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter&#x27;s <code>boardingCountdown(5)</code>. Which numbers does it print, and why?</p><div class="answer"><p>5 3 1. Each iteration decreases s twice, once with s = s - 1 in the body and once with --s in the header.</p></div></li><li><p>In the starter&#x27;s <code>printDepartures(360, 540)</code>, is the 9:00 ferry (540) printed? Explain using the loop&#x27;s test.</p><div class="answer"><p>No. After 8:15, time becomes 540, and 540 &lt; 540 is false, so the loop ends before printing it.</p></div></li></ol>
+<h2>Solution</h2><div class="file">FerrySchedule.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">FerrySchedule</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">INTERVAL</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">45</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// minutes between departures</span>
+
+<span class="t-w">    </span><span class="t-c1">// Given: turns minutes after midnight into a clock time, e.g. 405 -&gt; "6:45".</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">clock</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">mins</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">mins</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":0"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">mins</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">mins</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printDepartures</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">last</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">last</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">INTERVAL</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-n">clock</span><span class="t-p">(</span><span class="t-n">time</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">boardingCountdown</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">from</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">from</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">--</span><span class="t-n">s</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Gangway up"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printDepartures</span><span class="t-p">(</span><span class="t-mi">360</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">540</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// 6:00 to 9:00</span>
+<span class="t-w">        </span><span class="t-n">boardingCountdown</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A <code>for</code> header holds the three actions a <code>while</code> loop spreads over three places: <code>int time = first</code> runs once, <code>time &lt;= last</code> is tested before every iteration, and <code>time += INTERVAL</code> runs after every body. Declaring <code>time</code> in the header limits its scope to the loop, which is all it is needed for. The missing 9:00 ferry came from <code>&lt;</code>: when <code>time</code> reaches 540, <code>540 &lt; 540</code> is false, so the last sailing was never printed; <code>&lt;=</code> includes it. The countdown skipped numbers because <code>s</code> was changed twice per iteration: once by <code>s = s - 1</code> in the body and once by <code>--s</code> in the header, so it went 5, 3, 1. The book advises using the same variable in all three header sections and not altering it in the body; once the header updates it, the body only uses it. Like a <code>while</code>, a <code>for</code> is a pretest loop: <code>printDepartures(600, 590)</code> prints an empty line because the test is false before the first iteration.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestFerrySchedule.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestFerrySchedule</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// The morning board, exactly as "java FerrySchedule" prints it.</span>
+<span class="t-w">        </span><span class="t-n">FerrySchedule</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">FerrySchedule</span><span class="t-p">.</span><span class="t-na">printDepartures</span><span class="t-p">(</span><span class="t-mi">1215</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1260</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// evening: 20:15 to 21:00</span>
+<span class="t-w">        </span><span class="t-n">FerrySchedule</span><span class="t-p">.</span><span class="t-na">printDepartures</span><span class="t-p">(</span><span class="t-mi">600</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">600</span><span class="t-p">);</span><span class="t-w">     </span><span class="t-c1">// a single special sailing</span>
+<span class="t-w">        </span><span class="t-n">FerrySchedule</span><span class="t-p">.</span><span class="t-na">boardingCountdown</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">6:00 6:45 7:30 8:15 9:00
+5 4 3 2 1 Gangway up
+20:15 21:00
+10:00
+3 2 1 Gangway up
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>One for loop drives the timetable<div class="small">in <code>FerrySchedule.printDepartures</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\(\s*(?:int\s+)?time\s*=\s*first\s*;[^;]*;\s*(?:time\s*\+=\s*INTERVAL|time\s*=\s*time\s*\+\s*INTERVAL|time\s*=\s*INTERVAL\s*\+\s*time)\s*\)</code></div><div><span class="tag">forbid</span> <code>\bwhile\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The last sailing is included<div class="small">in <code>FerrySchedule.printDepartures</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\([^;]*;\s*(?:time\s*&lt;=\s*last|last\s*&gt;=\s*time)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The countdown changes s only in its header<div class="small">in <code>FerrySchedule.boardingCountdown</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\(\s*int\s+s\s*=\s*from\s*;\s*(?:s\s*&gt;=\s*1|s\s*&gt;\s*0|1\s*&lt;=\s*s|0\s*&lt;\s*s)\s*;\s*(?:--\s*s|s\s*--|s\s*-=\s*1)\s*\)</code></div><div><span class="tag">forbid</span> <code>\bfor\s*\([^)]*\)\s*\{[^}]*(?:\bs\s*(?:=|-=|\+=)(?!=)|\bs\s*--|\bs\s*\+\+|--\s*s\b|\+\+\s*s\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · One for loop drives the timetable</dt><dd><p>Write the timetable as <code>for(int time = first; ...; time += INTERVAL)</code> and remove the <code>while</code>. The header puts the start, the test and the step in one place, so a reader sees the whole count at a glance.</p><div class='small'><strong>Hint:</strong></div><p>The three statements that controlled the while loop each move into one section of the for header.</p></dd><dt>C2 · The last sailing is included</dt><dd><p>Test <code>time &lt;= last</code>. With <code>&lt;</code>, a ferry that leaves exactly at <code>last</code> makes the test false (540 &lt; 540), so the 9:00 departure never prints.</p></dd><dt>C3 · The countdown changes s only in its header</dt><dd><p>Delete <code>s = s - 1;</code> from the countdown&#x27;s body and keep <code>--s</code> in the header. The header already moves <code>s</code> down by one after each body, so changing it in the body as well skips every other number.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Find the three lines that initialize, test and change <code>time</code> in the while version. Each one has a place inside the for header&#x27;s parentheses.</p></li><li><p>Trace the last sailing: when <code>time</code> is 540 and <code>last</code> is 540, is your test true or false?</p></li><li><p>In the countdown, count how many times <code>s</code> decreases during one iteration.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Name the three sections of your <code>for</code> header in <code>printDepartures()</code> and say when each one runs.</p><div class="answer"><p>int time = first runs once, before anything else. time &lt;= last is tested before every iteration, including the first. time += INTERVAL runs after each execution of the body, then the test is evaluated again.</p></div></li><li><p>How many times does the body run for <code>printDepartures(600, 590)</code>? What does that tell you about <code>for</code> loops?</p><div class="answer"><p>Zero times: 600 &lt;= 590 is false at the start. A for loop, like a while loop, is a pretest loop; its body might never execute.</p></div></li><li><p>You declared <code>time</code> inside the <code>for</code> header. Could a statement after the loop print <code>time</code>? Why might that be a good thing?</p><div class="answer"><p>No. A variable declared in the header goes out of scope when the loop ends. That&#x27;s good when it&#x27;s only a counter: nothing else can misuse it, and the name can be reused for another loop.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>printReturnTrips(int first, int last)</code> that lists the same sailings from the latest to the earliest, with a <code>for</code> loop that decreases its control variable. Then try a header with two variables, <code>for(int time = first, trip = 1; time &lt;= last; time += INTERVAL, ++trip)</code>, to print <code>Trip 1 6:00</code>, <code>Trip 2 6:45</code>, and so on.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; every loop body in braces and indented under its loop header; named constants instead of bare numbers in loop conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
