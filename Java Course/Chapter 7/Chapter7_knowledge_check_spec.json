@@ -1,0 +1,1009 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 7: Characters, Strings, and the StringBuilder",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 7 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "7.1",
+   "title": "Understanding String Data Problems",
+   "subtitle": "Why == misjudges two equal names, and the three classes Java offers for text",
+   "source": "Ch. 7, section 7.1 (pp. 237–238)",
+   "intro": "A program asks Carmen for her name, she types `Carmen`, and it tells her that is not her name. Four questions on why, and on the classes Java gives you for working with text.",
+   "takeaways": [
+    "A `String` variable is a reference: it holds the memory address of a `String` object, not the characters themselves.",
+    "`==` on two `String`s asks whether both refer to the same object in memory. Text typed at run time lands in a new object, so `==` can report a difference even when every character matches.",
+    "Java splits text work across three kinds of class: `Character` for one character, `String` for text that never changes, and `StringBuilder`/`StringBuffer` for text you will keep modifying."
+   ],
+   "questions": [
+    {
+     "id": "typed-name-eq",
+     "concept": "== compares addresses, not text",
+     "level": "apply",
+     "stem": "The user types `Carmen` and presses Enter. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String aName = \"Carmen\";\nScanner input = new Scanner(System.in);\nString anotherName = input.nextLine();\nif(aName == anotherName)\n    System.out.println(\"same\");\nelse\n    System.out.println(\"different\");",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.Scanner;\npublic class TypedName\n{\n    public static void main(String[] args)\n    {\n        String aName = \"Carmen\";\n        Scanner input = new Scanner(System.in);\n        String anotherName = input.nextLine();\n        if(aName == anotherName)\n            System.out.println(\"same\");\n        else\n            System.out.println(\"different\");\n    }\n}",
+       "stdin": "Carmen\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`different`",
+       "feedback": "`nextLine()` builds a new `String` object from what was typed, stored at its own address. `==` compares the two addresses, and they differ even though the characters match.",
+       "correct": true
+      },
+      {
+       "text": "`same`",
+       "feedback": "This reads `==` as comparing letters. For `String`s, `==` compares the memory addresses the two variables hold, and the typed name lives somewhere other than the literal `\"Carmen\"`."
+      },
+      {
+       "text": "Nothing: it does not compile, because `==` cannot compare `String`s",
+       "feedback": "`==` compiles with any two references; it is `<` and `>` that refuse `String` operands. The real trouble is quieter: the code runs and gives a misleading answer."
+      }
+     ],
+     "hint": "When Java evaluates `aName == anotherName`, what exactly is stored in each of those two variables?",
+     "explanation": "`String` is a class, so a `String` variable holds a memory address. `==` compares those addresses, which tells you whether two variables refer to the same object, not whether two objects contain the same characters.",
+     "aside": "Java keeps a single shared copy of each identical string literal in a program, so two literals can pass an `==` test. That makes this bug sneaky: a quick test with literals seems to work, and the failure appears only with real input.",
+     "ref": "Ch. 7.1, Figure 7-1 and Figure 7-2 (pp. 237–238)"
+    },
+    {
+     "id": "string-var-holds",
+     "concept": "A String variable is a reference",
+     "level": "understand",
+     "stem": "After `String aGreeting = \"Hello\";` runs, what is stored in the memory location named `aGreeting`?",
+     "options": [
+      {
+       "text": "The address of the memory where the characters `Hello` are stored",
+       "feedback": "A `String` variable is a reference. It records where the `Hello` object lives, not the letters themselves; that is why comparing two such variables compares locations.",
+       "correct": true
+      },
+      {
+       "text": "The characters `Hello` themselves, just as `int x = 10;` stores 10",
+       "feedback": "That is how primitive variables work. The shortcut declaration makes `String` look primitive, but `String` is a class and its variables hold addresses."
+      },
+      {
+       "text": "The number 5, the count of characters in the text it names",
+       "feedback": "You can ask a `String` for its length, but the variable itself does not store it; it stores where the object is."
+      },
+      {
+       "text": "A copy of the whole `String` class, ready to hold any text",
+       "feedback": "A variable never holds a class. It holds a reference to one object created from that class."
+      }
+     ],
+     "hint": "Is `String` a primitive type like `int`, or a class? What does a variable of a class type hold?",
+     "explanation": "Variables of primitive types hold their values directly. Variables of class types, including `String`, hold a reference: the memory address of an object. Most surprises with `String` comparisons come from forgetting this.",
+     "ref": "Ch. 7.1, Understanding String Data Problems (pp. 237–238)"
+    },
+    {
+     "id": "flawed-diagnosis",
+     "concept": "Diagnosing the misleading comparison",
+     "level": "evaluate",
+     "stem": "Looking at the Carmen program, a classmate concludes: \"Java says the names differ, so the user must have typed an extra space.\" What is the flaw in that reasoning?",
+     "options": [
+      {
+       "text": "`==` compared memory addresses, so matching text can still come out as different",
+       "feedback": "The comparison never looked at the letters. Two objects with identical characters at different addresses are different to `==`, with or without a stray space.",
+       "correct": true
+      },
+      {
+       "text": "There is no flaw: a hidden trailing space is the only way two equal names can differ",
+       "feedback": "A trailing space would make the *contents* differ, but `==` never inspects contents. A perfectly typed name gives the same result."
+      },
+      {
+       "text": "`nextLine()` keeps the newline from the Enter key, and that newline is what differs",
+       "feedback": "`nextLine()` returns the line without its line ending. The real cause is that `==` compares where the objects are stored."
+      },
+      {
+       "text": "`==` compares only the first character of each name, so the error is in the case of `C`",
+       "feedback": "`==` does not compare characters at all when its operands are objects; it compares the two references as a whole."
+      }
+     ],
+     "hint": "Would the result change if the user typed the name perfectly? What is `==` actually comparing?",
+     "explanation": "When a result looks wrong, check what the operation really measures before blaming the data. For objects, `==` measures identity (same address), so equal-looking text in two separate objects always compares as different.",
+     "ref": "Ch. 7.1, discussion of Figure 7-2 (pp. 237–238)"
+    },
+    {
+     "id": "pick-text-class",
+     "concept": "Character, String, or StringBuilder",
+     "level": "analyze",
+     "stem": "Match each task to the class the reading recommends.\n\n(1) Test whether a single typed key is a digit.\n(2) Store a customer ID that never changes.\n(3) Build a report by adding text to it thousands of times.",
+     "options": [
+      {
+       "text": "(1) `Character`, (2) `String`, (3) `StringBuilder`",
+       "feedback": "Each class fits one kind of data: a single character, fixed text, and text that keeps changing. Choosing by that question is the habit to keep.",
+       "correct": true
+      },
+      {
+       "text": "(1) `String`, (2) `String`, (3) `String`",
+       "feedback": "`String` can hold all three, but it is meant for unchanging text, and single-character tests belong to `Character`. Changing a `String` thousands of times creates thousands of new objects."
+      },
+      {
+       "text": "(1) `Character`, (2) `StringBuilder`, (3) `String`",
+       "feedback": "This swaps fixed and changeable data. `String` is for text that never changes; `StringBuilder` is the one built for repeated modification."
+      },
+      {
+       "text": "(1) `StringBuilder`, (2) `Character`, (3) `String`",
+       "feedback": "`Character` holds exactly one character, so it cannot store a whole ID, and `StringBuilder` is for changeable text rather than single-character tests."
+      }
+     ],
+     "hint": "For each task ask two things: is it one character or many, and will the text change after it is created?",
+     "explanation": "`Character` holds and inspects one character. `String` holds fixed text made of one or more characters. `StringBuilder` and `StringBuffer` hold text that you plan to change.",
+     "ref": "Ch. 7.1, the list of text classes (p. 238)"
+    }
+   ]
+  },
+  {
+   "id": "7.2",
+   "title": "Using Character Class Methods",
+   "subtitle": "Comparing char values, is- versus to- methods, and testing letters, digits and whitespace",
+   "source": "Ch. 7, section 7.2 (pp. 238–241)",
+   "intro": "A sign-up form has to check each character of a password: is it a digit, a letter, a symbol? Five questions on the tools that inspect one character at a time.",
+   "takeaways": [
+    "`char` is primitive, so `==`, `<` and `>` compare characters directly by their Unicode values, and every uppercase letter comes before every lowercase one.",
+    "`Character` methods named `is…` answer a question with a `boolean`; methods named `to…` return a converted `char` and leave anything that isn't a letter unchanged.",
+    "These methods are `static`: call them on the class, as in `Character.isDigit(c)`, and pass the character in as the argument."
+   ],
+   "questions": [
+    {
+     "id": "digit-tests",
+     "concept": "Testing a digit",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "char c = '7';\nSystem.out.print(Character.isDigit(c) + \" \");\nSystem.out.print(Character.isLetterOrDigit(c) + \" \");\nSystem.out.print(Character.isUpperCase(c) + \" \");\nSystem.out.println(Character.toUpperCase(c));",
+      "verify": {
+       "expect": "output",
+       "program": "public class DigitTests\n{\n    public static void main(String[] args)\n    {\n        char c = '7';\n        System.out.print(Character.isDigit(c) + \" \");\n        System.out.print(Character.isLetterOrDigit(c) + \" \");\n        System.out.print(Character.isUpperCase(c) + \" \");\n        System.out.println(Character.toUpperCase(c));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`true true false 7`",
+       "feedback": "`'7'` is a digit, so it also passes the letter-or-digit test. Digits have no case: `isUpperCase()` is false and `toUpperCase()` hands the character back unchanged.",
+       "correct": true
+      },
+      {
+       "text": "`true false false 7`",
+       "feedback": "`isLetterOrDigit()` is true when *either* condition holds, and being a digit is enough."
+      },
+      {
+       "text": "`true true true 7`",
+       "feedback": "This treats \"not lowercase\" as \"uppercase\". A digit is neither, so `isUpperCase()` returns false."
+      },
+      {
+       "text": "`true true false`, then an error at `toUpperCase(c)`",
+       "feedback": "`toUpperCase()` makes no change when its argument isn't a lowercase letter. It simply returns `'7'`."
+      }
+     ],
+     "hint": "Does a digit have an uppercase or lowercase form? What does Table 7-1 say `toUpperCase()` does when there is nothing to convert?",
+     "explanation": "`isLetterOrDigit()` is true for anything that is a letter or a digit. Case belongs only to letters, so for a digit both `isUpperCase()` and `isLowerCase()` are false, and the `to…` methods return it unchanged.",
+     "ref": "Ch. 7.2, Table 7-1 (p. 239)"
+    },
+    {
+     "id": "to-in-condition",
+     "concept": "is… returns boolean, to… returns char",
+     "level": "analyze",
+     "stem": "A student wants to print a message when `ch` is uppercase. What happens with this code?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "char ch = 'q';\nif(Character.toUpperCase(ch))\n    System.out.println(\"Uppercase!\");",
+      "verify": {
+       "expect": "compile_error",
+       "program": "public class ToInCondition\n{\n    public static void main(String[] args)\n    {\n        char ch = 'q';\n        if(Character.toUpperCase(ch))\n            System.out.println(\"Uppercase!\");\n    }\n}",
+       "error_contains": [
+        "incompatible types"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It does not compile: an `if` condition must be a `boolean`, not a `char`",
+       "feedback": "The `to` prefix means \"convert and return a character\". A condition needs a `boolean`, which is what the `is` methods return; `isUpperCase(ch)` was the intended call.",
+       "correct": true
+      },
+      {
+       "text": "It prints `Uppercase!`, because `ch` is converted to `Q` before the test",
+       "feedback": "Converting `ch` doesn't produce a condition. `toUpperCase()` returns `'Q'`, and Java won't treat a character as true or false."
+      },
+      {
+       "text": "It prints nothing, because `q` is a lowercase letter, not an uppercase one",
+       "feedback": "That is what `isUpperCase(ch)` would do. With `toUpperCase(ch)` the program never runs: the compiler rejects a `char` used as a condition."
+      },
+      {
+       "text": "It compiles, but stops with an error when the `if` statement is reached",
+       "feedback": "A type mismatch like this is found by the compiler, before the program can run."
+      }
+     ],
+     "hint": "Look at the method's prefix. What type does a `to…` method give back, and what type must an `if` condition be?",
+     "explanation": "The prefix tells you the return type: `is…` methods return `boolean` and can be used as conditions; `to…` methods return a converted `char`. Java never converts a `char` to `true` or `false`, so using one as a condition is a compile-time error.",
+     "ref": "Ch. 7.2, Table 7-1 and Two Truths & a Lie (pp. 239–240)"
+    },
+    {
+     "id": "char-unicode-order",
+     "concept": "Comparing char values by Unicode",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "char yourInitial = 'b';\nchar myInitial = 'Z';\nSystem.out.println(yourInitial < myInitial);",
+      "verify": {
+       "expect": "output",
+       "program": "public class CharOrder\n{\n    public static void main(String[] args)\n    {\n        char yourInitial = 'b';\n        char myInitial = 'Z';\n        System.out.println(yourInitial < myInitial);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`false`",
+       "feedback": "`char` comparisons use Unicode values. Every uppercase letter has a smaller value than every lowercase letter, so `'Z'` (90) is less than `'b'` (98).",
+       "correct": true
+      },
+      {
+       "text": "`true`",
+       "feedback": "In the alphabet b comes before z, but the comparison uses Unicode values, where all uppercase letters come before all lowercase ones."
+      },
+      {
+       "text": "Nothing: it does not compile, because `<` cannot compare characters",
+       "feedback": "That rule is about `String`s. `char` is a primitive type, so relational operators work on it directly."
+      }
+     ],
+     "hint": "Characters are compared by their Unicode values. Where do the uppercase letters sit relative to the lowercase ones?",
+     "explanation": "Because `char` is primitive, `<` and `>` compare characters by Unicode value. Within one case this matches alphabetical order, but uppercase letters (65–90) all come before lowercase letters (97–122).",
+     "aside": "Each lowercase letter is exactly 32 above its uppercase partner: `'A'` is 65 and `'a'` is 97. In binary, 32 is a single bit, so changing a letter's case flips just one bit. Section 7.3 uses the same gap of 32 to spot case differences.",
+     "ref": "Ch. 7.2, Using Character Class Methods (pp. 238–239)"
+    },
+    {
+     "id": "count-symbols",
+     "concept": "isLetterOrDigit and whitespace",
+     "level": "apply",
+     "stem": "A password checker counts characters that are **not** letters or digits. (`charAt(i)` returns the character at position `i`.) What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String pwd = \"pa ss@1\";\nint symbols = 0;\nfor(int i = 0; i < pwd.length(); ++i)\n    if(!Character.isLetterOrDigit(pwd.charAt(i)))\n        ++symbols;\nSystem.out.println(symbols);",
+      "verify": {
+       "expect": "output",
+       "program": "public class CountSymbols\n{\n    public static void main(String[] args)\n    {\n        String pwd = \"pa ss@1\";\n        int symbols = 0;\n        for(int i = 0; i < pwd.length(); ++i)\n            if(!Character.isLetterOrDigit(pwd.charAt(i)))\n                ++symbols;\n        System.out.println(symbols);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`2`",
+       "feedback": "Two characters fail `isLetterOrDigit()`: the space and `@`. A space is neither a letter nor a digit, so it is counted; to skip it you would also test `isWhitespace()`.",
+       "correct": true
+      },
+      {
+       "text": "`1`",
+       "feedback": "This counts only `@`, as if spaces were ignored. `isLetterOrDigit()` is false for a space, so the `!` makes it count."
+      },
+      {
+       "text": "`3`",
+       "feedback": "This also counts `1`, but a digit passes `isLetterOrDigit()`, so the `!` makes the condition false for it."
+      },
+      {
+       "text": "`5`",
+       "feedback": "These are the characters that *pass* the test: four letters and a digit. The `!` reverses the test, so they are the ones not counted."
+      }
+     ],
+     "hint": "Go through the seven characters one by one. Which of them are neither a letter nor a digit?",
+     "explanation": "`isLetterOrDigit()` is false for punctuation, symbols *and* whitespace such as a space or tab. When a rule should treat spaces differently from symbols, test `isWhitespace()` separately.",
+     "ref": "Ch. 7.2, Table 7-1 and Two Truths & a Lie (pp. 239–240)"
+    },
+    {
+     "id": "static-call",
+     "concept": "Character methods are static",
+     "level": "understand",
+     "stem": "Why does the reading write `Character.isDigit(c)` rather than `c.isDigit()` for a `char` variable `c`?",
+     "options": [
+      {
+       "text": "`isDigit()` is `static`, and a primitive `char` has no methods of its own",
+       "feedback": "The class name before the dot marks a `static` method. `c` is a primitive, not an object, so it can't be the target of a call; it goes in as the argument.",
+       "correct": true
+      },
+      {
+       "text": "`Character` must be named so that Java can import it from `java.lang`",
+       "feedback": "Everything in `java.lang` is imported into every program automatically. The class name is there because the method belongs to the class."
+      },
+      {
+       "text": "Both forms work, and `Character.` is only a convention for readability",
+       "feedback": "`c.isDigit()` does not compile: `c` is a primitive `char`, and primitive values have no methods."
+      },
+      {
+       "text": "`isDigit()` is defined in `String`, so it needs a class name in front",
+       "feedback": "`isDigit()` belongs to the `Character` class (Table 7-1). Calling through a class name is what marks a method as `static`."
+      }
+     ],
+     "hint": "What does it tell you when a method is called with a class name, a dot, and the method name, with no object in front?",
+     "explanation": "A method called as `ClassName.method()` is `static`: it belongs to the class and works on the arguments you pass. `char` values are primitives, so the `Character` class supplies static methods that take a `char` and inspect or convert it.",
+     "aside": "Unicode has many letters and digits beyond A–Z and 0–9. `Character.isDigit('٣')` (Arabic-Indic three) and `Character.isLetter('é')` both return `true`, so these methods work on names and numbers typed in many languages.",
+     "ref": "Ch. 7.2, Note on static methods (p. 240)"
+    }
+   ]
+  },
+  {
+   "id": "7.3",
+   "title": "Declaring and Comparing String Objects",
+   "subtitle": "References and immutability, equals() versus ==, compareTo(), and empty versus null",
+   "source": "Ch. 7, section 7.3 (pp. 241–246)",
+   "intro": "A sign-up page lets `Carmen` and `carmen` register as different people, and the sorted member list puts `Zoe` before `adam`. Six questions on comparing text the way you meant to.",
+   "takeaways": [
+    "Strings are immutable: assigning a new value points the variable at a new object, and the old characters never change.",
+    "Compare contents with `equals()`, or `equalsIgnoreCase()` when case shouldn't matter; `==` only tells you whether two references point at the same object.",
+    "`compareTo()` returns 0, a negative or a positive number taken from the first pair of differing characters' Unicode values, so uppercase sorts before lowercase."
+   ],
+   "questions": [
+    {
+     "id": "literal-vs-new",
+     "concept": "== and equals() with literals and new",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String a = \"abc\";\nString b = \"abc\";\nString c = new String(\"abc\");\nSystem.out.println((a == b) + \" \" + (a == c) + \" \" + a.equals(c));",
+      "verify": {
+       "expect": "output",
+       "program": "public class LiteralVsNew\n{\n    public static void main(String[] args)\n    {\n        String a = \"abc\";\n        String b = \"abc\";\n        String c = new String(\"abc\");\n        System.out.println((a == b) + \" \" + (a == c) + \" \" + a.equals(c));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`true false true`",
+       "feedback": "Identical literals are stored once, so `a` and `b` hold the same address. `new` creates a separate object, so `a == c` is false. `equals()` compares the characters, which match.",
+       "correct": true
+      },
+      {
+       "text": "`true true true`",
+       "feedback": "This treats `==` as a content test. `new String(\"abc\")` builds a second object at its own address, so `==` sees two different references."
+      },
+      {
+       "text": "`false false true`",
+       "feedback": "Two identical literals share one stored copy, so `a == b` is true. That sharing is what makes `==` seem to work in quick tests."
+      },
+      {
+       "text": "`false false false`",
+       "feedback": "`equals()` ignores where the objects are stored and compares their characters, which are identical."
+      }
+     ],
+     "hint": "Which of these lines creates a brand-new object, and which reuse a value already stored in memory?",
+     "explanation": "Initializing two `String`s to the same literal stores the value once, so both references hold the same address. `new` always creates another object. Only `equals()` reliably answers \"same characters?\", however the `String`s were created.",
+     "aside": "Calling `intern()` on a `String` returns the shared stored copy: `new String(\"abc\").intern() == \"abc\"` is `true`. Java stores literals this way so a program doesn't keep many copies of the same text.",
+     "ref": "Ch. 7.3, Comparing String Values (pp. 241–243)"
+    },
+    {
+     "id": "compareto-value",
+     "concept": "What compareTo() returns",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String name = \"Morgan\";\nSystem.out.println(name.compareTo(\"Moreno\"));",
+      "verify": {
+       "expect": "output",
+       "program": "public class CompareValue\n{\n    public static void main(String[] args)\n    {\n        String name = \"Morgan\";\n        System.out.println(name.compareTo(\"Moreno\"));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`2`",
+       "feedback": "The first three letters match. At the fourth, `g` meets `e`; `g` is two letters after `e`, so the result is 2, a positive number meaning `Morgan` sorts after `Moreno`.",
+       "correct": true
+      },
+      {
+       "text": "`-2`",
+       "feedback": "This subtracts the wrong way round. The result is the calling string's character minus the argument's: `g` − `e` = 2."
+      },
+      {
+       "text": "`1`",
+       "feedback": "`compareTo()` doesn't only return 1 or −1; it returns the size of the first difference in Unicode values."
+      },
+      {
+       "text": "`0`",
+       "feedback": "Both names have six letters, but `compareTo()` compares characters, not lengths, and they differ at the fourth letter."
+      }
+     ],
+     "hint": "Walk through the two names one character at a time until they differ. How far apart are those two characters?",
+     "explanation": "`compareTo()` scans both `String`s from the start and stops at the first differing pair of characters. It returns the calling string's character value minus the argument's: zero for identical text, negative for \"less than\", positive for \"more than\".",
+     "ref": "Ch. 7.3, compareTo() and the Roger/Rodrigo example (pp. 244–245)"
+    },
+    {
+     "id": "uppercase-sorts-first",
+     "concept": "compareTo() and case",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String w1 = \"apple\";\nString w2 = \"Banana\";\nif(w1.compareTo(w2) < 0)\n    System.out.println(w1 + \" comes first\");\nelse\n    System.out.println(w2 + \" comes first\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class CaseOrder\n{\n    public static void main(String[] args)\n    {\n        String w1 = \"apple\";\n        String w2 = \"Banana\";\n        if(w1.compareTo(w2) < 0)\n            System.out.println(w1 + \" comes first\");\n        else\n            System.out.println(w2 + \" comes first\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Banana comes first`",
+       "feedback": "`'a'` (97) minus `'B'` (66) is positive, so `apple` counts as \"more\" and the `else` branch runs. In Unicode every uppercase letter comes before every lowercase one.",
+       "correct": true
+      },
+      {
+       "text": "`apple comes first`",
+       "feedback": "That is dictionary order, which ignores case. `compareTo()` uses Unicode values, and uppercase `B` has a smaller value than lowercase `a`."
+      },
+      {
+       "text": "Nothing: it does not compile, because `<` cannot be used with `String`s",
+       "feedback": "Here `<` compares the `int` that `compareTo()` returns, not the `String`s themselves, so it compiles."
+      }
+     ],
+     "hint": "Only the first characters matter here. Which has the smaller Unicode value: lowercase `a` or uppercase `B`?",
+     "explanation": "`compareTo()` is a lexicographical comparison based on Unicode values, not true alphabetical order. Because all uppercase letters come before all lowercase letters, mixed-case words sort in surprising ways unless you put them in the same case first.",
+     "aside": "`String` also offers `compareToIgnoreCase()`, which compares as if both strings had the same case, so `\"apple\"` comes before `\"Banana\"` the way a dictionary would order them.",
+     "ref": "Ch. 7.3, compareTo() and the Note on Unicode case values (pp. 244–245)"
+    },
+    {
+     "id": "yes-any-case",
+     "concept": "equalsIgnoreCase() for user input",
+     "level": "apply",
+     "stem": "A program asks *Continue? (yes/no)* and stores the reply in the `String` named `answer`. Users type `yes`, `Yes` or `YES`. Which condition accepts all three?",
+     "options": [
+      {
+       "text": "`answer.equalsIgnoreCase(\"yes\")`",
+       "feedback": "It compares the characters while treating upper- and lowercase as the same, which is exactly the uncertainty Shift and Caps Lock create.",
+       "correct": true
+      },
+      {
+       "text": "`answer.equals(\"yes\")`",
+       "feedback": "`equals()` is case sensitive: `\"Yes\"` and `\"yes\"` differ in their first character, so only one of the three replies passes."
+      },
+      {
+       "text": "`answer.toLowerCase() == \"yes\"`",
+       "feedback": "Lowering the case is a good idea, but `toLowerCase()` returns a new object at its own address, and `==` compares addresses, so this is false even for `yes`."
+      },
+      {
+       "text": "`answer.compareTo(\"yes\") == 0`",
+       "feedback": "Zero means an exact match, case included, so `Yes` and `YES` give nonzero results."
+      }
+     ],
+     "hint": "You need a content comparison that treats `Y` and `y` as the same letter.",
+     "explanation": "`equals()` returns true only for identical contents, case included. `equalsIgnoreCase()` compares contents but ignores case, which suits input typed by people.",
+     "ref": "Ch. 7.3, equals() and equalsIgnoreCase() (pp. 243–244)"
+    },
+    {
+     "id": "empty-vs-null",
+     "concept": "Empty String versus null String",
+     "level": "analyze",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String word1 = \"\";\nString word2 = null;\nSystem.out.println(word1.equals(\"hi\"));\nSystem.out.println(word2.equals(\"hi\"));",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class EmptyVsNull\n{\n    public static void main(String[] args)\n    {\n        String word1 = \"\";\n        String word2 = null;\n        System.out.println(word1.equals(\"hi\"));\n        System.out.println(word2.equals(\"hi\"));\n    }\n}",
+       "error_contains": [
+        "NullPointerException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `false`, then stops with an error on the last line",
+       "feedback": "`word1` refers to a real `String` that happens to be empty, so its methods work. `word2` holds no address at all, so there is no object to call `equals()` on.",
+       "correct": true
+      },
+      {
+       "text": "It prints `false` twice",
+       "feedback": "That treats `null` like an empty `String`. A null reference refers to no object, so `word2.equals(...)` has nothing to run on."
+      },
+      {
+       "text": "It stops with an error on the first comparison, since `word1` holds nothing",
+       "feedback": "An empty `String` is still an object at a real address; it just contains zero characters, and `equals()` works on it."
+      },
+      {
+       "text": "It does not compile, because `word2` is set to `null`",
+       "feedback": "Assigning `null` is legal, and the compiler doesn't track which references are null. The problem appears only when the line runs."
+      }
+     ],
+     "hint": "One of these variables refers to an object with no characters in it; the other refers to no object at all. Which can a method be called on?",
+     "explanation": "An empty `String` (`\"\"`) is an object with length zero and supports every `String` method. A null `String` holds no memory address, so calling any method through it causes an error at run time.",
+     "aside": "Putting the literal first avoids the crash: `\"hi\".equals(word2)` simply returns `false` when `word2` is null, because a literal is never null. Many Java style guides recommend this order.",
+     "ref": "Ch. 7.3, Empty and null Strings (p. 245)"
+    },
+    {
+     "id": "immutable-reassign",
+     "concept": "Strings are immutable",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String greeting = \"Hello\";\nString saved = greeting;\ngreeting = \"Bonjour\";\nSystem.out.println(saved);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Immutable\n{\n    public static void main(String[] args)\n    {\n        String greeting = \"Hello\";\n        String saved = greeting;\n        greeting = \"Bonjour\";\n        System.out.println(saved);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Hello`",
+       "feedback": "`saved` received a copy of the address of `Hello`. Assigning `\"Bonjour\"` gives `greeting` a new address; the `Hello` object is untouched and `saved` still refers to it.",
+       "correct": true
+      },
+      {
+       "text": "`Bonjour`",
+       "feedback": "This assumes the assignment rewrote the characters at the shared address. Strings are immutable: the assignment creates a new object and changes only `greeting`."
+      },
+      {
+       "text": "`null`",
+       "feedback": "This assumes `Hello` was discarded once `greeting` moved on. The garbage collector only reclaims objects nothing refers to, and `saved` still refers to `Hello`."
+      }
+     ],
+     "hint": "Does `greeting = \"Bonjour\";` change the characters of an existing object, or change which object `greeting` refers to?",
+     "explanation": "Strings are never changed in place. Assigning a new value creates a new `String` object and stores its address in the variable; any other variable that held the old address still sees the old text.",
+     "ref": "Ch. 7.3, Figure 7-5 and immutability (p. 242)"
+    }
+   ]
+  },
+  {
+   "id": "7.4",
+   "title": "Using a Variety of String Methods",
+   "subtitle": "Positions from zero, substring(), case-sensitive searches, and converting between Strings and numbers",
+   "source": "Ch. 7, section 7.4 (pp. 246–253)",
+   "intro": "A mail-merge greets a customer as \"Dear ovelace\", and a price calculator adds 12 and 30 to get 1230. Six questions on the `String` methods behind bugs like these.",
+   "takeaways": [
+    "Positions start at 0. `substring(start, end)` includes `start` and stops *before* `end`, so its length is `end − start`; the last valid index is `length() − 1`.",
+    "`String` methods never change the `String` they are called on; they return a new one, so keep the result: `s = s.replace(' ', '-');`.",
+    "`+` with a `String` joins text. To do arithmetic on text input, convert it first with `Integer.parseInt()` or `Double.parseDouble()`."
+   ],
+   "questions": [
+    {
+     "id": "split-name",
+     "concept": "indexOf() and substring()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String full = \"Ada Lovelace\";\nint space = full.indexOf(' ');\nString first = full.substring(0, space);\nString last = full.substring(space + 1);\nSystem.out.print(last + \", \" + first);\nSystem.out.println(\" (\" + first.length() + \")\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class SplitName\n{\n    public static void main(String[] args)\n    {\n        String full = \"Ada Lovelace\";\n        int space = full.indexOf(' ');\n        String first = full.substring(0, space);\n        String last = full.substring(space + 1);\n        System.out.print(last + \", \" + first);\n        System.out.println(\" (\" + first.length() + \")\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Lovelace, Ada (3)`",
+       "feedback": "`indexOf(' ')` is 3 because counting starts at 0. `substring(0, 3)` stops before position 3, giving `Ada`; `substring(4)` runs to the end, giving `Lovelace`.",
+       "correct": true
+      },
+      {
+       "text": "`Lovelace, Ada (4)`",
+       "feedback": "This includes the end position, which would capture the space too. The second argument is where the substring stops, not its last character."
+      },
+      {
+       "text": "`ovelace, Ada (4)`",
+       "feedback": "This counts positions from 1, so the space seems to be at position 4. The first position of a `String` is 0."
+      },
+      {
+       "text": "Nothing: `substring()` needs two arguments, so it does not compile",
+       "feedback": "With one argument, `substring()` extends to the end of the original string."
+      }
+     ],
+     "hint": "Number the characters of `\"Ada Lovelace\"` starting from 0. Where is the space, and is the second argument of `substring()` included?",
+     "explanation": "String positions start at 0. `substring(start, end)` returns the characters from `start` up to but not including `end`, so its length is `end − start`; with only `start`, it runs to the end.",
+     "ref": "Ch. 7.4, indexOf() (p. 246) and substring(), Figure 7-8 (p. 248)"
+    },
+    {
+     "id": "charat-off-by-one",
+     "concept": "Valid charAt() positions",
+     "level": "analyze",
+     "stem": "This loop is meant to count the spaces in `sentence`. What happens when it runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String sentence = \"to be\";\nint count = 0;\nfor(int x = 0; x <= sentence.length(); ++x)\n    if(sentence.charAt(x) == ' ')\n        ++count;\nSystem.out.println(count);",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class OffByOne\n{\n    public static void main(String[] args)\n    {\n        String sentence = \"to be\";\n        int count = 0;\n        for(int x = 0; x <= sentence.length(); ++x)\n            if(sentence.charAt(x) == ' ')\n                ++count;\n        System.out.println(count);\n    }\n}",
+       "error_contains": [
+        "StringIndexOutOfBoundsException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It stops with an error when `x` reaches 5",
+       "feedback": "`length()` is 5, so the valid positions are 0 to 4. The `<=` lets `x` reach 5, and `charAt(5)` asks for a position past the end, which causes an error.",
+       "correct": true
+      },
+      {
+       "text": "It prints `1`",
+       "feedback": "One space would be counted if the loop stopped in time, but `<=` makes it call `charAt(5)` before the `println()` is reached."
+      },
+      {
+       "text": "It prints `2`, counting the end of the string as a space",
+       "feedback": "`charAt()` doesn't return a filler character past the end; an index equal to the length is an error."
+      },
+      {
+       "text": "It prints `0`, because the loop never reaches the space",
+       "feedback": "The space is at position 2 and the loop does visit it; the problem is the final pass."
+      }
+     ],
+     "hint": "List the positions `x` takes. What is the highest position that actually holds a character in a 5-character `String`?",
+     "explanation": "`charAt()` accepts positions from 0 to `length() − 1`; a negative argument, or one greater than or equal to the length, causes an error. Loops over a `String` therefore use `x < s.length()`, not `<=`.",
+     "ref": "Ch. 7.4, charAt() (p. 246)"
+    },
+    {
+     "id": "discarded-replace",
+     "concept": "String methods return new Strings",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String partNum = \"BK 761 23\";\npartNum.replace(' ', '-');\nSystem.out.println(partNum);",
+      "verify": {
+       "expect": "output",
+       "program": "public class DiscardedReplace\n{\n    public static void main(String[] args)\n    {\n        String partNum = \"BK 761 23\";\n        partNum.replace(' ', '-');\n        System.out.println(partNum);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`BK 761 23`",
+       "feedback": "`replace()` builds a new `String` and returns it, but this code throws the result away. `partNum` still refers to the original object. `partNum = partNum.replace(' ', '-');` would keep it.",
+       "correct": true
+      },
+      {
+       "text": "`BK-761-23`",
+       "feedback": "That is the value `replace()` returns, but nothing stores it. Strings are immutable, so calling a method on one can't change it."
+      },
+      {
+       "text": "`BK-761 23`",
+       "feedback": "`replace()` replaces every occurrence, not only the first, and here even that result is discarded."
+      },
+      {
+       "text": "Nothing: it does not compile until the result of `replace()` is stored",
+       "feedback": "Java lets you ignore a method's return value. The code compiles and runs, which is why this mistake is easy to miss."
+      }
+     ],
+     "hint": "Strings are immutable. Where could the changed text go, if not into the original object?",
+     "explanation": "Methods such as `replace()`, `toUpperCase()` and `substring()` return a new `String` and leave the original unchanged. To use the result, assign it, as in `aWord = aWord.toUpperCase();`.",
+     "ref": "Ch. 7.4, toUpperCase() (p. 246) and replace() (p. 247)"
+    },
+    {
+     "id": "case-insensitive-search",
+     "concept": "contains() is case sensitive",
+     "level": "apply",
+     "stem": "A course search must report whether a query such as `java` appears anywhere in a title such as `Intro to Java Programming`, however either is capitalized. Which condition does that?",
+     "options": [
+      {
+       "text": "`title.toLowerCase().contains(query.toLowerCase())`",
+       "feedback": "`contains()` is case sensitive, so the fix the reading recommends is to convert both `String`s to the same case before searching.",
+       "correct": true
+      },
+      {
+       "text": "`title.contains(query.toLowerCase())`",
+       "feedback": "This lowers only the query. The title still holds `Java` with a capital `J`, and `contains()` is case sensitive, so the search misses."
+      },
+      {
+       "text": "`title.toUpperCase().equals(query.toUpperCase())`",
+       "feedback": "Putting both in one case is right, but `equals()` compares the *whole* title, and `JAVA` is not equal to `INTRO TO JAVA PROGRAMMING`."
+      },
+      {
+       "text": "`title.toLowerCase().startsWith(query.toLowerCase())`",
+       "feedback": "Case is handled, but `startsWith()` checks only the beginning, and this title begins with `intro`, not `java`."
+      }
+     ],
+     "hint": "You need a test that finds text anywhere inside the title and ignores case. Which methods are case sensitive?",
+     "explanation": "`contains()`, `startsWith()`, `endsWith()` and `replace()` are all case sensitive. When case shouldn't matter, convert the participating `String`s to the same case first.",
+     "ref": "Ch. 7.4, contains() and startsWith() (p. 247); Don't Do It (p. 258)"
+    },
+    {
+     "id": "concat-vs-parse",
+     "concept": "Concatenation versus conversion",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String a = \"12\";\nString b = \"30\";\nSystem.out.println(a + b);\nSystem.out.println(Integer.parseInt(a) + Integer.parseInt(b));",
+      "verify": {
+       "expect": "output",
+       "program": "public class ConcatVsParse\n{\n    public static void main(String[] args)\n    {\n        String a = \"12\";\n        String b = \"30\";\n        System.out.println(a + b);\n        System.out.println(Integer.parseInt(a) + Integer.parseInt(b));\n    }\n}",
+       "output": "1230 42"
+      }
+     },
+     "options": [
+      {
+       "text": "`1230`, then `42`",
+       "feedback": "With two `String`s, `+` joins the text. After `parseInt()` converts each one, the operands are `int`s and `+` adds them.",
+       "correct": true
+      },
+      {
+       "text": "`42`, then `42`",
+       "feedback": "This assumes Java notices the digits and adds them. `+` with `String` operands always concatenates, whatever the characters are."
+      },
+      {
+       "text": "`1230`, then `1230`",
+       "feedback": "`parseInt()` returns an `int`, so the second `+` has two numbers to work with and performs arithmetic."
+      },
+      {
+       "text": "`12 30`, then `42`",
+       "feedback": "Concatenation joins text exactly as it is and adds no space; you would have to include `\" \"` yourself."
+      }
+     ],
+     "hint": "What are the types of the operands on each side of `+` in the two `println()` calls?",
+     "explanation": "`+` concatenates when either operand is a `String`, and adds when both are numbers. Text that holds digits must be converted with a wrapper-class method such as `Integer.parseInt()` before you can do arithmetic with it.",
+     "ref": "Ch. 7.4, concatenation (p. 247) and Converting String Objects to Numbers (pp. 249–250)"
+    },
+    {
+     "id": "parse-salary",
+     "concept": "Choosing the conversion method",
+     "level": "apply",
+     "stem": "An input dialog returns the salary the user typed, `\"147.82\"`, in the `String` named `entry`. Which statement stores it as a number you can do arithmetic with?",
+     "options": [
+      {
+       "text": "`double pay = Double.parseDouble(entry);`",
+       "feedback": "`parseDouble()` is a static method of the `Double` wrapper class that turns the text into a `double` value.",
+       "correct": true
+      },
+      {
+       "text": "`int pay = Integer.parseInt(entry);`",
+       "feedback": "`147.82` is a valid number but the wrong type for `parseInt()`, which reads whole numbers only; it causes a `NumberFormatException`."
+      },
+      {
+       "text": "`double pay = (double) entry;`",
+       "feedback": "A cast can't turn a `String` into a number; the types are unrelated, so this does not compile."
+      },
+      {
+       "text": "`double pay = Double.toString(entry);`",
+       "feedback": "`toString()` goes the other way, turning a number into a `String`."
+      }
+     ],
+     "hint": "The text holds a decimal number. Which wrapper class matches that type, and which of its methods reads a `String`?",
+     "explanation": "Input from `showInputDialog()` or `nextLine()` is always a `String`. Convert it with the parse method of the matching wrapper class: `Integer.parseInt()` for whole numbers, `Double.parseDouble()` for decimals. Text that isn't a valid number of that type causes a `NumberFormatException`.",
+     "aside": "`Integer.parseInt()` can also read other number bases: `Integer.parseInt(\"ff\", 16)` returns 255, and `Integer.parseInt(\"101\", 2)` returns 5.",
+     "ref": "Ch. 7.4, Converting String Objects to Numbers (pp. 249–250)"
+    }
+   ]
+  },
+  {
+   "id": "7.5",
+   "title": "Learning About the StringBuilder and StringBuffer Classes",
+   "subtitle": "Mutable text, capacity and length, append(), insert(), setCharAt(), and when not to use them",
+   "source": "Ch. 7, section 7.5 (pp. 253–258)",
+   "intro": "A program builds a log one line at a time, and it gets slower with every line it adds. Six questions on the classes made for text that keeps changing.",
+   "takeaways": [
+    "A `StringBuilder` changes in place: `append()`, `insert()`, `setCharAt()` and `setLength()` modify the same object, unlike `String` methods, which return new objects.",
+    "Length is the number of characters stored; capacity is the size of the buffer. Built from a `String`, capacity starts at that `String`'s length plus 16, and presizing helps when you know roughly how large it will grow.",
+    "`equals()` on two `StringBuilder`s compares references, so convert them with `toString()` before comparing contents. Use `String` unless the text changes often."
+   ],
+   "questions": [
+    {
+     "id": "length-capacity",
+     "concept": "Length versus capacity",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "StringBuilder sb = new StringBuilder(\"Miami\");\nSystem.out.println(sb.length() + \" \" + sb.capacity());",
+      "verify": {
+       "expect": "output",
+       "program": "public class LengthCapacity\n{\n    public static void main(String[] args)\n    {\n        StringBuilder sb = new StringBuilder(\"Miami\");\n        System.out.println(sb.length() + \" \" + sb.capacity());\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`5 21`",
+       "feedback": "The length is the 5 characters stored. Built from a `String`, the capacity is that length plus 16 extra positions: 21.",
+       "correct": true
+      },
+      {
+       "text": "`5 16`",
+       "feedback": "16 is the extra room, but it is *added* to the length of the initial `String`, not used on its own."
+      },
+      {
+       "text": "`21 21`",
+       "feedback": "`length()` counts only the characters actually stored, not the empty positions in the buffer."
+      },
+      {
+       "text": "`5 5`",
+       "feedback": "The buffer is made larger than the text, with 16 spare positions, so it can grow without allocating new memory."
+      }
+     ],
+     "hint": "One method counts the characters stored; the other reports the size of the buffer. How much extra room does the constructor add?",
+     "explanation": "A `StringBuilder` keeps its characters in a buffer that can be larger than the text. `length()` reports the characters stored; `capacity()` reports the buffer size, which starts at the initial `String`'s length plus 16.",
+     "aside": "When a `StringBuilder` outgrows its buffer, the standard JDK allocates a new one about twice as large (old capacity × 2 + 2) and copies every character across. That copying is the extra time the reading's timing program measures.",
+     "ref": "Ch. 7.5, capacity and Figure 7-12 (pp. 254–255)"
+    },
+    {
+     "id": "builder-trace",
+     "concept": "insert(), append() and setCharAt()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "StringBuilder s = new StringBuilder(\"bird\");\ns.insert(0, \"Black\");\ns.append(\"s sing\");\ns.setCharAt(5, 'B');\nSystem.out.println(s);",
+      "verify": {
+       "expect": "output",
+       "program": "public class BuilderTrace\n{\n    public static void main(String[] args)\n    {\n        StringBuilder s = new StringBuilder(\"bird\");\n        s.insert(0, \"Black\");\n        s.append(\"s sing\");\n        s.setCharAt(5, 'B');\n        System.out.println(s);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`BlackBirds sing`",
+       "feedback": "`insert(0, ...)` puts `Black` at the front and `append()` adds to the end, giving `Blackbirds sing`. Position 5 holds the `b` of `birds`, and `setCharAt()` replaces it.",
+       "correct": true
+      },
+      {
+       "text": "`BlackbBirds sing`",
+       "feedback": "`setCharAt()` replaces the character at a position; it does not insert a new one the way `insert()` does."
+      },
+      {
+       "text": "`BlacBbirds sing`",
+       "feedback": "This counts positions from 1, so position 5 lands on `k`. The first character of a `StringBuilder` is at position 0."
+      },
+      {
+       "text": "`bird`",
+       "feedback": "This treats `StringBuilder` like `String`, whose methods return new objects. These methods change the object itself, so no reassignment is needed."
+      }
+     ],
+     "hint": "Write out the contents after each line, numbering positions from 0. Does `setCharAt()` add a character or swap one?",
+     "explanation": "`append()` adds to the end, `insert()` adds at a given position, and `setCharAt()` replaces one character. All of them change the same `StringBuilder` object, and positions start at 0, as in a `String`.",
+     "ref": "Ch. 7.5, append(), insert() and setCharAt() (p. 255)"
+    },
+    {
+     "id": "builder-equals",
+     "concept": "equals() on StringBuilder objects",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "StringBuilder a = new StringBuilder(\"Java\");\nStringBuilder b = new StringBuilder(\"Java\");\nboolean t1 = a.equals(b);\nboolean t2 = a.toString().equals(b.toString());\nSystem.out.println(t1 + \" \" + t2);",
+      "verify": {
+       "expect": "output",
+       "program": "public class BuilderEquals\n{\n    public static void main(String[] args)\n    {\n        StringBuilder a = new StringBuilder(\"Java\");\n        StringBuilder b = new StringBuilder(\"Java\");\n        boolean t1 = a.equals(b);\n        boolean t2 = a.toString().equals(b.toString());\n        System.out.println(t1 + \" \" + t2);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`false true`",
+       "feedback": "On `StringBuilder` objects `equals()` compares references, and these are two separate objects. After `toString()`, `String`'s `equals()` compares the characters, which match.",
+       "correct": true
+      },
+      {
+       "text": "`true true`",
+       "feedback": "This assumes `equals()` compares contents for every class. That's true of `String`, but a `StringBuilder`'s `equals()` compares references."
+      },
+      {
+       "text": "`false false`",
+       "feedback": "`toString()` produces two `String`s, and `String`'s `equals()` does compare contents, so the second test is true."
+      },
+      {
+       "text": "`true false`",
+       "feedback": "This has the two tests reversed: the direct `equals()` is the reference comparison, and the `toString()` version compares the text."
+      }
+     ],
+     "hint": "Which class's `equals()` runs in each test, and what does each version compare?",
+     "explanation": "`equals()` compares contents for `String` objects but references for `StringBuilder` objects. To compare the text in two builders, convert both with `toString()` and compare the resulting `String`s.",
+     "ref": "Ch. 7.5, comparing StringBuilder objects (p. 255)"
+    },
+    {
+     "id": "setlength-truncate",
+     "concept": "setLength() changes the string, not the buffer",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "StringBuilder sb = new StringBuilder(\"6311 Hickory Nut\");\nsb.setLength(4);\nSystem.out.println(sb + \"|\" + sb.length() + \"|\" + sb.capacity());",
+      "verify": {
+       "expect": "output",
+       "program": "public class SetLengthTruncate\n{\n    public static void main(String[] args)\n    {\n        StringBuilder sb = new StringBuilder(\"6311 Hickory Nut\");\n        sb.setLength(4);\n        System.out.println(sb + \"|\" + sb.length() + \"|\" + sb.capacity());\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`6311|4|32`",
+       "feedback": "A shorter length truncates the string to 4 characters. The buffer is not shrunk, so the capacity stays at 16 + 16 = 32.",
+       "correct": true
+      },
+      {
+       "text": "`6311|4|20`",
+       "feedback": "Capacity isn't recalculated from the new length; the buffer keeps the size it was given when the object was created."
+      },
+      {
+       "text": "`6311 Hickory Nut|4|32`",
+       "feedback": "`setLength()` changes the string itself: a length shorter than the string truncates it."
+      },
+      {
+       "text": "`6311|4|4`",
+       "feedback": "Length and capacity are separate: `setLength()` changes how many characters are kept, not the size of the buffer."
+      }
+     ],
+     "hint": "The initial string has 16 characters. Which of the three values does `setLength(4)` change?",
+     "explanation": "`setLength()` sets how many characters the `StringBuilder` holds: shorter truncates, longer pads with `'\\u0000'` characters. It does not change the capacity, which is the size of the underlying buffer.",
+     "ref": "Ch. 7.5, setLength() and Figure 7-13 (pp. 254–255)"
+    },
+    {
+     "id": "when-to-use-builder",
+     "concept": "Choosing String or StringBuilder",
+     "level": "evaluate",
+     "stem": "A program builds a 50,000-line report by appending one line at a time, and also checks whether each typed command equals `quit`. Which plan follows the reading's advice?",
+     "options": [
+      {
+       "text": "A presized `StringBuilder` for the report; a `String` for each command",
+       "feedback": "Repeated changes are what `StringBuilder` is for, and presizing avoids reallocating as it grows. Commands are compared, not changed, and comparing contents is `String`'s job.",
+       "correct": true
+      },
+      {
+       "text": "`StringBuilder` for both, since it can be used anywhere a `String` is",
+       "feedback": "It can stand in, but the reading warns against it when you need comparisons: a `StringBuilder`'s `equals()` compares references, so `quit` would never match."
+      },
+      {
+       "text": "`String` for both, since the garbage collector clears old copies for free",
+       "feedback": "Collection isn't free, and each change to a `String` creates a whole new object and copies its characters, so the cost grows with the report."
+      },
+      {
+       "text": "`StringBuffer` for the report, because it is faster than `StringBuilder`",
+       "feedback": "It's the reverse: `StringBuilder` is more efficient. `StringBuffer` adds thread safety, which a single-threaded program doesn't need."
+      }
+     ],
+     "hint": "For each piece of text, ask whether it changes repeatedly or is mainly compared.",
+     "explanation": "Use `StringBuilder` when text changes many times, and give it an approximate capacity if you can estimate the final size. Keep `String` for text that is compared or rarely changed. `StringBuffer` behaves the same but is thread safe, so it is only worth its cost in multithreaded programs.",
+     "aside": "Before Java 9, the compiler quietly turned `a + b + c` into a chain of `StringBuilder` `append()` calls; newer versions use a faster built-in mechanism. Either way, `s = s + line` inside a loop still creates a new `String` on every pass.",
+     "ref": "Ch. 7.5, StringBuilder versus StringBuffer (p. 253), when not to use StringBuilder (p. 255), Don't Do It (p. 258)"
+    },
+    {
+     "id": "builder-needs-new",
+     "concept": "Creating a StringBuilder",
+     "level": "understand",
+     "stem": "What happens when this code is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "StringBuilder greeting = \"Hello\";\ngreeting.append(\" there\");",
+      "verify": {
+       "expect": "compile_error",
+       "program": "public class BuilderNeedsNew\n{\n    public static void main(String[] args)\n    {\n        StringBuilder greeting = \"Hello\";\n        greeting.append(\" there\");\n    }\n}",
+       "error_contains": [
+        "incompatible types"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It does not compile: a literal is a `String`, and a `StringBuilder` needs `new`",
+       "feedback": "The shortcut that skips `new` exists only for `String`. A `StringBuilder` must be created with `new` and its constructor, as in `new StringBuilder(\"Hello\")`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and afterward `greeting` holds `Hello there`",
+       "feedback": "That would be the result with `new StringBuilder(\"Hello\")`. Java does not convert a string literal into a `StringBuilder` for you."
+      },
+      {
+       "text": "It compiles, but fails at run time because a literal can't be changed",
+       "feedback": "The mismatch between a `String` value and a `StringBuilder` variable is caught by the compiler, before anything runs."
+      }
+     ],
+     "hint": "What type is `\"Hello\"`? Is there a shortcut for creating a `StringBuilder` the way there is for a `String`?",
+     "explanation": "A string literal is always a `String` object. A `StringBuilder` is created with `new`, the constructor name, and an initial value (or a capacity) in the parentheses; to start from existing text, pass the `String` to the constructor or `append()` it to an empty builder.",
+     "ref": "Ch. 7.5, creating StringBuilder objects (pp. 253–254)"
+    }
+   ]
+  }
+ ]
+}

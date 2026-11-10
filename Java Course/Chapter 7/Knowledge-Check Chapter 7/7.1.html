@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Understanding String Data Problems · Knowledge check</title>
+<style>
+:root{--surface:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--rule-2:#CFCCC2;--ok:#2C6A41;--ok-soft:#EBF3ED;--bad:#9B3127;--bad-soft:#F8EDEB;--code-bg:#F2F1EB;--code-ink:#24231F;--code-kw:#7A2E8E;--code-str:#2E6B3A;--code-com:#67665F;--code-num:#A14C12;--code-fn:#1F4E79;--code-builtin:#735500;--paper:#F3F5F4;--accent:#0B5D58;--accent-soft:#E2F0EE;--accent-ink:#FFFFFF;--focus:#0B5D58;--pat:rgba(27,27,24,.055);--pat-strong:rgba(27,27,24,.095);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--surface:#1B1B19;--ink:#ECEBE6;--ink-2:#BDBCB4;--ink-3:#9A9991;--rule:#2D2C29;--rule-2:#403F3A;--ok:#86C79B;--ok-soft:#17261C;--bad:#E9A097;--bad-soft:#2D1B19;--code-bg:#20201D;--code-ink:#E4E3DD;--code-kw:#D3A3E3;--code-str:#9ED3A6;--code-com:#9A9991;--code-num:#F0B27A;--code-fn:#9CC0E6;--code-builtin:#E3C77A;--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}}
+:root[data-theme="dark"]{--surface:#1B1B19;--ink:#ECEBE6;--ink-2:#BDBCB4;--ink-3:#9A9991;--rule:#2D2C29;--rule-2:#403F3A;--ok:#86C79B;--ok-soft:#17261C;--bad:#E9A097;--bad-soft:#2D1B19;--code-bg:#20201D;--code-ink:#E4E3DD;--code-kw:#D3A3E3;--code-str:#9ED3A6;--code-com:#9A9991;--code-num:#F0B27A;--code-fn:#9CC0E6;--code-builtin:#E3C77A;--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(var(--pat) 1.1px, transparent 1.4px) 0 0/22px 22px, var(--grain);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - 36rem),transparent calc(50% - 25rem),transparent calc(50% + 25rem),#000 calc(50% + 36rem),#000 100%);mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - 36rem),transparent calc(50% - 25rem),transparent calc(50% + 25rem),#000 calc(50% + 36rem),#000 100%)}
+@media print{body::before{display:none}}
+
+:root{
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,"Liberation Mono",monospace;
+  --radius:10px; --measure:46rem; --ease:cubic-bezier(.2,.7,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans);
+  font-feature-settings:"kern","liga";-webkit-font-smoothing:antialiased;position:relative;z-index:0;min-height:100vh}
+.wrap{max-width:var(--measure);margin:0 auto;padding:3rem 1rem 4rem}
+@media (min-width:40rem){.wrap{padding:4rem 1.5rem 5rem}}
+p{margin:0 0 .75rem} p:last-child{margin-bottom:0}
+code{font-family:var(--mono);font-size:.9em;background:var(--code-bg);padding:.08em .32em;border-radius:4px;overflow-wrap:anywhere}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* masthead */
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;
+  display:flex;align-items:center;gap:.65rem}
+.eyebrow::before{content:"";flex:none;width:1.6rem;height:2px;background:var(--accent);border-radius:1px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.75rem,4.5vw,2.4rem);line-height:1.15;
+  letter-spacing:-.01em;margin:.6rem 0 .5rem;text-wrap:balance}
+.subtitle{color:var(--ink-2);font-size:1.05rem;margin:0 0 1rem}
+.meta{display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;color:var(--ink-3);font-size:.875rem;margin-bottom:1.25rem}
+.intro{color:var(--ink-2)}
+details.how{margin-top:1rem;border-top:1px solid var(--rule);padding-top:.75rem;color:var(--ink-2);font-size:.925rem}
+details.how summary{cursor:pointer;color:var(--ink);font-weight:500;list-style:none}
+details.how summary::-webkit-details-marker{display:none}
+details.how summary::before{content:"+";display:inline-block;width:1.1em;color:var(--accent)}
+details.how[open] summary::before{content:"\2212"}
+details.how ol{margin:.6rem 0 0;padding-left:1.25rem}
+details.how kbd{font:600 .75rem/1 var(--mono);border:1px solid var(--rule-2);border-bottom-width:2px;border-radius:4px;padding:.1rem .3rem;background:var(--surface)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:2rem;font-size:.875rem}
+.topbar a{text-decoration:none;color:var(--ink-2)} .topbar a:hover{color:var(--accent)}
+.theme-btn{background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;
+  padding:.3rem .75rem;font:inherit;font-size:.8rem;cursor:pointer}
+.theme-btn:hover{border-color:var(--accent);color:var(--ink)}
+
+/* progress rail */
+.rail{margin:2.25rem 0 1.5rem}
+.rail-head{display:flex;justify-content:space-between;gap:1rem;font-size:.8rem;color:var(--ink-3);margin-bottom:.5rem}
+.cells{display:flex;gap:4px}
+.cell{flex:1;min-width:0;height:28px;border:1px solid var(--rule-2);background:var(--surface);border-radius:4px;
+  cursor:pointer;padding:0;position:relative;color:var(--ink-3);font:600 .7rem/1 var(--sans);
+  transition:background-color .25s var(--ease),border-color .25s var(--ease),color .25s var(--ease),box-shadow .2s var(--ease)}
+.cell[data-state="first"]{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.cell[data-state="second"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.cell[data-state="missed"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.cell[data-state="trying"]{background:var(--surface);border-color:var(--bad);color:var(--bad)}
+.cell[aria-current="step"]{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--accent)}
+.cell:hover{border-color:var(--accent)}
+
+/* question */
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius);padding:1.5rem 1.25rem;
+  box-shadow:0 1px 0 var(--rule),0 18px 40px -32px rgba(0,0,0,.35)}
+@media (min-width:40rem){.panel{padding:2.25rem 2.5rem}}
+.q-meta{display:flex;flex-wrap:wrap;gap:.25rem .9rem;align-items:baseline;margin-bottom:1rem;font-size:.8rem;color:var(--ink-3)}
+.q-meta .num{color:var(--ink);font-weight:600;letter-spacing:.02em}
+.q-meta .level{text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:.7rem;border:1px solid var(--rule-2);
+  padding:.1rem .45rem;border-radius:4px;color:var(--ink-2)}
+.stem{font-size:1.125rem;line-height:1.6;margin-bottom:1.25rem}
+.stem:focus{outline:none}
+figure.code{margin:0 0 1.5rem;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--code-bg)}
+figure.code figcaption{font:600 .7rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  padding:.6rem .9rem;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:.5rem}
+figure.code figcaption::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+figure.code pre code{background:none;padding:0;border-radius:0;font-size:inherit;overflow-wrap:normal}
+figure.code pre{margin:0;padding:1rem .9rem;overflow-x:auto;font:400 .875rem/1.6 var(--mono);color:var(--code-ink);tab-size:4}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{padding:0}
+.options{display:grid;gap:.5rem}
+.opt{position:relative;display:grid;grid-template-columns:1.75rem minmax(0,1fr) auto;gap:.75rem;align-items:start;
+  padding:.85rem 1rem;border:1px solid var(--rule-2);border-radius:8px;background:var(--surface);cursor:pointer;
+  transition:border-color .18s var(--ease),background-color .18s var(--ease),opacity .25s var(--ease)}
+.opt:hover{border-color:var(--accent)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .key{width:1.75rem;height:1.75rem;border:1px solid var(--rule-2);border-radius:50%;display:grid;place-items:center;
+  font:600 .8rem/1 var(--sans);color:var(--ink-2);background:var(--surface);transition:background-color .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease)}
+.opt .txt{padding-top:.1rem;min-width:0;overflow-wrap:anywhere}
+.opt .tag{font-size:.75rem;font-weight:600;color:var(--ink-3);padding-top:.25rem;white-space:nowrap}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.opt:has(input:checked) .key{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:2px}
+.opt.ruled{cursor:default;border-style:dashed;background:transparent}
+.opt.ruled .txt{color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:1px}
+.opt.ruled .key{color:var(--bad);border-color:var(--bad)}
+.opt.ruled .tag{color:var(--bad)}
+.opt.is-correct{border-color:var(--ok);background:var(--ok-soft);cursor:default}
+.opt.is-correct .key{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.opt.is-correct .tag{color:var(--ok)}
+.opt.locked{cursor:default}
+.opt.locked:hover:not(.is-correct){border-color:var(--rule-2)}
+.opt.locked:not(.is-correct):not(.ruled){opacity:.72}
+
+.confidence{margin:1.5rem 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem}
+.confidence legend{font-size:.875rem;color:var(--ink-2);float:left;margin-right:1rem}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--rule-2);border-radius:8px;overflow:hidden}
+.seg label{position:relative;padding:.45rem .9rem;font-size:.85rem;color:var(--ink-2);cursor:pointer;border-left:1px solid var(--rule-2);
+  transition:background-color .18s var(--ease),color .18s var(--ease)}
+.seg label:first-child{border-left:0}
+.seg label:hover{color:var(--ink)}
+.seg input{position:absolute;opacity:0}
+.seg label:has(input:checked){background:var(--accent);color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:-2px}
+.seg.locked label{cursor:default}
+
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.5rem}
+.btn{font:600 .9rem/1 var(--sans);border-radius:8px;padding:.8rem 1.15rem;cursor:pointer;border:1px solid transparent;
+  transition:background-color .18s var(--ease),border-color .18s var(--ease),opacity .18s var(--ease),transform .12s var(--ease)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.08)}
+.btn-primary:disabled{background:var(--rule-2);color:var(--ink-2);cursor:not-allowed}
+.btn-quiet{background:transparent;border-color:var(--rule-2);color:var(--ink)}
+.btn-quiet:hover:not(:disabled){border-color:var(--accent)}
+.btn-quiet:disabled{opacity:.45;cursor:not-allowed}
+.why-disabled{font-size:.8rem;color:var(--ink-3)}
+
+/* feedback */
+.feedback{margin-top:1.75rem}
+.feedback:empty{display:none}
+.fb{border-left:3px solid var(--rule-2);padding:.25rem 0 .25rem 1.1rem}
+.fb + .fb{margin-top:1.25rem}
+.fb h3{font:600 .95rem/1.4 var(--sans);margin:0 0 .4rem}
+.fb h3:focus{outline:none}
+.fb.bad{border-color:var(--bad)} .fb.bad h3{color:var(--bad)}
+.fb.ok{border-color:var(--ok)} .fb.ok h3{color:var(--ok)}
+.fb.hint{border-color:var(--accent)} .fb.hint h3{color:var(--accent)}
+.fb .ref{margin-top:.75rem;font-size:.85rem;color:var(--ink-3)}
+details.others{margin-top:1rem;font-size:.95rem}
+details.others summary{cursor:pointer;font-weight:500}
+details.others summary:hover{color:var(--accent)}
+details.others dl{margin:.75rem 0 0}
+details.others dt{font-weight:600;margin-top:.75rem}
+details.others dt .k{display:inline-block;min-width:1.4rem;color:var(--ink-3)}
+details.others dd{margin:.2rem 0 0 1.4rem;color:var(--ink-2)}
+.aside{margin-top:1.25rem;background:var(--accent-soft);border-radius:8px;padding:.9rem 1.1rem .95rem;color:var(--ink);
+  display:grid;grid-template-columns:auto 1fr;gap:.15rem .75rem;align-items:start}
+.aside svg{grid-row:1 / span 2;width:1.15rem;height:1.15rem;margin-top:.1rem;color:var(--accent)}
+.aside .lbl{font:600 .7rem/1.6 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.aside .body{font-size:.95rem}
+
+.pager{display:flex;justify-content:space-between;gap:1rem;margin-top:1.25rem}
+
+/* summary */
+.summary h2{font-family:var(--serif);font-weight:600;font-size:1.6rem;margin:0 0 1rem}
+.score{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.25rem}
+.score .big{font-family:var(--serif);font-size:3.25rem;line-height:1;color:var(--accent);font-variant-numeric:lining-nums tabular-nums}
+.score .of{color:var(--ink-2)}
+.statline{color:var(--ink-3);font-size:.9rem;margin-bottom:2rem}
+.takeaways{border-top:1px solid var(--rule);padding-top:1.25rem;margin-top:1.5rem}
+.takeaways h3{font:600 1rem/1.4 var(--sans);margin:0 0 .6rem}
+.takeaways ol{list-style:none;margin:0;padding:0;counter-reset:t}
+.takeaways li{counter-increment:t;display:grid;grid-template-columns:2rem 1fr;gap:.5rem;padding:.35rem 0}
+.takeaways li::before{content:counter(t);font:600 1.15rem/1.4 var(--serif);color:var(--accent)}
+.block{border-top:1px solid var(--rule);padding-top:1.25rem;margin-top:1.5rem}
+.block h3{font:600 1rem/1.4 var(--sans);margin:0 0 .25rem}
+.block .lede{color:var(--ink-2);font-size:.9rem;margin-bottom:.75rem}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.25rem 1rem;padding:.7rem 0;border-bottom:1px solid var(--rule);align-items:center}
+.rows li:last-child{border-bottom:0}
+.rows .c{font-weight:500}
+.rows .r{grid-column:1;font-size:.82rem;color:var(--ink-3)}
+.rows .st{font-size:.8rem;font-weight:600;white-space:nowrap}
+.rows .st.first{color:var(--ok)} .rows .st.second{color:var(--ink-2)} .rows .st.missed,.rows .st.trying{color:var(--bad)}
+.rows .st.open{color:var(--ink-3)}
+.rows button{grid-row:1 / span 2;grid-column:2}
+
+/* calm motion: content settles in; nothing bounces, flashes or loops */
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter > *{animation:rise .34s var(--ease) both}
+.enter > *:nth-child(2){animation-delay:.04s} .enter > *:nth-child(3){animation-delay:.08s}
+.enter > *:nth-child(4){animation-delay:.12s} .enter > *:nth-child(n+5){animation-delay:.16s}
+.fb,.aside{animation:rise .3s var(--ease) both}
+.fb + .fb{animation-delay:.07s} .aside{animation-delay:.14s}
+
+footer{margin-top:3rem;color:var(--ink-3);font-size:.8rem;border-top:1px solid var(--rule);padding-top:1rem}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* full screen */
+.tools{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.fs-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;
+  padding:.3rem .8rem .3rem .65rem;font:inherit;font-size:.8rem;cursor:pointer;transition:border-color .18s ease,color .18s ease}
+.fs-btn:hover{border-color:var(--accent);color:var(--ink)}
+.fs-btn svg{width:.95rem;height:.95rem;flex:none}
+.fs-btn .fs-out{display:none} .fs-btn.on .fs-in{display:none} .fs-btn.on .fs-out{display:inline}
+.fs-note{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);z-index:60;max-width:min(32rem,calc(100vw - 2rem));background:var(--ink);color:var(--surface);
+  border-radius:8px;padding:.7rem 1rem;font-size:.875rem;line-height:1.45;box-shadow:0 12px 32px -12px rgba(0,0,0,.4)}
+html:fullscreen{background:var(--paper);overflow-y:auto}
+html:-webkit-full-screen{background:var(--paper);overflow-y:auto}
+::backdrop{background:var(--paper)}
+@media print{.tools{display:none}}
+@media print{.rail,.actions,.pager,.topbar,footer{display:none}.panel{border:0;padding:0;box-shadow:none}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--code-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--code-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--code-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--code-num)}
+.t-nf,.t-fm,.t-nc,.t-nn,.t-nt{color:var(--code-fn)}
+.t-nb,.t-bp,.t-na{color:var(--code-builtin)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a id="hubLink" href="#" hidden>&larr; All knowledge checks</a><span class="tools"><button class="fs-btn" id="fsBtn" type="button" aria-pressed="false" hidden><svg class="fs-in" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><svg class="fs-out" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4"/></svg><span class="fs-t">Full screen</span></button><button class="theme-btn" id="themeBtn" type="button" aria-label="Switch colour theme">Theme</button></span>
+  </div>
+  <header>
+    <div class="eyebrow" id="kicker"></div>
+    <h1 id="title"></h1>
+    <p class="subtitle" id="subtitle"></p>
+    <div class="meta" id="meta"></div>
+    <div class="intro" id="intro"></div>
+    <details class="how">
+      <summary>How this check works</summary>
+      <ol>
+        <li>Choose an answer and say how sure you are. Rating your confidence makes it easier to spot what you only <em>think</em> you know.</li>
+        <li>If your first answer is wrong you get feedback on that choice and a hint, then one more try.</li>
+        <li>After that you see the reasoning for every option and where it is covered in the reading.</li>
+        <li>Only first tries count toward your result. Nothing is graded or sent anywhere; progress stays in this browser.</li>
+        <li>Keyboard: <kbd>A</kbd>&ndash;<kbd>E</kbd> choose an answer, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> rate your confidence, <kbd>Enter</kbd> checks it.</li>
+      </ol>
+    </details>
+  </header>
+
+  <nav class="rail" aria-label="Questions">
+    <div class="rail-head"><span id="railLabel"></span><span id="railScore"></span></div>
+    <div class="cells" id="cells"></div>
+  </nav>
+
+  <main id="main" class="panel"></main>
+
+  <footer>Practice only. Your answers are not graded or sent anywhere; progress is kept in this browser so you can come back.</footer>
+</div>
+
+<script type="application/json" id="kc-data">{"course": "COP1800 · Java Programming I", "collection": "Chapter 7: Characters, Strings, and the StringBuilder", "id": "7.1", "title": "Understanding String Data Problems", "subtitle": "Why == misjudges two equal names, and the three classes Java offers for text", "intro": "\u003cp>A program asks Carmen for her name, she types \u003ccode>Carmen\u003c/code>, and it tells her that is not her name. Four questions on why, and on the classes Java gives you for working with text.\u003c/p>", "source": "Ch. 7, section 7.1 (pp. 237–238)", "minutes": 6, "storageKey": "kc:COP1800 · Java Programming I:7.1:611b64b80d", "hubHref": "index.html", "takeaways": ["A \u003ccode>String\u003c/code> variable is a reference: it holds the memory address of a \u003ccode>String\u003c/code> object, not the characters themselves.", "\u003ccode>==\u003c/code> on two \u003ccode>String\u003c/code>s asks whether both refer to the same object in memory. Text typed at run time lands in a new object, so \u003ccode>==\u003c/code> can report a difference even when every character matches.", "Java splits text work across three kinds of class: \u003ccode>Character\u003c/code> for one character, \u003ccode>String\u003c/code> for text that never changes, and \u003ccode>StringBuilder\u003c/code>/\u003ccode>StringBuffer\u003c/code> for text you will keep modifying."], "questions": [{"id": "typed-name-eq", "concept": "== compares addresses, not text", "level": "apply", "stem": "\u003cp>The user types \u003ccode>Carmen\u003c/code> and presses Enter. What does this code print?\u003c/p>", "code": "\u003cspan class=\"t-n\">String\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">aName\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-o\">=\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-s\">\"Carmen\"\u003c/span>\u003cspan class=\"t-p\">;\u003c/span>\n\u003cspan class=\"t-n\">Scanner\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">input\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-o\">=\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-k\">new\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">Scanner\u003c/span>\u003cspan class=\"t-p\">(\u003c/span>\u003cspan class=\"t-n\">System\u003c/span>\u003cspan class=\"t-p\">.\u003c/span>\u003cspan class=\"t-na\">in\u003c/span>\u003cspan class=\"t-p\">);\u003c/span>\n\u003cspan class=\"t-n\">String\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">anotherName\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-o\">=\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">input\u003c/span>\u003cspan class=\"t-p\">.\u003c/span>\u003cspan class=\"t-na\">nextLine\u003c/span>\u003cspan class=\"t-p\">();\u003c/span>\n\u003cspan class=\"t-k\">if\u003c/span>\u003cspan class=\"t-p\">(\u003c/span>\u003cspan class=\"t-n\">aName\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-o\">==\u003c/span>\u003cspan class=\"t-w\"> \u003c/span>\u003cspan class=\"t-n\">anotherName\u003c/span>\u003cspan class=\"t-p\">)\u003c/span>\n\u003cspan class=\"t-w\">    \u003c/span>\u003cspan class=\"t-n\">System\u003c/span>\u003cspan class=\"t-p\">.\u003c/span>\u003cspan class=\"t-na\">out\u003c/span>\u003cspan class=\"t-p\">.\u003c/span>\u003cspan class=\"t-na\">println\u003c/span>\u003cspan class=\"t-p\">(\u003c/span>\u003cspan class=\"t-s\">\"same\"\u003c/span>\u003cspan class=\"t-p\">);\u003c/span>\n\u003cspan class=\"t-k\">else\u003c/span>\n\u003cspan class=\"t-w\">    \u003c/span>\u003cspan class=\"t-n\">System\u003c/span>\u003cspan class=\"t-p\">.\u003c/span>\u003cspan class=\"t-na\">out\u003c/span>\u003cspan class=\"t-p\">.\u003c/span>\u003cspan class=\"t-na\">println\u003c/span>\u003cspan class=\"t-p\">(\u003c/span>\u003cspan class=\"t-s\">\"different\"\u003c/span>\u003cspan class=\"t-p\">);\u003c/span>\n", "codeLabel": "Java", "options": [{"html": "\u003ccode>different\u003c/code>", "correct": true, "feedback": "\u003cp>\u003ccode>nextLine()\u003c/code> builds a new \u003ccode>String\u003c/code> object from what was typed, stored at its own address. \u003ccode>==\u003c/code> compares the two addresses, and they differ even though the characters match.\u003c/p>"}, {"html": "\u003ccode>same\u003c/code>", "correct": false, "feedback": "\u003cp>This reads \u003ccode>==\u003c/code> as comparing letters. For \u003ccode>String\u003c/code>s, \u003ccode>==\u003c/code> compares the memory addresses the two variables hold, and the typed name lives somewhere other than the literal \u003ccode>&quot;Carmen&quot;\u003c/code>.\u003c/p>"}, {"html": "Nothing: it does not compile, because \u003ccode>==\u003c/code> cannot compare \u003ccode>String\u003c/code>s", "correct": false, "feedback": "\u003cp>\u003ccode>==\u003c/code> compiles with any two references; it is \u003ccode>&lt;\u003c/code> and \u003ccode>&gt;\u003c/code> that refuse \u003ccode>String\u003c/code> operands. The real trouble is quieter: the code runs and gives a misleading answer.\u003c/p>"}], "lockOrder": false, "hint": "\u003cp>When Java evaluates \u003ccode>aName == anotherName\u003c/code>, what exactly is stored in each of those two variables?\u003c/p>", "explanation": "\u003cp>\u003ccode>String\u003c/code> is a class, so a \u003ccode>String\u003c/code> variable holds a memory address. \u003ccode>==\u003c/code> compares those addresses, which tells you whether two variables refer to the same object, not whether two objects contain the same characters.\u003c/p>", "ref": "Ch. 7.1, Figure 7-1 and Figure 7-2 (pp. 237–238)", "aside": "\u003cp>Java keeps a single shared copy of each identical string literal in a program, so two literals can pass an \u003ccode>==\u003c/code> test. That makes this bug sneaky: a quick test with literals seems to work, and the failure appears only with real input.\u003c/p>"}, {"id": "string-var-holds", "concept": "A String variable is a reference", "level": "understand", "stem": "\u003cp>After \u003ccode>String aGreeting = &quot;Hello&quot;;\u003c/code> runs, what is stored in the memory location named \u003ccode>aGreeting\u003c/code>?\u003c/p>", "code": "", "codeLabel": "", "options": [{"html": "The address of the memory where the characters \u003ccode>Hello\u003c/code> are stored", "correct": true, "feedback": "\u003cp>A \u003ccode>String\u003c/code> variable is a reference. It records where the \u003ccode>Hello\u003c/code> object lives, not the letters themselves; that is why comparing two such variables compares locations.\u003c/p>"}, {"html": "The characters \u003ccode>Hello\u003c/code> themselves, just as \u003ccode>int x = 10;\u003c/code> stores 10", "correct": false, "feedback": "\u003cp>That is how primitive variables work. The shortcut declaration makes \u003ccode>String\u003c/code> look primitive, but \u003ccode>String\u003c/code> is a class and its variables hold addresses.\u003c/p>"}, {"html": "The number 5, the count of characters in the text it names", "correct": false, "feedback": "\u003cp>You can ask a \u003ccode>String\u003c/code> for its length, but the variable itself does not store it; it stores where the object is.\u003c/p>"}, {"html": "A copy of the whole \u003ccode>String\u003c/code> class, ready to hold any text", "correct": false, "feedback": "\u003cp>A variable never holds a class. It holds a reference to one object created from that class.\u003c/p>"}], "lockOrder": false, "hint": "\u003cp>Is \u003ccode>String\u003c/code> a primitive type like \u003ccode>int\u003c/code>, or a class? What does a variable of a class type hold?\u003c/p>", "explanation": "\u003cp>Variables of primitive types hold their values directly. Variables of class types, including \u003ccode>String\u003c/code>, hold a reference: the memory address of an object. Most surprises with \u003ccode>String\u003c/code> comparisons come from forgetting this.\u003c/p>", "ref": "Ch. 7.1, Understanding String Data Problems (pp. 237–238)", "aside": ""}, {"id": "flawed-diagnosis", "concept": "Diagnosing the misleading comparison", "level": "evaluate", "stem": "\u003cp>Looking at the Carmen program, a classmate concludes: &quot;Java says the names differ, so the user must have typed an extra space.&quot; What is the flaw in that reasoning?\u003c/p>", "code": "", "codeLabel": "", "options": [{"html": "\u003ccode>==\u003c/code> compared memory addresses, so matching text can still come out as different", "correct": true, "feedback": "\u003cp>The comparison never looked at the letters. Two objects with identical characters at different addresses are different to \u003ccode>==\u003c/code>, with or without a stray space.\u003c/p>"}, {"html": "There is no flaw: a hidden trailing space is the only way two equal names can differ", "correct": false, "feedback": "\u003cp>A trailing space would make the \u003cem>contents\u003c/em> differ, but \u003ccode>==\u003c/code> never inspects contents. A perfectly typed name gives the same result.\u003c/p>"}, {"html": "\u003ccode>nextLine()\u003c/code> keeps the newline from the Enter key, and that newline is what differs", "correct": false, "feedback": "\u003cp>\u003ccode>nextLine()\u003c/code> returns the line without its line ending. The real cause is that \u003ccode>==\u003c/code> compares where the objects are stored.\u003c/p>"}, {"html": "\u003ccode>==\u003c/code> compares only the first character of each name, so the error is in the case of \u003ccode>C\u003c/code>", "correct": false, "feedback": "\u003cp>\u003ccode>==\u003c/code> does not compare characters at all when its operands are objects; it compares the two references as a whole.\u003c/p>"}], "lockOrder": false, "hint": "\u003cp>Would the result change if the user typed the name perfectly? What is \u003ccode>==\u003c/code> actually comparing?\u003c/p>", "explanation": "\u003cp>When a result looks wrong, check what the operation really measures before blaming the data. For objects, \u003ccode>==\u003c/code> measures identity (same address), so equal-looking text in two separate objects always compares as different.\u003c/p>", "ref": "Ch. 7.1, discussion of Figure 7-2 (pp. 237–238)", "aside": ""}, {"id": "pick-text-class", "concept": "Character, String, or StringBuilder", "level": "analyze", "stem": "\u003cp>Match each task to the class the reading recommends.\u003c/p>\u003cp>(1) Test whether a single typed key is a digit.\u003cbr>(2) Store a customer ID that never changes.\u003cbr>(3) Build a report by adding text to it thousands of times.\u003c/p>", "code": "", "codeLabel": "", "options": [{"html": "(1) \u003ccode>Character\u003c/code>, (2) \u003ccode>String\u003c/code>, (3) \u003ccode>StringBuilder\u003c/code>", "correct": true, "feedback": "\u003cp>Each class fits one kind of data: a single character, fixed text, and text that keeps changing. Choosing by that question is the habit to keep.\u003c/p>"}, {"html": "(1) \u003ccode>String\u003c/code>, (2) \u003ccode>String\u003c/code>, (3) \u003ccode>String\u003c/code>", "correct": false, "feedback": "\u003cp>\u003ccode>String\u003c/code> can hold all three, but it is meant for unchanging text, and single-character tests belong to \u003ccode>Character\u003c/code>. Changing a \u003ccode>String\u003c/code> thousands of times creates thousands of new objects.\u003c/p>"}, {"html": "(1) \u003ccode>Character\u003c/code>, (2) \u003ccode>StringBuilder\u003c/code>, (3) \u003ccode>String\u003c/code>", "correct": false, "feedback": "\u003cp>This swaps fixed and changeable data. \u003ccode>String\u003c/code> is for text that never changes; \u003ccode>StringBuilder\u003c/code> is the one built for repeated modification.\u003c/p>"}, {"html": "(1) \u003ccode>StringBuilder\u003c/code>, (2) \u003ccode>Character\u003c/code>, (3) \u003ccode>String\u003c/code>", "correct": false, "feedback": "\u003cp>\u003ccode>Character\u003c/code> holds exactly one character, so it cannot store a whole ID, and \u003ccode>StringBuilder\u003c/code> is for changeable text rather than single-character tests.\u003c/p>"}], "lockOrder": false, "hint": "\u003cp>For each task ask two things: is it one character or many, and will the text change after it is created?\u003c/p>", "explanation": "\u003cp>\u003ccode>Character\u003c/code> holds and inspects one character. \u003ccode>String\u003c/code> holds fixed text made of one or more characters. \u003ccode>StringBuilder\u003c/code> and \u003ccode>StringBuffer\u003c/code> hold text that you plan to change.\u003c/p>", "ref": "Ch. 7.1, the list of text classes (p. 238)", "aside": ""}]}</script>
+<script>
+(function(){
+  "use strict";
+  var D = JSON.parse(document.getElementById("kc-data").textContent);
+  var Q = D.questions, N = Q.length, MAX_TRIES = 2;
+  var LETTERS = "ABCDEFGH";
+  var CONF = [["guess","Guessing"],["unsure","Fairly sure"],["sure","Certain"]];
+  var $ = function(id){ return document.getElementById(id); };
+  var main = $("main");
+  var STILL = matchMedia("(prefers-reduced-motion: reduce)");
+  var MARK = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M10 1.5c.5 4.6 2.6 7.4 8.5 8.5-5.9 1.1-8 3.9-8.5 8.5-.5-4.6-2.6-7.4-8.5-8.5 5.9-1.1 8-3.9 8.5-8.5z"/></svg>';
+
+  // ---------- persistence (per viewer, best effort) ----------
+  function load(){ try { var s = JSON.parse(localStorage.getItem(D.storageKey) || "null"); if (s && s.v === 1) return s; } catch(e){} return null; }
+  function save(){
+    // a small summary lets the hub page show progress without knowing the answers
+    // While practising "missed only", keep the stats of the full run: the practice round must not
+    // overwrite the first-try record shown on the hub (only first tries count).
+    if (!S.only) {
+      var done = 0, first = 0;
+      Q.forEach(function(q){ var st = state(q); if (st === "first" || st === "second" || st === "missed") done++; if (st === "first") first++; });
+      S.stats = { done: done, first: first, total: N, at: Date.now() };
+    }
+    try { localStorage.setItem(D.storageKey, JSON.stringify(S)); } catch(e){}
+  }
+  function shuffled(n, lock){ var a = []; for (var i=0;i<n;i++) a.push(i); if (lock) return a;
+    for (var j=n-1;j>0;j--){ var k=Math.floor(Math.random()*(j+1)); var t=a[j]; a[j]=a[k]; a[k]=t; } return a; }
+  function fresh(onlyIds){
+    var st = { v:1, cur:0, view:"q", order:{}, ans:{}, only: onlyIds || null };
+    Q.forEach(function(q){ st.order[q.id] = shuffled(q.options.length, q.lockOrder); });
+    return st;
+  }
+  var S = load() || fresh();
+  // saved state from an older page version may lack an order for a question: rebuild what is missing
+  Q.forEach(function(q){ var o = S.order[q.id]; if (!o || o.length !== q.options.length) S.order[q.id] = shuffled(q.options.length, q.lockOrder); });
+  if (S.only) { S.only = S.only.filter(function(id){ return Q.some(function(q){ return q.id === id; }); }); if (!S.only.length) S.only = null; }
+
+  function visible(){ return S.only ? Q.filter(function(q){ return S.only.indexOf(q.id) >= 0; }) : Q; }
+  function A(q){ return S.ans[q.id] || (S.ans[q.id] = { tries: [], conf: null, done: false }); }
+  function correctIdx(q){ for (var i=0;i<q.options.length;i++) if (q.options[i].correct) return i; return -1; }
+  function state(q){
+    var a = S.ans[q.id]; if (!a || !a.tries.length) return "open";
+    var ci = correctIdx(q);
+    if (a.tries[0] === ci) return "first";
+    if (a.done) return a.tries.indexOf(ci) >= 0 ? "second" : "missed";
+    return "trying";
+  }
+  var STATE_LABEL = { open:"not answered", first:"correct on first try", second:"correct on second try", missed:"missed", trying:"one try left" };
+
+  // ---------- masthead ----------
+  $("kicker").textContent = [D.course, D.collection].filter(Boolean).join("  ·  ");
+  $("title").textContent = D.title;
+  if (D.subtitle) $("subtitle").textContent = D.subtitle; else $("subtitle").remove();
+  var meta = [N + " questions", "about " + D.minutes + " minutes"];
+  $("meta").innerHTML = meta.map(function(m){ return "<span>" + m + "</span>"; }).join("") + (D.source ? "<span>" + D.source + "</span>" : "");
+  $("intro").innerHTML = D.intro || "";
+  if (D.hubHref){ $("hubLink").href = D.hubHref; $("hubLink").hidden = false; }
+  document.title = D.title + " · Knowledge check";
+
+  // theme toggle (remembered per viewer)
+  var root = document.documentElement;
+  try { var th = localStorage.getItem("kc:theme"); if (th) root.setAttribute("data-theme", th); } catch(e){}
+  $("themeBtn").addEventListener("click", function(){
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark"; root.setAttribute("data-theme", next);
+    try { localStorage.setItem("kc:theme", next); } catch(e){}
+  });
+
+  // ---------- rail ----------
+  function renderRail(){
+    var vs = visible(), cells = $("cells"); cells.innerHTML = "";
+    var answered = 0, first = 0;
+    vs.forEach(function(q, i){
+      var st = state(q); if (st !== "open" && st !== "trying") answered++; if (st === "first") first++;
+      var b = document.createElement("button"); b.type = "button"; b.className = "cell"; b.dataset.state = st;
+      b.textContent = i + 1;
+      b.setAttribute("aria-label", "Question " + (i+1) + ", " + STATE_LABEL[st]);
+      if (S.view === "q" && i === S.cur) b.setAttribute("aria-current", "step");
+      b.addEventListener("click", function(){ S.view = "q"; S.cur = i; save(); render(true); });
+      cells.appendChild(b);
+    });
+    $("railLabel").textContent = S.view === "summary" ? "Review" : "Question " + (S.cur + 1) + " of " + vs.length + (S.only ? " (missed only)" : "");
+    $("railScore").textContent = answered ? first + " of " + answered + " right on first try" : "";
+  }
+
+  // ---------- question ----------
+  function renderQuestion(focus){
+    var vs = visible(), q = vs[S.cur], a = A(q), ci = correctIdx(q), st = state(q);
+    var order = S.order[q.id], locked = a.done || st === "first";
+    var html = '<div class="q-meta"><span class="num">Question ' + (S.cur+1) + ' of ' + vs.length + '</span>' +
+      '<span>' + esc(q.concept) + '</span><span class="level">' + esc(q.level) + '</span></div>' +
+      '<div class="stem" id="stem" tabindex="-1">' + q.stem + '</div>';
+    if (q.code) html += '<figure class="code">' + (q.codeLabel ? '<figcaption>' + esc(q.codeLabel) + '</figcaption>' : '') +
+      '<pre><code>' + q.code + '</code></pre></figure>';
+    html += '<form id="qform" novalidate><fieldset><legend class="sr">Answer options</legend><div class="options">';
+    order.forEach(function(oi, pos){
+      var o = q.options[oi], cls = "opt", tag = "";
+      var tried = a.tries.indexOf(oi) >= 0;
+      if (tried && oi !== ci) { cls += " ruled"; tag = "Ruled out"; }
+      if (locked && oi === ci) { cls += " is-correct"; tag = "Answer"; }
+      if (locked) cls += " locked";
+      var dis = (tried || locked) ? " disabled" : "";
+      html += '<label class="' + cls + '"><input type="radio" name="opt" value="' + oi + '"' + dis + '>' +
+        '<span class="key" aria-hidden="true">' + LETTERS[pos] + '</span><span class="txt"><span class="sr">Option ' + LETTERS[pos] + ': </span>' + o.html + '</span>' +
+        '<span class="tag">' + tag + '</span></label>';
+    });
+    html += '</div></fieldset>';
+    if (!locked){
+      html += '<fieldset class="confidence"><legend>How sure are you?</legend><span class="seg' + (a.tries.length ? " locked" : "") + '">';
+      CONF.forEach(function(c){
+        html += '<label><input type="radio" name="conf" value="' + c[0] + '"' + (a.conf === c[0] ? " checked" : "") +
+          (a.tries.length ? " disabled" : "") + '>' + c[1] + '</label>';
+      });
+      html += '</span></fieldset>';
+      html += '<div class="actions"><button class="btn btn-primary" id="checkBtn" type="submit" disabled>Check answer</button>' +
+        '<span class="why-disabled" id="whyDisabled" aria-live="polite"></span></div>';
+    }
+    html += '</form><div class="feedback" id="feedback" aria-live="polite"></div>';
+    html += '<div class="pager"><button class="btn btn-quiet" id="prevBtn" type="button"' + (S.cur === 0 ? " disabled" : "") + '>Previous</button>' +
+      '<button class="btn ' + (locked ? "btn-primary" : "btn-quiet") + '" id="nextBtn" type="button">' +
+      (S.cur === vs.length - 1 ? "See your results" : (locked ? "Next question" : "Skip for now")) + '</button></div>';
+    main.innerHTML = html;
+
+    var form = $("qform");
+    if (!locked){
+      var update = function(){
+        var opt = form.querySelector('input[name=opt]:checked'), conf = a.tries.length ? a.conf : (form.querySelector('input[name=conf]:checked') || {}).value;
+        if (!a.tries.length && conf) { a.conf = conf; save(); }
+        $("checkBtn").disabled = !(opt && conf);
+        $("whyDisabled").textContent = !opt ? "Choose an answer." : (!conf ? "Rate your confidence to check." : "");
+      };
+      form.addEventListener("change", update); update();
+      form.addEventListener("submit", function(ev){ ev.preventDefault();
+        var opt = form.querySelector('input[name=opt]:checked'); if (!opt || !a.conf) return;
+        submit(q, +opt.value);
+      });
+    }
+    renderFeedback(q, false);
+    $("prevBtn").addEventListener("click", function(){ S.cur--; save(); render(true); });
+    $("nextBtn").addEventListener("click", function(){ if (S.cur < vs.length - 1) { S.cur++; } else { S.view = "summary"; } save(); render(true); });
+    if (focus) $("stem").focus({preventScroll:true});
+  }
+
+  function submit(q, oi){
+    var a = A(q), ci = correctIdx(q);
+    a.tries.push(oi);
+    if (oi === ci || a.tries.length >= MAX_TRIES) a.done = true;
+    save(); render(false); renderFeedback(q, true);
+  }
+
+  function renderFeedback(q, focus){
+    var a = S.ans[q.id], fb = $("feedback"); if (!a || !a.tries.length) return;
+    var ci = correctIdx(q), last = a.tries[a.tries.length - 1], order = S.order[q.id];
+    var letter = function(oi){ return LETTERS[order.indexOf(oi)]; };
+    var h = "";
+    if (!a.done){
+      h += '<div class="fb bad"><h3 tabindex="-1" id="fbh">Not ' + letter(last) + '. One more try.</h3>' + q.options[last].feedback + '</div>';
+      if (q.hint) h += '<div class="fb hint"><h3>Hint</h3>' + q.hint + '</div>';
+    } else {
+      var first = a.tries[0] === ci, got = a.tries.indexOf(ci) >= 0;
+      var head = first ? "Correct." : (got ? "Correct on the second try." : "The answer is " + letter(ci) + ".");
+      if (first && a.conf === "guess") head = "Correct, though you were guessing. Make sure the reasoning below is yours.";
+      if (!got && a.conf === "sure") head = "The answer is " + letter(ci) + ". You were certain, so this one is worth a closer look.";
+      if (!first){ h += '<div class="fb bad"><h3>Why ' + letter(a.tries[0]) + ' doesn’t hold</h3>' + q.options[a.tries[0]].feedback + '</div>'; }
+      h += '<div class="fb ok"><h3 tabindex="-1" id="fbh">' + head + '</h3>' + q.explanation +
+        '<details class="others"><summary>Reasoning for every option</summary><dl>';
+      order.forEach(function(oi, pos){
+        h += '<dt><span class="k">' + LETTERS[pos] + '</span>' + q.options[oi].html + (oi === ci ? ' <span class="sr">(answer)</span>' : '') + '</dt><dd>' + q.options[oi].feedback + '</dd>';
+      });
+      h += '</dl></details><div class="ref">In the reading: ' + q.ref + '</div></div>';
+      if (q.aside) h += '<aside class="aside" aria-label="Worth knowing">' + MARK + '<span class="lbl">Worth knowing</span><div class="body">' + q.aside + '</div></aside>';
+    }
+    fb.innerHTML = h;
+    if (focus && $("fbh")) { $("fbh").focus({preventScroll:true}); $("fbh").scrollIntoView({block:"nearest", behavior: STILL.matches ? "auto" : "smooth"}); }
+  }
+
+  // ---------- summary ----------
+  function renderSummary(focus){
+    var vs = visible(), first = 0, second = 0, missed = 0, open = 0, trying = 0;
+    var blind = [], lucky = [];
+    vs.forEach(function(q){
+      var st = state(q), a = S.ans[q.id];
+      if (st === "first") first++; else if (st === "second") second++; else if (st === "missed") missed++;
+      else if (st === "trying") trying++; else open++;
+      if (a && a.tries.length){
+        if (a.conf === "sure" && a.tries[0] !== correctIdx(q)) blind.push(q);
+        if (a.conf === "guess" && a.tries[0] === correctIdx(q)) lucky.push(q);
+      }
+    });
+    var stats = [];
+    if (second) stats.push(second + " on the second try"); if (missed) stats.push(missed + " missed"); if (trying) stats.push(trying + " with a try left"); if (open) stats.push(open + " not answered");
+    var h = '<section class="summary"><h2 tabindex="-1" id="sumh">Your results</h2>' +
+      '<div class="score"><span class="big" id="bigScore" data-to="' + first + '">' + first + '</span><span class="of">of ' + vs.length + ' right on the first try</span></div>' +
+      '<div class="statline">' + (stats.join(" · ") || "Every question answered correctly on the first try.") + '</div>';
+    if (D.takeaways && D.takeaways.length && !S.only) {
+      h += '<div class="takeaways"><h3>Carry these forward</h3><ol>' + D.takeaways.map(function(t){ return '<li><span>' + t + '</span></li>'; }).join("") + '</ol></div>';
+    }
+    h += block("Review first: certain but wrong", "These are misconceptions you hold with confidence, the most important thing a check like this can surface.", blind);
+    h += block("Right, but you were guessing", "Correct answers you weren’t sure of. Re-read the reasoning so the knowledge is yours next time.", lucky);
+    h += '<div class="block"><h3>Every question</h3><ul class="rows">';
+    vs.forEach(function(q, i){
+      var st = state(q);
+      h += '<li><span class="c">' + (i+1) + '. ' + esc(q.concept) + '</span><span class="r">' + q.ref + '</span>' +
+        '<span class="st ' + st + '">' + cap(STATE_LABEL[st]) + '</span></li>';
+    });
+    h += '</ul></div><div class="actions">';
+    var missedIds = vs.filter(function(q){ var s = state(q); return s !== "first"; }).map(function(q){ return q.id; });
+    if (missedIds.length) h += '<button class="btn btn-primary" id="retryMissed" type="button">Practise the ' + missedIds.length + ' you didn’t get first time</button>';
+    h += '<button class="btn btn-quiet" id="restart" type="button">' + (S.only ? "Start over with all questions" : "Start over") + '</button>';
+    h += '</div></section>';
+    main.innerHTML = h;
+    if ($("retryMissed")) $("retryMissed").addEventListener("click", function(){
+      var keep = S.stats; S = fresh(missedIds); S.stats = keep; save(); render(true); });
+    $("restart").addEventListener("click", function(){ S = fresh(); save(); render(true); });
+    main.querySelectorAll("[data-goto]").forEach(function(b){ b.addEventListener("click", function(){
+      S.view = "q"; S.cur = +b.dataset.goto; save(); render(true); }); });
+    if (focus) { $("sumh").focus({preventScroll:true}); countUp($("bigScore")); }
+  }
+  function countUp(el){
+    // the score settles in over ~0.6 s; the final number is in the DOM from the start for screen readers
+    var to = +el.dataset.to; if (STILL.matches || to < 2) return;
+    var t0 = null, dur = 600;
+    el.setAttribute("aria-hidden", "true");
+    var sr = document.createElement("span"); sr.className = "sr"; sr.textContent = to; el.parentNode.insertBefore(sr, el);
+    function step(t){ if (t0 === null) t0 = t; var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(e * to); if (p < 1) requestAnimationFrame(step); }
+    el.textContent = "0"; requestAnimationFrame(step);
+  }
+  function block(title, lede, list){
+    if (!list.length) return "";
+    var vs = visible();
+    return '<div class="block"><h3>' + title + '</h3><p class="lede">' + lede + '</p><ul class="rows">' +
+      list.map(function(q){ var i = vs.indexOf(q);
+        return '<li><span class="c">' + esc(q.concept) + '</span><span class="r">' + q.ref + '</span>' +
+          '<button class="btn btn-quiet" type="button" data-goto="' + i + '">Revisit</button></li>'; }).join("") + '</ul></div>';
+  }
+
+  // ---------- keyboard: A-E choose, 1-3 confidence (Enter submits through the form) ----------
+  document.addEventListener("keydown", function(ev){
+    if (S.view !== "q" || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    var t = ev.target; if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && t.type !== "radio")) return;
+    var form = $("qform"); if (!form) return;
+    if (ev.key === "Enter") {
+      var btn = $("checkBtn");
+      if (btn && !btn.disabled && (!t || t === document.body || form.contains(t))) { ev.preventDefault(); btn.click(); }
+      return;
+    }
+    var k = ev.key.toUpperCase(), box = null;
+    var pos = LETTERS.indexOf(k);
+    if (k.length === 1 && pos >= 0) box = form.querySelectorAll('input[name=opt]')[pos];
+    else if (/^[1-3]$/.test(k)) box = form.querySelectorAll('input[name=conf]')[+k - 1];
+    if (!box || box.disabled) return;
+    ev.preventDefault(); box.checked = true; box.focus({preventScroll:true});
+    form.dispatchEvent(new Event("change", {bubbles:true}));
+  });
+
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function render(focus){
+    if (S.cur >= visible().length) S.cur = 0;
+    renderRail();
+    main.classList.remove("enter");
+    if (S.view === "summary") renderSummary(focus); else renderQuestion(focus);
+    if (focus) { void main.offsetWidth; main.classList.add("enter"); }
+    if (focus) window.scrollTo({top: Math.max(0, document.querySelector(".rail").offsetTop - 16), behavior: "auto"});
+  }
+  render(false);
+})();
+</script>
+<script>
+/* Full screen. Blackboard often shows an uploaded page inside a frame; when that frame doesn't allow full screen,
+   the button opens the page on its own in a new tab (same address, so saved progress comes along), where full
+   screen works. Hidden where the browser has no full screen for pages (iPhone). */
+(function(){
+  "use strict";
+  var btn = document.getElementById("fsBtn"); if (!btn) return;
+  var d = document, el = d.documentElement, txt = btn.querySelector(".fs-t"), timer;
+  var can = !!(d.fullscreenEnabled || d.webkitFullscreenEnabled);
+  var framed = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+  var KEYS = /Mac|iPad/.test(navigator.platform || navigator.userAgent) ? "Control+Command+F" : "F11";
+  function isFs(){ return !!(d.fullscreenElement || d.webkitFullscreenElement); }
+  function note(msg){
+    var n = d.getElementById("fsNote");
+    if (!n) { n = d.createElement("div"); n.id = "fsNote"; n.className = "fs-note"; n.setAttribute("role", "status"); d.body.appendChild(n); }
+    n.textContent = msg; n.hidden = false; clearTimeout(timer); timer = setTimeout(function(){ n.hidden = true; }, 7000);
+  }
+  function openPage(){
+    var w = null;
+    try { w = window.open(location.href, "_blank"); } catch(e){}
+    if (w) { try { w.opener = null; } catch(e){} }
+    else note("Your course page blocked the new tab. Open this page on its own, or press " + KEYS + " for full screen.");
+  }
+  function sync(){
+    var on = isFs();
+    btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on ? "true" : "false");
+    txt.textContent = on ? "Exit full screen" : "Full screen";
+    btn.title = on ? "Leave full screen (Esc)" : "Fill the screen with this page";
+  }
+  if (can) {
+    btn.hidden = false; sync();
+    btn.addEventListener("click", function(){
+      if (isFs()) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+      var req = el.requestFullscreen || el.webkitRequestFullscreen, p;
+      try { p = req.call(el, { navigationUI: "hide" }); } catch(e){ p = null; fail(); return; }
+      if (p && p.catch) p.catch(fail);
+    });
+    d.addEventListener("fullscreenchange", sync); d.addEventListener("webkitfullscreenchange", sync);
+  } else if (framed) {
+    btn.hidden = false; txt.textContent = "Open full page";
+    btn.title = "Open this page in its own tab, where it can go full screen";
+    btn.addEventListener("click", openPage);
+  }
+  function fail(){ if (framed) openPage(); else note("Full screen isn't available here. Press " + KEYS + " instead."); }
+})();
+</script>
+</body>
+</html>
