@@ -1,0 +1,61 @@
+POSTING CHECKLIST
+=================
+
+  Lab 5.1: The tide-pool walk's go/no-go questions
+    students : 5.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.1_guide.html
+
+  Lab 5.2: The marina meter that always says EXPIRED
+    students : 5.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.2_guide.html
+
+  Lab 5.3: The ferry crew's negative overtime
+    students : 5.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.3_guide.html
+
+  Lab 5.4: The kite shop's missing medium bonus
+    students : 5.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.4_guide.html
+
+  Lab 5.5: The bike dock that runs out too early
+    students : 5.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.5_guide.html
+
+  Lab 5.6: The parcel counter's eight-kilogram bargain
+    students : 5.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.6_guide.html
+
+  Lab 5.7: The rental dock that hands out two boats
+    students : 5.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.7_guide.html
+
+  Lab 5.8: The lighthouse tower on a windy day
+    students : 5.8.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.8_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.8_guide.html
+
+  Lab 5.9: The jet-ski deposit that charges the wrong renters
+    students : 5.9.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.9_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.9_guide.html
+
+  Lab 5.10: The swim school's two sets of rules
+    students : 5.10.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/5.10_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/5.10_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

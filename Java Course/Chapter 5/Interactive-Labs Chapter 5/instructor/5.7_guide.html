@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The rental dock that hands out two boats</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.7</div>
+  <h1>The rental dock that hands out two boats</h1>
+<h2>Objectives</h2><ul><li>Use <code>switch</code> to test one variable against a series of exact <code>char</code> values</li><li>End each case with <code>break</code>, and predict the fall-through when it is missing</li><li>Stack empty <code>case</code> labels so several values share one action</li><li>Rewrite a chain of <code>if</code> statements as a switch expression with <code>-&gt;</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> In <code>describe()</code>, every case ends with <code>break</code>, so one code prints one boat.</li><li><strong>R2</strong> <code>describe()</code> accepts lowercase codes: <code>&#x27;k&#x27;</code>, <code>&#x27;p&#x27;</code> and <code>&#x27;c&#x27;</code> are stacked with their uppercase labels, so each pair shares one action.</li><li><strong>R3</strong> <code>getHourlyRate()</code> returns the value of a switch expression (<code>case &#x27;k&#x27;, &#x27;K&#x27; -&gt; 18.00;</code> …, <code>default -&gt; 0.0;</code>) instead of the <code>if</code> chain.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Predict what the starter&#x27;s <code>describe(&#x27;K&#x27;)</code> prints, and explain why.</p><div class="answer"><p><code>Kayak</code> and then <code>Paddleboard</code>. The K case has no <code>break</code>, so execution falls through into the next case and continues until the <code>break</code> after Paddleboard.</p></div></li><li><p>Why does <code>describe(&#x27;p&#x27;)</code> print <em>Unknown code p</em> even though the rate lookup knows a lowercase p?</p><div class="answer"><p>A switch matches exact values, and <code>&#x27;p&#x27;</code> and <code>&#x27;P&#x27;</code> are different <code>char</code> values. There is no <code>case &#x27;p&#x27;</code>, so the default runs.</p></div></li></ol>
+<h2>Solution</h2><div class="file">RentalDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RentalDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">describe</span><span class="t-p">(</span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">switch</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'k'</span><span class="t-p">:</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'K'</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Kayak"</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'p'</span><span class="t-p">:</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'P'</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Paddleboard"</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'c'</span><span class="t-p">:</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'C'</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Canoe"</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-k">break</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">default</span><span class="t-p">:</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Unknown code "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getHourlyRate</span><span class="t-p">(</span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-k">switch</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'k'</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-sc">'K'</span><span class="t-w"> </span><span class="t-o">-&gt;</span><span class="t-w"> </span><span class="t-mf">18.00</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'p'</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-sc">'P'</span><span class="t-w"> </span><span class="t-o">-&gt;</span><span class="t-w"> </span><span class="t-mf">22.00</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">case</span><span class="t-w"> </span><span class="t-sc">'c'</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-sc">'C'</span><span class="t-w"> </span><span class="t-o">-&gt;</span><span class="t-w"> </span><span class="t-mf">25.00</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">default</span><span class="t-w"> </span><span class="t-o">-&gt;</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">quote</span><span class="t-p">(</span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">describe</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">getHourlyRate</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" an hour"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-sc">'K'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-sc">'p'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-sc">'c'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-sc">'Z'</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A <code>switch</code> jumps to the matching <code>case</code> and runs statements from there *until a <code>break</code> or the end of the switch*: with no <code>break</code> after <em>Kayak</em>, execution fell through into the paddleboard case. Each case therefore ends with <code>break</code> (the last one, <code>default</code>, doesn&#x27;t need it). An empty <code>case &#x27;k&#x27;:</code> falls through to <code>case &#x27;K&#x27;:</code> on purpose, so both letters share one action (Figure 5-28); <code>case &#x27;k&#x27;, &#x27;K&#x27;:</code> is the shorter form Java 14 and later accept. The switch expression (Figure 5-29) produces a value: each <code>-&gt;</code> gives the result for its labels, there is no fall-through and no <code>break</code>, and the whole expression is followed by a semicolon because it ends the <code>return</code> statement. A switch expression that returns a value must cover every possible input, which is why <code>default -&gt; 0.0;</code> is required.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRentalDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRentalDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the quotes exactly as "java RentalDesk" would.</span>
+<span class="t-w">        </span><span class="t-n">RentalDesk</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">RentalDesk</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-sc">'k'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">RentalDesk</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-sc">'P'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">RentalDesk</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">(</span><span class="t-sc">'C'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">RentalDesk</span><span class="t-p">.</span><span class="t-na">getHourlyRate</span><span class="t-p">(</span><span class="t-sc">'x'</span><span class="t-p">)));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Kayak
+  $18.00 an hour
+Paddleboard
+  $22.00 an hour
+Canoe
+  $25.00 an hour
+Unknown code Z
+Kayak
+Paddleboard
+Canoe
+0.00
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Every boat&#x27;s case ends with break<div class="small">in <code>RentalDesk.describe</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*&quot;Kayak&quot;\s*\)\s*;\s*break\s*;)(?=[\s\S]*&quot;Paddleboard&quot;\s*\)\s*;\s*break\s*;)(?=[\s\S]*&quot;Canoe&quot;\s*\)\s*;\s*break\s*;)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Lowercase codes share the uppercase actions<div class="small">in <code>RentalDesk.describe</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bcase\s+(?:&#x27;K&#x27;\s*,\s*)?&#x27;k&#x27;[\s\S]*?&quot;Kayak&quot;)(?=[\s\S]*\bcase\s+(?:&#x27;P&#x27;\s*,\s*)?&#x27;p&#x27;[\s\S]*?&quot;Paddleboard&quot;)(?=[\s\S]*\bcase\s+(?:&#x27;C&#x27;\s*,\s*)?&#x27;c&#x27;[\s\S]*?&quot;Canoe&quot;)</code></div><div><span class="tag">forbid</span> <code>toUpperCase|toLowerCase</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The rate comes from a switch expression<div class="small">in <code>RentalDesk.getHourlyRate</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\b(?:return|rate\s*=)\s*switch\s*\(\s*code\s*\))(?=(?:[\s\S]*?-&gt;){4})(?=[\s\S]*\bdefault\s*-&gt;)</code></div><div><span class="tag">forbid</span> <code>\bif\b|\bbreak\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Every boat&#x27;s case ends with break</dt><dd><p>Add <code>break;</code> after <code>System.out.println(&quot;Kayak&quot;);</code>. Without it, a K runs the kayak line and then falls through into the paddleboard case; <code>break</code> ends the switch after one boat.</p><div class='small'><strong>Hint:</strong></div><p>Where does execution go after the Kayak line, when nothing stops it?</p></dd><dt>C2 · Lowercase codes share the uppercase actions</dt><dd><p>Add <code>case &#x27;k&#x27;:</code> directly above (or together with) <code>case &#x27;K&#x27;:</code>, and the same for <code>p</code> and <code>c</code>. An empty case falls through to the next label, so both letters run the same statements without repeating them.</p></dd><dt>C3 · The rate comes from a switch expression</dt><dd><p>Replace the <code>if</code> chain with <code>return switch(code) { case &#x27;k&#x27;, &#x27;K&#x27; -&gt; 18.00; … default -&gt; 0.0; };</code>. Each arrow gives the value for its labels, there is no fall-through to guard against, and <code>default</code> covers every other code.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Trace <code>describe(&#x27;K&#x27;)</code> line by line. After the Kayak line, what is the next statement Java runs?</p></li><li><p>A <code>case</code> label with no statements under it passes control straight to the next label. Use that to give <code>&#x27;k&#x27;</code> the same action as <code>&#x27;K&#x27;</code>.</p></li><li><p>In a switch expression, labels that share a result are separated by commas, and <code>-&gt;</code> is followed by the value itself. Remember the semicolon after the closing brace.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Fall-through caused the Kayak bug, and fall-through also makes <code>case &#x27;k&#x27;: case &#x27;K&#x27;:</code> work. What decides whether it helps or hurts?</p><div class="answer"><p>Whether it is intended. Stacked empty labels fall through on purpose so several values share one action; a case with statements and no <code>break</code> falls into the next case&#x27;s statements, which is usually a mistake.</p></div></li><li><p>Why can&#x27;t a switch expression that returns a value leave out <code>default</code>, when the <code>switch</code> statement in <code>describe()</code> could?</p><div class="answer"><p>The expression must produce a value for every possible <code>char</code>, so the compiler requires all inputs to be covered. A statement may simply do nothing when no case matches.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>S</code> (sailboat, $40.00 an hour) to both methods. Then change <code>describe()</code> into a switch expression inside <code>System.out.println(…)</code> (Figure 5-30). Which statement does that remove from every case?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

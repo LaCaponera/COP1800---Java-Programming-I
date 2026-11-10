@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The parcel counter&#x27;s eight-kilogram bargain</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.6</div>
+  <h1>The parcel counter&#x27;s eight-kilogram bargain</h1>
+<h2>Objectives</h2><ul><li>Write a range check as one chain of <code>if…else</code> decisions, so a value gets exactly one result</li><li>Stop asking a question whose answer is already known: finish the chain with a plain <code>else</code></li><li>Get the boundary values right with <code>&lt;</code> versus <code>&gt;=</code></li><li>Use <code>||</code> for &quot;outside the range&quot;: no value can be below the minimum <em>and</em> above the maximum</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>getRate()</code> is one <code>if…else if…else</code> chain: after a range matches, no other rate is assigned.</li><li><strong>R2</strong> The chain asks only two questions: the last range is a plain <code>else</code>, because by then its answer is already known.</li><li><strong>R3</strong> <code>isOutOfRange()</code> returns <code>true</code> when the weight is below <code>MIN_WEIGHT</code> <strong>or</strong> above <code>MAX_WEIGHT</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace <code>getRate(8.0)</code> through the starter. Which <code>if</code> statements are true, and what rate is returned?</p><div class="answer"><p>The first two are true (8 ≥ 5 and 8 ≥ 1); the third is false. The second <code>if</code> overwrites the heavy rate, so it returns 9.00.</p></div></li><li><p>Can any weight make <code>weightKg &lt; MIN_WEIGHT &amp;&amp; weightKg &gt; MAX_WEIGHT</code> true? What does that mean for the 45 kg anchor?</p><div class="answer"><p>No: a single value can&#x27;t be below 0.1 and above 30 at once. The method always returns <code>false</code>, so the anchor is treated as valid and quoted a rate.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ParcelCounter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ParcelCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">LIGHT_LIMIT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">1.0</span><span class="t-p">;</span><span class="t-w">   </span><span class="t-c1">// kg</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MEDIUM_LIMIT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-p">;</span><span class="t-w">  </span><span class="t-c1">// kg</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">LIGHT_RATE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">4.50</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MEDIUM_RATE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">9.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">HEAVY_RATE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">15.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MIN_WEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">0.1</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MAX_WEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">30.0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getRate</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MEDIUM_LIMIT</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">HEAVY_RATE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">LIGHT_LIMIT</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">MEDIUM_RATE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">LIGHT_RATE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isOutOfRange</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">MIN_WEIGHT</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">MAX_WEIGHT</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">quote</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">isOutOfRange</span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" kg: cannot ship"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" kg: $"</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">getRate</span><span class="t-p">(</span><span class="t-n">weightKg</span><span class="t-p">)));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mf">0.4</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mf">3.2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mf">8.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">quote</span><span class="t-p">(</span><span class="t-mf">45.0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Three separate <code>if</code> statements are three independent decisions, so a later one can overwrite an earlier one: 8 kg is at least 5 kg (heavy rate) <em>and</em> at least 1 kg, so the second <code>if</code> reset it to the medium rate. Chaining with <code>else</code> ends the decision as soon as a range matches. After asking <em>at least 5 kg?</em> and <em>at least 1 kg?</em> and getting two no answers, the weight must be under 1 kg, so asking again is wasted work and one more place to get a boundary wrong; a plain <code>else</code> handles it (Figure 5-21). Checking the heaviest range first is fine; if most parcels are light, starting from <code>weightKg &lt; LIGHT_LIMIT</code> is equally correct and a little more efficient (Figure 5-22). In <code>isOutOfRange()</code>, a single weight can never be below 0.1 <em>and</em> above 30 at the same time, so the <code>&amp;&amp;</code> version was always <code>false</code>; the English &quot;too light and too heavy are errors&quot; means <code>||</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestParcelCounter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestParcelCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the counter exactly as "java ParcelCounter" would.</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Each boundary, and the weights just past the limits.</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-mf">0.99</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-mf">1.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-mf">5.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-mf">30.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-mf">0.05</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ParcelCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-mf">30.5</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">0.4 kg: $4.50
+3.2 kg: $9.00
+8.0 kg: $15.00
+45.0 kg: cannot ship
+0.99 kg: $4.50
+1.0 kg: $9.00
+5.0 kg: $15.00
+30.0 kg: $15.00
+0.05 kg: cannot ship
+30.5 kg: cannot ship
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>One chained decision<div class="small">in <code>ParcelCounter.getRate</code></div></td><td><div><span class="tag">require</span> <code>\belse\s*\{?\s*if\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The last range is a plain else<div class="small">in <code>ParcelCounter.getRate</code></div></td><td><div><span class="tag">require</span> <code>\belse\s*\{?\s*(?:rate\s*=|return\b)\s*\w+\s*;</code></div><div><span class="tag">forbid</span> <code>^(?=(?:[\s\S]*?\bif\b){3})</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Out of range means too light OR too heavy<div class="small">in <code>ParcelCounter.isOutOfRange</code></div></td><td><div><span class="tag">require</span> <code>\bweightKg\s*&lt;\s*MIN_WEIGHT\s*\)?\s*\|\|\s*\(?\s*weightKg\s*&gt;\s*MAX_WEIGHT\b</code></div><div><span class="tag">require</span> <code>\bweightKg\s*&gt;\s*MAX_WEIGHT\s*\)?\s*\|\|\s*\(?\s*weightKg\s*&lt;\s*MIN_WEIGHT\b</code></div><div><span class="tag">forbid</span> <code>&amp;&amp;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · One chained decision</dt><dd><p>Connect the decisions with <code>else</code> so they form one chain: <code>if(…) … else if(…) … else …</code>. Separate <code>if</code> statements are all evaluated, so a later one overwrites the rate an earlier one set, which is how 8 kg ended up at the medium rate.</p><div class='small'><strong>Hint:</strong></div><p>Trace 8.0 through the starter one <code>if</code> at a time. How many times is <code>rate</code> assigned?</p></dd><dt>C2 · The last range is a plain else</dt><dd><p>Ask at most two questions and finish with a plain <code>else</code>. Once a weight is neither at least 5 kg nor at least 1 kg, it must be under 1 kg; a third comparison repeats a question that&#x27;s already answered.</p></dd><dt>C3 · Out of range means too light OR too heavy</dt><dd><p>Use <code>||</code>: <code>weightKg &lt; MIN_WEIGHT || weightKg &gt; MAX_WEIGHT</code>. One weight can&#x27;t be below 0.1 kg <em>and</em> above 30 kg at the same time, so with <code>&amp;&amp;</code> the method can never return <code>true</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Trace an 8 kg crate through the starter&#x27;s three <code>if</code> statements. Which assignment happens last?</p></li><li><p>If the first question is <em>at least 5 kg?</em> and the answer is no, and the second is <em>at least 1 kg?</em> and the answer is no, what do you already know about the weight?</p></li><li><p>Try <code>isOutOfRange(45.0)</code> by hand with <code>&amp;&amp;</code>: what is each side, and what is the result? The English word <em>and</em> can mislead you here.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your chain asks <em>at least 5 kg?</em> first. If 90% of Seawall&#x27;s parcels are letters under 1 kg, which question should come first, and how many questions does a typical parcel then need?</p><div class="answer"><p>Ask <em>under 1 kg?</em> first (<code>weightKg &lt; LIGHT_LIMIT</code>). Most parcels then need one question instead of two, and the result for every weight is the same.</p></div></li><li><p>Why does <code>quote(1.0)</code> show whether you chose <code>&gt;=</code> or <code>&gt;</code> correctly, while <code>quote(3.2)</code> can&#x27;t?</p><div class="answer"><p>1.0 is exactly on the boundary between light and medium, so only it is treated differently by <code>&gt;=</code> and <code>&gt;</code>; 3.2 is inside the medium range and gets the same rate either way.</p></div></li></ol>
+<h2>Extension</h2><p>Seawall adds an oversize rate: $28.00 for 20 kg and over (still at most 30 kg). Add it to your chain. Where must the new question go so the chain still asks each question at most once?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

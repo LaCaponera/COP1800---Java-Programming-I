@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The marina meter that always says EXPIRED</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.2</div>
+  <h1>The marina meter that always says EXPIRED</h1>
+<h2>Objectives</h2><ul><li>Write an <code>if</code> statement whose dependent statement runs only when its Boolean expression is <code>true</code></li><li>Recognise the empty statement created by a semicolon right after the condition</li><li>Use <code>if…else</code> (a dual-alternative selection) so exactly one of two actions runs</li><li>Compare objects&#x27; values through their getters instead of comparing references with <code>==</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> In <code>printMeter()</code>, <strong>EXPIRED</strong> prints only when <code>minutesLeft</code> is 0: the <code>if</code> controls that line.</li><li><strong>R2</strong> <code>printMeter()</code> is an <code>if…else</code>: a meter prints exactly one line, EXPIRED or the minutes left.</li><li><strong>R3</strong> <code>compareSlips()</code> compares the two boats&#x27; lengths with <code>getLengthFeet()</code>, not the two <code>Boat</code> references.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace <code>printMeter(45)</code> in the starter. Which lines print, and which part of the code decides that?</p><div class="answer"><p>Both <code>Meter: EXPIRED</code> and <code>Meter: 45 min left</code> print. The <code>if</code> ends at the semicolon after its condition, so its only dependent statement is empty; both println calls are independent statements that always run.</p></div></li><li><p>A classmate suggests <code>if(minutesLeft = 0)</code>. What does Java do with that line, and why?</p><div class="answer"><p>It doesn&#x27;t compile. A single <code>=</code> assigns 0 to <code>minutesLeft</code>, which gives an <code>int</code>, and an <code>if</code> accepts only a Boolean expression. Equality is tested with <code>==</code>.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">SlipReport.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SlipReport</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printMeter</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutesLeft</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1, R2): EXPIRED only at 0 minutes; otherwise only the minutes.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">minutesLeft</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Meter: EXPIRED"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Meter: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">minutesLeft</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min left"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">compareSlips</span><span class="t-p">(</span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): two different boats can still have the same length.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" and "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" need the same slip size"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" and "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" need different slip sizes"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printMeter</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printMeter</span><span class="t-p">(</span><span class="t-mi">45</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">otter</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Sea Otter"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">28</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">heron</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Blue Heron"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">28</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">gull</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Gull"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">compareSlips</span><span class="t-p">(</span><span class="t-n">otter</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">heron</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">compareSlips</span><span class="t-p">(</span><span class="t-n">otter</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">gull</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Boat.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// The marina's Boat class. Read it; you don't need to change it.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Boat</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">lengthFeet</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Boat</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">boatName</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">length</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">boatName</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">lengthFeet</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">length</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getLengthFeet</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">lengthFeet</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">SlipReport.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SlipReport</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printMeter</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutesLeft</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">minutesLeft</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Meter: EXPIRED"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Meter: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">minutesLeft</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min left"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">compareSlips</span><span class="t-p">(</span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">getLengthFeet</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">.</span><span class="t-na">getLengthFeet</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" and "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" need the same slip size"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" and "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" need different slip sizes"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printMeter</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printMeter</span><span class="t-p">(</span><span class="t-mi">45</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">otter</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Sea Otter"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">28</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">heron</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Blue Heron"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">28</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Boat</span><span class="t-w"> </span><span class="t-n">gull</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Gull"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">compareSlips</span><span class="t-p">(</span><span class="t-n">otter</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">heron</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">compareSlips</span><span class="t-p">(</span><span class="t-n">otter</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">gull</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>if(minutesLeft == 0);</code> ends the <code>if</code> at the semicolon: when the condition is true, Java runs an <em>empty statement</em>, and the EXPIRED line below it is an independent statement that always runs, whatever its indentation says. Removing the semicolon makes the println the <code>if</code>&#x27;s dependent statement. Adding <code>else</code> turns it into a dual-alternative selection, so exactly one of the two lines prints. In <code>compareSlips()</code>, <code>first == second</code> compares references: it is <code>true</code> only when both names refer to the <em>same object in memory</em>. <em>Sea Otter</em> and <em>Blue Heron</em> are different objects with equal lengths, so their values must be compared: <code>getLengthFeet()</code> returns an <code>int</code>, and <code>int</code> values can be compared with any relational operator.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSlipReport.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSlipReport</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the report exactly as "java SlipReport" would.</span>
+<span class="t-w">        </span><span class="t-n">SlipReport</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">SlipReport</span><span class="t-p">.</span><span class="t-na">printMeter</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">SlipReport</span><span class="t-p">.</span><span class="t-na">compareSlips</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Tern"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Gull"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">SlipReport</span><span class="t-p">.</span><span class="t-na">compareSlips</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Tern"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Boat</span><span class="t-p">(</span><span class="t-s">"Orca"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">40</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Meter: EXPIRED
+Meter: 45 min left
+Sea Otter and Blue Heron need the same slip size
+Sea Otter and Gull need different slip sizes
+Meter: 5 min left
+Tern and Gull need the same slip size
+Tern and Orca need different slip sizes
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>No semicolon right after the meter&#x27;s condition<div class="small">in <code>SlipReport.printMeter</code> of <code>SlipReport.java</code></div></td><td><div><span class="tag">require</span> <code>\bif\s*\(\s*(?:minutesLeft\s*(?:==|&lt;=)\s*0|0\s*(?:==|&gt;=)\s*minutesLeft)\s*\)\s*[{A-Za-z]</code></div><div><span class="tag">forbid</span> <code>\bif\s*\([^;{}()]*\)\s*;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>An if…else picks exactly one line<div class="small">in <code>SlipReport.printMeter</code> of <code>SlipReport.java</code></div></td><td><div><span class="tag">require</span> <code>\belse\b[\s{]*System\s*\.\s*out\s*\.\s*println\s*\(</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The boats&#x27; lengths are compared, not their references<div class="small">in <code>SlipReport.compareSlips</code> of <code>SlipReport.java</code></div></td><td><div><span class="tag">require</span> <code>\b(?:first|second)\s*\.\s*getLengthFeet\s*\(\s*\)\s*==\s*(?:first|second)\s*\.\s*getLengthFeet\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\b(?:first|second)\s*(?:==|!=)\s*(?:first|second)\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · No semicolon right after the meter&#x27;s condition</dt><dd><p>Delete the semicolon after <code>if(minutesLeft == 0)</code>. That semicolon is an empty statement: it becomes the whole <code>if</code>, and the EXPIRED line below runs every time, no matter how it is indented.</p><div class='small'><strong>Hint:</strong></div><p>Where does an <code>if</code> statement end? Look for the first semicolon after the condition.</p></dd><dt>C2 · An if…else picks exactly one line</dt><dd><p>Put <code>else</code> before the minutes-left line. An <code>if…else</code> is a dual-alternative selection: when the meter is at 0 only EXPIRED prints, and otherwise only the minutes print.</p></dd><dt>C3 · The boats&#x27; lengths are compared, not their references</dt><dd><p>Compare <code>first.getLengthFeet()</code> with <code>second.getLengthFeet()</code>. <code>first == second</code> asks whether both names refer to the same object in memory; two different boats of 28 feet are different objects, so it says <code>false</code>.</p><div class='small'><strong>Hint:</strong></div><p>What value does the slip size actually depend on?</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>An <code>if</code> statement ends at its first semicolon. In <code>printMeter()</code>, where is the first semicolon after the condition&#x27;s closing parenthesis?</p></li><li><p>Two lines that must never both print are the two halves of an <code>if…else</code>.</p></li><li><p><code>Boat</code> is a class, so <code>first</code> and <code>second</code> hold references. The value you care about comes back from one of <code>Boat</code>&#x27;s getters, as an <code>int</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why does <code>first == second</code> say <code>false</code> for <em>Sea Otter</em> and <em>Blue Heron</em>, but <code>true</code> if you call <code>compareSlips(otter, otter)</code>?</p><div class="answer"><p><code>==</code> on objects compares references, the memory addresses. <code>otter</code> and <code>heron</code> are two different objects, so their references differ even though the lengths are equal. Passing <code>otter</code> twice gives two references to the same object, so <code>==</code> is true.</p></div></li><li><p>The indentation of the starter made the EXPIRED line <em>look</em> controlled by the <code>if</code>. What does the compiler use instead of indentation to decide what belongs to an <code>if</code>?</p><div class="answer"><p>Statements and punctuation: the <code>if</code>&#x27;s dependent statement is the single statement right after the condition (or a block in braces). The compiler ignores indentation, so a semicolon after the condition makes an empty statement the dependent one.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>printLonger(Boat first, Boat second)</code> that prints the name of the longer boat, or <code>Same length</code> when they are equal. Which relational operators can you use with <code>getLengthFeet()</code> that you could never use with <code>first</code> and <code>second</code> themselves?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

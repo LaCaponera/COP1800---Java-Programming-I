@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The ferry crew&#x27;s negative overtime</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.3</div>
+  <h1>The ferry crew&#x27;s negative overtime</h1>
+<h2>Objectives</h2><ul><li>Use curly braces to make several statements depend on an <code>if</code> or an <code>else</code></li><li>Explain why an indented statement after an unbraced <code>if</code> always runs</li><li>Write an <code>if…else</code> with a block in each clause, so every path assigns every result</li><li>State the scope of a variable declared inside a block</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> When <code>hoursWorked</code> is more than <code>FULL_WEEK</code>, <strong>both</strong> the regular-pay and the overtime-pay statements depend on the <code>if</code>: they form one block.</li><li><strong>R2</strong> An <code>else</code> block sets regular pay to hours times rate and overtime pay to <code>0.0</code>. <code>regularPay</code> and <code>overtimePay</code> are declared without a value, so each path assigns them once.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, how many statements depend on <code>if(hoursWorked &gt; FULL_WEEK)</code>? Which line runs no matter how many hours are worked?</p><div class="answer"><p>One: <code>regularPay = FULL_WEEK * rate;</code>. The overtime line is an independent statement, so it runs for every deckhand, including Marta with 30 hours.</p></div></li><li><p>Predict Marta&#x27;s overtime pay with the starter code (30 hours at $25.50).</p><div class="answer"><p>−382.5: (30 − 40) × 1.5 × 25.50. The overtime line runs even though she didn&#x27;t work more than 40 hours.</p></div></li></ol>
+<h2>Solution</h2><div class="file">DeckhandPay.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DeckhandPay</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FULL_WEEK</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">40</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">OT_RATE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">1.5</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printPay</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">hoursWorked</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">regularPay</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">overtimePay</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">hoursWorked</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">FULL_WEEK</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">regularPay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">FULL_WEEK</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">overtimePay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">hoursWorked</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-n">FULL_WEEK</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">OT_RATE</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">regularPay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">hoursWorked</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">overtimePay</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": regular $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">regularPay</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", overtime $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">overtimePay</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printPay</span><span class="t-p">(</span><span class="t-s">"Marta"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">30</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">25.50</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printPay</span><span class="t-p">(</span><span class="t-s">"Jonah"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">44</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">20.00</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Without braces, an <code>if</code> controls exactly one statement. In the starter, only <code>regularPay = FULL_WEEK * rate;</code> depended on the <code>if</code>; the overtime line was an independent statement that ran for everyone, so 30 hours gave (30 − 40) × 1.5 × 25.50 = −382.50. The indentation made it <em>look</em> dependent, but the compiler ignores indentation. Braces make both lines one block. The <code>else</code> block is the other half of the dual-alternative selection, as in the book&#x27;s Payroll program (Figure 5-9). Declaring the two variables without values is deliberate: the compiler checks that every path assigns them before the println uses them (<em>variable might not have been initialized</em> otherwise), so forgetting an assignment in one branch becomes a compile error instead of a wrong paycheck. The final println is outside the decision, so it runs for every deckhand.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestDeckhandPay.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestDeckhandPay</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs this week's pay slips exactly as "java DeckhandPay" would.</span>
+<span class="t-w">        </span><span class="t-n">DeckhandPay</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Exactly a full week, and a long week with half an hour extra.</span>
+<span class="t-w">        </span><span class="t-n">DeckhandPay</span><span class="t-p">.</span><span class="t-na">printPay</span><span class="t-p">(</span><span class="t-s">"Ines"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">40</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">18.00</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">DeckhandPay</span><span class="t-p">.</span><span class="t-na">printPay</span><span class="t-p">(</span><span class="t-s">"Tomas"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">45.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">16.00</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Marta: regular $765.0, overtime $0.0
+Jonah: regular $800.0, overtime $120.0
+Ines: regular $720.0, overtime $0.0
+Tomas: regular $640.0, overtime $132.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Both overtime-case statements are in one block<div class="small">in <code>DeckhandPay.printPay</code></div></td><td><div><span class="tag">require</span> <code>\bif\s*\(\s*(?:hoursWorked\s*&gt;\s*FULL_WEEK|FULL_WEEK\s*&lt;\s*hoursWorked)\s*\)\s*\{(?=[^}]*\bregularPay\s*=)(?=[^}]*\bovertimePay\s*=)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>An else block sets both amounts<div class="small">in <code>DeckhandPay.printPay</code></div></td><td><div><span class="tag">require</span> <code>\belse\s*\{(?=[^}]*\bregularPay\s*=\s*(?:hoursWorked\s*\*\s*rate|rate\s*\*\s*hoursWorked)\s*;)(?=[^}]*\bovertimePay\s*=\s*0(?:\.0*)?\s*;)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Pay is declared without a value<div class="small">in <code>DeckhandPay.printPay</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bdouble\s+regularPay\s*;)(?=[\s\S]*\bdouble\s+overtimePay\s*;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Both overtime-case statements are in one block</dt><dd><p>Put curly braces around the two pay statements after <code>if(hoursWorked &gt; FULL_WEEK)</code>. Without them, the <code>if</code> controls only the first statement, and the overtime line runs for every deckhand, which is how 30 hours produced negative overtime.</p><div class='small'><strong>Hint:</strong></div><p>Indentation is for people; braces are for the compiler.</p></dd><dt>C2 · An else block sets both amounts</dt><dd><p>Add an <code>else</code> block with braces that sets <code>regularPay</code> to <code>hoursWorked * rate</code> and <code>overtimePay</code> to <code>0.0</code>. One block for each case makes each path&#x27;s work visible in one place.</p></dd><dt>C3 · Pay is declared without a value</dt><dd><p>Declare <code>double regularPay;</code> and <code>double overtimePay;</code> with no starting value. Then the compiler confirms that every path of your <code>if…else</code> assigns both, so a forgotten assignment can&#x27;t slip through as a wrong amount.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Count the statements that depend on the starter&#x27;s <code>if</code>. The compiler counts one; how many did the programmer mean?</p></li><li><p>A pair of curly braces turns several statements into one block that an <code>if</code> or an <code>else</code> can control.</p></li><li><p>When the week is 40 hours or less, regular pay is every hour at the normal rate and there is no overtime: that is the <code>else</code> block.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Suppose you declared <code>double bonus = 25.0;</code> inside the <code>if</code> block. Could the final println use <code>bonus</code>? Why or why not?</p><div class="answer"><p>No. A variable declared inside a block is local to that block; after the closing brace it no longer exists, so the println would get <em>cannot find symbol</em>. To use it after the decision, declare it before the <code>if</code>.</p></div></li><li><p>Why is declaring <code>regularPay</code> without a starting value safer here than giving it one?</p><div class="answer"><p>With no starting value, the compiler refuses to compile unless every path assigns it before it&#x27;s used. A starting value would hide a missing assignment: the program would compile and quietly print the starting value as someone&#x27;s pay.</p></div></li></ol>
+<h2>Extension</h2><p>Payroll wants a third line for long weeks only: <code>  (includes N overtime hours)</code>. Add it inside the right block so it prints only when there is overtime. What would go wrong if you added it without braces?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

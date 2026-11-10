@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The tide-pool walk&#x27;s go/no-go questions</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.1</div>
+  <h1>The tide-pool walk&#x27;s go/no-go questions</h1>
+<h2>Objectives</h2><ul><li>Tell a sequence structure (steps that always run) from a decision structure (a yes-or-no question that picks a path)</li><li>Turn each diamond of a plan into a yes-or-no question whose answer is a <code>boolean</code></li><li>Write a relational expression that respects the exact boundary in the plan (below versus up to)</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>isTideLowEnough(double)</code> returns <code>true</code> only when the tide is <strong>below</strong> <code>SAFE_TIDE</code>.</li><li><strong>R2</strong> <code>hasRoomForOneMore(int)</code> returns <code>true</code> when fewer than <code>MAX_GROUP</code> walkers are signed up, so one more can join.</li><li><strong>R3</strong> <code>isOldEnough(int)</code> returns <code>true</code> for children <code>MIN_AGE</code> and older.</li><li><strong>R4</strong> Each method returns its comparison directly and uses the named constant, not the number.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the guide&#x27;s plan, which steps form a sequence structure and which are decision structures? Name one of each.</p><div class="answer"><p>&quot;Get the tide height, the walkers signed up and the child&#x27;s age&quot; is a sequence: it always happens. Each question, such as &quot;is the tide below 0.5 m?&quot;, is a decision: the answer chooses whether the walk goes ahead or a notice is posted.</p></div></li><li><p>The starter&#x27;s <code>isTideLowEnough()</code> returns <code>false</code> no matter what. What will the check sheet print, and what does that tell you about where the decision has to happen?</p><div class="answer"><p>Every answer prints <code>false</code>. The method ignores its parameter, so it isn&#x27;t making a decision at all; the decision has to come from comparing <code>tideMeters</code> to <code>SAFE_TIDE</code> inside the method.</p></div></li></ol>
+<h2>Solution</h2><div class="file">TidePoolTour.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TidePoolTour</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">SAFE_TIDE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">0.5</span><span class="t-p">;</span><span class="t-w">  </span><span class="t-c1">// metres</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_GROUP</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">12</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MIN_AGE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">8</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// The lead guide's plan, in pseudocode:</span>
+<span class="t-w">    </span><span class="t-c1">//   get the tide height, the walkers signed up, the child's age</span>
+<span class="t-w">    </span><span class="t-c1">//   is the tide below 0.5 m?           no  -&gt; post "Walk closed"</span>
+<span class="t-w">    </span><span class="t-c1">//   is there room for one more walker? no  -&gt; post "Walk full"</span>
+<span class="t-w">    </span><span class="t-c1">//   is the child 8 or older?           no  -&gt; post "Too young"</span>
+<span class="t-w">    </span><span class="t-c1">//   all yes -&gt; sign the walker up</span>
+<span class="t-w">    </span><span class="t-c1">// Each question is one diamond in the flowchart: a yes-or-no answer.</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isTideLowEnough</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">tideMeters</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">tideMeters</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">SAFE_TIDE</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">hasRoomForOneMore</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">signedUp</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">signedUp</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">MAX_GROUP</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isOldEnough</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_AGE</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// A sequence structure: every line runs, one after another.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Saturday walk: go/no-go answers"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tide 0.3 m low enough? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isTideLowEnough</span><span class="t-p">(</span><span class="t-mf">0.3</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tide 0.5 m low enough? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isTideLowEnough</span><span class="t-p">(</span><span class="t-mf">0.5</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Room with 11 signed up? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hasRoomForOneMore</span><span class="t-p">(</span><span class="t-mi">11</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Room with 12 signed up? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hasRoomForOneMore</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Age 8 old enough? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isOldEnough</span><span class="t-p">(</span><span class="t-mi">8</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Age 7 old enough? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">isOldEnough</span><span class="t-p">(</span><span class="t-mi">7</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Every decision a computer makes comes down to a yes-or-no question, and a relational expression such as <code>tideMeters &lt; SAFE_TIDE</code> <em>is</em> that question: its value is <code>true</code> or <code>false</code>, so the method can return it directly. The work is in the boundaries. <em>Below</em> 0.5 m means <code>&lt;</code>, so exactly 0.5 m is not safe. <em>Room for one more</em> with a group of 12 means fewer than 12 are signed up, so 12 signed up answers <code>false</code>. <em>8 and older</em> means <code>&gt;=</code>, so an 8-year-old may join. Using <code>SAFE_TIDE</code> rather than <code>0.5</code> keeps the rule in one place: if the center changes the limit, one line changes. <code>main()</code> is a sequence structure: every statement runs in order; the diamonds of the plan live inside the three methods.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestTidePoolTour.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestTidePoolTour</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the check sheet exactly as "java TidePoolTour" would.</span>
+<span class="t-w">        </span><span class="t-n">TidePoolTour</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Values just inside and just outside each boundary.</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tide 0.49 m: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">TidePoolTour</span><span class="t-p">.</span><span class="t-na">isTideLowEnough</span><span class="t-p">(</span><span class="t-mf">0.49</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tide 0.51 m: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">TidePoolTour</span><span class="t-p">.</span><span class="t-na">isTideLowEnough</span><span class="t-p">(</span><span class="t-mf">0.51</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Room with 0 signed up: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">TidePoolTour</span><span class="t-p">.</span><span class="t-na">hasRoomForOneMore</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Age 15: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">TidePoolTour</span><span class="t-p">.</span><span class="t-na">isOldEnough</span><span class="t-p">(</span><span class="t-mi">15</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Saturday walk: go/no-go answers
+Tide 0.3 m low enough? true
+Tide 0.5 m low enough? false
+Room with 11 signed up? true
+Room with 12 signed up? false
+Age 8 old enough? true
+Age 7 old enough? false
+Tide 0.49 m: true
+Tide 0.51 m: false
+Room with 0 signed up: true
+Age 15: true
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The tide must be strictly below SAFE_TIDE<div class="small">in <code>TidePoolTour.isTideLowEnough</code></div></td><td><div><span class="tag">require</span> <code>\breturn\s*\(?\s*(?:tideMeters\s*&lt;\s*SAFE_TIDE|SAFE_TIDE\s*&gt;\s*tideMeters)\b</code></div><div><span class="tag">forbid</span> <code>&lt;=|&gt;=</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Room means fewer than MAX_GROUP signed up<div class="small">in <code>TidePoolTour.hasRoomForOneMore</code></div></td><td><div><span class="tag">require</span> <code>\breturn\s*\(?\s*(?:signedUp\s*&lt;\s*MAX_GROUP|MAX_GROUP\s*&gt;\s*signedUp)\b</code></div><div><span class="tag">forbid</span> <code>&lt;=|&gt;=|\+\s*1|-\s*1</code></div></td></tr><tr><td>C3</td><td>R3</td><td>MIN_AGE and older may join<div class="small">in <code>TidePoolTour.isOldEnough</code></div></td><td><div><span class="tag">require</span> <code>\breturn\s*\(?\s*(?:age\s*&gt;=\s*MIN_AGE|MIN_AGE\s*&lt;=\s*age)\b</code></div></td></tr><tr><td>C4</td><td>R4</td><td>Named constants, not bare numbers<div class="small">in <code>TidePoolTour</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bisTideLowEnough\s*\([^)]*\)\s*\{\s*return\b[^;]*\bSAFE_TIDE\b)(?=[\s\S]*\bhasRoomForOneMore\s*\([^)]*\)\s*\{\s*return\b[^;]*\bMAX_GROUP\b)(?=[\s\S]*\bisOldEnough\s*\([^)]*\)\s*\{\s*return\b[^;]*\bMIN_AGE\b)</code></div><div><span class="tag">forbid</span> <code>\breturn\b[^;]*(?:\b0\.5\b|\b12\b|\b8\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The tide must be strictly below SAFE_TIDE</dt><dd><p>Return the comparison <code>tideMeters &lt; SAFE_TIDE</code>. The plan says <em>below</em> 0.5 m, so a tide of exactly 0.5 m is not safe: <code>&lt;=</code> would let it through.</p><div class='small'><strong>Hint:</strong></div><p>Read the plan&#x27;s wording aloud: is 0.5 m itself below 0.5 m?</p></dd><dt>C2 · Room means fewer than MAX_GROUP signed up</dt><dd><p>Return <code>signedUp &lt; MAX_GROUP</code>. With 12 already signed up the group is full, so the answer must be <code>false</code>; with 11 there is room for the twelfth walker.</p></dd><dt>C3 · MIN_AGE and older may join</dt><dd><p>Return <code>age &gt;= MIN_AGE</code>. <em>8 and older</em> includes 8 itself, which <code>&gt;</code> would leave out.</p></dd><dt>C4 · Named constants, not bare numbers</dt><dd><p>Write each method as a single <code>return</code> of the comparison, using <code>SAFE_TIDE</code>, <code>MAX_GROUP</code> and <code>MIN_AGE</code>. The comparison already is <code>true</code> or <code>false</code>, and the constants keep each rule in one place.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>A comparison such as <code>x &lt; y</code> already has a value, <code>true</code> or <code>false</code>, so it can follow <code>return</code> directly.</p></li><li><p>Test each boundary from the plan in your head: the tide at exactly 0.5 m, a group with exactly 12, a child of exactly 8. Which answers are yes?</p></li><li><p>Two of the questions use <code>&lt;</code>; the age question includes its boundary value.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your <code>isTideLowEnough()</code> contains no <code>if</code>, yet it makes a decision. Explain how.</p><div class="answer"><p>The expression <code>tideMeters &lt; SAFE_TIDE</code> is evaluated to a Boolean value, <code>true</code> or <code>false</code>, and the method returns that value. The decision is the comparison itself; an <code>if</code> would only be needed to choose between different actions.</p></div></li><li><p>Which call in the check sheet would have printed a wrong answer if you had used <code>&lt;=</code> in <code>hasRoomForOneMore()</code>? Why do boundaries deserve a test of their own?</p><div class="answer"><p><code>hasRoomForOneMore(12)</code> would print <code>true</code> and let a thirteenth walker join. Values in the middle of a range work with either operator; only the boundary value shows whether <code>&lt;</code> or <code>&lt;=</code> matches the rule, so it needs its own test.</p></div></li></ol>
+<h2>Extension</h2><p>The plan&#x27;s last step needs all three answers to be yes. Add <code>public static boolean canJoin(double tide, int signedUp, int age)</code> that returns the three answers combined. (Section 5.5 introduces the operator that joins them; for now, what would you write in pseudocode?)</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

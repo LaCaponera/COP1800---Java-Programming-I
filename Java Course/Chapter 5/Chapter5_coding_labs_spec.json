@@ -1,0 +1,1174 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 5: Making Decisions",
+ "collection_intro": "Hands-on labs for each section of Chapter 5 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict, fix or write the decisions, check their structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "5.1",
+   "title": "The tide-pool walk's go/no-go questions",
+   "subtitle": "Planning with pseudocode, sequence and decision structures, and decisions as Boolean values",
+   "source": "Ch. 5, section 5.1 (pp. 161–163)",
+   "minutes": 20,
+   "objectives": [
+    "Tell a sequence structure (steps that always run) from a decision structure (a yes-or-no question that picks a path)",
+    "Turn each diamond of a plan into a yes-or-no question whose answer is a `boolean`",
+    "Write a relational expression that respects the exact boundary in the plan (below versus up to)"
+   ],
+   "scenario": "Saltmarsh Nature Center runs a guided tide-pool walk every Saturday. The lead guide planned the go/no-go decision in pseudocode before anyone wrote code; the plan is in the comments at the top of `TidePoolTour`.\n\nA computer never asks *how high is the tide?* It asks yes-or-no questions, and every answer is a Boolean value. Write the three questions from the plan as methods that return `true` or `false`, matching the plan's boundaries exactly. The guide's check sheet must print:\n\n```\nSaturday walk: go/no-go answers\nTide 0.3 m low enough? true\nTide 0.5 m low enough? false\nRoom with 11 signed up? true\nRoom with 12 signed up? false\nAge 8 old enough? true\nAge 7 old enough? false\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`isTideLowEnough(double)` returns `true` only when the tide is **below** `SAFE_TIDE`."
+    },
+    {
+     "id": "R2",
+     "text": "`hasRoomForOneMore(int)` returns `true` when fewer than `MAX_GROUP` walkers are signed up, so one more can join."
+    },
+    {
+     "id": "R3",
+     "text": "`isOldEnough(int)` returns `true` for children `MIN_AGE` and older."
+    },
+    {
+     "id": "R4",
+     "text": "Each method returns its comparison directly and uses the named constant, not the number."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "TidePoolTour.java",
+   "starter_code": "public class TidePoolTour\n{\n    public static final double SAFE_TIDE = 0.5;  // metres\n    public static final int MAX_GROUP = 12;\n    public static final int MIN_AGE = 8;\n\n    // The lead guide's plan, in pseudocode:\n    //   get the tide height, the walkers signed up, the child's age\n    //   is the tide below 0.5 m?           no  -> post \"Walk closed\"\n    //   is there room for one more walker? no  -> post \"Walk full\"\n    //   is the child 8 or older?           no  -> post \"Too young\"\n    //   all yes -> sign the walker up\n    // Each question is one diamond in the flowchart: a yes-or-no answer.\n\n    // TODO (R1, R4): Is the tide low enough? Only a tide BELOW SAFE_TIDE is safe.\n    public static boolean isTideLowEnough(double tideMeters)\n    {\n        return false;\n    }\n\n    // TODO (R2, R4): Is there room for one more walker? A group holds MAX_GROUP.\n    public static boolean hasRoomForOneMore(int signedUp)\n    {\n        return false;\n    }\n\n    // TODO (R3, R4): Is the child old enough? MIN_AGE and older may join.\n    public static boolean isOldEnough(int age)\n    {\n        return false;\n    }\n\n    // A sequence structure: every line runs, one after another.\n    public static void main(String[] args)\n    {\n        System.out.println(\"Saturday walk: go/no-go answers\");\n        System.out.println(\"Tide 0.3 m low enough? \" + isTideLowEnough(0.3));\n        System.out.println(\"Tide 0.5 m low enough? \" + isTideLowEnough(0.5));\n        System.out.println(\"Room with 11 signed up? \" + hasRoomForOneMore(11));\n        System.out.println(\"Room with 12 signed up? \" + hasRoomForOneMore(12));\n        System.out.println(\"Age 8 old enough? \" + isOldEnough(8));\n        System.out.println(\"Age 7 old enough? \" + isOldEnough(7));\n    }\n}\n",
+   "solution": "public class TidePoolTour\n{\n    public static final double SAFE_TIDE = 0.5;  // metres\n    public static final int MAX_GROUP = 12;\n    public static final int MIN_AGE = 8;\n\n    // The lead guide's plan, in pseudocode:\n    //   get the tide height, the walkers signed up, the child's age\n    //   is the tide below 0.5 m?           no  -> post \"Walk closed\"\n    //   is there room for one more walker? no  -> post \"Walk full\"\n    //   is the child 8 or older?           no  -> post \"Too young\"\n    //   all yes -> sign the walker up\n    // Each question is one diamond in the flowchart: a yes-or-no answer.\n\n    public static boolean isTideLowEnough(double tideMeters)\n    {\n        return tideMeters < SAFE_TIDE;\n    }\n\n    public static boolean hasRoomForOneMore(int signedUp)\n    {\n        return signedUp < MAX_GROUP;\n    }\n\n    public static boolean isOldEnough(int age)\n    {\n        return age >= MIN_AGE;\n    }\n\n    // A sequence structure: every line runs, one after another.\n    public static void main(String[] args)\n    {\n        System.out.println(\"Saturday walk: go/no-go answers\");\n        System.out.println(\"Tide 0.3 m low enough? \" + isTideLowEnough(0.3));\n        System.out.println(\"Tide 0.5 m low enough? \" + isTideLowEnough(0.5));\n        System.out.println(\"Room with 11 signed up? \" + hasRoomForOneMore(11));\n        System.out.println(\"Room with 12 signed up? \" + hasRoomForOneMore(12));\n        System.out.println(\"Age 8 old enough? \" + isOldEnough(8));\n        System.out.println(\"Age 7 old enough? \" + isOldEnough(7));\n    }\n}\n",
+   "solution_notes": "Every decision a computer makes comes down to a yes-or-no question, and a relational expression such as `tideMeters < SAFE_TIDE` *is* that question: its value is `true` or `false`, so the method can return it directly. The work is in the boundaries. *Below* 0.5 m means `<`, so exactly 0.5 m is not safe. *Room for one more* with a group of 12 means fewer than 12 are signed up, so 12 signed up answers `false`. *8 and older* means `>=`, so an 8-year-old may join. Using `SAFE_TIDE` rather than `0.5` keeps the rule in one place: if the center changes the limit, one line changes. `main()` is a sequence structure: every statement runs in order; the diamonds of the plan live inside the three methods.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The tide must be strictly below SAFE_TIDE",
+     "within": "TidePoolTour.isTideLowEnough",
+     "require": "\\breturn\\s*\\(?\\s*(?:tideMeters\\s*<\\s*SAFE_TIDE|SAFE_TIDE\\s*>\\s*tideMeters)\\b",
+     "forbid": "<=|>=",
+     "message": "Return the comparison `tideMeters < SAFE_TIDE`. The plan says *below* 0.5 m, so a tide of exactly 0.5 m is not safe: `<=` would let it through.",
+     "hint": "Read the plan's wording aloud: is 0.5 m itself below 0.5 m?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Room means fewer than MAX_GROUP signed up",
+     "within": "TidePoolTour.hasRoomForOneMore",
+     "require": "\\breturn\\s*\\(?\\s*(?:signedUp\\s*<\\s*MAX_GROUP|MAX_GROUP\\s*>\\s*signedUp)\\b",
+     "forbid": "<=|>=|\\+\\s*1|-\\s*1",
+     "message": "Return `signedUp < MAX_GROUP`. With 12 already signed up the group is full, so the answer must be `false`; with 11 there is room for the twelfth walker."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "MIN_AGE and older may join",
+     "within": "TidePoolTour.isOldEnough",
+     "require": "\\breturn\\s*\\(?\\s*(?:age\\s*>=\\s*MIN_AGE|MIN_AGE\\s*<=\\s*age)\\b",
+     "message": "Return `age >= MIN_AGE`. *8 and older* includes 8 itself, which `>` would leave out."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "Named constants, not bare numbers",
+     "within": "TidePoolTour",
+     "require": "^(?=[\\s\\S]*\\bisTideLowEnough\\s*\\([^)]*\\)\\s*\\{\\s*return\\b[^;]*\\bSAFE_TIDE\\b)(?=[\\s\\S]*\\bhasRoomForOneMore\\s*\\([^)]*\\)\\s*\\{\\s*return\\b[^;]*\\bMAX_GROUP\\b)(?=[\\s\\S]*\\bisOldEnough\\s*\\([^)]*\\)\\s*\\{\\s*return\\b[^;]*\\bMIN_AGE\\b)",
+     "forbid": "\\breturn\\b[^;]*(?:\\b0\\.5\\b|\\b12\\b|\\b8\\b)",
+     "message": "Write each method as a single `return` of the comparison, using `SAFE_TIDE`, `MAX_GROUP` and `MIN_AGE`. The comparison already is `true` or `false`, and the constants keep each rule in one place."
+    }
+   ],
+   "hints": [
+    "A comparison such as `x < y` already has a value, `true` or `false`, so it can follow `return` directly.",
+    "Test each boundary from the plan in your head: the tide at exactly 0.5 m, a group with exactly 12, a child of exactly 8. Which answers are yes?",
+    "Two of the questions use `<`; the age question includes its boundary value."
+   ],
+   "test_program": {
+    "file_name": "TestTidePoolTour.java",
+    "code": "public class TestTidePoolTour\n{\n    public static void main(String[] args)\n    {\n        // Runs the check sheet exactly as \"java TidePoolTour\" would.\n        TidePoolTour.main(new String[0]);\n\n        // Values just inside and just outside each boundary.\n        System.out.println(\"Tide 0.49 m: \" + TidePoolTour.isTideLowEnough(0.49));\n        System.out.println(\"Tide 0.51 m: \" + TidePoolTour.isTideLowEnough(0.51));\n        System.out.println(\"Room with 0 signed up: \"\n            + TidePoolTour.hasRoomForOneMore(0));\n        System.out.println(\"Age 15: \" + TidePoolTour.isOldEnough(15));\n    }\n}\n",
+    "expected_output": "Saturday walk: go/no-go answers\nTide 0.3 m low enough? true\nTide 0.5 m low enough? false\nRoom with 11 signed up? true\nRoom with 12 signed up? false\nAge 8 old enough? true\nAge 7 old enough? false\nTide 0.49 m: true\nTide 0.51 m: false\nRoom with 0 signed up: true\nAge 15: true\n",
+    "predict": "Before you change anything: what does the starter print after each question mark, and why is it the same every time?"
+   },
+   "warmup": [
+    {
+     "question": "In the guide's plan, which steps form a sequence structure and which are decision structures? Name one of each.",
+     "model_answer": "\"Get the tide height, the walkers signed up and the child's age\" is a sequence: it always happens. Each question, such as \"is the tide below 0.5 m?\", is a decision: the answer chooses whether the walk goes ahead or a notice is posted."
+    },
+    {
+     "question": "The starter's `isTideLowEnough()` returns `false` no matter what. What will the check sheet print, and what does that tell you about where the decision has to happen?",
+     "model_answer": "Every answer prints `false`. The method ignores its parameter, so it isn't making a decision at all; the decision has to come from comparing `tideMeters` to `SAFE_TIDE` inside the method."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your `isTideLowEnough()` contains no `if`, yet it makes a decision. Explain how.",
+     "model_answer": "The expression `tideMeters < SAFE_TIDE` is evaluated to a Boolean value, `true` or `false`, and the method returns that value. The decision is the comparison itself; an `if` would only be needed to choose between different actions."
+    },
+    {
+     "question": "Which call in the check sheet would have printed a wrong answer if you had used `<=` in `hasRoomForOneMore()`? Why do boundaries deserve a test of their own?",
+     "model_answer": "`hasRoomForOneMore(12)` would print `true` and let a thirteenth walker join. Values in the middle of a range work with either operator; only the boundary value shows whether `<` or `<=` matches the rule, so it needs its own test."
+    }
+   ],
+   "extension": "The plan's last step needs all three answers to be yes. Add `public static boolean canJoin(double tide, int signedUp, int age)` that returns the three answers combined. (Section 5.5 introduces the operator that joins them; for now, what would you write in pseudocode?)",
+   "worth_knowing": "Java's `boolean` is named after George Boole, whose 1854 book *The Laws of Thought* described an algebra in which every value is true or false. In 1937 Claude Shannon's master's thesis showed that switching circuits compute Boole's algebra. That is why, deep down, every decision your program makes is still a yes or a no.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.2",
+   "title": "The marina meter that always says EXPIRED",
+   "subtitle": "The if and if…else statements, the stray-semicolon pitfall, and comparing objects through their values",
+   "source": "Ch. 5, section 5.2 (pp. 163–168)",
+   "minutes": 25,
+   "objectives": [
+    "Write an `if` statement whose dependent statement runs only when its Boolean expression is `true`",
+    "Recognise the empty statement created by a semicolon right after the condition",
+    "Use `if…else` (a dual-alternative selection) so exactly one of two actions runs",
+    "Compare objects' values through their getters instead of comparing references with `==`"
+   ],
+   "scenario": "Pier 9 Marina prints a status line for each parking meter and a note when two boats need the same size of slip. Two complaints came in this week:\n\n- Every meter says **EXPIRED**, even with time left, and then prints the minutes too.\n- *Sea Otter* and *Blue Heron* are both 28 feet long, yet the report says they need different slips.\n\nFix `SlipReport` so the marina's report prints:\n\n```\nMeter: EXPIRED\nMeter: 45 min left\nSea Otter and Blue Heron need the same slip size\nSea Otter and Gull need different slip sizes\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "In `printMeter()`, **EXPIRED** prints only when `minutesLeft` is 0: the `if` controls that line."
+    },
+    {
+     "id": "R2",
+     "text": "`printMeter()` is an `if…else`: a meter prints exactly one line, EXPIRED or the minutes left."
+    },
+    {
+     "id": "R3",
+     "text": "`compareSlips()` compares the two boats' lengths with `getLengthFeet()`, not the two `Boat` references."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "SlipReport.java",
+     "starter": "public class SlipReport\n{\n    public static void printMeter(int minutesLeft)\n    {\n        // TODO (R1, R2): EXPIRED only at 0 minutes; otherwise only the minutes.\n        if(minutesLeft == 0);\n            System.out.println(\"Meter: EXPIRED\");\n        System.out.println(\"Meter: \" + minutesLeft + \" min left\");\n    }\n\n    public static void compareSlips(Boat first, Boat second)\n    {\n        // TODO (R3): two different boats can still have the same length.\n        if(first == second)\n            System.out.println(first.getName() + \" and \" + second.getName()\n                + \" need the same slip size\");\n        else\n            System.out.println(first.getName() + \" and \" + second.getName()\n                + \" need different slip sizes\");\n    }\n\n    public static void main(String[] args)\n    {\n        printMeter(0);\n        printMeter(45);\n\n        Boat otter = new Boat(\"Sea Otter\", 28);\n        Boat heron = new Boat(\"Blue Heron\", 28);\n        Boat gull = new Boat(\"Gull\", 22);\n        compareSlips(otter, heron);\n        compareSlips(otter, gull);\n    }\n}\n",
+     "solution": "public class SlipReport\n{\n    public static void printMeter(int minutesLeft)\n    {\n        if(minutesLeft == 0)\n            System.out.println(\"Meter: EXPIRED\");\n        else\n            System.out.println(\"Meter: \" + minutesLeft + \" min left\");\n    }\n\n    public static void compareSlips(Boat first, Boat second)\n    {\n        if(first.getLengthFeet() == second.getLengthFeet())\n            System.out.println(first.getName() + \" and \" + second.getName()\n                + \" need the same slip size\");\n        else\n            System.out.println(first.getName() + \" and \" + second.getName()\n                + \" need different slip sizes\");\n    }\n\n    public static void main(String[] args)\n    {\n        printMeter(0);\n        printMeter(45);\n\n        Boat otter = new Boat(\"Sea Otter\", 28);\n        Boat heron = new Boat(\"Blue Heron\", 28);\n        Boat gull = new Boat(\"Gull\", 22);\n        compareSlips(otter, heron);\n        compareSlips(otter, gull);\n    }\n}\n"
+    },
+    {
+     "name": "Boat.java",
+     "editable": false,
+     "starter": "// The marina's Boat class. Read it; you don't need to change it.\npublic class Boat\n{\n    private String name;\n    private int lengthFeet;\n\n    public Boat(String boatName, int length)\n    {\n        name = boatName;\n        lengthFeet = length;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public int getLengthFeet()\n    {\n        return lengthFeet;\n    }\n}\n"
+    }
+   ],
+   "main_file": "SlipReport.java",
+   "solution_notes": "`if(minutesLeft == 0);` ends the `if` at the semicolon: when the condition is true, Java runs an *empty statement*, and the EXPIRED line below it is an independent statement that always runs, whatever its indentation says. Removing the semicolon makes the println the `if`'s dependent statement. Adding `else` turns it into a dual-alternative selection, so exactly one of the two lines prints. In `compareSlips()`, `first == second` compares references: it is `true` only when both names refer to the *same object in memory*. *Sea Otter* and *Blue Heron* are different objects with equal lengths, so their values must be compared: `getLengthFeet()` returns an `int`, and `int` values can be compared with any relational operator.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "No semicolon right after the meter's condition",
+     "file": "SlipReport.java",
+     "within": "SlipReport.printMeter",
+     "require": "\\bif\\s*\\(\\s*(?:minutesLeft\\s*(?:==|<=)\\s*0|0\\s*(?:==|>=)\\s*minutesLeft)\\s*\\)\\s*[{A-Za-z]",
+     "forbid": "\\bif\\s*\\([^;{}()]*\\)\\s*;",
+     "message": "Delete the semicolon after `if(minutesLeft == 0)`. That semicolon is an empty statement: it becomes the whole `if`, and the EXPIRED line below runs every time, no matter how it is indented.",
+     "hint": "Where does an `if` statement end? Look for the first semicolon after the condition."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "An if…else picks exactly one line",
+     "file": "SlipReport.java",
+     "within": "SlipReport.printMeter",
+     "require": "\\belse\\b[\\s{]*System\\s*\\.\\s*out\\s*\\.\\s*println\\s*\\(",
+     "message": "Put `else` before the minutes-left line. An `if…else` is a dual-alternative selection: when the meter is at 0 only EXPIRED prints, and otherwise only the minutes print."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The boats' lengths are compared, not their references",
+     "file": "SlipReport.java",
+     "within": "SlipReport.compareSlips",
+     "require": "\\b(?:first|second)\\s*\\.\\s*getLengthFeet\\s*\\(\\s*\\)\\s*==\\s*(?:first|second)\\s*\\.\\s*getLengthFeet\\s*\\(\\s*\\)",
+     "forbid": "\\b(?:first|second)\\s*(?:==|!=)\\s*(?:first|second)\\b",
+     "message": "Compare `first.getLengthFeet()` with `second.getLengthFeet()`. `first == second` asks whether both names refer to the same object in memory; two different boats of 28 feet are different objects, so it says `false`.",
+     "hint": "What value does the slip size actually depend on?"
+    }
+   ],
+   "hints": [
+    "An `if` statement ends at its first semicolon. In `printMeter()`, where is the first semicolon after the condition's closing parenthesis?",
+    "Two lines that must never both print are the two halves of an `if…else`.",
+    "`Boat` is a class, so `first` and `second` hold references. The value you care about comes back from one of `Boat`'s getters, as an `int`."
+   ],
+   "test_program": {
+    "file_name": "TestSlipReport.java",
+    "code": "public class TestSlipReport\n{\n    public static void main(String[] args)\n    {\n        // Runs the report exactly as \"java SlipReport\" would.\n        SlipReport.main(new String[0]);\n\n        SlipReport.printMeter(5);\n        SlipReport.compareSlips(new Boat(\"Tern\", 22), new Boat(\"Gull\", 22));\n        SlipReport.compareSlips(new Boat(\"Tern\", 22), new Boat(\"Orca\", 40));\n    }\n}\n",
+    "expected_output": "Meter: EXPIRED\nMeter: 45 min left\nSea Otter and Blue Heron need the same slip size\nSea Otter and Gull need different slip sizes\nMeter: 5 min left\nTern and Gull need the same slip size\nTern and Orca need different slip sizes\n",
+    "how_to_run": "Put `SlipReport.java`, `Boat.java` and `TestSlipReport.java` in the same folder, then run `javac *.java` and `java TestSlipReport`. In an IDE, add all three to one project and run `TestSlipReport.java`.",
+    "predict": "Before you change anything: how many lines does the starter print for `printMeter(45)`, and what are they?"
+   },
+   "warmup": [
+    {
+     "question": "Trace `printMeter(45)` in the starter. Which lines print, and which part of the code decides that?",
+     "model_answer": "Both `Meter: EXPIRED` and `Meter: 45 min left` print. The `if` ends at the semicolon after its condition, so its only dependent statement is empty; both println calls are independent statements that always run."
+    },
+    {
+     "question": "A classmate suggests `if(minutesLeft = 0)`. What does Java do with that line, and why?",
+     "model_answer": "It doesn't compile. A single `=` assigns 0 to `minutesLeft`, which gives an `int`, and an `if` accepts only a Boolean expression. Equality is tested with `==`."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why does `first == second` say `false` for *Sea Otter* and *Blue Heron*, but `true` if you call `compareSlips(otter, otter)`?",
+     "model_answer": "`==` on objects compares references, the memory addresses. `otter` and `heron` are two different objects, so their references differ even though the lengths are equal. Passing `otter` twice gives two references to the same object, so `==` is true."
+    },
+    {
+     "question": "The indentation of the starter made the EXPIRED line *look* controlled by the `if`. What does the compiler use instead of indentation to decide what belongs to an `if`?",
+     "model_answer": "Statements and punctuation: the `if`'s dependent statement is the single statement right after the condition (or a block in braces). The compiler ignores indentation, so a semicolon after the condition makes an empty statement the dependent one."
+    }
+   ],
+   "extension": "Add `printLonger(Boat first, Boat second)` that prints the name of the longer boat, or `Same length` when they are equal. Which relational operators can you use with `getLengthFeet()` that you could never use with `first` and `second` themselves?",
+   "worth_knowing": "The Java compiler can catch this lab's semicolon for you. Compile with `javac -Xlint:empty SlipReport.java` and it warns about an *empty statement after if*. Most IDEs flag the same line. Linting options like this exist because the bug compiles cleanly and is hard to see by eye.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.3",
+   "title": "The ferry crew's negative overtime",
+   "subtitle": "Blocks of several statements in if and else clauses, and why indentation doesn't make a block",
+   "source": "Ch. 5, section 5.3 (pp. 168–171)",
+   "minutes": 20,
+   "objectives": [
+    "Use curly braces to make several statements depend on an `if` or an `else`",
+    "Explain why an indented statement after an unbraced `if` always runs",
+    "Write an `if…else` with a block in each clause, so every path assigns every result",
+    "State the scope of a variable declared inside a block"
+   ],
+   "scenario": "Island Ferry Lines pays its deckhands overtime at 1.5 times their rate for every hour past 40 in a week. The payroll method was written quickly, and this week Marta, who worked 30 hours, was told she owes the company $382.50 of overtime.\n\nRewrite `printPay()` as the payroll office wants it: one block of pay calculations when a deckhand worked more than a full week, and another block when they didn't. Each path sets both amounts. This week's pay slips must read:\n\n```\nMarta: regular $765.0, overtime $0.0\nJonah: regular $800.0, overtime $120.0\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "When `hoursWorked` is more than `FULL_WEEK`, **both** the regular-pay and the overtime-pay statements depend on the `if`: they form one block."
+    },
+    {
+     "id": "R2",
+     "text": "An `else` block sets regular pay to hours times rate and overtime pay to `0.0`. `regularPay` and `overtimePay` are declared without a value, so each path assigns them once."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "DeckhandPay.java",
+   "starter_code": "public class DeckhandPay\n{\n    public static final int FULL_WEEK = 40;\n    public static final double OT_RATE = 1.5;\n\n    public static void printPay(String name, double hoursWorked, double rate)\n    {\n        double regularPay = hoursWorked * rate;\n        double overtimePay = 0.0;\n\n        // TODO (R1): both pay lines below belong to the overtime case.\n        // TODO (R2): an else block for a week of FULL_WEEK hours or less.\n        if(hoursWorked > FULL_WEEK)\n            regularPay = FULL_WEEK * rate;\n            overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\n\n        System.out.println(name + \": regular $\" + regularPay\n            + \", overtime $\" + overtimePay);\n    }\n\n    public static void main(String[] args)\n    {\n        printPay(\"Marta\", 30, 25.50);\n        printPay(\"Jonah\", 44, 20.00);\n    }\n}\n",
+   "solution": "public class DeckhandPay\n{\n    public static final int FULL_WEEK = 40;\n    public static final double OT_RATE = 1.5;\n\n    public static void printPay(String name, double hoursWorked, double rate)\n    {\n        double regularPay;\n        double overtimePay;\n\n        if(hoursWorked > FULL_WEEK)\n        {\n            regularPay = FULL_WEEK * rate;\n            overtimePay = (hoursWorked - FULL_WEEK) * OT_RATE * rate;\n        }\n        else\n        {\n            regularPay = hoursWorked * rate;\n            overtimePay = 0.0;\n        }\n\n        System.out.println(name + \": regular $\" + regularPay\n            + \", overtime $\" + overtimePay);\n    }\n\n    public static void main(String[] args)\n    {\n        printPay(\"Marta\", 30, 25.50);\n        printPay(\"Jonah\", 44, 20.00);\n    }\n}\n",
+   "solution_notes": "Without braces, an `if` controls exactly one statement. In the starter, only `regularPay = FULL_WEEK * rate;` depended on the `if`; the overtime line was an independent statement that ran for everyone, so 30 hours gave (30 − 40) × 1.5 × 25.50 = −382.50. The indentation made it *look* dependent, but the compiler ignores indentation. Braces make both lines one block. The `else` block is the other half of the dual-alternative selection, as in the book's Payroll program (Figure 5-9). Declaring the two variables without values is deliberate: the compiler checks that every path assigns them before the println uses them (*variable might not have been initialized* otherwise), so forgetting an assignment in one branch becomes a compile error instead of a wrong paycheck. The final println is outside the decision, so it runs for every deckhand.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Both overtime-case statements are in one block",
+     "within": "DeckhandPay.printPay",
+     "require": "\\bif\\s*\\(\\s*(?:hoursWorked\\s*>\\s*FULL_WEEK|FULL_WEEK\\s*<\\s*hoursWorked)\\s*\\)\\s*\\{(?=[^}]*\\bregularPay\\s*=)(?=[^}]*\\bovertimePay\\s*=)",
+     "message": "Put curly braces around the two pay statements after `if(hoursWorked > FULL_WEEK)`. Without them, the `if` controls only the first statement, and the overtime line runs for every deckhand, which is how 30 hours produced negative overtime.",
+     "hint": "Indentation is for people; braces are for the compiler."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "An else block sets both amounts",
+     "within": "DeckhandPay.printPay",
+     "require": "\\belse\\s*\\{(?=[^}]*\\bregularPay\\s*=\\s*(?:hoursWorked\\s*\\*\\s*rate|rate\\s*\\*\\s*hoursWorked)\\s*;)(?=[^}]*\\bovertimePay\\s*=\\s*0(?:\\.0*)?\\s*;)",
+     "message": "Add an `else` block with braces that sets `regularPay` to `hoursWorked * rate` and `overtimePay` to `0.0`. One block for each case makes each path's work visible in one place."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Pay is declared without a value",
+     "within": "DeckhandPay.printPay",
+     "require": "^(?=[\\s\\S]*\\bdouble\\s+regularPay\\s*;)(?=[\\s\\S]*\\bdouble\\s+overtimePay\\s*;)",
+     "message": "Declare `double regularPay;` and `double overtimePay;` with no starting value. Then the compiler confirms that every path of your `if…else` assigns both, so a forgotten assignment can't slip through as a wrong amount."
+    }
+   ],
+   "hints": [
+    "Count the statements that depend on the starter's `if`. The compiler counts one; how many did the programmer mean?",
+    "A pair of curly braces turns several statements into one block that an `if` or an `else` can control.",
+    "When the week is 40 hours or less, regular pay is every hour at the normal rate and there is no overtime: that is the `else` block."
+   ],
+   "test_program": {
+    "file_name": "TestDeckhandPay.java",
+    "code": "public class TestDeckhandPay\n{\n    public static void main(String[] args)\n    {\n        // Runs this week's pay slips exactly as \"java DeckhandPay\" would.\n        DeckhandPay.main(new String[0]);\n\n        // Exactly a full week, and a long week with half an hour extra.\n        DeckhandPay.printPay(\"Ines\", 40, 18.00);\n        DeckhandPay.printPay(\"Tomas\", 45.5, 16.00);\n    }\n}\n",
+    "expected_output": "Marta: regular $765.0, overtime $0.0\nJonah: regular $800.0, overtime $120.0\nInes: regular $720.0, overtime $0.0\nTomas: regular $640.0, overtime $132.0\n",
+    "predict": "Before you change anything: work out Marta's overtime amount by hand, following what the compiler actually does, then run it and compare."
+   },
+   "warmup": [
+    {
+     "question": "In the starter, how many statements depend on `if(hoursWorked > FULL_WEEK)`? Which line runs no matter how many hours are worked?",
+     "model_answer": "One: `regularPay = FULL_WEEK * rate;`. The overtime line is an independent statement, so it runs for every deckhand, including Marta with 30 hours."
+    },
+    {
+     "question": "Predict Marta's overtime pay with the starter code (30 hours at $25.50).",
+     "model_answer": "−382.5: (30 − 40) × 1.5 × 25.50. The overtime line runs even though she didn't work more than 40 hours."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Suppose you declared `double bonus = 25.0;` inside the `if` block. Could the final println use `bonus`? Why or why not?",
+     "model_answer": "No. A variable declared inside a block is local to that block; after the closing brace it no longer exists, so the println would get *cannot find symbol*. To use it after the decision, declare it before the `if`."
+    },
+    {
+     "question": "Why is declaring `regularPay` without a starting value safer here than giving it one?",
+     "model_answer": "With no starting value, the compiler refuses to compile unless every path assigns it before it's used. A starting value would hide a missing assignment: the program would compile and quietly print the starting value as someone's pay."
+    }
+   ],
+   "extension": "Payroll wants a third line for long weeks only: `  (includes N overtime hours)`. Add it inside the right block so it prints only when there is overtime. What would go wrong if you added it without braces?",
+   "worth_knowing": "In 2014 Apple patched a security flaw (CVE-2014-1266, nicknamed *goto fail*) caused by this exact shape: an unbraced `if` followed by a duplicated line, indented to look dependent. The second `goto fail;` always ran, skipping the final certificate check in iOS and macOS. Braces around every clause make the mistake visible.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.4",
+   "title": "The kite shop's missing medium bonus",
+   "subtitle": "Nested if…else statements, and which if an else belongs to",
+   "source": "Ch. 5, section 5.4 (pp. 172–173)",
+   "minutes": 25,
+   "objectives": [
+    "Nest a decision inside the `if` clause of another decision when two conditions must be checked in turn",
+    "Pair each `else` with the most recent unmatched `if`, as the compiler does",
+    "Use braces or a complete inner `if…else` to make the pairing you intend"
+   ],
+   "scenario": "Breakwater Kites pays a weekly bonus to its sales staff:\n\n- **$50** for selling at least 3 items worth $1,000 or more in total\n- **$25** for selling at least 3 items worth less than $1,000\n- **$10** for selling fewer than 3 items\n\nThe bonus method checks the number of items first and the total value only for staff who sold enough items. It compiles, but this week Ben got $10 and Cai got nothing. Fix `getBonus()` so the bonus sheet reads:\n\n```\nAna: 4 items, $1250.0 -> bonus $50\nBen: 5 items, $640.0 -> bonus $25\nCai: 2 items, $1800.0 -> bonus $10\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Inside the decision for 3 or more items, a nested `if…else` gives `LARGE_BONUS` when the total is at least `MIN_VALUE` and `MEDIUM_BONUS` otherwise."
+    },
+    {
+     "id": "R2",
+     "text": "Fewer than `MIN_ITEMS` items earns `SMALL_BONUS`: that `else` belongs to the outer `if`, the one that tests the items."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "KiteShopBonus.java",
+   "starter_code": "public class KiteShopBonus\n{\n    public static final int MIN_ITEMS = 3;\n    public static final double MIN_VALUE = 1000.00;\n    public static final int LARGE_BONUS = 50;\n    public static final int MEDIUM_BONUS = 25;\n    public static final int SMALL_BONUS = 10;\n\n    public static int getBonus(int itemsSold, double totalValue)\n    {\n        int bonus = 0;\n        // TODO (R1, R2): the indentation says what the owner meant.\n        // Which if does the compiler pair this else with?\n        if(itemsSold >= MIN_ITEMS)\n            if(totalValue >= MIN_VALUE)\n                bonus = LARGE_BONUS;\n        else\n            bonus = SMALL_BONUS;\n        return bonus;\n    }\n\n    public static void printLine(String name, int itemsSold, double totalValue)\n    {\n        System.out.println(name + \": \" + itemsSold + \" items, $\" + totalValue\n            + \" -> bonus $\" + getBonus(itemsSold, totalValue));\n    }\n\n    public static void main(String[] args)\n    {\n        printLine(\"Ana\", 4, 1250.00);\n        printLine(\"Ben\", 5, 640.00);\n        printLine(\"Cai\", 2, 1800.00);\n    }\n}\n",
+   "solution": "public class KiteShopBonus\n{\n    public static final int MIN_ITEMS = 3;\n    public static final double MIN_VALUE = 1000.00;\n    public static final int LARGE_BONUS = 50;\n    public static final int MEDIUM_BONUS = 25;\n    public static final int SMALL_BONUS = 10;\n\n    public static int getBonus(int itemsSold, double totalValue)\n    {\n        int bonus = 0;\n        if(itemsSold >= MIN_ITEMS)\n            if(totalValue >= MIN_VALUE)\n                bonus = LARGE_BONUS;\n            else\n                bonus = MEDIUM_BONUS;\n        else\n            bonus = SMALL_BONUS;\n        return bonus;\n    }\n\n    public static void printLine(String name, int itemsSold, double totalValue)\n    {\n        System.out.println(name + \": \" + itemsSold + \" items, $\" + totalValue\n            + \" -> bonus $\" + getBonus(itemsSold, totalValue));\n    }\n\n    public static void main(String[] args)\n    {\n        printLine(\"Ana\", 4, 1250.00);\n        printLine(\"Ben\", 5, 640.00);\n        printLine(\"Cai\", 2, 1800.00);\n    }\n}\n",
+   "solution_notes": "The compiler pairs an `else` with the most recent `if` that doesn't have one yet, whatever the indentation shows. In the starter, the only `else` belonged to the inner `if(totalValue >= MIN_VALUE)`: 3+ items under $1,000 got the *small* bonus, and fewer than 3 items fell through with no `else` at all, leaving `bonus` at 0. Giving the inner `if` its own `else` (the medium bonus) completes the nested `if…else`, so the next `else` pairs with the outer `if`, exactly as in the book's Figure 5-13. Wrapping the inner decision in braces works too: `if(itemsSold >= MIN_ITEMS) { if(…) … else … } else bonus = SMALL_BONUS;`. Either way, the whole nested `if…else` sits inside the `if` clause of the outer one, and the total value is examined only for staff who sold enough items.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The value test is nested inside the items test, with a medium-bonus else",
+     "within": "KiteShopBonus.getBonus",
+     "require": "^(?=[\\s\\S]*\\bif\\s*\\(\\s*itemsSold\\s*>=\\s*MIN_ITEMS\\s*\\)\\s*\\{?\\s*if\\s*\\(\\s*totalValue\\s*>=\\s*MIN_VALUE\\s*\\))(?=[\\s\\S]*\\belse\\s*\\{?\\s*bonus\\s*=\\s*MEDIUM_BONUS\\s*;)",
+     "message": "Keep the value test nested inside `if(itemsSold >= MIN_ITEMS)` and give it its own `else` that assigns `MEDIUM_BONUS`. Staff with 3 or more items always earn either the large or the medium bonus: that is a complete `if…else` inside the outer `if`.",
+     "hint": "Which bonus is missing from the starter completely?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Each if has its own else",
+     "within": "KiteShopBonus.getBonus",
+     "require": "^(?=(?:[\\s\\S]*?\\belse\\b){2})(?=[\\s\\S]*\\belse\\s*\\{?\\s*bonus\\s*=\\s*SMALL_BONUS\\s*;)",
+     "message": "The decision needs two `else` clauses: one for the inner value test and one, assigning `SMALL_BONUS`, for the outer items test. The compiler pairs each `else` with the most recent unmatched `if`, so the small-bonus `else` must come after the inner decision is complete."
+    }
+   ],
+   "hints": [
+    "Read the starter the way the compiler does: an `else` belongs to the closest `if` above it that doesn't have an `else` yet.",
+    "Three outcomes need three assignments. Which constant never appears in the starter?",
+    "Once the inner `if` has its own `else`, the next `else` you write pairs with the outer `if`. Braces around the inner decision make the same pairing explicit."
+   ],
+   "test_program": {
+    "file_name": "TestKiteShopBonus.java",
+    "code": "public class TestKiteShopBonus\n{\n    public static void main(String[] args)\n    {\n        // Runs the bonus sheet exactly as \"java KiteShopBonus\" would.\n        KiteShopBonus.main(new String[0]);\n\n        // The boundaries: exactly 3 items, exactly $1,000, and just under it.\n        KiteShopBonus.printLine(\"Dev\", 3, 1000.00);\n        KiteShopBonus.printLine(\"Eli\", 3, 999.99);\n        KiteShopBonus.printLine(\"Fay\", 0, 0.00);\n    }\n}\n",
+    "expected_output": "Ana: 4 items, $1250.0 -> bonus $50\nBen: 5 items, $640.0 -> bonus $25\nCai: 2 items, $1800.0 -> bonus $10\nDev: 3 items, $1000.0 -> bonus $50\nEli: 3 items, $999.99 -> bonus $25\nFay: 0 items, $0.0 -> bonus $10\n",
+    "predict": "Before you change anything: predict the three bonuses the starter prints, reading the code the way the compiler pairs `else` with `if`."
+   },
+   "warmup": [
+    {
+     "question": "Which `if` does the starter's `else` belong to: the items test or the value test? How do you know?",
+     "model_answer": "The value test, `if(totalValue >= MIN_VALUE)`. An `else` pairs with the most recent `if` that has no `else`; the indentation that lines it up with the outer `if` is ignored by the compiler."
+    },
+    {
+     "question": "Predict Cai's bonus with the starter (2 items, $1,800) and explain it.",
+     "model_answer": "$0. The outer `if` is false and has no `else`, so nothing is assigned and `bonus` keeps its starting value of 0."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why is Cai's $1,800 total never examined by your solution? Is that a problem?",
+     "model_answer": "The value test is nested in the items test, so it runs only when 3 or more items were sold. It isn't a problem: with fewer than 3 items the bonus is $10 whatever the value, so the second question would be wasted."
+    },
+    {
+     "question": "Rewrite the outcome rules as a sentence a new programmer could use to predict where each `else` goes in any nested decision.",
+     "model_answer": "Each `else` belongs to the nearest `if` above it that doesn't already have an `else`; elses match ifs on a first-in, last-out basis, so an inner decision must be complete (or closed with a brace) before an `else` for the outer one."
+    }
+   ],
+   "extension": "Breakwater Kites adds a $75 bonus for 10 or more items worth at least $1,000. Where does the new decision go, and what is the smallest change that keeps every existing bonus correct?",
+   "worth_knowing": "This ambiguity has a name: the *dangling else*. Languages solve it differently. ALGOL 60 didn't allow an `if` directly after `then` without a `begin…end`; Python makes indentation part of the syntax, so what you see is what runs. Java, like C, chose the nearest-`if` rule and leaves the clarity to braces.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.5",
+   "title": "The bike dock that runs out too early",
+   "subtitle": "The logical AND and OR operators, complete expressions on both sides, and short-circuit evaluation",
+   "source": "Ch. 5, section 5.5 (pp. 174–177)",
+   "minutes": 30,
+   "objectives": [
+    "Combine two Boolean tests with `&&` (both must be true) or `||` (at least one must be true)",
+    "Write a complete Boolean expression on each side of a binary logical operator",
+    "Predict which method calls are skipped by short-circuit evaluation",
+    "Order the operands of `&&` so a method with a side effect runs only when it should"
+   ],
+   "scenario": "Harbor City's bike share has a dock on Pier Street with 2 bikes. A rider can unlock a bike only if **they have credit and a bike can be reserved**. Reserving has a side effect: the dock holds one bike for the rider.\n\nFares are half price for anyone who **is a member or has taken 10 or more rides this month**.\n\nThis morning Kim, who has no credit, was refused, and yet a bike disappeared from the dock, so Lu was refused too. Raj, a member, paid full fare. Fix `UnlockStation` so the morning log reads:\n\n```\nKim: cannot unlock\nRaj: unlocked, fare $2.00\nLu: unlocked, fare $2.00\nBikes left: 0\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`tryUnlock()` checks the rider's credit **before** reserving a bike, in one `&&` expression, so a rider without credit never reserves one."
+    },
+    {
+     "id": "R2",
+     "text": "`getFare()` gives `HALF_FARE` when the rider is a member **or** has at least `FREQUENT_RIDES` rides this month, using one `||` expression with a complete comparison on each side."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "UnlockStation.java",
+     "starter": "public class UnlockStation\n{\n    public static final double FULL_FARE = 4.00;\n    public static final double HALF_FARE = 2.00;\n    public static final int FREQUENT_RIDES = 10;\n\n    public static void tryUnlock(Rider rider, BikeDock dock)\n    {\n        // TODO (R1): a rider with no credit must not take a bike out of the dock.\n        if(dock.reserveBike() && rider.hasCredit())\n            System.out.println(rider.getName() + \": unlocked, fare $\"\n                + String.format(\"%.2f\", getFare(rider)));\n        else\n            System.out.println(rider.getName() + \": cannot unlock\");\n    }\n\n    public static double getFare(Rider rider)\n    {\n        double fare = FULL_FARE;\n        // TODO (R2): members ride at half fare, and so do frequent riders.\n        if(rider.isMember() && rider.getRidesThisMonth() >= FREQUENT_RIDES)\n            fare = HALF_FARE;\n        return fare;\n    }\n\n    public static void main(String[] args)\n    {\n        BikeDock dock = new BikeDock(\"Pier Street\", 2);\n        tryUnlock(new Rider(\"Kim\", false, false, 3), dock);\n        tryUnlock(new Rider(\"Raj\", true, true, 2), dock);\n        tryUnlock(new Rider(\"Lu\", true, false, 12), dock);\n        System.out.println(\"Bikes left: \" + dock.getBikesAvailable());\n    }\n}\n",
+     "solution": "public class UnlockStation\n{\n    public static final double FULL_FARE = 4.00;\n    public static final double HALF_FARE = 2.00;\n    public static final int FREQUENT_RIDES = 10;\n\n    public static void tryUnlock(Rider rider, BikeDock dock)\n    {\n        if(rider.hasCredit() && dock.reserveBike())\n            System.out.println(rider.getName() + \": unlocked, fare $\"\n                + String.format(\"%.2f\", getFare(rider)));\n        else\n            System.out.println(rider.getName() + \": cannot unlock\");\n    }\n\n    public static double getFare(Rider rider)\n    {\n        double fare = FULL_FARE;\n        if(rider.isMember() || rider.getRidesThisMonth() >= FREQUENT_RIDES)\n            fare = HALF_FARE;\n        return fare;\n    }\n\n    public static void main(String[] args)\n    {\n        BikeDock dock = new BikeDock(\"Pier Street\", 2);\n        tryUnlock(new Rider(\"Kim\", false, false, 3), dock);\n        tryUnlock(new Rider(\"Raj\", true, true, 2), dock);\n        tryUnlock(new Rider(\"Lu\", true, false, 12), dock);\n        System.out.println(\"Bikes left: \" + dock.getBikesAvailable());\n    }\n}\n"
+    },
+    {
+     "name": "BikeDock.java",
+     "editable": false,
+     "starter": "// The city's BikeDock class. Read it; you don't need to change it.\npublic class BikeDock\n{\n    private String street;\n    private int bikesAvailable;\n\n    public BikeDock(String dockStreet, int bikes)\n    {\n        street = dockStreet;\n        bikesAvailable = bikes;\n    }\n\n    // Holds a bike for the rider: one fewer bike stays in the dock.\n    // Returns false when the dock is empty.\n    public boolean reserveBike()\n    {\n        if(bikesAvailable > 0)\n        {\n            bikesAvailable = bikesAvailable - 1;\n            return true;\n        }\n        return false;\n    }\n\n    public int getBikesAvailable()\n    {\n        return bikesAvailable;\n    }\n}\n"
+    },
+    {
+     "name": "Rider.java",
+     "editable": false,
+     "starter": "// The city's Rider class. Read it; you don't need to change it.\npublic class Rider\n{\n    private String name;\n    private boolean credit;\n    private boolean member;\n    private int ridesThisMonth;\n\n    public Rider(String riderName, boolean hasCredit, boolean isMember, int rides)\n    {\n        name = riderName;\n        credit = hasCredit;\n        member = isMember;\n        ridesThisMonth = rides;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public boolean hasCredit()\n    {\n        return credit;\n    }\n\n    public boolean isMember()\n    {\n        return member;\n    }\n\n    public int getRidesThisMonth()\n    {\n        return ridesThisMonth;\n    }\n}\n"
+    }
+   ],
+   "main_file": "UnlockStation.java",
+   "solution_notes": "`&&` evaluates its left operand first and stops as soon as the answer is known: if the left side is `false`, the right side never runs (short-circuit evaluation). In the starter, `dock.reserveBike()` was on the left, so it ran for every rider, and its side effect, taking a bike out of the dock, happened even for Kim, who had no credit. With `rider.hasCredit()` on the left, a rider without credit stops the expression before `reserveBike()` is called. A nested `if(rider.hasCredit()) { if(dock.reserveBike()) … }` gives the same result. For the fare, the rule is *either* condition, so the operator is `||`; the starter's `&&` demanded both and charged Raj, a member with 2 rides, the full fare. Each side of `||` must be a complete Boolean expression: `rider.getRidesThisMonth() >= FREQUENT_RIDES`, not just `>= FREQUENT_RIDES`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Credit is checked before a bike is reserved",
+     "file": "UnlockStation.java",
+     "within": "UnlockStation.tryUnlock",
+     "require": [
+      "\\brider\\s*\\.\\s*hasCredit\\s*\\(\\s*\\)\\s*\\)?\\s*&&\\s*\\(?\\s*dock\\s*\\.\\s*reserveBike\\s*\\(\\s*\\)",
+      "\\bif\\s*\\(\\s*rider\\s*\\.\\s*hasCredit\\s*\\(\\s*\\)\\s*\\)\\s*\\{?\\s*if\\s*\\(\\s*dock\\s*\\.\\s*reserveBike\\s*\\(\\s*\\)\\s*\\)"
+     ],
+     "forbid": "\\breserveBike\\s*\\(\\s*\\)\\s*\\)?\\s*&&",
+     "message": "Put `rider.hasCredit()` on the left of `&&` and `dock.reserveBike()` on the right. `&&` stops at the first `false`, so a rider without credit never reaches `reserveBike()`, and no bike leaves the dock for them.",
+     "hint": "Which of the two calls changes something in the dock?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Half fare for a member OR a frequent rider",
+     "file": "UnlockStation.java",
+     "within": "UnlockStation.getFare",
+     "require": [
+      "\\brider\\s*\\.\\s*isMember\\s*\\(\\s*\\)\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*rider\\s*\\.\\s*getRidesThisMonth\\s*\\(\\s*\\)\\s*>=\\s*FREQUENT_RIDES",
+      "\\brider\\s*\\.\\s*getRidesThisMonth\\s*\\(\\s*\\)\\s*>=\\s*FREQUENT_RIDES\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*rider\\s*\\.\\s*isMember\\s*\\(\\s*\\)"
+     ],
+     "forbid": "&&",
+     "message": "Join the two conditions with `||`: half fare needs only one of them to be true. Keep a complete comparison on each side, `rider.isMember() || rider.getRidesThisMonth() >= FREQUENT_RIDES`."
+    }
+   ],
+   "hints": [
+    "Trace Kim: which call in the starter's condition runs first, and what does it do to the dock even though the answer will be *cannot unlock*?",
+    "With `&&`, the right-hand call runs only when the left-hand side is `true`. Which call should only happen for riders who can pay?",
+    "Say the fare rule out loud: \"a member *or* a frequent rider\". The starter's operator says something else."
+   ],
+   "test_program": {
+    "file_name": "TestUnlockStation.java",
+    "code": "public class TestUnlockStation\n{\n    public static void main(String[] args)\n    {\n        // Runs the morning log exactly as \"java UnlockStation\" would.\n        UnlockStation.main(new String[0]);\n\n        // A dock with one bike: a rider with no credit tries first.\n        BikeDock dock = new BikeDock(\"Market Square\", 1);\n        UnlockStation.tryUnlock(new Rider(\"Noa\", false, true, 30), dock);\n        UnlockStation.tryUnlock(new Rider(\"Ola\", true, false, 10), dock);\n        UnlockStation.tryUnlock(new Rider(\"Pia\", true, true, 0), dock);\n\n        // Fares only: not a member, 9 rides; a member with no rides.\n        System.out.println(String.format(\"%.2f\",\n            UnlockStation.getFare(new Rider(\"Quin\", true, false, 9))));\n        System.out.println(String.format(\"%.2f\",\n            UnlockStation.getFare(new Rider(\"Ros\", true, true, 0))));\n    }\n}\n",
+    "expected_output": "Kim: cannot unlock\nRaj: unlocked, fare $2.00\nLu: unlocked, fare $2.00\nBikes left: 0\nNoa: cannot unlock\nOla: unlocked, fare $2.00\nPia: cannot unlock\n4.00\n2.00\n",
+    "how_to_run": "Put `UnlockStation.java`, `BikeDock.java`, `Rider.java` and `TestUnlockStation.java` in the same folder, then run `javac *.java` and `java TestUnlockStation`. In an IDE, add all four to one project and run `TestUnlockStation.java`.",
+    "predict": "Before you change anything: trace the starter for Kim, Raj and Lu. How many bikes are left after each, and what does each rider see?"
+   },
+   "warmup": [
+    {
+     "question": "In the starter, Kim has no credit. List, in order, what `tryUnlock()` does for Kim, including what happens to the dock.",
+     "model_answer": "It calls `dock.reserveBike()` first, which takes a bike (2 left becomes 1) and returns true; then `rider.hasCredit()` returns false, so the whole `&&` is false and Kim sees *cannot unlock*. The bike stays reserved even though Kim didn't get it."
+    },
+    {
+     "question": "Why does `if(rider.getRidesThisMonth() >= 10 || >= 20)` not compile?",
+     "model_answer": "`||` is a binary operator: it needs a complete Boolean expression on each side. `>= 20` has no left operand; it would have to be `rider.getRidesThisMonth() >= 20`."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Both `rider.hasCredit() && dock.reserveBike()` and `dock.reserveBike() && rider.hasCredit()` give the same true/false answer for every rider. Why do they still behave differently?",
+     "model_answer": "Because of short-circuit evaluation and a side effect. `&&` skips its right side when the left side is false, and `reserveBike()` changes the dock. Only the order that puts `hasCredit()` first skips the reservation for riders who can't pay."
+    },
+    {
+     "question": "In `getFare()`, if the rider is a member, is `getRidesThisMonth()` ever called? What would change if it had a side effect, such as counting the lookup?",
+     "model_answer": "No: with `||`, a `true` left side decides the answer, so the right side isn't evaluated. If it counted lookups, members' lookups would never be counted; a call whose side effect must always happen should run on its own before the `if`."
+    }
+   ],
+   "extension": "The city adds a rule: riders under 16 can unlock only if they are members. Add a `boolean isUnder16` parameter to a new version of `tryUnlock()` and write the condition. Where does the new test go so that a bike is still reserved only when the rider will get it?",
+   "worth_knowing": "Java also has `&` and `|` for `boolean` operands, and they never short-circuit: both sides always run. `rider.hasCredit() & dock.reserveBike()` would give the right true/false answer and still take a bike from the dock for every rider. One missing character changes when the side effect happens.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.6",
+   "title": "The parcel counter's eight-kilogram bargain",
+   "subtitle": "Accurate and efficient range checks, and choosing && or || correctly",
+   "source": "Ch. 5, section 5.6 (pp. 178–181)",
+   "minutes": 25,
+   "objectives": [
+    "Write a range check as one chain of `if…else` decisions, so a value gets exactly one result",
+    "Stop asking a question whose answer is already known: finish the chain with a plain `else`",
+    "Get the boundary values right with `<` versus `>=`",
+    "Use `||` for \"outside the range\": no value can be below the minimum *and* above the maximum"
+   ],
+   "scenario": "Seawall Post charges by weight:\n\n- under 1 kg: **$4.50**\n- 1 kg up to (not including) 5 kg: **$9.00**\n- 5 kg and over: **$15.00**\n\nParcels must weigh at least 0.1 kg and at most 30 kg. Yesterday an 8 kg crate was charged the medium rate, and a 45 kg anchor was accepted. Rewrite the rate check as one efficient range check and fix the weight limits so the counter prints:\n\n```\n0.4 kg: $4.50\n3.2 kg: $9.00\n8.0 kg: $15.00\n45.0 kg: cannot ship\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`getRate()` is one `if…else if…else` chain: after a range matches, no other rate is assigned."
+    },
+    {
+     "id": "R2",
+     "text": "The chain asks only two questions: the last range is a plain `else`, because by then its answer is already known."
+    },
+    {
+     "id": "R3",
+     "text": "`isOutOfRange()` returns `true` when the weight is below `MIN_WEIGHT` **or** above `MAX_WEIGHT`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "ParcelCounter.java",
+   "starter_code": "public class ParcelCounter\n{\n    public static final double LIGHT_LIMIT = 1.0;   // kg\n    public static final double MEDIUM_LIMIT = 5.0;  // kg\n    public static final double LIGHT_RATE = 4.50;\n    public static final double MEDIUM_RATE = 9.00;\n    public static final double HEAVY_RATE = 15.00;\n    public static final double MIN_WEIGHT = 0.1;\n    public static final double MAX_WEIGHT = 30.0;\n\n    public static double getRate(double weightKg)\n    {\n        double rate = 0.0;\n        // TODO (R1, R2): one chain of decisions, two questions at most.\n        if(weightKg >= MEDIUM_LIMIT)\n            rate = HEAVY_RATE;\n        if(weightKg >= LIGHT_LIMIT)\n            rate = MEDIUM_RATE;\n        if(weightKg < LIGHT_LIMIT)\n            rate = LIGHT_RATE;\n        return rate;\n    }\n\n    public static boolean isOutOfRange(double weightKg)\n    {\n        // TODO (R3): which weights can never make this true?\n        return weightKg < MIN_WEIGHT && weightKg > MAX_WEIGHT;\n    }\n\n    public static void quote(double weightKg)\n    {\n        if(isOutOfRange(weightKg))\n            System.out.println(weightKg + \" kg: cannot ship\");\n        else\n            System.out.println(weightKg + \" kg: $\"\n                + String.format(\"%.2f\", getRate(weightKg)));\n    }\n\n    public static void main(String[] args)\n    {\n        quote(0.4);\n        quote(3.2);\n        quote(8.0);\n        quote(45.0);\n    }\n}\n",
+   "solution": "public class ParcelCounter\n{\n    public static final double LIGHT_LIMIT = 1.0;   // kg\n    public static final double MEDIUM_LIMIT = 5.0;  // kg\n    public static final double LIGHT_RATE = 4.50;\n    public static final double MEDIUM_RATE = 9.00;\n    public static final double HEAVY_RATE = 15.00;\n    public static final double MIN_WEIGHT = 0.1;\n    public static final double MAX_WEIGHT = 30.0;\n\n    public static double getRate(double weightKg)\n    {\n        double rate;\n        if(weightKg >= MEDIUM_LIMIT)\n            rate = HEAVY_RATE;\n        else if(weightKg >= LIGHT_LIMIT)\n            rate = MEDIUM_RATE;\n        else\n            rate = LIGHT_RATE;\n        return rate;\n    }\n\n    public static boolean isOutOfRange(double weightKg)\n    {\n        return weightKg < MIN_WEIGHT || weightKg > MAX_WEIGHT;\n    }\n\n    public static void quote(double weightKg)\n    {\n        if(isOutOfRange(weightKg))\n            System.out.println(weightKg + \" kg: cannot ship\");\n        else\n            System.out.println(weightKg + \" kg: $\"\n                + String.format(\"%.2f\", getRate(weightKg)));\n    }\n\n    public static void main(String[] args)\n    {\n        quote(0.4);\n        quote(3.2);\n        quote(8.0);\n        quote(45.0);\n    }\n}\n",
+   "solution_notes": "Three separate `if` statements are three independent decisions, so a later one can overwrite an earlier one: 8 kg is at least 5 kg (heavy rate) *and* at least 1 kg, so the second `if` reset it to the medium rate. Chaining with `else` ends the decision as soon as a range matches. After asking *at least 5 kg?* and *at least 1 kg?* and getting two no answers, the weight must be under 1 kg, so asking again is wasted work and one more place to get a boundary wrong; a plain `else` handles it (Figure 5-21). Checking the heaviest range first is fine; if most parcels are light, starting from `weightKg < LIGHT_LIMIT` is equally correct and a little more efficient (Figure 5-22). In `isOutOfRange()`, a single weight can never be below 0.1 *and* above 30 at the same time, so the `&&` version was always `false`; the English \"too light and too heavy are errors\" means `||`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "One chained decision",
+     "within": "ParcelCounter.getRate",
+     "require": "\\belse\\s*\\{?\\s*if\\s*\\(",
+     "message": "Connect the decisions with `else` so they form one chain: `if(…) … else if(…) … else …`. Separate `if` statements are all evaluated, so a later one overwrites the rate an earlier one set, which is how 8 kg ended up at the medium rate.",
+     "hint": "Trace 8.0 through the starter one `if` at a time. How many times is `rate` assigned?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The last range is a plain else",
+     "within": "ParcelCounter.getRate",
+     "require": "\\belse\\s*\\{?\\s*(?:rate\\s*=|return\\b)\\s*\\w+\\s*;",
+     "forbid": "^(?=(?:[\\s\\S]*?\\bif\\b){3})",
+     "message": "Ask at most two questions and finish with a plain `else`. Once a weight is neither at least 5 kg nor at least 1 kg, it must be under 1 kg; a third comparison repeats a question that's already answered."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Out of range means too light OR too heavy",
+     "within": "ParcelCounter.isOutOfRange",
+     "require": [
+      "\\bweightKg\\s*<\\s*MIN_WEIGHT\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*weightKg\\s*>\\s*MAX_WEIGHT\\b",
+      "\\bweightKg\\s*>\\s*MAX_WEIGHT\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*weightKg\\s*<\\s*MIN_WEIGHT\\b"
+     ],
+     "forbid": "&&",
+     "message": "Use `||`: `weightKg < MIN_WEIGHT || weightKg > MAX_WEIGHT`. One weight can't be below 0.1 kg *and* above 30 kg at the same time, so with `&&` the method can never return `true`."
+    }
+   ],
+   "hints": [
+    "Trace an 8 kg crate through the starter's three `if` statements. Which assignment happens last?",
+    "If the first question is *at least 5 kg?* and the answer is no, and the second is *at least 1 kg?* and the answer is no, what do you already know about the weight?",
+    "Try `isOutOfRange(45.0)` by hand with `&&`: what is each side, and what is the result? The English word *and* can mislead you here."
+   ],
+   "test_program": {
+    "file_name": "TestParcelCounter.java",
+    "code": "public class TestParcelCounter\n{\n    public static void main(String[] args)\n    {\n        // Runs the counter exactly as \"java ParcelCounter\" would.\n        ParcelCounter.main(new String[0]);\n\n        // Each boundary, and the weights just past the limits.\n        ParcelCounter.quote(0.99);\n        ParcelCounter.quote(1.0);\n        ParcelCounter.quote(5.0);\n        ParcelCounter.quote(30.0);\n        ParcelCounter.quote(0.05);\n        ParcelCounter.quote(30.5);\n    }\n}\n",
+    "expected_output": "0.4 kg: $4.50\n3.2 kg: $9.00\n8.0 kg: $15.00\n45.0 kg: cannot ship\n0.99 kg: $4.50\n1.0 kg: $9.00\n5.0 kg: $15.00\n30.0 kg: $15.00\n0.05 kg: cannot ship\n30.5 kg: cannot ship\n",
+    "predict": "Before you change anything: predict the rate the starter charges for 8.0 kg and for 45.0 kg, and say which line is responsible for each."
+   },
+   "warmup": [
+    {
+     "question": "Trace `getRate(8.0)` through the starter. Which `if` statements are true, and what rate is returned?",
+     "model_answer": "The first two are true (8 ≥ 5 and 8 ≥ 1); the third is false. The second `if` overwrites the heavy rate, so it returns 9.00."
+    },
+    {
+     "question": "Can any weight make `weightKg < MIN_WEIGHT && weightKg > MAX_WEIGHT` true? What does that mean for the 45 kg anchor?",
+     "model_answer": "No: a single value can't be below 0.1 and above 30 at once. The method always returns `false`, so the anchor is treated as valid and quoted a rate."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your chain asks *at least 5 kg?* first. If 90% of Seawall's parcels are letters under 1 kg, which question should come first, and how many questions does a typical parcel then need?",
+     "model_answer": "Ask *under 1 kg?* first (`weightKg < LIGHT_LIMIT`). Most parcels then need one question instead of two, and the result for every weight is the same."
+    },
+    {
+     "question": "Why does `quote(1.0)` show whether you chose `>=` or `>` correctly, while `quote(3.2)` can't?",
+     "model_answer": "1.0 is exactly on the boundary between light and medium, so only it is treated differently by `>=` and `>`; 3.2 is inside the medium range and gets the same rate either way."
+    }
+   ],
+   "extension": "Seawall adds an oversize rate: $28.00 for 20 kg and over (still at most 30 kg). Add it to your chain. Where must the new question go so the chain still asks each question at most once?",
+   "worth_knowing": "In 1996 the first Ariane 5 rocket broke up about 40 seconds after launch. Its guidance software converted a horizontal-velocity value into a 16-bit integer, and on Ariane 5's faster trajectory that value no longer fit. That conversion had no range check: the code had been reused from Ariane 4, where the value never got that large.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.7",
+   "title": "The rental dock that hands out two boats",
+   "subtitle": "The switch statement, break and fall-through, stacked case labels, and the switch expression",
+   "source": "Ch. 5, section 5.7 (pp. 181–186)",
+   "minutes": 30,
+   "objectives": [
+    "Use `switch` to test one variable against a series of exact `char` values",
+    "End each case with `break`, and predict the fall-through when it is missing",
+    "Stack empty `case` labels so several values share one action",
+    "Rewrite a chain of `if` statements as a switch expression with `->`"
+   ],
+   "scenario": "Saltwater Rentals codes its boats with one letter: **K** kayak, **P** paddleboard, **C** canoe. Staff type the code on a tablet, sometimes in lowercase.\n\nThe desk's `describe()` printed *Kayak* and then *Paddleboard* for a single K, and lowercase codes come back as unknown. The manager also wants the rate lookup written as a switch expression. Fix `RentalDesk` so the quotes read:\n\n```\nKayak\n  $18.00 an hour\nPaddleboard\n  $22.00 an hour\nCanoe\n  $25.00 an hour\nUnknown code Z\n```\n\nSwitch expressions need Java 14 or later.\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "In `describe()`, every case ends with `break`, so one code prints one boat."
+    },
+    {
+     "id": "R2",
+     "text": "`describe()` accepts lowercase codes: `'k'`, `'p'` and `'c'` are stacked with their uppercase labels, so each pair shares one action."
+    },
+    {
+     "id": "R3",
+     "text": "`getHourlyRate()` returns the value of a switch expression (`case 'k', 'K' -> 18.00;` …, `default -> 0.0;`) instead of the `if` chain."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "RentalDesk.java",
+   "starter_code": "public class RentalDesk\n{\n    public static void describe(char code)\n    {\n        // TODO (R1, R2): one code, one boat, in either case.\n        switch(code)\n        {\n            case 'K':\n                System.out.println(\"Kayak\");\n            case 'P':\n                System.out.println(\"Paddleboard\");\n                break;\n            case 'C':\n                System.out.println(\"Canoe\");\n                break;\n            default:\n                System.out.println(\"Unknown code \" + code);\n        }\n    }\n\n    public static double getHourlyRate(char code)\n    {\n        // TODO (R3): the same lookup as a switch expression.\n        double rate;\n        if(code == 'K' || code == 'k')\n            rate = 18.00;\n        else if(code == 'P' || code == 'p')\n            rate = 22.00;\n        else if(code == 'C' || code == 'c')\n            rate = 25.00;\n        else\n            rate = 0.0;\n        return rate;\n    }\n\n    public static void quote(char code)\n    {\n        describe(code);\n        double rate = getHourlyRate(code);\n        if(rate > 0)\n            System.out.println(\"  $\" + String.format(\"%.2f\", rate) + \" an hour\");\n    }\n\n    public static void main(String[] args)\n    {\n        quote('K');\n        quote('p');\n        quote('c');\n        quote('Z');\n    }\n}\n",
+   "solution": "public class RentalDesk\n{\n    public static void describe(char code)\n    {\n        switch(code)\n        {\n            case 'k':\n            case 'K':\n                System.out.println(\"Kayak\");\n                break;\n            case 'p':\n            case 'P':\n                System.out.println(\"Paddleboard\");\n                break;\n            case 'c':\n            case 'C':\n                System.out.println(\"Canoe\");\n                break;\n            default:\n                System.out.println(\"Unknown code \" + code);\n        }\n    }\n\n    public static double getHourlyRate(char code)\n    {\n        return switch(code)\n        {\n            case 'k', 'K' -> 18.00;\n            case 'p', 'P' -> 22.00;\n            case 'c', 'C' -> 25.00;\n            default -> 0.0;\n        };\n    }\n\n    public static void quote(char code)\n    {\n        describe(code);\n        double rate = getHourlyRate(code);\n        if(rate > 0)\n            System.out.println(\"  $\" + String.format(\"%.2f\", rate) + \" an hour\");\n    }\n\n    public static void main(String[] args)\n    {\n        quote('K');\n        quote('p');\n        quote('c');\n        quote('Z');\n    }\n}\n",
+   "solution_notes": "A `switch` jumps to the matching `case` and runs statements from there *until a `break` or the end of the switch*: with no `break` after *Kayak*, execution fell through into the paddleboard case. Each case therefore ends with `break` (the last one, `default`, doesn't need it). An empty `case 'k':` falls through to `case 'K':` on purpose, so both letters share one action (Figure 5-28); `case 'k', 'K':` is the shorter form Java 14 and later accept. The switch expression (Figure 5-29) produces a value: each `->` gives the result for its labels, there is no fall-through and no `break`, and the whole expression is followed by a semicolon because it ends the `return` statement. A switch expression that returns a value must cover every possible input, which is why `default -> 0.0;` is required.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Every boat's case ends with break",
+     "within": "RentalDesk.describe",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\"Kayak\"\\s*\\)\\s*;\\s*break\\s*;)(?=[\\s\\S]*\"Paddleboard\"\\s*\\)\\s*;\\s*break\\s*;)(?=[\\s\\S]*\"Canoe\"\\s*\\)\\s*;\\s*break\\s*;)",
+     "message": "Add `break;` after `System.out.println(\"Kayak\");`. Without it, a K runs the kayak line and then falls through into the paddleboard case; `break` ends the switch after one boat.",
+     "hint": "Where does execution go after the Kayak line, when nothing stops it?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Lowercase codes share the uppercase actions",
+     "within": "RentalDesk.describe",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\\bcase\\s+(?:'K'\\s*,\\s*)?'k'[\\s\\S]*?\"Kayak\")(?=[\\s\\S]*\\bcase\\s+(?:'P'\\s*,\\s*)?'p'[\\s\\S]*?\"Paddleboard\")(?=[\\s\\S]*\\bcase\\s+(?:'C'\\s*,\\s*)?'c'[\\s\\S]*?\"Canoe\")",
+     "forbid": "toUpperCase|toLowerCase",
+     "message": "Add `case 'k':` directly above (or together with) `case 'K':`, and the same for `p` and `c`. An empty case falls through to the next label, so both letters run the same statements without repeating them."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The rate comes from a switch expression",
+     "within": "RentalDesk.getHourlyRate",
+     "require": "^(?=[\\s\\S]*\\b(?:return|rate\\s*=)\\s*switch\\s*\\(\\s*code\\s*\\))(?=(?:[\\s\\S]*?->){4})(?=[\\s\\S]*\\bdefault\\s*->)",
+     "forbid": "\\bif\\b|\\bbreak\\b",
+     "message": "Replace the `if` chain with `return switch(code) { case 'k', 'K' -> 18.00; … default -> 0.0; };`. Each arrow gives the value for its labels, there is no fall-through to guard against, and `default` covers every other code."
+    }
+   ],
+   "hints": [
+    "Trace `describe('K')` line by line. After the Kayak line, what is the next statement Java runs?",
+    "A `case` label with no statements under it passes control straight to the next label. Use that to give `'k'` the same action as `'K'`.",
+    "In a switch expression, labels that share a result are separated by commas, and `->` is followed by the value itself. Remember the semicolon after the closing brace."
+   ],
+   "test_program": {
+    "file_name": "TestRentalDesk.java",
+    "code": "public class TestRentalDesk\n{\n    public static void main(String[] args)\n    {\n        // Runs the quotes exactly as \"java RentalDesk\" would.\n        RentalDesk.main(new String[0]);\n\n        RentalDesk.describe('k');\n        RentalDesk.describe('P');\n        RentalDesk.describe('C');\n        System.out.println(String.format(\"%.2f\", RentalDesk.getHourlyRate('x')));\n    }\n}\n",
+    "expected_output": "Kayak\n  $18.00 an hour\nPaddleboard\n  $22.00 an hour\nCanoe\n  $25.00 an hour\nUnknown code Z\nKayak\nPaddleboard\nCanoe\n0.00\n",
+    "how_to_run": "Put `RentalDesk.java` and `TestRentalDesk.java` in the same folder, then run `javac *.java` and `java TestRentalDesk`. Switch expressions need JDK 14 or later: if the compiler reports *switch expressions are not supported*, check the project's Java version in your IDE.",
+    "predict": "Before you change anything: predict every line the starter prints for `quote('K')` and for `quote('p')`."
+   },
+   "warmup": [
+    {
+     "question": "Predict what the starter's `describe('K')` prints, and explain why.",
+     "model_answer": "`Kayak` and then `Paddleboard`. The K case has no `break`, so execution falls through into the next case and continues until the `break` after Paddleboard."
+    },
+    {
+     "question": "Why does `describe('p')` print *Unknown code p* even though the rate lookup knows a lowercase p?",
+     "model_answer": "A switch matches exact values, and `'p'` and `'P'` are different `char` values. There is no `case 'p'`, so the default runs."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Fall-through caused the Kayak bug, and fall-through also makes `case 'k': case 'K':` work. What decides whether it helps or hurts?",
+     "model_answer": "Whether it is intended. Stacked empty labels fall through on purpose so several values share one action; a case with statements and no `break` falls into the next case's statements, which is usually a mistake."
+    },
+    {
+     "question": "Why can't a switch expression that returns a value leave out `default`, when the `switch` statement in `describe()` could?",
+     "model_answer": "The expression must produce a value for every possible `char`, so the compiler requires all inputs to be covered. A statement may simply do nothing when no case matches."
+    }
+   ],
+   "extension": "Add `S` (sailboat, $40.00 an hour) to both methods. Then change `describe()` into a switch expression inside `System.out.println(…)` (Figure 5-30). Which statement does that remove from every case?",
+   "worth_knowing": "Switch expressions became a standard part of Java in Java 14 (2020), through JEP 361. C# went further much earlier: it refuses to compile a non-empty case that falls through into the next one, so the forgotten-`break` bug can't happen there. Stacked empty labels, as in this lab, are still allowed.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.8",
+   "title": "The lighthouse tower on a windy day",
+   "subtitle": "The conditional (ternary) operator and the NOT operator",
+   "source": "Ch. 5, section 5.8 (pp. 186–187)",
+   "minutes": 20,
+   "objectives": [
+    "Read and write the conditional operator: `test ? valueIfTrue : valueIfFalse`",
+    "Replace an `if…else` that only chooses between two values with one conditional expression",
+    "Use `!` to negate a Boolean variable, and know when it reads more clearly than a negated comparison"
+   ],
+   "scenario": "Cape Lantern Lighthouse Museum charges **$6.00** for visitors 12 and under and **$14.00** for everyone else. Visitors 7 and older may climb the tower, **except when it is windy**: then nobody climbs.\n\nOn Tuesday the wind was strong and a 12-year-old was sent up the tower. Rewrite the price lookup as a single conditional expression and fix the climbing rule so the front desk prints:\n\n```\nNoor: $6.00, no tower climb\nSam: $14.00, tower climb OK\nIvy: $6.00, no tower climb\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`getTicketPrice()` is one `return` statement whose value comes from the conditional operator `? :`; no `if`."
+    },
+    {
+     "id": "R2",
+     "text": "`canClimbTower()` returns `true` only when it is **not** windy and the visitor is at least `MIN_CLIMB_AGE`, using `!isWindy`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "LighthouseTickets.java",
+   "starter_code": "public class LighthouseTickets\n{\n    public static final int CHILD_MAX_AGE = 12;\n    public static final double CHILD_PRICE = 6.00;\n    public static final double ADULT_PRICE = 14.00;\n    public static final int MIN_CLIMB_AGE = 7;\n\n    public static double getTicketPrice(int age)\n    {\n        // TODO (R1): choose between the two prices in one expression.\n        double price;\n        if(age <= CHILD_MAX_AGE)\n            price = CHILD_PRICE;\n        else\n            price = ADULT_PRICE;\n        return price;\n    }\n\n    public static boolean canClimbTower(int age, boolean isWindy)\n    {\n        // TODO (R2): nobody climbs when it is windy.\n        return age >= MIN_CLIMB_AGE;\n    }\n\n    public static void printVisit(String name, int age, boolean isWindy)\n    {\n        String price = String.format(\"%.2f\", getTicketPrice(age));\n        String climb = canClimbTower(age, isWindy)\n            ? \", tower climb OK\" : \", no tower climb\";\n        System.out.println(name + \": $\" + price + climb);\n    }\n\n    public static void main(String[] args)\n    {\n        printVisit(\"Noor\", 6, false);\n        printVisit(\"Sam\", 34, false);\n        printVisit(\"Ivy\", 12, true);\n    }\n}\n",
+   "solution": "public class LighthouseTickets\n{\n    public static final int CHILD_MAX_AGE = 12;\n    public static final double CHILD_PRICE = 6.00;\n    public static final double ADULT_PRICE = 14.00;\n    public static final int MIN_CLIMB_AGE = 7;\n\n    public static double getTicketPrice(int age)\n    {\n        return (age <= CHILD_MAX_AGE) ? CHILD_PRICE : ADULT_PRICE;\n    }\n\n    public static boolean canClimbTower(int age, boolean isWindy)\n    {\n        return !isWindy && age >= MIN_CLIMB_AGE;\n    }\n\n    public static void printVisit(String name, int age, boolean isWindy)\n    {\n        String price = String.format(\"%.2f\", getTicketPrice(age));\n        String climb = canClimbTower(age, isWindy)\n            ? \", tower climb OK\" : \", no tower climb\";\n        System.out.println(name + \": $\" + price + climb);\n    }\n\n    public static void main(String[] args)\n    {\n        printVisit(\"Noor\", 6, false);\n        printVisit(\"Sam\", 34, false);\n        printVisit(\"Ivy\", 12, true);\n    }\n}\n",
+   "solution_notes": "The conditional operator is the only *ternary* operator in Java: it takes three operands. `(age <= CHILD_MAX_AGE) ? CHILD_PRICE : ADULT_PRICE` evaluates the test, then takes the value after `?` when it is true and the value after `:` when it is false, so the whole method is one `return` statement. It suits an `if…else` whose only job is to choose between two values; for actions or longer logic, an `if…else` reads better. `printVisit()` already used one: `canClimbTower(…) ? \", tower climb OK\" : \", no tower climb\"`. The NOT operator `!` reverses a Boolean value. `!isWindy` reads naturally as \"not windy\", which is the case the book recommends `!` for (a Boolean variable), and it is clearer than `isWindy == false`. `!` has the highest precedence, so `!isWindy && age >= MIN_CLIMB_AGE` negates only `isWindy`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "One return with the conditional operator",
+     "within": "LighthouseTickets.getTicketPrice",
+     "require": "\\breturn\\s*\\(?[^;?]*\\bage\\b[^;?]*\\)?\\s*\\?\\s*\\w+\\s*:\\s*\\w+\\s*;",
+     "forbid": "\\bif\\b",
+     "message": "Replace the `if…else` with `return (age <= CHILD_MAX_AGE) ? CHILD_PRICE : ADULT_PRICE;`. The conditional operator chooses between two values in one expression, which is all this method does.",
+     "hint": "`printVisit()` already contains one conditional expression you can use as a model."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Climbing needs NOT windy and the minimum age",
+     "within": "LighthouseTickets.canClimbTower",
+     "require": "^(?=[\\s\\S]*!\\s*\\(?\\s*isWindy\\b)(?=[\\s\\S]*\\b(?:age\\s*>=\\s*MIN_CLIMB_AGE|MIN_CLIMB_AGE\\s*<=\\s*age)\\b)(?=[\\s\\S]*&&)",
+     "forbid": "\\bisWindy\\s*[!=]=|[!=]=\\s*isWindy\\b",
+     "message": "Return `!isWindy && age >= MIN_CLIMB_AGE`. The `!` operator turns \"windy\" into \"not windy\"; both conditions must hold, so they are joined with `&&`. Testing `isWindy == false` works but reads less clearly than `!isWindy`."
+    }
+   ],
+   "hints": [
+    "Read `? :` as \"if … then this value, otherwise that value\". Which two values does `getTicketPrice()` choose between?",
+    "The climbing rule has two conditions that must both be true. One of them is about the wind being *absent*.",
+    "`!` placed before a Boolean value reverses it: `!isWindy` is `true` exactly when `isWindy` is `false`."
+   ],
+   "test_program": {
+    "file_name": "TestLighthouseTickets.java",
+    "code": "public class TestLighthouseTickets\n{\n    public static void main(String[] args)\n    {\n        // Runs the front desk exactly as \"java LighthouseTickets\" would.\n        LighthouseTickets.main(new String[0]);\n\n        // The boundaries: 13 pays the adult price; 7 may climb on a calm day.\n        LighthouseTickets.printVisit(\"Ari\", 13, false);\n        LighthouseTickets.printVisit(\"Bea\", 7, false);\n        LighthouseTickets.printVisit(\"Cy\", 40, true);\n    }\n}\n",
+    "expected_output": "Noor: $6.00, no tower climb\nSam: $14.00, tower climb OK\nIvy: $6.00, no tower climb\nAri: $14.00, tower climb OK\nBea: $6.00, tower climb OK\nCy: $14.00, no tower climb\n",
+    "predict": "Before you change anything: predict Ivy's line (12 years old, windy day) with the starter, including the part produced by `? :` in `printVisit()`."
+   },
+   "warmup": [
+    {
+     "question": "In `printVisit()`, what does `canClimbTower(age, isWindy) ? \", tower climb OK\" : \", no tower climb\"` produce for Sam (34, calm day)?",
+     "model_answer": "`\", tower climb OK\"`. The test is true for Sam, so the conditional expression takes the value after the `?`, and that text is joined to the rest of the line."
+    },
+    {
+     "question": "The starter's `canClimbTower()` receives `isWindy` but never uses it. Who can climb on a windy day as the code stands?",
+     "model_answer": "Everyone 7 or older: the method returns only `age >= MIN_CLIMB_AGE`, so the wind makes no difference. That's how Ivy went up on Tuesday."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Give one reason to prefer the conditional operator in `getTicketPrice()` and one situation where you would keep an `if…else` instead.",
+     "model_answer": "It's concise: one statement that clearly picks one of two values. I would keep an `if…else` when each branch performs actions, such as printing or changing several variables, or when the test is long enough that a single line becomes hard to read."
+    },
+    {
+     "question": "Rewrite the climbing rule without `!` (for example with `isWindy == false`) and say which version is easier to read aloud, and why.",
+     "model_answer": "`isWindy == false && age >= MIN_CLIMB_AGE`. `!isWindy` is easier: it reads as \"not windy\", while `== false` makes the reader evaluate a comparison of a Boolean against a Boolean."
+    }
+   ],
+   "extension": "The museum adds a free ticket for members. Write `getTicketPrice(int age, boolean isMember)` as one `return` with two conditional operators: members pay 0.00, others pay as before. Is the one-line version still readable? Add parentheses until it is.",
+   "worth_knowing": "The book mentions an *Elvis operator* (`?:`) for null checks, but it was only a proposal for Java 7 (Project Coin) and was never added. Java still has no Elvis operator. Groovy and Kotlin have one: `name ?: \"Guest\"` means `name`, unless it is null.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.9",
+   "title": "The jet-ski deposit that charges the wrong renters",
+   "subtitle": "Operator precedence: && before ||, and parentheses that change or clarify the order",
+   "source": "Ch. 5, section 5.9 (pp. 187–189)",
+   "minutes": 20,
+   "objectives": [
+    "Apply the precedence of `!`, relational, equality, `&&`, `||` and `?:` operators to evaluate an expression by hand",
+    "Explain why `a || b && c` means `a || (b && c)`",
+    "Add parentheses to change the order of evaluation where the rule needs it",
+    "Add parentheses that change nothing but make the intended order obvious"
+   ],
+   "scenario": "Bayside Jet Ski charges a **$200 extra deposit** to renters who meet both conditions:\n\n- they are under 25 **or** have had more than 2 incidents with the company, **and**\n- they rent the fast model, code **X**.\n\nA 40-year-old renting the standard model (S) with 3 old incidents was charged the extra deposit. The owner also wants the discount rule (members, or locals on a weekday) written so nobody has to remember precedence. Fix `JetSkiDesk` so the desk prints:\n\n```\nTheo: extra deposit $0\nAna: extra deposit $200\nMax: extra deposit $0\nMember, weekend: true\nLocal, weekday: true\nLocal, weekend: false\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`getExtraDeposit()` groups the age-or-incidents test in parentheses, so that **either** of those **and** the fast model are required."
+    },
+    {
+     "id": "R2",
+     "text": "`isDiscounted()` keeps its meaning (a member, or a local on a weekday) but shows the `&&` part in parentheses."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "JetSkiDesk.java",
+   "starter_code": "public class JetSkiDesk\n{\n    public static final int MIN_AGE = 25;\n    public static final int MAX_INCIDENTS = 2;\n    public static final char FAST_MODEL = 'X';\n    public static final int EXTRA_DEPOSIT = 200;\n\n    public static int getExtraDeposit(int age, int incidents, char model)\n    {\n        int deposit = 0;\n        // TODO (R1): (young OR incidents) AND the fast model.\n        if(incidents > MAX_INCIDENTS || age < MIN_AGE && model == FAST_MODEL)\n            deposit = EXTRA_DEPOSIT;\n        return deposit;\n    }\n\n    public static boolean isDiscounted(boolean isMember, boolean isLocal,\n            boolean isWeekday)\n    {\n        // TODO (R2): correct already, but show which part goes first.\n        return isMember || isLocal && isWeekday;\n    }\n\n    public static void main(String[] args)\n    {\n        System.out.println(\"Theo: extra deposit $\" + getExtraDeposit(40, 3, 'S'));\n        System.out.println(\"Ana: extra deposit $\" + getExtraDeposit(22, 0, 'X'));\n        System.out.println(\"Max: extra deposit $\" + getExtraDeposit(30, 0, 'X'));\n        System.out.println(\"Member, weekend: \" + isDiscounted(true, false, false));\n        System.out.println(\"Local, weekday: \" + isDiscounted(false, true, true));\n        System.out.println(\"Local, weekend: \" + isDiscounted(false, true, false));\n    }\n}\n",
+   "solution": "public class JetSkiDesk\n{\n    public static final int MIN_AGE = 25;\n    public static final int MAX_INCIDENTS = 2;\n    public static final char FAST_MODEL = 'X';\n    public static final int EXTRA_DEPOSIT = 200;\n\n    public static int getExtraDeposit(int age, int incidents, char model)\n    {\n        int deposit = 0;\n        if((incidents > MAX_INCIDENTS || age < MIN_AGE) && model == FAST_MODEL)\n            deposit = EXTRA_DEPOSIT;\n        return deposit;\n    }\n\n    public static boolean isDiscounted(boolean isMember, boolean isLocal,\n            boolean isWeekday)\n    {\n        return isMember || (isLocal && isWeekday);\n    }\n\n    public static void main(String[] args)\n    {\n        System.out.println(\"Theo: extra deposit $\" + getExtraDeposit(40, 3, 'S'));\n        System.out.println(\"Ana: extra deposit $\" + getExtraDeposit(22, 0, 'X'));\n        System.out.println(\"Max: extra deposit $\" + getExtraDeposit(30, 0, 'X'));\n        System.out.println(\"Member, weekend: \" + isDiscounted(true, false, false));\n        System.out.println(\"Local, weekday: \" + isDiscounted(false, true, true));\n        System.out.println(\"Local, weekend: \" + isDiscounted(false, true, false));\n    }\n}\n",
+   "solution_notes": "`&&` has higher precedence than `||` (Table 5-1), just as multiplication comes before addition. The starter's condition therefore meant `incidents > MAX_INCIDENTS || (age < MIN_AGE && model == FAST_MODEL)`: three incidents made the whole expression true on their own, whatever the model, so Theo paid the deposit for a standard ski. Parentheses around the `||` part force it to be evaluated first, matching the rule: `(incidents > MAX_INCIDENTS || age < MIN_AGE) && model == FAST_MODEL` (the book's Figure 5-34). The relational and equality comparisons need no parentheses of their own, because they bind more tightly than `&&` and `||`. In `isDiscounted()` precedence already gave the intended meaning; the parentheses change nothing for the computer but tell the next reader that the order was deliberate.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The OR part is grouped before the AND",
+     "within": "JetSkiDesk.getExtraDeposit",
+     "require": [
+      "\\(\\s*\\(?\\s*(?:incidents\\s*>\\s*MAX_INCIDENTS\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*age\\s*<\\s*MIN_AGE|age\\s*<\\s*MIN_AGE\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*incidents\\s*>\\s*MAX_INCIDENTS)\\s*\\)?\\s*\\)\\s*&&\\s*\\(?\\s*model\\s*==\\s*FAST_MODEL",
+      "\\bmodel\\s*==\\s*FAST_MODEL\\s*\\)?\\s*&&\\s*\\(\\s*\\(?\\s*(?:incidents\\s*>\\s*MAX_INCIDENTS\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*age\\s*<\\s*MIN_AGE|age\\s*<\\s*MIN_AGE\\s*\\)?\\s*\\|\\|\\s*\\(?\\s*incidents\\s*>\\s*MAX_INCIDENTS)\\s*\\)?\\s*\\)"
+     ],
+     "message": "Put parentheses around `incidents > MAX_INCIDENTS || age < MIN_AGE`, then join that group to `model == FAST_MODEL` with `&&`. Without them `&&` goes first, so more than two incidents alone triggers the deposit even on the standard model.",
+     "hint": "Rewrite the starter's condition with the parentheses Java silently adds. Is that the owner's rule?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The AND part is shown in parentheses",
+     "within": "JetSkiDesk.isDiscounted",
+     "require": [
+      "\\bisMember\\s*\\|\\|\\s*\\(\\s*(?:isLocal\\s*&&\\s*isWeekday|isWeekday\\s*&&\\s*isLocal)\\s*\\)",
+      "\\(\\s*(?:isLocal\\s*&&\\s*isWeekday|isWeekday\\s*&&\\s*isLocal)\\s*\\)\\s*\\|\\|\\s*isMember\\b"
+     ],
+     "message": "Write `isMember || (isLocal && isWeekday)`. Java would evaluate the `&&` first anyway; the parentheses tell the reader that this order is the rule, not luck."
+    }
+   ],
+   "hints": [
+    "Precedence works like arithmetic: `a + b * c` multiplies first. In `a || b && c`, which operator plays the part of the multiplication?",
+    "Evaluate the starter's condition for Theo (40, 3 incidents, model S) step by step, doing `&&` first. Which part makes it true?",
+    "Parentheses are evaluated first. Put them around the part of the rule that is joined by *or*."
+   ],
+   "test_program": {
+    "file_name": "TestJetSkiDesk.java",
+    "code": "public class TestJetSkiDesk\n{\n    public static void main(String[] args)\n    {\n        // Runs the desk exactly as \"java JetSkiDesk\" would.\n        JetSkiDesk.main(new String[0]);\n\n        // Kai: 19, no incidents, standard model.\n        System.out.println(\"Kai: $\" + JetSkiDesk.getExtraDeposit(19, 0, 'S'));\n        // Lee: 50, four incidents, fast model.\n        System.out.println(\"Lee: $\" + JetSkiDesk.getExtraDeposit(50, 4, 'X'));\n        // Mo: exactly 25, exactly two incidents, fast model.\n        System.out.println(\"Mo: $\" + JetSkiDesk.getExtraDeposit(25, 2, 'X'));\n        System.out.println(\"Visitor, weekday: \"\n            + JetSkiDesk.isDiscounted(false, false, true));\n    }\n}\n",
+    "expected_output": "Theo: extra deposit $0\nAna: extra deposit $200\nMax: extra deposit $0\nMember, weekend: true\nLocal, weekday: true\nLocal, weekend: false\nKai: $0\nLee: $200\nMo: $0\nVisitor, weekday: false\n",
+    "predict": "Before you change anything: evaluate the starter's condition for Theo (40, 3 incidents, model S) by hand, operator by operator, and predict his deposit."
+   },
+   "warmup": [
+    {
+     "question": "Rewrite the starter's condition with the parentheses Java uses because of precedence.",
+     "model_answer": "`incidents > MAX_INCIDENTS || (age < MIN_AGE && model == FAST_MODEL)`: the comparisons are evaluated first, then `&&`, then `||`."
+    },
+    {
+     "question": "`p`, `q` and `r` are all `true`. What is the value of `!q || r`? Of `!(q || !r)`?",
+     "model_answer": "`!q || r` is `false || true`, which is `true`. In `!(q || !r)`, the parentheses go first: `true || false` is `true`, and `!` makes it `false`."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your `isDiscounted()` parentheses don't change any result. Why are they still worth writing?",
+     "model_answer": "They make the intended order visible. A reader doesn't have to remember that `&&` binds tighter than `||`, and a later change can't silently move the grouping without someone noticing the parentheses."
+    },
+    {
+     "question": "Mo is 25 with exactly 2 incidents and rents model X. Explain, using the constants, why Mo pays no extra deposit.",
+     "model_answer": "`age < MIN_AGE` is `25 < 25`, false, and `incidents > MAX_INCIDENTS` is `2 > 2`, false, so the grouped `||` is false, and false `&&` anything is false. Both limits are strict comparisons."
+    }
+   ],
+   "extension": "Bayside adds a rule: the extra deposit is waived for members. Add a `boolean isMember` parameter and write the condition in one `if`. Where do the new `!` and the new parentheses go?",
+   "worth_knowing": "`&&` before `||` mirrors Boolean algebra, where AND behaves like multiplication and OR like addition: `a || b && c` reads like a + b·c. Mixed conditions still trip people up, so compilers help: GCC's `-Wparentheses` warns *suggest parentheses around '&&' within '||'* in C code.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  },
+  {
+   "id": "5.10",
+   "title": "The swim school's two sets of rules",
+   "subtitle": "Decisions in set methods, and constructors that call them instead of repeating the rules",
+   "source": "Ch. 5, section 5.10 (pp. 189–192)",
+   "minutes": 25,
+   "objectives": [
+    "Use decisions in a set method to keep a field's value within the allowed range",
+    "Have a constructor call the set methods so each rule is written once",
+    "Test the parameter (the new value), not the field (the old value), in a setter's decision"
+   ],
+   "scenario": "Riptide Swim School enrolls students aged 4 to 17 with ID numbers up to 9999; an invalid value is stored as 0. `SwimStudent` checks these rules in two places, and the two copies have drifted apart: the constructor accepted a 2-year-old, and `setAge()` let a 21-year-old into the program.\n\nMake the setters the only place the rules live, fix `setAge()`, and have the constructor use them. The front desk's program, `SwimDesk`, must print:\n\n```\nStudent 1201, age 9\nStudent 0, age 0\nStudent 1201, age 10\nStudent 1201, age 0\n```\n",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor contains no decisions: it calls `setStudentId()` and `setAge()` with its parameters."
+    },
+    {
+     "id": "R2",
+     "text": "`setAge()` decides using the **parameter** `studentAge`: from `MIN_AGE` to `MAX_AGE` it is stored, otherwise `age` becomes 0."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "SwimStudent.java",
+     "starter": "public class SwimStudent\n{\n    private int studentId;\n    private int age;\n    public final int MAX_ID = 9999;\n    public final int MIN_AGE = 4;\n    public final int MAX_AGE = 17;\n\n    public SwimStudent(int id, int studentAge)\n    {\n        // TODO (R1): these rules are already written in the setters below.\n        if(id <= MAX_ID)\n            studentId = id;\n        else\n            studentId = 0;\n        if(studentAge <= MAX_AGE)\n            age = studentAge;\n        else\n            age = 0;\n    }\n\n    public void setStudentId(int id)\n    {\n        if(id <= MAX_ID)\n            studentId = id;\n        else\n            studentId = 0;\n    }\n\n    public void setAge(int studentAge)\n    {\n        // TODO (R2): which value is this decision really testing?\n        if(age >= MIN_AGE && age <= MAX_AGE)\n            age = studentAge;\n        else\n            age = 0;\n    }\n\n    public int getStudentId()\n    {\n        return studentId;\n    }\n\n    public int getAge()\n    {\n        return age;\n    }\n}\n",
+     "solution": "public class SwimStudent\n{\n    private int studentId;\n    private int age;\n    public final int MAX_ID = 9999;\n    public final int MIN_AGE = 4;\n    public final int MAX_AGE = 17;\n\n    public SwimStudent(int id, int studentAge)\n    {\n        setStudentId(id);\n        setAge(studentAge);\n    }\n\n    public void setStudentId(int id)\n    {\n        if(id <= MAX_ID)\n            studentId = id;\n        else\n            studentId = 0;\n    }\n\n    public void setAge(int studentAge)\n    {\n        if(studentAge >= MIN_AGE && studentAge <= MAX_AGE)\n            age = studentAge;\n        else\n            age = 0;\n    }\n\n    public int getStudentId()\n    {\n        return studentId;\n    }\n\n    public int getAge()\n    {\n        return age;\n    }\n}\n"
+    },
+    {
+     "name": "SwimDesk.java",
+     "editable": false,
+     "starter": "// The front desk's program. Read it; you don't need to change it.\npublic class SwimDesk\n{\n    public static void main(String[] args)\n    {\n        SwimStudent mia = new SwimStudent(1201, 9);\n        SwimStudent leo = new SwimStudent(45000, 2);\n        display(mia);\n        display(leo);\n\n        mia.setAge(10);\n        display(mia);\n        mia.setAge(21);\n        display(mia);\n    }\n\n    public static void display(SwimStudent s)\n    {\n        System.out.println(\"Student \" + s.getStudentId() + \", age \" + s.getAge());\n    }\n}\n"
+    }
+   ],
+   "main_file": "SwimStudent.java",
+   "solution_notes": "Two copies of a rule drift apart: the constructor's age check had no minimum, so a 2-year-old was enrolled, while the setter had one. When the constructor calls `setStudentId(id)` and `setAge(studentAge)`, each rule exists exactly once, in the method whose job is to guard that field, and a future change (say, a maximum age of 18) is made in one place (Figure 5-36). The setter's decision must test the *new* value, the parameter `studentAge`. The starter tested the field `age`, the value already stored: for a new object that is 0, so every age was refused, and for Mia (age 9) the test passed for *any* new value, which is how 21 got in. The book's own Figure 5-36 contains the same slip: its `setPayRate()` tests `payRate` instead of `rate`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The constructor calls the setters and makes no decisions",
+     "file": "SwimStudent.java",
+     "within": "SwimStudent.SwimStudent",
+     "require": "^(?=[\\s\\S]*\\b(?:this\\s*\\.\\s*)?setStudentId\\s*\\(\\s*\\w+\\s*\\)\\s*;)(?=[\\s\\S]*\\b(?:this\\s*\\.\\s*)?setAge\\s*\\(\\s*\\w+\\s*\\)\\s*;)",
+     "forbid": "\\bif\\b|\\?",
+     "message": "Replace the constructor's `if` statements with calls to `setStudentId(id)` and `setAge(studentAge)`. The rules are then written once, in the setters, and the constructor can never disagree with them again.",
+     "hint": "The setters already contain the decisions. What is the constructor's only job now?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "setAge() tests the parameter, inside the full range",
+     "file": "SwimStudent.java",
+     "within": "SwimStudent.setAge",
+     "require": "^(?=[\\s\\S]*\\b(?:studentAge\\s*>=\\s*MIN_AGE|MIN_AGE\\s*<=\\s*studentAge)\\b)(?=[\\s\\S]*\\b(?:studentAge\\s*<=\\s*MAX_AGE|MAX_AGE\\s*>=\\s*studentAge)\\b)",
+     "forbid": "(?<![\\w.])(?:this\\s*\\.\\s*)?age\\s*(?:[<>]=?|==|!=)|(?:[<>]=?|==|!=)\\s*(?:this\\s*\\.\\s*)?age\\b",
+     "message": "Compare the parameter `studentAge`, the age being proposed, with `MIN_AGE` and `MAX_AGE`. The field `age` holds the old value, so testing it decides about the wrong number.",
+     "hint": "Trace `mia.setAge(21)`: what is in `age` and what is in `studentAge` when the `if` runs?"
+    }
+   ],
+   "hints": [
+    "Compare the constructor's age rule with `setAge()`'s rule. Do they agree for a 2-year-old?",
+    "A constructor may call the class's own methods. Which two methods already do exactly what the constructor's `if` statements try to do?",
+    "Inside a setter, the field holds the value from before the call; the parameter holds the value being proposed. Which one should the rule judge?"
+   ],
+   "test_program": {
+    "file_name": "TestSwimStudent.java",
+    "code": "public class TestSwimStudent\n{\n    public static void main(String[] args)\n    {\n        // Runs the front desk exactly as \"java SwimDesk\" would.\n        SwimDesk.main(new String[0]);\n\n        // The edges of both rules, through the constructor and the setter.\n        SwimDesk.display(new SwimStudent(9999, 4));\n        SwimDesk.display(new SwimStudent(10000, 18));\n        SwimStudent s = new SwimStudent(77, 3);\n        SwimDesk.display(s);\n        s.setAge(17);\n        SwimDesk.display(s);\n    }\n}\n",
+    "expected_output": "Student 1201, age 9\nStudent 0, age 0\nStudent 1201, age 10\nStudent 1201, age 0\nStudent 9999, age 4\nStudent 0, age 0\nStudent 77, age 0\nStudent 77, age 17\n",
+    "how_to_run": "Put `SwimStudent.java`, `SwimDesk.java` and `TestSwimStudent.java` in the same folder, then run `javac *.java` and `java TestSwimStudent`. In an IDE, add all three to one project and run `TestSwimStudent.java`.",
+    "predict": "Before you change anything: trace `mia.setAge(21)` in the starter. What is in `age` when the `if` runs, and what does Mia's age become?"
+   },
+   "warmup": [
+    {
+     "question": "The constructor and `setAge()` both check ages. Find one age they disagree about, and say what each would store.",
+     "model_answer": "Age 2 (anything under 4): the constructor checks only `studentAge <= MAX_AGE`, so it stores 2; `setAge(2)` checks the minimum too and would store 0."
+    },
+    {
+     "question": "When `mia.setAge(21)` runs in the starter, Mia's `age` field is 10. Is the `if` true or false, and what does `age` become?",
+     "model_answer": "True: the condition tests the field, and 10 is between 4 and 17. So `age = studentAge;` runs and stores 21, which breaks the rule."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Riptide raises the maximum age to 18. With your solution, how many places must change? How many with the starter?",
+     "model_answer": "One: the `MAX_AGE` constant, used only by `setAge()`. With the starter the rule lived in the constructor and in the setter, so both would have to be found and changed, and missing one recreates the inconsistency."
+    },
+    {
+     "question": "Look at `setPayRate()` in the book's Figure 5-36. Using what you fixed here, what does its `if` test, and what pay rate would `new Employee(1234, 75.00)` end up with?",
+     "model_answer": "It tests the field `payRate`, not the parameter `rate`. For a new object `payRate` is 0.0, so `0.0 <= MAX_RATE` is true and 75.00 is stored, above the $60 limit; the rule never actually checks the new rate."
+    }
+   ],
+   "extension": "Add a `String level` field with `setLevel(String)` that accepts only \"Beginner\", \"Intermediate\" or \"Advanced\" (anything else stores \"Beginner\"), using a `switch` on the string. Add a third constructor parameter and keep the constructor free of decisions.",
+   "worth_knowing": "When you learn inheritance (Chapter 9), this pattern comes with a catch: a subclass can override `setAge()`, and the constructor would then run the subclass's version before the subclass has finished setting up. Joshua Bloch's *Effective Java* says constructors must not call overridable methods; declaring the setters `final` keeps this lab's design safe.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions."
+    }
+   ]
+  }
+ ]
+}

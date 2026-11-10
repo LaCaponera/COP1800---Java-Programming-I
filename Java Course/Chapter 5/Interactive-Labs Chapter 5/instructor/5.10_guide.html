@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The swim school&#x27;s two sets of rules</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.10</div>
+  <h1>The swim school&#x27;s two sets of rules</h1>
+<h2>Objectives</h2><ul><li>Use decisions in a set method to keep a field&#x27;s value within the allowed range</li><li>Have a constructor call the set methods so each rule is written once</li><li>Test the parameter (the new value), not the field (the old value), in a setter&#x27;s decision</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The constructor contains no decisions: it calls <code>setStudentId()</code> and <code>setAge()</code> with its parameters.</li><li><strong>R2</strong> <code>setAge()</code> decides using the <strong>parameter</strong> <code>studentAge</code>: from <code>MIN_AGE</code> to <code>MAX_AGE</code> it is stored, otherwise <code>age</code> becomes 0.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The constructor and <code>setAge()</code> both check ages. Find one age they disagree about, and say what each would store.</p><div class="answer"><p>Age 2 (anything under 4): the constructor checks only <code>studentAge &lt;= MAX_AGE</code>, so it stores 2; <code>setAge(2)</code> checks the minimum too and would store 0.</p></div></li><li><p>When <code>mia.setAge(21)</code> runs in the starter, Mia&#x27;s <code>age</code> field is 10. Is the <code>if</code> true or false, and what does <code>age</code> become?</p><div class="answer"><p>True: the condition tests the field, and 10 is between 4 and 17. So <code>age = studentAge;</code> runs and stores 21, which breaks the rule.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">SwimStudent.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SwimStudent</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">studentId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_ID</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">9999</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MIN_AGE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_AGE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">17</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">SwimStudent</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): these rules are already written in the setters below.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_ID</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">studentId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">studentId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">studentAge</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_AGE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setStudentId</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_ID</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">studentId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">studentId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setAge</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): which value is this decision really testing?</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_AGE</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_AGE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getStudentId</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">studentId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getAge</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">SwimDesk.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// The front desk's program. Read it; you don't need to change it.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SwimDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">SwimStudent</span><span class="t-w"> </span><span class="t-n">mia</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SwimStudent</span><span class="t-p">(</span><span class="t-mi">1201</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">9</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">SwimStudent</span><span class="t-w"> </span><span class="t-n">leo</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SwimStudent</span><span class="t-p">(</span><span class="t-mi">45000</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">display</span><span class="t-p">(</span><span class="t-n">mia</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">display</span><span class="t-p">(</span><span class="t-n">leo</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">mia</span><span class="t-p">.</span><span class="t-na">setAge</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">display</span><span class="t-p">(</span><span class="t-n">mia</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">mia</span><span class="t-p">.</span><span class="t-na">setAge</span><span class="t-p">(</span><span class="t-mi">21</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">display</span><span class="t-p">(</span><span class="t-n">mia</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">display</span><span class="t-p">(</span><span class="t-n">SwimStudent</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Student "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">getStudentId</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", age "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">getAge</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">SwimStudent.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SwimStudent</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">studentId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_ID</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">9999</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MIN_AGE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAX_AGE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">17</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">SwimStudent</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">setStudentId</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setAge</span><span class="t-p">(</span><span class="t-n">studentAge</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setStudentId</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_ID</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">studentId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">studentId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setAge</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">studentAge</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_AGE</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-n">MAX_AGE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">studentAge</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">age</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getStudentId</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">studentId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getAge</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">age</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Two copies of a rule drift apart: the constructor&#x27;s age check had no minimum, so a 2-year-old was enrolled, while the setter had one. When the constructor calls <code>setStudentId(id)</code> and <code>setAge(studentAge)</code>, each rule exists exactly once, in the method whose job is to guard that field, and a future change (say, a maximum age of 18) is made in one place (Figure 5-36). The setter&#x27;s decision must test the <em>new</em> value, the parameter <code>studentAge</code>. The starter tested the field <code>age</code>, the value already stored: for a new object that is 0, so every age was refused, and for Mia (age 9) the test passed for <em>any</em> new value, which is how 21 got in. The book&#x27;s own Figure 5-36 contains the same slip: its <code>setPayRate()</code> tests <code>payRate</code> instead of <code>rate</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSwimStudent.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSwimStudent</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the front desk exactly as "java SwimDesk" would.</span>
+<span class="t-w">        </span><span class="t-n">SwimDesk</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// The edges of both rules, through the constructor and the setter.</span>
+<span class="t-w">        </span><span class="t-n">SwimDesk</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SwimStudent</span><span class="t-p">(</span><span class="t-mi">9999</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">SwimDesk</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SwimStudent</span><span class="t-p">(</span><span class="t-mi">10000</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">18</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">SwimStudent</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SwimStudent</span><span class="t-p">(</span><span class="t-mi">77</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">SwimDesk</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">setAge</span><span class="t-p">(</span><span class="t-mi">17</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">SwimDesk</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Student 1201, age 9
+Student 0, age 0
+Student 1201, age 10
+Student 1201, age 0
+Student 9999, age 4
+Student 0, age 0
+Student 77, age 0
+Student 77, age 17
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The constructor calls the setters and makes no decisions<div class="small">in <code>SwimStudent.SwimStudent</code> of <code>SwimStudent.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\b(?:this\s*\.\s*)?setStudentId\s*\(\s*\w+\s*\)\s*;)(?=[\s\S]*\b(?:this\s*\.\s*)?setAge\s*\(\s*\w+\s*\)\s*;)</code></div><div><span class="tag">forbid</span> <code>\bif\b|\?</code></div></td></tr><tr><td>C2</td><td>R2</td><td>setAge() tests the parameter, inside the full range<div class="small">in <code>SwimStudent.setAge</code> of <code>SwimStudent.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\b(?:studentAge\s*&gt;=\s*MIN_AGE|MIN_AGE\s*&lt;=\s*studentAge)\b)(?=[\s\S]*\b(?:studentAge\s*&lt;=\s*MAX_AGE|MAX_AGE\s*&gt;=\s*studentAge)\b)</code></div><div><span class="tag">forbid</span> <code>(?&lt;![\w.])(?:this\s*\.\s*)?age\s*(?:[&lt;&gt;]=?|==|!=)|(?:[&lt;&gt;]=?|==|!=)\s*(?:this\s*\.\s*)?age\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The constructor calls the setters and makes no decisions</dt><dd><p>Replace the constructor&#x27;s <code>if</code> statements with calls to <code>setStudentId(id)</code> and <code>setAge(studentAge)</code>. The rules are then written once, in the setters, and the constructor can never disagree with them again.</p><div class='small'><strong>Hint:</strong></div><p>The setters already contain the decisions. What is the constructor&#x27;s only job now?</p></dd><dt>C2 · setAge() tests the parameter, inside the full range</dt><dd><p>Compare the parameter <code>studentAge</code>, the age being proposed, with <code>MIN_AGE</code> and <code>MAX_AGE</code>. The field <code>age</code> holds the old value, so testing it decides about the wrong number.</p><div class='small'><strong>Hint:</strong></div><p>Trace <code>mia.setAge(21)</code>: what is in <code>age</code> and what is in <code>studentAge</code> when the <code>if</code> runs?</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compare the constructor&#x27;s age rule with <code>setAge()</code>&#x27;s rule. Do they agree for a 2-year-old?</p></li><li><p>A constructor may call the class&#x27;s own methods. Which two methods already do exactly what the constructor&#x27;s <code>if</code> statements try to do?</p></li><li><p>Inside a setter, the field holds the value from before the call; the parameter holds the value being proposed. Which one should the rule judge?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Riptide raises the maximum age to 18. With your solution, how many places must change? How many with the starter?</p><div class="answer"><p>One: the <code>MAX_AGE</code> constant, used only by <code>setAge()</code>. With the starter the rule lived in the constructor and in the setter, so both would have to be found and changed, and missing one recreates the inconsistency.</p></div></li><li><p>Look at <code>setPayRate()</code> in the book&#x27;s Figure 5-36. Using what you fixed here, what does its <code>if</code> test, and what pay rate would <code>new Employee(1234, 75.00)</code> end up with?</p><div class="answer"><p>It tests the field <code>payRate</code>, not the parameter <code>rate</code>. For a new object <code>payRate</code> is 0.0, so <code>0.0 &lt;= MAX_RATE</code> is true and 75.00 is stored, above the $60 limit; the rule never actually checks the new rate.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>String level</code> field with <code>setLevel(String)</code> that accepts only &quot;Beginner&quot;, &quot;Intermediate&quot; or &quot;Advanced&quot; (anything else stores &quot;Beginner&quot;), using a <code>switch</code> on the string. Add a third constructor parameter and keep the constructor free of decisions.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

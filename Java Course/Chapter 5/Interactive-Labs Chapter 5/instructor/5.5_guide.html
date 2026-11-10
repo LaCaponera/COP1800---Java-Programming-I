@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bike dock that runs out too early</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.5</div>
+  <h1>The bike dock that runs out too early</h1>
+<h2>Objectives</h2><ul><li>Combine two Boolean tests with <code>&amp;&amp;</code> (both must be true) or <code>||</code> (at least one must be true)</li><li>Write a complete Boolean expression on each side of a binary logical operator</li><li>Predict which method calls are skipped by short-circuit evaluation</li><li>Order the operands of <code>&amp;&amp;</code> so a method with a side effect runs only when it should</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>tryUnlock()</code> checks the rider&#x27;s credit <strong>before</strong> reserving a bike, in one <code>&amp;&amp;</code> expression, so a rider without credit never reserves one.</li><li><strong>R2</strong> <code>getFare()</code> gives <code>HALF_FARE</code> when the rider is a member <strong>or</strong> has at least <code>FREQUENT_RIDES</code> rides this month, using one <code>||</code> expression with a complete comparison on each side.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, Kim has no credit. List, in order, what <code>tryUnlock()</code> does for Kim, including what happens to the dock.</p><div class="answer"><p>It calls <code>dock.reserveBike()</code> first, which takes a bike (2 left becomes 1) and returns true; then <code>rider.hasCredit()</code> returns false, so the whole <code>&amp;&amp;</code> is false and Kim sees <em>cannot unlock</em>. The bike stays reserved even though Kim didn&#x27;t get it.</p></div></li><li><p>Why does <code>if(rider.getRidesThisMonth() &gt;= 10 || &gt;= 20)</code> not compile?</p><div class="answer"><p><code>||</code> is a binary operator: it needs a complete Boolean expression on each side. <code>&gt;= 20</code> has no left operand; it would have to be <code>rider.getRidesThisMonth() &gt;= 20</code>.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">UnlockStation.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">UnlockStation</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">FULL_FARE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">4.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">HALF_FARE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">2.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FREQUENT_RIDES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">tryUnlock</span><span class="t-p">(</span><span class="t-n">Rider</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">BikeDock</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): a rider with no credit must not take a bike out of the dock.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">dock</span><span class="t-p">.</span><span class="t-na">reserveBike</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">hasCredit</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": unlocked, fare $"</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">getFare</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": cannot unlock"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getFare</span><span class="t-p">(</span><span class="t-n">Rider</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">fare</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">FULL_FARE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): members ride at half fare, and so do frequent riders.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">isMember</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">getRidesThisMonth</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">FREQUENT_RIDES</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">fare</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">HALF_FARE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">fare</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BikeDock</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeDock</span><span class="t-p">(</span><span class="t-s">"Pier Street"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Kim"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Raj"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Lu"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">12</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Bikes left: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">.</span><span class="t-na">getBikesAvailable</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">BikeDock.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// The city's BikeDock class. Read it; you don't need to change it.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BikeDock</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">street</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bikesAvailable</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">BikeDock</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">dockStreet</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bikes</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">street</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">dockStreet</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">bikesAvailable</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bikes</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Holds a bike for the rider: one fewer bike stays in the dock.</span>
+<span class="t-w">    </span><span class="t-c1">// Returns false when the dock is empty.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">reserveBike</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">bikesAvailable</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">bikesAvailable</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bikesAvailable</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getBikesAvailable</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">bikesAvailable</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Rider.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// The city's Rider class. Read it; you don't need to change it.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Rider</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">credit</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ridesThisMonth</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Rider</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">riderName</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">hasCredit</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">isMember</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">rides</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">riderName</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">credit</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">hasCredit</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">member</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">isMember</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">ridesThisMonth</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">rides</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">hasCredit</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">credit</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isMember</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getRidesThisMonth</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">ridesThisMonth</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">UnlockStation.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">UnlockStation</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">FULL_FARE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">4.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">HALF_FARE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">2.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FREQUENT_RIDES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">tryUnlock</span><span class="t-p">(</span><span class="t-n">Rider</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">BikeDock</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">hasCredit</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">.</span><span class="t-na">reserveBike</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": unlocked, fare $"</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">getFare</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": cannot unlock"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getFare</span><span class="t-p">(</span><span class="t-n">Rider</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">fare</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">FULL_FARE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">isMember</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">rider</span><span class="t-p">.</span><span class="t-na">getRidesThisMonth</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">FREQUENT_RIDES</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">fare</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">HALF_FARE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">fare</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BikeDock</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeDock</span><span class="t-p">(</span><span class="t-s">"Pier Street"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Kim"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Raj"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Lu"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">12</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Bikes left: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">.</span><span class="t-na">getBikesAvailable</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>&amp;&amp;</code> evaluates its left operand first and stops as soon as the answer is known: if the left side is <code>false</code>, the right side never runs (short-circuit evaluation). In the starter, <code>dock.reserveBike()</code> was on the left, so it ran for every rider, and its side effect, taking a bike out of the dock, happened even for Kim, who had no credit. With <code>rider.hasCredit()</code> on the left, a rider without credit stops the expression before <code>reserveBike()</code> is called. A nested <code>if(rider.hasCredit()) { if(dock.reserveBike()) … }</code> gives the same result. For the fare, the rule is <em>either</em> condition, so the operator is <code>||</code>; the starter&#x27;s <code>&amp;&amp;</code> demanded both and charged Raj, a member with 2 rides, the full fare. Each side of <code>||</code> must be a complete Boolean expression: <code>rider.getRidesThisMonth() &gt;= FREQUENT_RIDES</code>, not just <code>&gt;= FREQUENT_RIDES</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestUnlockStation.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestUnlockStation</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the morning log exactly as "java UnlockStation" would.</span>
+<span class="t-w">        </span><span class="t-n">UnlockStation</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// A dock with one bike: a rider with no credit tries first.</span>
+<span class="t-w">        </span><span class="t-n">BikeDock</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeDock</span><span class="t-p">(</span><span class="t-s">"Market Square"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">UnlockStation</span><span class="t-p">.</span><span class="t-na">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Noa"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">30</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">UnlockStation</span><span class="t-p">.</span><span class="t-na">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Ola"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">UnlockStation</span><span class="t-p">.</span><span class="t-na">tryUnlock</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Pia"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-n">dock</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Fares only: not a member, 9 rides; a member with no rides.</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-n">UnlockStation</span><span class="t-p">.</span><span class="t-na">getFare</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Quin"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">9</span><span class="t-p">))));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-s">"%.2f"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-n">UnlockStation</span><span class="t-p">.</span><span class="t-na">getFare</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rider</span><span class="t-p">(</span><span class="t-s">"Ros"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">))));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Kim: cannot unlock
+Raj: unlocked, fare $2.00
+Lu: unlocked, fare $2.00
+Bikes left: 0
+Noa: cannot unlock
+Ola: unlocked, fare $2.00
+Pia: cannot unlock
+4.00
+2.00
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Credit is checked before a bike is reserved<div class="small">in <code>UnlockStation.tryUnlock</code> of <code>UnlockStation.java</code></div></td><td><div><span class="tag">require</span> <code>\brider\s*\.\s*hasCredit\s*\(\s*\)\s*\)?\s*&amp;&amp;\s*\(?\s*dock\s*\.\s*reserveBike\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\bif\s*\(\s*rider\s*\.\s*hasCredit\s*\(\s*\)\s*\)\s*\{?\s*if\s*\(\s*dock\s*\.\s*reserveBike\s*\(\s*\)\s*\)</code></div><div><span class="tag">forbid</span> <code>\breserveBike\s*\(\s*\)\s*\)?\s*&amp;&amp;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Half fare for a member OR a frequent rider<div class="small">in <code>UnlockStation.getFare</code> of <code>UnlockStation.java</code></div></td><td><div><span class="tag">require</span> <code>\brider\s*\.\s*isMember\s*\(\s*\)\s*\)?\s*\|\|\s*\(?\s*rider\s*\.\s*getRidesThisMonth\s*\(\s*\)\s*&gt;=\s*FREQUENT_RIDES</code></div><div><span class="tag">require</span> <code>\brider\s*\.\s*getRidesThisMonth\s*\(\s*\)\s*&gt;=\s*FREQUENT_RIDES\s*\)?\s*\|\|\s*\(?\s*rider\s*\.\s*isMember\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>&amp;&amp;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Credit is checked before a bike is reserved</dt><dd><p>Put <code>rider.hasCredit()</code> on the left of <code>&amp;&amp;</code> and <code>dock.reserveBike()</code> on the right. <code>&amp;&amp;</code> stops at the first <code>false</code>, so a rider without credit never reaches <code>reserveBike()</code>, and no bike leaves the dock for them.</p><div class='small'><strong>Hint:</strong></div><p>Which of the two calls changes something in the dock?</p></dd><dt>C2 · Half fare for a member OR a frequent rider</dt><dd><p>Join the two conditions with <code>||</code>: half fare needs only one of them to be true. Keep a complete comparison on each side, <code>rider.isMember() || rider.getRidesThisMonth() &gt;= FREQUENT_RIDES</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Trace Kim: which call in the starter&#x27;s condition runs first, and what does it do to the dock even though the answer will be <em>cannot unlock</em>?</p></li><li><p>With <code>&amp;&amp;</code>, the right-hand call runs only when the left-hand side is <code>true</code>. Which call should only happen for riders who can pay?</p></li><li><p>Say the fare rule out loud: &quot;a member <em>or</em> a frequent rider&quot;. The starter&#x27;s operator says something else.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Both <code>rider.hasCredit() &amp;&amp; dock.reserveBike()</code> and <code>dock.reserveBike() &amp;&amp; rider.hasCredit()</code> give the same true/false answer for every rider. Why do they still behave differently?</p><div class="answer"><p>Because of short-circuit evaluation and a side effect. <code>&amp;&amp;</code> skips its right side when the left side is false, and <code>reserveBike()</code> changes the dock. Only the order that puts <code>hasCredit()</code> first skips the reservation for riders who can&#x27;t pay.</p></div></li><li><p>In <code>getFare()</code>, if the rider is a member, is <code>getRidesThisMonth()</code> ever called? What would change if it had a side effect, such as counting the lookup?</p><div class="answer"><p>No: with <code>||</code>, a <code>true</code> left side decides the answer, so the right side isn&#x27;t evaluated. If it counted lookups, members&#x27; lookups would never be counted; a call whose side effect must always happen should run on its own before the <code>if</code>.</p></div></li></ol>
+<h2>Extension</h2><p>The city adds a rule: riders under 16 can unlock only if they are members. Add a <code>boolean isUnder16</code> parameter to a new version of <code>tryUnlock()</code> and write the condition. Where does the new test go so that a bike is still reserved only when the rider will get it?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

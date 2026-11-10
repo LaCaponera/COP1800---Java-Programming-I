@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The kite shop&#x27;s missing medium bonus</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 5.4</div>
+  <h1>The kite shop&#x27;s missing medium bonus</h1>
+<h2>Objectives</h2><ul><li>Nest a decision inside the <code>if</code> clause of another decision when two conditions must be checked in turn</li><li>Pair each <code>else</code> with the most recent unmatched <code>if</code>, as the compiler does</li><li>Use braces or a complete inner <code>if…else</code> to make the pairing you intend</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Inside the decision for 3 or more items, a nested <code>if…else</code> gives <code>LARGE_BONUS</code> when the total is at least <code>MIN_VALUE</code> and <code>MEDIUM_BONUS</code> otherwise.</li><li><strong>R2</strong> Fewer than <code>MIN_ITEMS</code> items earns <code>SMALL_BONUS</code>: that <code>else</code> belongs to the outer <code>if</code>, the one that tests the items.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Which <code>if</code> does the starter&#x27;s <code>else</code> belong to: the items test or the value test? How do you know?</p><div class="answer"><p>The value test, <code>if(totalValue &gt;= MIN_VALUE)</code>. An <code>else</code> pairs with the most recent <code>if</code> that has no <code>else</code>; the indentation that lines it up with the outer <code>if</code> is ignored by the compiler.</p></div></li><li><p>Predict Cai&#x27;s bonus with the starter (2 items, $1,800) and explain it.</p><div class="answer"><p>$0. The outer <code>if</code> is false and has no <code>else</code>, so nothing is assigned and <code>bonus</code> keeps its starting value of 0.</p></div></li></ol>
+<h2>Solution</h2><div class="file">KiteShopBonus.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">KiteShopBonus</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MIN_ITEMS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MIN_VALUE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">1000.00</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">LARGE_BONUS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">50</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MEDIUM_BONUS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">25</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SMALL_BONUS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getBonus</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">itemsSold</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">totalValue</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bonus</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">itemsSold</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_ITEMS</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">totalValue</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">MIN_VALUE</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">bonus</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">LARGE_BONUS</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">else</span>
+<span class="t-w">                </span><span class="t-n">bonus</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">MEDIUM_BONUS</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">bonus</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">SMALL_BONUS</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">bonus</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printLine</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">itemsSold</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">totalValue</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">itemsSold</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" items, $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">totalValue</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" -&gt; bonus $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getBonus</span><span class="t-p">(</span><span class="t-n">itemsSold</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">totalValue</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printLine</span><span class="t-p">(</span><span class="t-s">"Ana"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">1250.00</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printLine</span><span class="t-p">(</span><span class="t-s">"Ben"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">640.00</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printLine</span><span class="t-p">(</span><span class="t-s">"Cai"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">1800.00</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The compiler pairs an <code>else</code> with the most recent <code>if</code> that doesn&#x27;t have one yet, whatever the indentation shows. In the starter, the only <code>else</code> belonged to the inner <code>if(totalValue &gt;= MIN_VALUE)</code>: 3+ items under $1,000 got the <em>small</em> bonus, and fewer than 3 items fell through with no <code>else</code> at all, leaving <code>bonus</code> at 0. Giving the inner <code>if</code> its own <code>else</code> (the medium bonus) completes the nested <code>if…else</code>, so the next <code>else</code> pairs with the outer <code>if</code>, exactly as in the book&#x27;s Figure 5-13. Wrapping the inner decision in braces works too: <code>if(itemsSold &gt;= MIN_ITEMS) { if(…) … else … } else bonus = SMALL_BONUS;</code>. Either way, the whole nested <code>if…else</code> sits inside the <code>if</code> clause of the outer one, and the total value is examined only for staff who sold enough items.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestKiteShopBonus.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestKiteShopBonus</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs the bonus sheet exactly as "java KiteShopBonus" would.</span>
+<span class="t-w">        </span><span class="t-n">KiteShopBonus</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// The boundaries: exactly 3 items, exactly $1,000, and just under it.</span>
+<span class="t-w">        </span><span class="t-n">KiteShopBonus</span><span class="t-p">.</span><span class="t-na">printLine</span><span class="t-p">(</span><span class="t-s">"Dev"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">1000.00</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">KiteShopBonus</span><span class="t-p">.</span><span class="t-na">printLine</span><span class="t-p">(</span><span class="t-s">"Eli"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">999.99</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">KiteShopBonus</span><span class="t-p">.</span><span class="t-na">printLine</span><span class="t-p">(</span><span class="t-s">"Fay"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.00</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Ana: 4 items, $1250.0 -&gt; bonus $50
+Ben: 5 items, $640.0 -&gt; bonus $25
+Cai: 2 items, $1800.0 -&gt; bonus $10
+Dev: 3 items, $1000.0 -&gt; bonus $50
+Eli: 3 items, $999.99 -&gt; bonus $25
+Fay: 0 items, $0.0 -&gt; bonus $10
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The value test is nested inside the items test, with a medium-bonus else<div class="small">in <code>KiteShopBonus.getBonus</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bif\s*\(\s*itemsSold\s*&gt;=\s*MIN_ITEMS\s*\)\s*\{?\s*if\s*\(\s*totalValue\s*&gt;=\s*MIN_VALUE\s*\))(?=[\s\S]*\belse\s*\{?\s*bonus\s*=\s*MEDIUM_BONUS\s*;)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Each if has its own else<div class="small">in <code>KiteShopBonus.getBonus</code></div></td><td><div><span class="tag">require</span> <code>^(?=(?:[\s\S]*?\belse\b){2})(?=[\s\S]*\belse\s*\{?\s*bonus\s*=\s*SMALL_BONUS\s*;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The value test is nested inside the items test, with a medium-bonus else</dt><dd><p>Keep the value test nested inside <code>if(itemsSold &gt;= MIN_ITEMS)</code> and give it its own <code>else</code> that assigns <code>MEDIUM_BONUS</code>. Staff with 3 or more items always earn either the large or the medium bonus: that is a complete <code>if…else</code> inside the outer <code>if</code>.</p><div class='small'><strong>Hint:</strong></div><p>Which bonus is missing from the starter completely?</p></dd><dt>C2 · Each if has its own else</dt><dd><p>The decision needs two <code>else</code> clauses: one for the inner value test and one, assigning <code>SMALL_BONUS</code>, for the outer items test. The compiler pairs each <code>else</code> with the most recent unmatched <code>if</code>, so the small-bonus <code>else</code> must come after the inner decision is complete.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Read the starter the way the compiler does: an <code>else</code> belongs to the closest <code>if</code> above it that doesn&#x27;t have an <code>else</code> yet.</p></li><li><p>Three outcomes need three assignments. Which constant never appears in the starter?</p></li><li><p>Once the inner <code>if</code> has its own <code>else</code>, the next <code>else</code> you write pairs with the outer <code>if</code>. Braces around the inner decision make the same pairing explicit.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is Cai&#x27;s $1,800 total never examined by your solution? Is that a problem?</p><div class="answer"><p>The value test is nested in the items test, so it runs only when 3 or more items were sold. It isn&#x27;t a problem: with fewer than 3 items the bonus is $10 whatever the value, so the second question would be wasted.</p></div></li><li><p>Rewrite the outcome rules as a sentence a new programmer could use to predict where each <code>else</code> goes in any nested decision.</p><div class="answer"><p>Each <code>else</code> belongs to the nearest <code>if</code> above it that doesn&#x27;t already have an <code>else</code>; elses match ifs on a first-in, last-out basis, so an inner decision must be complete (or closed with a brace) before an <code>else</code> for the outer one.</p></div></li></ol>
+<h2>Extension</h2><p>Breakwater Kites adds a $75 bonus for 10 or more items worth at least $1,000. Where does the new decision go, and what is the smallest change that keeps every existing bonus correct?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; dependent statements indented under their if, else or case; named constants instead of bare numbers in conditions.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
