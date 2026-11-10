@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The badge printer that rejects Muñoz</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 7.2</div>
+  <h1>The badge printer that rejects Muñoz</h1>
+<h2>Objectives</h2><ul><li>Use <code>Character.isLetter()</code>, <code>isDigit()</code> and <code>isWhitespace()</code> to test a <code>char</code> instead of hand-written ranges</li><li>Use <code>Character.toUpperCase()</code> to convert a <code>char</code>, knowing it leaves non-letters unchanged</li><li>Distinguish the <code>is</code> methods (return a <code>boolean</code>) from the <code>to</code> methods (return a converted <code>char</code>)</li><li>Explain why the methods are called with the class name: they are <code>static</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>isAllowed()</code> returns true for any letter (use <code>Character.isLetter()</code>), a space, a hyphen or an apostrophe, and false for everything else. No hand-written letter ranges.</li><li><strong>R2</strong> <code>toBadge()</code> returns the uppercase equivalent with <code>Character.toUpperCase()</code>; characters that are not lowercase letters come back unchanged. No arithmetic such as <code>c - 32</code>.</li><li><strong>R3</strong> <code>reason()</code> returns <code>&quot;a digit&quot;</code> when <code>Character.isDigit()</code> is true, <code>&quot;whitespace&quot;</code> when <code>Character.isWhitespace()</code> is true, and <code>&quot;a symbol&quot;</code> otherwise.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, what does <code>isAllowed(&#x27;\u00f1&#x27;)</code> (the n with a tilde) return, and why?</p><div class="answer"><p>false. The letter is not between &#x27;a&#x27; and &#x27;z&#x27; or &#x27;A&#x27; and &#x27;Z&#x27; in Unicode, and it is not a space, hyphen or apostrophe, so every part of the test is false.</p></div></li><li><p><code>Character.isUpperCase()</code> and <code>Character.toUpperCase()</code> look alike. What different kinds of values do they return?</p><div class="answer"><p>isUpperCase() returns a boolean (true or false); toUpperCase() returns a char, the uppercase equivalent of its argument.</p></div></li></ol>
+<h2>Solution</h2><div class="file">BadgePrinter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BadgePrinter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// True for the characters a badge can print:</span>
+<span class="t-w">    </span><span class="t-c1">// letters, spaces, hyphens and apostrophes.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isAllowed</span><span class="t-p">(</span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Character</span><span class="t-p">.</span><span class="t-na">isLetter</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-sc">' '</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-sc">'-'</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-sc">'\''</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The character as it is printed on the badge (badges are in capitals).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-nf">toBadge</span><span class="t-p">(</span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Character</span><span class="t-p">.</span><span class="t-na">toUpperCase</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Why the printer rejected a character.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">reason</span><span class="t-p">(</span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">Character</span><span class="t-p">.</span><span class="t-na">isDigit</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"a digit"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">Character</span><span class="t-p">.</span><span class="t-na">isWhitespace</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"whitespace"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"a symbol"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The <code>Character</code> class (Table 7-1) knows the properties of every Unicode character, so <code>Character.isLetter(&#x27;\u00f1&#x27;)</code> is true while the range test <code>c &gt;= &#x27;a&#x27; &amp;&amp; c &lt;= &#x27;z&#x27;</code> is false: <code>ñ</code> has the Unicode value 241, past <code>z</code> (122). <code>Character.toUpperCase()</code> returns the uppercase equivalent and makes <strong>no change</strong> to anything that is not a lowercase letter, so digits, hyphens and capitals need no special case; <code>c - 32</code> only works for <code>a</code> to <code>z</code>. The methods whose names start with <code>is</code> return a <code>boolean</code>; those that start with <code>to</code> return a <code>char</code>. All are <code>static</code>, which is why they are called with the class name and a dot. The space test stays <code>c == &#x27; &#x27;</code> on purpose: <code>isWhitespace()</code> is also true for a tab or a newline, which a badge must not print. In <code>reason()</code>, the order of the tests doesn&#x27;t matter here because a character can&#x27;t be a digit and whitespace at once.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBadgePrinter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBadgePrinter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">printBadge</span><span class="t-p">(</span><span class="t-s">"O'Neil-Park"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printBadge</span><span class="t-p">(</span><span class="t-s">"R2D2"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printBadge</span><span class="t-p">(</span><span class="t-s">"Li\tWei"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">printBadge</span><span class="t-p">(</span><span class="t-s">"Ana!"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// ñ is the n with a tilde in Munoz; Ñ is its capital.</span>
+<span class="t-w">        </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">enye</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-sc">'ñ'</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"n with tilde allowed: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BadgePrinter</span><span class="t-p">.</span><span class="t-na">isAllowed</span><span class="t-p">(</span><span class="t-n">enye</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"n with tilde printed as its capital: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">BadgePrinter</span><span class="t-p">.</span><span class="t-na">toBadge</span><span class="t-p">(</span><span class="t-n">enye</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-sc">'Ñ'</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"7 printed as: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BadgePrinter</span><span class="t-p">.</span><span class="t-na">toBadge</span><span class="t-p">(</span><span class="t-sc">'7'</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Walks through the name one character at a time</span>
+<span class="t-w">    </span><span class="t-c1">// (charAt() and length() are in section 7.4).</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printBadge</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">badge</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">();</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">i</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">c</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">.</span><span class="t-na">charAt</span><span class="t-p">(</span><span class="t-n">i</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-o">!</span><span class="t-n">BadgePrinter</span><span class="t-p">.</span><span class="t-na">isAllowed</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">shown</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">.</span><span class="t-na">replace</span><span class="t-p">(</span><span class="t-sc">'\t'</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-sc">'_'</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">shown</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": rejected at position "</span>
+<span class="t-w">                    </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">i</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BadgePrinter</span><span class="t-p">.</span><span class="t-na">reason</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">));</span>
+<span class="t-w">                </span><span class="t-k">return</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-n">badge</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">badge</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BadgePrinter</span><span class="t-p">.</span><span class="t-na">toBadge</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": badge "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">badge</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">O&#x27;Neil-Park: badge O&#x27;NEIL-PARK
+R2D2: rejected at position 1, a digit
+Li_Wei: rejected at position 2, whitespace
+Ana!: rejected at position 3, a symbol
+n with tilde allowed: true
+n with tilde printed as its capital: true
+7 printed as: 7
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Letters are recognised with Character.isLetter()<div class="small">in <code>BadgePrinter.isAllowed</code></div></td><td><div><span class="tag">require</span> <code>\bCharacter\s*\.\s*isLetter\s*\(\s*c\s*\)</code></div><div><span class="tag">forbid</span> <code>\bc\s*[&lt;&gt;]=?\s*&#x27;|&#x27;\s*[&lt;&gt;]=?\s*c\b|\bisLetterOrDigit\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>toBadge() converts with Character.toUpperCase()<div class="small">in <code>BadgePrinter.toBadge</code></div></td><td><div><span class="tag">require</span> <code>\bCharacter\s*\.\s*toUpperCase\s*\(\s*c\s*\)</code></div><div><span class="tag">forbid</span> <code>-\s*32\b|\bc\s*[&lt;&gt;]=?\s*&#x27;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>reason() asks isDigit() and isWhitespace()<div class="small">in <code>BadgePrinter.reason</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bCharacter\s*\.\s*isDigit\s*\(\s*c\s*\))(?=[\s\S]*\bCharacter\s*\.\s*isWhitespace\s*\(\s*c\s*\))</code></div><div><span class="tag">forbid</span> <code>\bc\s*[&lt;&gt;]=?\s*&#x27;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Letters are recognised with Character.isLetter()</dt><dd><p>Replace the two letter ranges with <code>Character.isLetter(c)</code>. It is true for every letter Unicode knows, including ñ, é and ü, while the ranges only cover <code>a</code> to <code>z</code> and <code>A</code> to <code>Z</code>. Keep the tests for space, hyphen and apostrophe.</p><div class='small'><strong>Hint:</strong></div><p><code>isLetterOrDigit()</code> would also let digits through, and a badge can&#x27;t print them.</p></dd><dt>C2 · toBadge() converts with Character.toUpperCase()</dt><dd><p>Return <code>Character.toUpperCase(c)</code>. It knows the capital of every lowercase letter and leaves all other characters unchanged, so you need neither the range test nor <code>- 32</code>.</p></dd><dt>C3 · reason() asks isDigit() and isWhitespace()</dt><dd><p>Test <code>Character.isDigit(c)</code> and <code>Character.isWhitespace(c)</code> and return <code>&quot;a digit&quot;</code>, <code>&quot;whitespace&quot;</code> or <code>&quot;a symbol&quot;</code>. <code>isWhitespace()</code> is true for a space, tab, newline, carriage return and form feed, so one call covers them all.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Look at Table 7-1: which methods answer yes/no questions about a character, and which return a converted character?</p></li><li><p>Character methods are <code>static</code>: you call them with the class name, a dot and the method name, and pass the <code>char</code> as the argument.</p></li><li><p><code>reason()</code> needs an <code>if</code>, an <code>else if</code> and an <code>else</code>: one return for each of the three kinds of rejected character.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why does <code>toBadge()</code> need no <code>if</code> once it uses <code>Character.toUpperCase()</code>? Use the <code>&#x27;7&#x27;</code> line of the test output in your answer.</p><div class="answer"><p>toUpperCase() makes no change to an argument that is not a lowercase letter, so &#x27;7&#x27;, hyphens, apostrophes and capitals come back as they are. The test shows 7 printed as 7.</p></div></li><li><p>Why did the solution keep <code>c == &#x27; &#x27;</code> for spaces instead of using <code>Character.isWhitespace(c)</code> in <code>isAllowed()</code>?</p><div class="answer"><p>isWhitespace() is also true for a tab, newline, carriage return and form feed. A badge should print a space but reject a tab, as Li&lt;Tab&gt;Wei shows.</p></div></li><li><p>How can you tell from the call <code>Character.isDigit(c)</code> that <code>isDigit()</code> is a static method?</p><div class="answer"><p>It is called with the class name Character and a dot, not with an object, so it belongs to the class.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>countLetters(String name)</code> that returns how many characters of a name are letters. You will need a loop with <code>name.length()</code> and <code>name.charAt(i)</code> from section 7.4. Try it on <code>&quot;O&#x27;Neil-Park&quot;</code> (9).</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; each method has one clear return per case; no leftover range tests or magic numbers.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

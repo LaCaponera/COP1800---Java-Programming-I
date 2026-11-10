@@ -1,0 +1,643 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 7: Characters, Strings, and the StringBuilder",
+ "collection_intro": "Hands-on labs for sections 7.1 to 7.5 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "7.1",
+   "title": "The bridge door that locks out its own officer",
+   "subtitle": "String variables are references: == compares where text is stored, equals() compares what it says",
+   "source": "Ch. 7, section 7.1 (pp. 237–238)",
+   "minutes": 20,
+   "objectives": [
+    "Explain why `==` on two `String` variables compares memory addresses, not the characters",
+    "Predict when `==` seems to work on Strings (two identical literals) and when it fails (text read from input)",
+    "Replace a reference comparison with `equals()` and keep `==` where it is right: on a primitive `char`",
+    "Name the three Java classes for text data: `Character`, `String` and `StringBuilder`"
+   ],
+   "scenario": "On the *Gull Star*, the bridge door opens only for the duty officer's badge, `MARA-07`, scanned at the bridge deck, `B`. In the shipyard's tests, where the badge was typed into the code as `\"MARA-07\"`, the door opened every time. Tonight Officer Mara scanned her real badge and the door stayed locked. The gate also has a *repeat scan* warning for a badge scanned twice in a row, and it has never fired once.\n\nBoth methods in `CrewGate` compare text with `==`. The scanner reads each badge with `nextLine()`, which builds a new `String` object every time, so `==` compares two different addresses even when the characters match. One comparison in `canEnterBridge()` is fine as it is: decide which.\n\nWhen you are done, scanning `MARA-07` at deck B twice must print:\n\n```\nMARA-07 at deck B: bridge door opens\nMARA-07 at deck B: repeat scan, bridge door opens\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`canEnterBridge()` compares the badge's **contents** with `DUTY_OFFICER` using `equals()`, and keeps `==` for the deck, which is a primitive `char`."
+    },
+    {
+     "id": "R2",
+     "text": "`isRepeatScan()` returns true when `badge` and `lastBadge` contain the same characters, using `equals()`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "CrewGate.java",
+   "starter_code": "import java.util.Scanner;\n\npublic class CrewGate\n{\n    public static final String DUTY_OFFICER = \"MARA-07\";\n    public static final char BRIDGE_DECK = 'B';\n\n    // True only for the duty officer's badge scanned at the bridge deck.\n    public static boolean canEnterBridge(String badge, char deck)\n    {\n        // TODO (R1): one of these two comparisons checks where the text is\n        // stored, not what it says. Fix that one and keep the other.\n        return badge == DUTY_OFFICER && deck == BRIDGE_DECK;\n    }\n\n    // True when the same badge is scanned twice in a row.\n    public static boolean isRepeatScan(String badge, String lastBadge)\n    {\n        // TODO (R2): compare what the two badges say.\n        return badge == lastBadge;\n    }\n\n    public static void main(String[] args)\n    {\n        Scanner keyboard = new Scanner(System.in);\n        System.out.print(\"Badge >> \");\n        String badge = keyboard.nextLine();\n        if(canEnterBridge(badge, BRIDGE_DECK))\n            System.out.println(\"Bridge door opens for \" + badge);\n        else\n            System.out.println(\"Bridge door stays locked for \" + badge);\n    }\n}\n",
+   "solution": "import java.util.Scanner;\n\npublic class CrewGate\n{\n    public static final String DUTY_OFFICER = \"MARA-07\";\n    public static final char BRIDGE_DECK = 'B';\n\n    // True only for the duty officer's badge scanned at the bridge deck.\n    public static boolean canEnterBridge(String badge, char deck)\n    {\n        return DUTY_OFFICER.equals(badge) && deck == BRIDGE_DECK;\n    }\n\n    // True when the same badge is scanned twice in a row.\n    public static boolean isRepeatScan(String badge, String lastBadge)\n    {\n        return badge.equals(lastBadge);\n    }\n\n    public static void main(String[] args)\n    {\n        Scanner keyboard = new Scanner(System.in);\n        System.out.print(\"Badge >> \");\n        String badge = keyboard.nextLine();\n        if(canEnterBridge(badge, BRIDGE_DECK))\n            System.out.println(\"Bridge door opens for \" + badge);\n        else\n            System.out.println(\"Bridge door stays locked for \" + badge);\n    }\n}\n",
+   "solution_notes": "This is the book's TryToCompareStrings problem (Figure 7-1). A `String` variable holds a **reference**: the address where the characters are stored. `nextLine()` builds a new `String` object for every line it reads, so a scanned `MARA-07` sits at a different address from the literal `\"MARA-07\"` and `==` is false. The shipyard tests passed for the misleading reason the book describes: identical literals in a program are stored once, so two literals share one address. `equals()` compares the characters, however the text was created. The deck is a `char`, a primitive type, so the variable holds the value itself and `==` compares values: that comparison was always right (and a `char` has no methods to call). Writing `DUTY_OFFICER.equals(badge)` (constant first) also gives false instead of a crash if `badge` is ever null; `badge.equals(DUTY_OFFICER)` passes the checks too.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The badge is compared with equals(); the deck keeps ==",
+     "within": "CrewGate.canEnterBridge",
+     "require": "^(?=[\\s\\S]*(?:\\bDUTY_OFFICER\\s*\\.\\s*equals\\s*\\(\\s*badge\\s*\\)|\\bbadge\\s*\\.\\s*equals\\s*\\(\\s*DUTY_OFFICER\\s*\\)))(?=[\\s\\S]*(?:\\bdeck\\s*==\\s*BRIDGE_DECK\\b|\\bBRIDGE_DECK\\s*==\\s*deck\\b))",
+     "forbid": "\\bbadge\\s*[!=]=|[!=]=\\s*badge\\b|\\bDUTY_OFFICER\\s*[!=]=|[!=]=\\s*DUTY_OFFICER\\b",
+     "message": "Compare the badge with `DUTY_OFFICER.equals(badge)` (or `badge.equals(DUTY_OFFICER)`): a `String` variable holds an address, and a scanned badge is a new object at a new address. Keep `deck == BRIDGE_DECK`: a `char` is a primitive, so `==` already compares the values.",
+     "hint": "Only one of the two `==` in the return statement has a reference on each side."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Repeat scans compare contents with equals()",
+     "within": "CrewGate.isRepeatScan",
+     "require": "\\b(?:badge\\s*\\.\\s*equals\\s*\\(\\s*lastBadge|lastBadge\\s*\\.\\s*equals\\s*\\(\\s*badge)\\s*\\)",
+     "forbid": "\\bbadge\\s*[!=]=\\s*lastBadge\\b|\\blastBadge\\s*[!=]=\\s*badge\\b",
+     "message": "Return `badge.equals(lastBadge)`. Each scan is read by a separate `nextLine()` call, so the two badges are always two objects; only their characters can match."
+    }
+   ],
+   "hints": [
+    "Ask of each variable in the comparisons: is its type a class (`String`) or a primitive (`char`)? Only a primitive variable holds its value directly.",
+    "The `String` class gives every String object a method that compares the characters and returns a `boolean`. You can call it on the constant or on the scanned badge.",
+    "In the test program the literal `\"MARA-07\"` passes even with `==`, because both literals are the same stored object. The scanned lines are new objects, which is why they fail."
+   ],
+   "test_program": {
+    "file_name": "TestCrewGate.java",
+    "code": "import java.util.Scanner;\n\npublic class TestCrewGate\n{\n    public static void main(String[] args)\n    {\n        // A badge written in the code as a literal\n        System.out.println(\"Literal MARA-07 at deck B: \"\n            + CrewGate.canEnterBridge(\"MARA-07\", 'B'));\n\n        // Badges \"scanned\" at the gate: every nextLine() builds a new String\n        Scanner scanner = new Scanner(\"MARA-07\\nMARA-07\\nTOMAS-12\\nMARA-07\\n\");\n        String lastBadge = \"\";\n        String badge;\n\n        badge = scanner.nextLine();\n        scan(badge, 'B', lastBadge);\n        lastBadge = badge;\n\n        badge = scanner.nextLine();\n        scan(badge, 'B', lastBadge);\n        lastBadge = badge;\n\n        badge = scanner.nextLine();\n        scan(badge, 'B', lastBadge);\n        lastBadge = badge;\n\n        badge = scanner.nextLine();\n        scan(badge, 'C', lastBadge);\n    }\n\n    private static void scan(String badge, char deck, String lastBadge)\n    {\n        System.out.print(badge + \" at deck \" + deck + \": \");\n        if(CrewGate.isRepeatScan(badge, lastBadge))\n            System.out.print(\"repeat scan, \");\n        if(CrewGate.canEnterBridge(badge, deck))\n            System.out.println(\"bridge door opens\");\n        else\n            System.out.println(\"bridge door stays locked\");\n    }\n}\n",
+    "expected_output": "Literal MARA-07 at deck B: true\nMARA-07 at deck B: bridge door opens\nMARA-07 at deck B: repeat scan, bridge door opens\nTOMAS-12 at deck B: bridge door stays locked\nMARA-07 at deck C: bridge door stays locked\n",
+    "predict": "Before you change anything, predict the first two lines with the starter: does the literal `\"MARA-07\"` open the door? Does the scanned `MARA-07`? Run it and see whether you were right.",
+    "how_to_run": "Put `CrewGate.java` and `TestCrewGate.java` in the same folder, then run `javac *.java` and `java TestCrewGate`. In an IDE, add both to one project and run `TestCrewGate.java`. You don't type anything: the test program supplies the scanned badges."
+   },
+   "warmup": [
+    {
+     "question": "In the starter, `badge` and `DUTY_OFFICER` are both `String` variables. What does each variable actually hold, so what does `badge == DUTY_OFFICER` compare?",
+     "model_answer": "Each holds a reference, the memory address where its characters are stored. So == compares the two addresses, not the characters."
+    },
+    {
+     "question": "`deck == BRIDGE_DECK` also uses `==`. Why is that comparison correct?",
+     "model_answer": "char is a primitive type, so the variable holds the character value itself, not an address. == compares the two values."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "With the starter, the literal `\"MARA-07\"` opened the door but the scanned `MARA-07` did not. Explain the difference in terms of memory addresses.",
+     "model_answer": "Identical literals are stored once, so both literals refer to the same address and == is true. nextLine() builds a new String object at a new address, so == compares two different addresses and is false even though the characters match."
+    },
+    {
+     "question": "Why is a bug like this dangerous to test only with literals typed into your code?",
+     "model_answer": "Literal tests pass by accident because identical literals share an address. The bug only appears with text that is created at run time, such as user input, so the program looks correct until real users use it."
+    },
+    {
+     "question": "Which of the three text classes in this chapter (`Character`, `String`, `StringBuilder`) would you choose for a badge code that never changes after it is scanned, and why?",
+     "model_answer": "String: the badge is fixed text that is compared but never modified. Character holds a single character, and StringBuilder is for text that will be changed repeatedly."
+    }
+   ],
+   "extension": "Add `isCrewBadge(String badge)` that returns true for `MARA-07`, `TOMAS-12` or `LIN-03` using `equals()` and `||`. Then try `CrewGate.canEnterBridge(null, 'B')` with your solution and with `badge.equals(DUTY_OFFICER)` instead. Which version crashes, and why?",
+   "worth_knowing": "Comparing Strings with `==` is common enough that bug-finding tools have a named rule for it: SpotBugs reports it as `ES_COMPARING_STRINGS_WITH_EQ`, and IntelliJ IDEA underlines it as you type. Professional teams run such tools on every commit to catch it early.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the comparison reads clearly (constant first or variable first, used consistently)."
+    }
+   ]
+  },
+  {
+   "id": "7.2",
+   "title": "The badge printer that rejects Muñoz",
+   "subtitle": "Character class methods: is... methods that test a char and to... methods that convert it",
+   "source": "Ch. 7, section 7.2 (pp. 238–241)",
+   "minutes": 25,
+   "objectives": [
+    "Use `Character.isLetter()`, `isDigit()` and `isWhitespace()` to test a `char` instead of hand-written ranges",
+    "Use `Character.toUpperCase()` to convert a `char`, knowing it leaves non-letters unchanged",
+    "Distinguish the `is` methods (return a `boolean`) from the `to` methods (return a converted `char`)",
+    "Explain why the methods are called with the class name: they are `static`"
+   ],
+   "scenario": "The Gull Island ferry prints a name badge, in capitals, for every passenger. The printer accepts letters, spaces, hyphens and apostrophes. Its software was written with ranges such as `c >= 'a' && c <= 'z'`, so it only knows the 26 English letters: this morning it refused to print a badge for **Ana Muñoz**, because `ñ` is not between `a` and `z`.\n\nRewrite `BadgePrinter` with the `Character` class, which knows every letter in Unicode. When the printer rejects a character, `reason()` tells the agent what kind of character it was, so with the names `R2D2` and `Li<Tab>Wei` the test program prints:\n\n```\nR2D2: rejected at position 1, a digit\nLi_Wei: rejected at position 2, whitespace\n```\n\n(the test program shows the tab as `_` so you can see it). The test program walks through each name with `length()` and `charAt()`, which you meet in section 7.4; your methods only ever see one `char`.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`isAllowed()` returns true for any letter (use `Character.isLetter()`), a space, a hyphen or an apostrophe, and false for everything else. No hand-written letter ranges."
+    },
+    {
+     "id": "R2",
+     "text": "`toBadge()` returns the uppercase equivalent with `Character.toUpperCase()`; characters that are not lowercase letters come back unchanged. No arithmetic such as `c - 32`."
+    },
+    {
+     "id": "R3",
+     "text": "`reason()` returns `\"a digit\"` when `Character.isDigit()` is true, `\"whitespace\"` when `Character.isWhitespace()` is true, and `\"a symbol\"` otherwise."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "BadgePrinter.java",
+   "starter_code": "public class BadgePrinter\n{\n    // True for the characters a badge can print:\n    // letters, spaces, hyphens and apostrophes.\n    public static boolean isAllowed(char c)\n    {\n        // TODO (R1): these ranges only know the 26 English letters, so they\n        // reject the n with a tilde in Munoz. Ask the Character class instead.\n        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')\n            || c == ' ' || c == '-' || c == '\\'';\n    }\n\n    // The character as it is printed on the badge (badges are in capitals).\n    public static char toBadge(char c)\n    {\n        // TODO (R2): subtracting 32 only works for a to z.\n        if(c >= 'a' && c <= 'z')\n            return (char)(c - 32);\n        return c;\n    }\n\n    // Why the printer rejected a character.\n    public static String reason(char c)\n    {\n        // TODO (R3): tell digits and whitespace apart from other symbols.\n        return \"a symbol\";\n    }\n}\n",
+   "solution": "public class BadgePrinter\n{\n    // True for the characters a badge can print:\n    // letters, spaces, hyphens and apostrophes.\n    public static boolean isAllowed(char c)\n    {\n        return Character.isLetter(c) || c == ' ' || c == '-' || c == '\\'';\n    }\n\n    // The character as it is printed on the badge (badges are in capitals).\n    public static char toBadge(char c)\n    {\n        return Character.toUpperCase(c);\n    }\n\n    // Why the printer rejected a character.\n    public static String reason(char c)\n    {\n        if(Character.isDigit(c))\n            return \"a digit\";\n        else if(Character.isWhitespace(c))\n            return \"whitespace\";\n        else\n            return \"a symbol\";\n    }\n}\n",
+   "solution_notes": "The `Character` class (Table 7-1) knows the properties of every Unicode character, so `Character.isLetter('\\u00f1')` is true while the range test `c >= 'a' && c <= 'z'` is false: `ñ` has the Unicode value 241, past `z` (122). `Character.toUpperCase()` returns the uppercase equivalent and makes **no change** to anything that is not a lowercase letter, so digits, hyphens and capitals need no special case; `c - 32` only works for `a` to `z`. The methods whose names start with `is` return a `boolean`; those that start with `to` return a `char`. All are `static`, which is why they are called with the class name and a dot. The space test stays `c == ' '` on purpose: `isWhitespace()` is also true for a tab or a newline, which a badge must not print. In `reason()`, the order of the tests doesn't matter here because a character can't be a digit and whitespace at once.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Letters are recognised with Character.isLetter()",
+     "within": "BadgePrinter.isAllowed",
+     "require": "\\bCharacter\\s*\\.\\s*isLetter\\s*\\(\\s*c\\s*\\)",
+     "forbid": "\\bc\\s*[<>]=?\\s*'|'\\s*[<>]=?\\s*c\\b|\\bisLetterOrDigit\\b",
+     "message": "Replace the two letter ranges with `Character.isLetter(c)`. It is true for every letter Unicode knows, including ñ, é and ü, while the ranges only cover `a` to `z` and `A` to `Z`. Keep the tests for space, hyphen and apostrophe.",
+     "hint": "`isLetterOrDigit()` would also let digits through, and a badge can't print them."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "toBadge() converts with Character.toUpperCase()",
+     "within": "BadgePrinter.toBadge",
+     "require": "\\bCharacter\\s*\\.\\s*toUpperCase\\s*\\(\\s*c\\s*\\)",
+     "forbid": "-\\s*32\\b|\\bc\\s*[<>]=?\\s*'",
+     "message": "Return `Character.toUpperCase(c)`. It knows the capital of every lowercase letter and leaves all other characters unchanged, so you need neither the range test nor `- 32`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "reason() asks isDigit() and isWhitespace()",
+     "within": "BadgePrinter.reason",
+     "require": "^(?=[\\s\\S]*\\bCharacter\\s*\\.\\s*isDigit\\s*\\(\\s*c\\s*\\))(?=[\\s\\S]*\\bCharacter\\s*\\.\\s*isWhitespace\\s*\\(\\s*c\\s*\\))",
+     "forbid": "\\bc\\s*[<>]=?\\s*'",
+     "message": "Test `Character.isDigit(c)` and `Character.isWhitespace(c)` and return `\"a digit\"`, `\"whitespace\"` or `\"a symbol\"`. `isWhitespace()` is true for a space, tab, newline, carriage return and form feed, so one call covers them all."
+    }
+   ],
+   "hints": [
+    "Look at Table 7-1: which methods answer yes/no questions about a character, and which return a converted character?",
+    "Character methods are `static`: you call them with the class name, a dot and the method name, and pass the `char` as the argument.",
+    "`reason()` needs an `if`, an `else if` and an `else`: one return for each of the three kinds of rejected character."
+   ],
+   "test_program": {
+    "file_name": "TestBadgePrinter.java",
+    "code": "public class TestBadgePrinter\n{\n    public static void main(String[] args)\n    {\n        printBadge(\"O'Neil-Park\");\n        printBadge(\"R2D2\");\n        printBadge(\"Li\\tWei\");\n        printBadge(\"Ana!\");\n\n        // ñ is the n with a tilde in Munoz; Ñ is its capital.\n        char enye = 'ñ';\n        System.out.println(\"n with tilde allowed: \" + BadgePrinter.isAllowed(enye));\n        System.out.println(\"n with tilde printed as its capital: \"\n            + (BadgePrinter.toBadge(enye) == 'Ñ'));\n        System.out.println(\"7 printed as: \" + BadgePrinter.toBadge('7'));\n    }\n\n    // Walks through the name one character at a time\n    // (charAt() and length() are in section 7.4).\n    private static void printBadge(String name)\n    {\n        String badge = \"\";\n        for(int i = 0; i < name.length(); ++i)\n        {\n            char c = name.charAt(i);\n            if(!BadgePrinter.isAllowed(c))\n            {\n                String shown = name.replace('\\t', '_');\n                System.out.println(shown + \": rejected at position \"\n                    + i + \", \" + BadgePrinter.reason(c));\n                return;\n            }\n            badge = badge + BadgePrinter.toBadge(c);\n        }\n        System.out.println(name + \": badge \" + badge);\n    }\n}\n",
+    "expected_output": "O'Neil-Park: badge O'NEIL-PARK\nR2D2: rejected at position 1, a digit\nLi_Wei: rejected at position 2, whitespace\nAna!: rejected at position 3, a symbol\nn with tilde allowed: true\nn with tilde printed as its capital: true\n7 printed as: 7\n",
+    "predict": "Before you change anything: which lines will the starter already get right, and which will it get wrong? Pay attention to the last three lines.",
+    "how_to_run": "Put `BadgePrinter.java` and `TestBadgePrinter.java` in the same folder, then run `javac *.java` and `java TestBadgePrinter`. In an IDE, add both to one project and run `TestBadgePrinter.java`. The test program shows the tab in `Li<Tab>Wei` as `_` so you can see where it is."
+   },
+   "warmup": [
+    {
+     "question": "With the starter, what does `isAllowed('\\u00f1')` (the n with a tilde) return, and why?",
+     "model_answer": "false. The letter is not between 'a' and 'z' or 'A' and 'Z' in Unicode, and it is not a space, hyphen or apostrophe, so every part of the test is false."
+    },
+    {
+     "question": "`Character.isUpperCase()` and `Character.toUpperCase()` look alike. What different kinds of values do they return?",
+     "model_answer": "isUpperCase() returns a boolean (true or false); toUpperCase() returns a char, the uppercase equivalent of its argument."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why does `toBadge()` need no `if` once it uses `Character.toUpperCase()`? Use the `'7'` line of the test output in your answer.",
+     "model_answer": "toUpperCase() makes no change to an argument that is not a lowercase letter, so '7', hyphens, apostrophes and capitals come back as they are. The test shows 7 printed as 7."
+    },
+    {
+     "question": "Why did the solution keep `c == ' '` for spaces instead of using `Character.isWhitespace(c)` in `isAllowed()`?",
+     "model_answer": "isWhitespace() is also true for a tab, newline, carriage return and form feed. A badge should print a space but reject a tab, as Li<Tab>Wei shows."
+    },
+    {
+     "question": "How can you tell from the call `Character.isDigit(c)` that `isDigit()` is a static method?",
+     "model_answer": "It is called with the class name Character and a dot, not with an object, so it belongs to the class."
+    }
+   ],
+   "extension": "Add `countLetters(String name)` that returns how many characters of a name are letters. You will need a loop with `name.length()` and `name.charAt(i)` from section 7.4. Try it on `\"O'Neil-Park\"` (9).",
+   "worth_knowing": "Not every letter has a one-character capital. `Character.toUpperCase('ß')` (the German sharp s) returns `ß` unchanged, because its capital is two letters, SS, which a single `char` can't hold. The `String` method `\"ß\".toUpperCase()` can, and returns `\"SS\"`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; each method has one clear return per case; no leftover range tests or magic numbers."
+    }
+   ]
+  },
+  {
+   "id": "7.3",
+   "title": "The marina list that files zephyr after Zodiac",
+   "subtitle": "Comparing Strings: equals(), equalsIgnoreCase(), compareTo(), and empty versus null",
+   "source": "Ch. 7, section 7.3 (pp. 241–246)",
+   "minutes": 25,
+   "objectives": [
+    "Choose between `equals()` and `equalsIgnoreCase()` for a comparison typed by people",
+    "Use the sign of `compareTo()` to decide which of two Strings comes first",
+    "Explain why `compareTo()` puts every capital before every lowercase letter",
+    "Tell an empty String from a null String, and test for null with `==` before calling any method"
+   ],
+   "scenario": "Gull Island Marina keeps a registry of the boats in its slips. Three bugs reached the harbor master this week:\n\n- She typed `SEA OTTER` to look up the *Sea Otter* and the registry said no such boat.\n- The slip list is supposed to be in alphabetical order, but `firstInList()` just returns its first argument.\n- The nickname column crashes on boats whose nickname was never recorded. In the registry, `\"\"` means *the owner said there is no nickname* and `null` means *nobody has asked yet*.\n\nFix `MarinaRegistry`. The list must use `compareTo()`, which orders by Unicode values, so the test program expects this line, which surprises most people:\n\n```\nFirst of zephyr / Zodiac: Zodiac\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`sameBoat()` treats names as the same boat whatever their capitals, using `equalsIgnoreCase()`."
+    },
+    {
+     "id": "R2",
+     "text": "`firstInList()` uses `compareTo()` and returns the name that comes first; when the names are identical it returns `a`."
+    },
+    {
+     "id": "R3",
+     "text": "`nicknameLabel()` returns `(not recorded)` for a null nickname, `(none)` for an empty one and the nickname in double quotes otherwise. Test for null with `==` **before** calling any method on the nickname."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "MarinaRegistry.java",
+   "starter_code": "public class MarinaRegistry\n{\n    // True when the typed name is the registered boat, whatever the capitals.\n    public static boolean sameBoat(String registered, String typed)\n    {\n        // TODO (R1)\n        return registered.equals(typed);\n    }\n\n    // The name that comes first in the slip list; a if they are identical.\n    public static String firstInList(String a, String b)\n    {\n        // TODO (R2): compare the two names.\n        return a;\n    }\n\n    // How the nickname column shows a nickname.\n    public static String nicknameLabel(String nickname)\n    {\n        // TODO (R3): a nickname nobody has asked about yet is null.\n        if(nickname.equals(\"\"))\n            return \"(none)\";\n        return \"\\\"\" + nickname + \"\\\"\";\n    }\n}\n",
+   "solution": "public class MarinaRegistry\n{\n    // True when the typed name is the registered boat, whatever the capitals.\n    public static boolean sameBoat(String registered, String typed)\n    {\n        return registered.equalsIgnoreCase(typed);\n    }\n\n    // The name that comes first in the slip list; a if they are identical.\n    public static String firstInList(String a, String b)\n    {\n        if(a.compareTo(b) <= 0)\n            return a;\n        else\n            return b;\n    }\n\n    // How the nickname column shows a nickname.\n    public static String nicknameLabel(String nickname)\n    {\n        if(nickname == null)\n            return \"(not recorded)\";\n        if(nickname.equals(\"\"))\n            return \"(none)\";\n        return \"\\\"\" + nickname + \"\\\"\";\n    }\n}\n",
+   "solution_notes": "`equalsIgnoreCase()` is the book's choice for text people type, because you can't predict when they use Shift or Caps Lock; a trailing space still makes two names different. `compareTo()` returns 0 for identical Strings, a negative number when the calling String comes first and a positive number when it comes later. Only the sign matters, so `a.compareTo(b) <= 0` returns `a` for a tie as required. The comparison uses Unicode values: every capital (65 to 90) is less than every lowercase letter (97 to 122), so `Zodiac` comes before `zephyr`, and a space (32) comes before any letter, so `Sea Otter` comes before `Seahorse`. An empty String refers to an object with no characters, so you can call its methods; a null String refers to nothing, so `nickname.equals(\"\")` crashes with a `NullPointerException`. Testing `nickname == null` first is the one place where `==` is the right test for a String: it asks whether the variable holds an address at all. `\"\".equals(nickname)` would also avoid the crash, but it would show `(none)` for null instead of `(not recorded)`, losing a distinction the registry needs.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Names are matched with equalsIgnoreCase()",
+     "within": "MarinaRegistry.sameBoat",
+     "require": "\\b(?:registered\\s*\\.\\s*equalsIgnoreCase\\s*\\(\\s*typed|typed\\s*\\.\\s*equalsIgnoreCase\\s*\\(\\s*registered)\\s*\\)",
+     "forbid": "\\.\\s*equals\\s*\\(|==",
+     "message": "Return `registered.equalsIgnoreCase(typed)`. `equals()` is true only when every character matches exactly, so `SEA OTTER` and `Sea Otter` count as different boats."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "firstInList() decides with the sign of compareTo()",
+     "within": "MarinaRegistry.firstInList",
+     "require": "\\b(?:a\\s*\\.\\s*compareTo\\s*\\(\\s*b|b\\s*\\.\\s*compareTo\\s*\\(\\s*a)\\s*\\)\\s*(?:<|>|<=|>=)\\s*0\\b",
+     "forbid": "\\bcompareToIgnoreCase\\b|[!=]=\\s*-?\\s*[1-9]",
+     "message": "Compare with `a.compareTo(b)` and test only its sign: `<= 0` means `a` comes first or the names are identical, so return `a`; otherwise return `b`. Don't test for a specific value such as `== -1`: `compareTo()` returns the difference between the first two characters that differ, which can be any number.",
+     "hint": "The registry orders by Unicode values, as `compareTo()` does, so don't switch to a case-insensitive comparison here."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Null is tested with == before any method call",
+     "within": "MarinaRegistry.nicknameLabel",
+     "require": "^(?:(?!\\bnickname\\s*\\.)[\\s\\S])*?\\b(?:nickname\\s*==\\s*null|null\\s*==\\s*nickname)\\b",
+     "forbid": "\\.\\s*equals\\s*\\(\\s*null\\s*\\)",
+     "message": "Start with `if(nickname == null) return \"(not recorded)\";`. A null String holds no address, so calling `nickname.equals(\"\")` on it crashes; `==` is the right test here because it asks whether the variable refers to an object at all.",
+     "hint": "`nickname.equals(null)` can never help: if `nickname` is null, the call itself crashes before `equals()` runs."
+    }
+   ],
+   "hints": [
+    "The `String` class has a version of `equals()` that ignores case. Its name says so.",
+    "`compareTo()` returns an `int`. You only care whether it is negative, zero or positive, so compare it with 0.",
+    "For R3, order matters: the first test must not call a method on `nickname`, because if it is null there is no object to call it on."
+   ],
+   "test_program": {
+    "file_name": "TestMarinaRegistry.java",
+    "code": "public class TestMarinaRegistry\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Sea Otter / SEA OTTER: \"\n            + MarinaRegistry.sameBoat(\"Sea Otter\", \"SEA OTTER\"));\n        System.out.println(\"Sea Otter / sea otter + space: \"\n            + MarinaRegistry.sameBoat(\"Sea Otter\", \"sea otter \"));\n\n        first(\"Petrel\", \"Pelican\");\n        first(\"Seahorse\", \"Sea Otter\");\n        first(\"Albatross\", \"Zodiac\");\n        first(\"zephyr\", \"Zodiac\");\n        first(\"Marlin\", \"Marlin\");\n\n        System.out.println(\"Nickname: \"\n            + MarinaRegistry.nicknameLabel(\"The Old Lady\"));\n        System.out.println(\"Nickname: \" + MarinaRegistry.nicknameLabel(\"\"));\n        System.out.println(\"Nickname: \" + MarinaRegistry.nicknameLabel(null));\n    }\n\n    private static void first(String a, String b)\n    {\n        System.out.println(\"First of \" + a + \" / \" + b + \": \"\n            + MarinaRegistry.firstInList(a, b));\n    }\n}\n",
+    "expected_output": "Sea Otter / SEA OTTER: true\nSea Otter / sea otter + space: false\nFirst of Petrel / Pelican: Pelican\nFirst of Seahorse / Sea Otter: Sea Otter\nFirst of Albatross / Zodiac: Albatross\nFirst of zephyr / Zodiac: Zodiac\nFirst of Marlin / Marlin: Marlin\nNickname: \"The Old Lady\"\nNickname: (none)\nNickname: (not recorded)\n",
+    "predict": "Predict the `Seahorse / Sea Otter` line before you run it: which name comes first, and which two characters does `compareTo()` end up comparing? Then predict what the starter does on the very last line.",
+    "how_to_run": "Put `MarinaRegistry.java` and `TestMarinaRegistry.java` in the same folder, then run `javac *.java` and `java TestMarinaRegistry`. In an IDE, add both to one project and run `TestMarinaRegistry.java`."
+   },
+   "warmup": [
+    {
+     "question": "With the starter, what happens when the test program calls `nicknameLabel(null)`? Why?",
+     "model_answer": "The program crashes with a NullPointerException: nickname refers to no object, so there is nothing to call equals() on."
+    },
+    {
+     "question": "`\"Roger\".compareTo(\"Rodrigo\")` returns 3. Which characters were compared to get that number, and what does the positive sign mean?",
+     "model_answer": "R and o match, then g is compared with d; g is 3 after d in Unicode, so it returns 3. Positive means Roger comes after Rodrigo."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your registry files `Zodiac` before `zephyr`. Explain why, using Unicode values.",
+     "model_answer": "compareTo() compares the first characters, Z and z. Capital Z is 90 and lowercase z is 122, so Z is smaller and Zodiac comes first. Every capital comes before every lowercase letter."
+    },
+    {
+     "question": "Lesson 7.1 said never to compare Strings with `==`, yet R3 requires `nickname == null`. Why is `==` correct here?",
+     "model_answer": "== compares references. Here we want to know whether the variable refers to any object at all, which is a question about the reference, not about the characters. A method such as equals() can't be called on null."
+    },
+    {
+     "question": "Why does `sameBoat(\"Sea Otter\", \"sea otter \")` still return false with `equalsIgnoreCase()`?",
+     "model_answer": "equalsIgnoreCase() ignores only differences in case. The typed name has an extra space at the end, so the two Strings have different characters (and lengths)."
+    }
+   ],
+   "extension": "Add `lastInList(String a, String b, String c)` that returns whichever of three names comes last, using only `compareTo()`. Test it with `\"Marlin\"`, `\"marlin\"` and `\"Zodiac\"`: which wins, and why?",
+   "worth_knowing": "Tony Hoare, who introduced the null reference in 1965 in the language ALGOL W, later called it his \"billion-dollar mistake\" because of the crashes it has caused. Newer languages such as Kotlin and Swift make the compiler check whether a variable may be null before you can call a method on it.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the null test comes first and reads clearly; comparisons test the sign of compareTo(), not a specific number."
+    }
+   ]
+  },
+  {
+   "id": "7.4",
+   "title": "The ticket counter that forgets every fix",
+   "subtitle": "String methods: toUpperCase(), replace(), indexOf(), substring(), charAt(), startsWith() and parseDouble()",
+   "source": "Ch. 7, section 7.4 (pp. 246–253)",
+   "minutes": 30,
+   "objectives": [
+    "Explain why calling `toUpperCase()` or `replace()` without using the result changes nothing: Strings are immutable",
+    "Split a full name at the space with `indexOf()` and `substring()`, and handle the `-1` that means *not found*",
+    "Capitalize a word with `charAt()`, `Character.toUpperCase()` and `substring()`",
+    "Clean text with `startsWith()` and `substring()` before converting it with `Double.parseDouble()`"
+   ],
+   "scenario": "Agents at the Gull Island ticket counter type fast and messily: sailing codes as `gi 2130`, names as `ana lopez`, fares as `$24.50` or `24.50`. `FerryTicket` should clean all three before a ticket is printed, but:\n\n- `normalizeCode()` calls `toUpperCase()` and `replace()`, and still returns the code unchanged.\n- `cardName()` has not been written. The boarding card shows the family name in capitals, a comma, then the first name with one capital: `ana lopez` becomes `LOPEZ, Ana`. A passenger with a single name, such as `cher`, gets `CHER`.\n- `fareAmount()` crashes on `$24.50` with a `NumberFormatException`.\n\nWhen you are done, the test program prints:\n\n```\nCode: GI-2130\nCard: LOPEZ, Ana\nCard: DE LA CRUZ, Maria\nCard: CHER\nFares: 24.5 + 13.75 = 38.25\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`normalizeCode()` returns the code in capitals with each space replaced by a hyphen, using the **values returned** by `toUpperCase()` and `replace()`."
+    },
+    {
+     "id": "R2",
+     "text": "`cardName()` finds the first space with `indexOf(' ')`, splits the name with `substring()`, and returns the family name in capitals, `, `, and the first name with its first letter capitalized (`Character.toUpperCase()` on `charAt(0)`) and the rest in lowercase."
+    },
+    {
+     "id": "R3",
+     "text": "When the name has no space (`indexOf()` returns `-1`), `cardName()` returns the whole name in capitals."
+    },
+    {
+     "id": "R4",
+     "text": "`fareAmount()` removes a leading `$` (test it with `startsWith()`, remove it with `substring()`) and converts the rest with `Double.parseDouble()`."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "FerryTicket.java",
+   "starter_code": "public class FerryTicket\n{\n    // \"gi 2130\" typed at the counter becomes \"GI-2130\".\n    public static String normalizeCode(String code)\n    {\n        // TODO (R1): both calls below do their work, yet the method\n        // returns the code exactly as it was typed. Why?\n        code.toUpperCase();\n        code.replace(' ', '-');\n        return code;\n    }\n\n    // \"ana lopez\" becomes \"LOPEZ, Ana\"; a single name, \"cher\", becomes \"CHER\".\n    public static String cardName(String fullName)\n    {\n        // TODO (R2, R3)\n        return fullName;\n    }\n\n    // \"$24.50\" or \"24.50\" becomes 24.5.\n    public static double fareAmount(String fare)\n    {\n        // TODO (R4): parseDouble() can't read a dollar sign.\n        return Double.parseDouble(fare);\n    }\n}\n",
+   "solution": "public class FerryTicket\n{\n    // \"gi 2130\" typed at the counter becomes \"GI-2130\".\n    public static String normalizeCode(String code)\n    {\n        code = code.toUpperCase();\n        code = code.replace(' ', '-');\n        return code;\n    }\n\n    // \"ana lopez\" becomes \"LOPEZ, Ana\"; a single name, \"cher\", becomes \"CHER\".\n    public static String cardName(String fullName)\n    {\n        int space = fullName.indexOf(' ');\n        if(space == -1)\n            return fullName.toUpperCase();\n\n        String firstName = fullName.substring(0, space);\n        String familyName = fullName.substring(space + 1);\n        return familyName.toUpperCase() + \", \"\n            + Character.toUpperCase(firstName.charAt(0))\n            + firstName.substring(1).toLowerCase();\n    }\n\n    // \"$24.50\" or \"24.50\" becomes 24.5.\n    public static double fareAmount(String fare)\n    {\n        if(fare.startsWith(\"$\"))\n            fare = fare.substring(1);\n        return Double.parseDouble(fare);\n    }\n}\n",
+   "solution_notes": "**Immutability** is the heart of R1: `code.toUpperCase()` doesn't change `code`; it creates a new String and returns its address. Ignoring the return value throws the new String away, so the result must be assigned (`code = code.toUpperCase();`) or used directly (`return code.toUpperCase().replace(' ', '-');`). `cardName()` follows the book's BusinessLetter (Figure 7-8) and RepairName steps: `indexOf(' ')` gives the position of the first space, `substring(0, space)` is everything before it and `substring(space + 1)` everything after it, to the end. Splitting at the *first* space keeps multi-word family names together (`de la cruz`). `indexOf()` returns `-1` when the character is missing, and `substring(0, -1)` would throw, so the single-name case is handled first. `Character.toUpperCase(firstName.charAt(0))` is a `char`; the `+` that joins it with Strings turns it into text. For fares, `startsWith(\"$\")` is case-sensitive and exact, and `substring(1)` drops position 0; `Double.parseDouble()` then succeeds.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The new Strings from toUpperCase() and replace() are used",
+     "within": "FerryTicket.normalizeCode",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*(?:=|\\breturn)[^;]*\\.\\s*toUpperCase\\s*\\(\\s*\\))(?=[\\s\\S]*(?:=|\\breturn)[^;]*\\.\\s*replace\\s*\\(\\s*' '\\s*,\\s*'-'\\s*\\))",
+     "forbid": "(?:^|[;{}])\\s*code\\s*\\.\\s*(?:toUpperCase|replace)\\s*\\([^;]*\\)\\s*;",
+     "message": "Strings are immutable: `toUpperCase()` and `replace()` return a **new** String and leave `code` as it was. Assign each result (`code = code.toUpperCase();`) or chain the calls in the `return` statement."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The name is split at the space with indexOf() and substring()",
+     "within": "FerryTicket.cardName",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\\.\\s*indexOf\\s*\\(\\s*' '\\s*\\))(?=[\\s\\S]*\\.\\s*substring\\s*\\(\\s*0\\s*,\\s*\\w+\\s*\\))(?=[\\s\\S]*\\.\\s*substring\\s*\\(\\s*\\w+\\s*\\+\\s*1\\s*[,)])",
+     "message": "Store `fullName.indexOf(' ')` in a variable, then take `substring(0, space)` for the first name and `substring(space + 1)` for the family name. The `+ 1` skips the space itself."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The first name gets one capital and the rest lowercase",
+     "within": "FerryTicket.cardName",
+     "require": "^(?=[\\s\\S]*\\bCharacter\\s*\\.\\s*toUpperCase\\s*\\(\\s*\\w+\\s*\\.\\s*charAt\\s*\\(\\s*0\\s*\\)\\s*\\))(?=[\\s\\S]*\\.\\s*substring\\s*\\(\\s*1\\s*\\)\\s*\\.\\s*toLowerCase\\s*\\(\\s*\\))(?=[\\s\\S]*\\w+\\s*\\.\\s*toUpperCase\\s*\\(\\s*\\)\\s*\\+)",
+     "message": "Build the card as `familyName.toUpperCase() + \", \" + Character.toUpperCase(firstName.charAt(0)) + firstName.substring(1).toLowerCase()`: the family name in capitals, then the first letter of the first name as a capital, then the rest of the first name in lowercase.",
+     "hint": "Try your method on `mARIA de la cruz`: the card must say `Maria`, not `MARIA`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "A name without a space is handled before substring()",
+     "within": "FerryTicket.cardName",
+     "require": "\\bif\\s*\\(\\s*(?:\\w+\\s*==\\s*-\\s*1|-\\s*1\\s*==\\s*\\w+|\\w+\\s*<\\s*0|\\w+\\s*!=\\s*-\\s*1|\\w+\\s*>=\\s*0)\\s*\\)",
+     "message": "`indexOf()` returns `-1` when there is no space, and `substring(0, -1)` throws an exception. Test for `-1` before splitting and return `fullName.toUpperCase()` in that case."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "A leading $ is removed before parseDouble()",
+     "within": "FerryTicket.fareAmount",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*\\.\\s*startsWith\\s*\\(\\s*\\\"\\$\\\"\\s*\\))(?=[\\s\\S]*\\.\\s*substring\\s*\\(\\s*1\\s*\\))(?=[\\s\\S]*\\bDouble\\s*\\.\\s*parseDouble\\s*\\()",
+     "forbid": "\\.\\s*replace\\s*\\(\\s*'\\$'",
+     "message": "Test `fare.startsWith(\"$\")`; if it is true, keep `fare.substring(1)` (everything after position 0). Then return `Double.parseDouble(fare)`.",
+     "hint": "`replace('$', ' ')` would leave a space that `parseDouble()` can't read either, and a `char` can't be replaced by nothing."
+    }
+   ],
+   "hints": [
+    "For R1, read the starter's two calls aloud: what does each one *return*, and where does that returned value go?",
+    "Trace `\"ana lopez\"`: `indexOf(' ')` is 3. Which `substring()` calls give `\"ana\"` and `\"lopez\"`? Remember the second argument is the position *after* the last character you want.",
+    "For a name without a space, `indexOf()` doesn't fail; it returns a special value. Check for it before you call `substring()`."
+   ],
+   "test_program": {
+    "file_name": "TestFerryTicket.java",
+    "code": "public class TestFerryTicket\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Code: \" + FerryTicket.normalizeCode(\"gi 2130\"));\n        System.out.println(\"Code: \" + FerryTicket.normalizeCode(\"Prt 0645\"));\n\n        System.out.println(\"Card: \" + FerryTicket.cardName(\"ana lopez\"));\n        System.out.println(\"Card: \" + FerryTicket.cardName(\"mARIA de la cruz\"));\n        System.out.println(\"Card: \" + FerryTicket.cardName(\"cher\"));\n\n        double first = FerryTicket.fareAmount(\"$24.50\");\n        double second = FerryTicket.fareAmount(\"13.75\");\n        System.out.println(\"Fares: \" + first + \" + \" + second\n            + \" = \" + (first + second));\n    }\n}\n",
+    "expected_output": "Code: GI-2130\nCode: PRT-0645\nCard: LOPEZ, Ana\nCard: DE LA CRUZ, Maria\nCard: CHER\nFares: 24.5 + 13.75 = 38.25\n",
+    "predict": "With the starter, what will the two `Code:` lines print? Predict them before you run it, then explain the result in one sentence.",
+    "how_to_run": "Put `FerryTicket.java` and `TestFerryTicket.java` in the same folder, then run `javac *.java` and `java TestFerryTicket`. In an IDE, add both to one project and run `TestFerryTicket.java`."
+   },
+   "warmup": [
+    {
+     "question": "The starter calls `code.toUpperCase();` on its own line. What does that call do, and why does `code` still hold `gi 2130` afterwards?",
+     "model_answer": "It creates a new String, GI 2130, and returns its address, but nothing stores that address. Strings are immutable, so code still refers to the original gi 2130."
+    },
+    {
+     "question": "For `String name = \"ana lopez\";`, what are `name.indexOf(' ')`, `name.charAt(0)` and `name.substring(4)`?",
+     "model_answer": "indexOf(' ') is 3, charAt(0) is 'a', and substring(4) is \"lopez\" (from position 4 to the end)."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why does `cardName()` split at the **first** space? What would a passenger called `maria de la cruz` get if you split at the last one?",
+     "model_answer": "The first word is the first name and everything after it is the family name. Splitting at the last space would give CRUZ, Maria de la, breaking up a multi-word family name."
+    },
+    {
+     "question": "What happens if you remove your `-1` test and call `cardName(\"cher\")`? Explain in terms of what `indexOf()` returns.",
+     "model_answer": "indexOf(' ') returns -1 because there is no space, so substring(0, -1) is called with a negative end position and the program stops with an exception."
+    },
+    {
+     "question": "`fareAmount(\"24.50 USD\")` still crashes. Which exception, and why can't `parseDouble()` handle it?",
+     "model_answer": "NumberFormatException. parseDouble() can only convert a String that represents a valid number, and \" USD\" makes it invalid."
+    }
+   ],
+   "extension": "Add `departureHour(String code)` that returns the hour of a normalized code as an `int`: `\"GI-2130\"` gives 21. Find the hyphen with `indexOf('-')`, take the two characters after it with `substring()`, and convert them with `Integer.parseInt()`.",
+   "worth_knowing": "Because Strings are immutable, Java can safely share them: identical literals are stored once in a *string pool*. Immutability also makes Strings safe as file names and passwords passed between parts of a program, since no part can change the text after another part has checked it.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; meaningful names such as `space`, `firstName` and `familyName`; each String method result is used, never thrown away."
+    }
+   ]
+  },
+  {
+   "id": "7.5",
+   "title": "The departure board that rebuilds itself every hour",
+   "subtitle": "StringBuilder: append(), insert(), setLength(), capacity, and comparing contents with toString()",
+   "source": "Ch. 7, section 7.5 (pp. 253–257)",
+   "minutes": 30,
+   "objectives": [
+    "Explain why building text with `+` in a loop creates a new String on every pass",
+    "Build text in a loop with a `StringBuilder` created with `new` and an initial capacity",
+    "Change a `StringBuilder` with `append()`, `insert()` and `setLength()`, then turn it into a String with `toString()`",
+    "Explain why `equals()` on two `StringBuilder` objects compares references, and compare their contents instead"
+   ],
+   "scenario": "The dock's departure board shows a line of sailing times such as `06:00 | 08:00 | 10:00`. Its code builds that line with `list = list + ...` inside a loop. Every pass creates a brand-new String and copies all the text built so far, and the line ends with a stray ` | `.\n\nThe board also needs two new features:\n\n- `markDelayed()` inserts the word `DELAYED` after the time: `08:00 Gull Star` becomes `08:00 DELAYED Gull Star`.\n- `sameText()` tells the operator whether two boards show the same text. It uses `equals()` and always says no.\n\nRewrite `DockBoard` with `StringBuilder`. Each entry such as `06:00 | ` is 8 characters, so create the builder with room for `count * 8` characters up front. The test program expects:\n\n```\nTimes: [06:00 | 08:00 | 10:00]\nTimes: [21:00]\nTimes: []\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`sailingTimes()` builds the list in a `StringBuilder` created with `new` and an initial capacity of `count * 8`, adds each entry with `append()` inside the loop, and returns `toString()`. No String concatenation onto the list."
+    },
+    {
+     "id": "R2",
+     "text": "The list has ` | ` **between** times, not after the last one (for example, cut it off afterwards with `setLength()`), and `count` 0 gives an empty String."
+    },
+    {
+     "id": "R3",
+     "text": "`markDelayed()` copies the sailing into a `StringBuilder`, uses `insert()` to add `DELAYED ` at position 6, and returns the result as a String."
+    },
+    {
+     "id": "R4",
+     "text": "`sameText()` compares the two boards' **contents** by converting each with `toString()` and comparing with `equals()`."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "DockBoard.java",
+   "starter_code": "public class DockBoard\n{\n    // 6 becomes \"06\"; 14 stays \"14\".\n    public static String twoDigits(int hour)\n    {\n        if(hour < 10)\n            return \"0\" + hour;\n        return \"\" + hour;\n    }\n\n    // sailingTimes(6, 3, 2) returns \"06:00 | 08:00 | 10:00\".\n    public static String sailingTimes(int firstHour, int count, int gap)\n    {\n        // TODO (R1, R2): every pass of this loop creates a brand-new String,\n        // and the finished list ends with a stray \" | \".\n        String list = \"\";\n        int hour = firstHour;\n        for(int i = 0; i < count; ++i)\n        {\n            list = list + twoDigits(hour) + \":00 | \";\n            hour = hour + gap;\n        }\n        return list;\n    }\n\n    // markDelayed(\"08:00 Gull Star\") returns \"08:00 DELAYED Gull Star\".\n    public static String markDelayed(String sailing)\n    {\n        // TODO (R3)\n        return sailing;\n    }\n\n    // True when the two boards show the same text.\n    public static boolean sameText(StringBuilder a, StringBuilder b)\n    {\n        // TODO (R4)\n        return a.equals(b);\n    }\n}\n",
+   "solution": "public class DockBoard\n{\n    // 6 becomes \"06\"; 14 stays \"14\".\n    public static String twoDigits(int hour)\n    {\n        if(hour < 10)\n            return \"0\" + hour;\n        return \"\" + hour;\n    }\n\n    // sailingTimes(6, 3, 2) returns \"06:00 | 08:00 | 10:00\".\n    public static String sailingTimes(int firstHour, int count, int gap)\n    {\n        StringBuilder list = new StringBuilder(count * 8);\n        int hour = firstHour;\n        for(int i = 0; i < count; ++i)\n        {\n            list.append(twoDigits(hour));\n            list.append(\":00 | \");\n            hour = hour + gap;\n        }\n        if(count > 0)\n            list.setLength(list.length() - 3);\n        return list.toString();\n    }\n\n    // markDelayed(\"08:00 Gull Star\") returns \"08:00 DELAYED Gull Star\".\n    public static String markDelayed(String sailing)\n    {\n        StringBuilder line = new StringBuilder(sailing);\n        line.insert(6, \"DELAYED \");\n        return line.toString();\n    }\n\n    // True when the two boards show the same text.\n    public static boolean sameText(StringBuilder a, StringBuilder b)\n    {\n        return a.toString().equals(b.toString());\n    }\n}\n",
+   "solution_notes": "A `String` is immutable, so `list = list + ...` creates a new String on every pass and copies everything built so far into it. A `StringBuilder` is changed in place: `append()` adds to the end of its buffer. Unlike a String, it must be created with `new` and a constructor. `new StringBuilder(count * 8)` sets the initial **capacity** (the size of the buffer) to fit the whole list, so the buffer never has to be reallocated as it grows; this is the effect Figure 7-14 measures. Appending ` | ` after every time and then cutting the last 3 characters with `setLength(list.length() - 3)` keeps the loop simple; the `count > 0` test matters because `setLength(-3)` throws an exception. Appending the separator before every time except the first (`if(i > 0)`) is equally correct. `insert(6, \"DELAYED \")` adds text at position 6, right after `08:00 `. `StringBuilder` does not compare contents in `equals()`: it compares references, exactly like `==`, so two boards with identical text are \"different\". The book's fix, `a.toString().equals(b.toString())`, compares the characters. Here `StringBuilder` is the right tool for the loop, while a String is fine for `twoDigits()`, which builds its text once.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A StringBuilder with an initial capacity is appended to in the loop",
+     "within": "DockBoard.sailingTimes",
+     "require": "^(?=[\\s\\S]*\\bStringBuilder\\s+(\\w+)\\s*=\\s*new\\s+StringBuilder\\s*\\(\\s*count\\s*\\*\\s*8\\s*\\)\\s*;)(?=[\\s\\S]*\\bfor\\s*\\([^{]*\\)\\s*\\{[^}]*\\b\\1\\s*\\.\\s*append\\s*\\()(?=[\\s\\S]*\\breturn\\s+\\1\\s*\\.\\s*toString\\s*\\(\\s*\\)\\s*;)",
+     "forbid": "\\b(\\w+)\\s*=\\s*\\1\\s*\\+\\s*twoDigits|\\+=\\s*twoDigits|\\bString\\s+\\w+\\s*=\\s*\\\"\\\"\\s*;",
+     "message": "Declare `StringBuilder list = new StringBuilder(count * 8);`, call `list.append(...)` inside the loop instead of `list = list + ...`, and `return list.toString();`. The capacity makes room for every 8-character entry up front.",
+     "hint": "`append()` changes the builder itself, so its result doesn't need to be assigned to anything."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "No separator after the last time",
+     "within": "DockBoard.sailingTimes",
+     "require": "\\.\\s*setLength\\s*\\(|\\bif\\s*\\(\\s*i\\s*(?:>|!=)\\s*0\\s*\\)|\\bif\\s*\\(\\s*i\\s*<\\s*count\\s*-\\s*1\\s*\\)",
+     "message": "Remove the stray ` | `: either cut the last 3 characters after the loop with `list.setLength(list.length() - 3)` (only when `count > 0`), or append the separator only between times with an `if` inside the loop."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "markDelayed() inserts into a StringBuilder",
+     "within": "DockBoard.markDelayed",
+     "require": "^(?=[\\s\\S]*\\bnew\\s+StringBuilder\\s*\\(\\s*sailing\\s*\\))(?=[\\s\\S]*\\.\\s*insert\\s*\\(\\s*6\\s*,)(?=[\\s\\S]*\\.\\s*toString\\s*\\(\\s*\\))",
+     "forbid": "\\bsailing\\s*\\.\\s*substring\\b",
+     "message": "Copy the sailing with `new StringBuilder(sailing)`, call `insert(6, \"DELAYED \")` on it, and return its `toString()`. Position 6 is right after the time and its space."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "Boards are compared by their contents",
+     "within": "DockBoard.sameText",
+     "require": "\\b(?:a\\s*\\.\\s*toString\\s*\\(\\s*\\)\\s*\\.\\s*equals\\s*\\(\\s*b\\s*\\.\\s*toString\\s*\\(\\s*\\)\\s*\\)|b\\s*\\.\\s*toString\\s*\\(\\s*\\)\\s*\\.\\s*equals\\s*\\(\\s*a\\s*\\.\\s*toString\\s*\\(\\s*\\)\\s*\\))",
+     "forbid": "\\ba\\s*\\.\\s*equals\\s*\\(\\s*b\\s*\\)|\\bb\\s*\\.\\s*equals\\s*\\(\\s*a\\s*\\)|\\ba\\s*==\\s*b\\b",
+     "message": "Return `a.toString().equals(b.toString())`. `StringBuilder`'s own `equals()` compares references, like `==`, so it is false for two separate boards even when their text is identical."
+    }
+   ],
+   "hints": [
+    "Start R1 by changing only the declaration and the line inside the loop. The loop header and `hour = hour + gap;` stay as they are.",
+    "Trace `sailingTimes(9, 0, 1)`: the loop never runs. What would `setLength(list.length() - 3)` do to an empty builder?",
+    "For R4, turn each `StringBuilder` into a `String` first; then you can use the String comparison from section 7.3."
+   ],
+   "test_program": {
+    "file_name": "TestDockBoard.java",
+    "code": "public class TestDockBoard\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Times: [\" + DockBoard.sailingTimes(6, 3, 2) + \"]\");\n        System.out.println(\"Times: [\" + DockBoard.sailingTimes(21, 1, 1) + \"]\");\n        System.out.println(\"Times: [\" + DockBoard.sailingTimes(9, 0, 1) + \"]\");\n\n        System.out.println(DockBoard.markDelayed(\"08:00 Gull Star\"));\n        System.out.println(DockBoard.markDelayed(\"14:00 Island Belle\"));\n\n        StringBuilder north = new StringBuilder(\"06:00 | 08:00\");\n        StringBuilder south = new StringBuilder(\"06:00 | 08:00\");\n        StringBuilder east = new StringBuilder(\"06:00\");\n        System.out.println(\"North and south show the same text: \"\n            + DockBoard.sameText(north, south));\n        System.out.println(\"North and east show the same text: \"\n            + DockBoard.sameText(north, east));\n        System.out.println(\"Capacity of a builder made from \\\"Gull Star\\\": \"\n            + new StringBuilder(\"Gull Star\").capacity());\n    }\n}\n",
+    "expected_output": "Times: [06:00 | 08:00 | 10:00]\nTimes: [21:00]\nTimes: []\n08:00 DELAYED Gull Star\n14:00 DELAYED Island Belle\nNorth and south show the same text: true\nNorth and east show the same text: false\nCapacity of a builder made from \"Gull Star\": 25\n",
+    "predict": "Predict the last line before you run the test: what is the capacity of `new StringBuilder(\"Gull Star\")`? Then predict what the starter's `sameText(north, south)` prints.",
+    "how_to_run": "Put `DockBoard.java` and `TestDockBoard.java` in the same folder, then run `javac *.java` and `java TestDockBoard`. In an IDE, add both to one project and run `TestDockBoard.java`."
+   },
+   "warmup": [
+    {
+     "question": "With the starter, `sailingTimes(6, 3, 2)` runs the loop 3 times. How many different String objects does `list` refer to during the call, counting the empty one it starts with?",
+     "model_answer": "Four: the empty String, then a new String after each of the 3 passes. Strings are immutable, so each + creates a new object and the old ones are left for the garbage collector."
+    },
+    {
+     "question": "`new StringBuilder(\"Gull Star\")` contains 9 characters. What is its capacity, and why is it bigger than the length?",
+     "model_answer": "25: the length of the String plus 16. The extra 16 positions leave room to modify the builder without allocating new memory."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The starter's `sameText(north, south)` printed false although both boards show `06:00 | 08:00`. Explain why, and how your version fixes it.",
+     "model_answer": "StringBuilder's equals() compares references, and north and south are two separate objects at different addresses. My version converts both to Strings with toString() and uses String's equals(), which compares the characters."
+    },
+    {
+     "question": "Why does the solution create the builder with `new StringBuilder(count * 8)` instead of `new StringBuilder()`?",
+     "model_answer": "Each entry is 8 characters, so count * 8 fits the whole list. The buffer then never has to be enlarged and copied while the loop appends, which saves time for long lists."
+    },
+    {
+     "question": "`twoDigits()` still builds its result with `+`. Is that a problem? When should you choose a `StringBuilder` over a `String`?",
+     "model_answer": "No: it builds one short String once. Use StringBuilder when text is changed repeatedly, such as appending in a loop; for text built once or compared often, use String."
+    }
+   ],
+   "extension": "Add `cancelLast(StringBuilder board)` that removes the last time and its separator from a board such as `06:00 | 08:00 | 10:00`, using only `length()` and `setLength()`. What should it do with a board that holds a single time?",
+   "worth_knowing": "In a single statement, `javac` already turns `a + b + c` into efficient code, so `+` is fine there. The cost appears in a loop: building a 10,000-entry list with `+` copies about 400 million characters in total, while one `StringBuilder` with enough capacity copies each character once.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Consistent Allman braces and indentation; the builder has a clear name; String is kept where text is built once and StringBuilder is used where it changes repeatedly."
+    }
+   ]
+  }
+ ]
+}

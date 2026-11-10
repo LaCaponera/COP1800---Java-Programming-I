@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The marina list that files zephyr after Zodiac</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 7.3</div>
+  <h1>The marina list that files zephyr after Zodiac</h1>
+<h2>Objectives</h2><ul><li>Choose between <code>equals()</code> and <code>equalsIgnoreCase()</code> for a comparison typed by people</li><li>Use the sign of <code>compareTo()</code> to decide which of two Strings comes first</li><li>Explain why <code>compareTo()</code> puts every capital before every lowercase letter</li><li>Tell an empty String from a null String, and test for null with <code>==</code> before calling any method</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>sameBoat()</code> treats names as the same boat whatever their capitals, using <code>equalsIgnoreCase()</code>.</li><li><strong>R2</strong> <code>firstInList()</code> uses <code>compareTo()</code> and returns the name that comes first; when the names are identical it returns <code>a</code>.</li><li><strong>R3</strong> <code>nicknameLabel()</code> returns <code>(not recorded)</code> for a null nickname, <code>(none)</code> for an empty one and the nickname in double quotes otherwise. Test for null with <code>==</code> <strong>before</strong> calling any method on the nickname.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, what happens when the test program calls <code>nicknameLabel(null)</code>? Why?</p><div class="answer"><p>The program crashes with a NullPointerException: nickname refers to no object, so there is nothing to call equals() on.</p></div></li><li><p><code>&quot;Roger&quot;.compareTo(&quot;Rodrigo&quot;)</code> returns 3. Which characters were compared to get that number, and what does the positive sign mean?</p><div class="answer"><p>R and o match, then g is compared with d; g is 3 after d in Unicode, so it returns 3. Positive means Roger comes after Rodrigo.</p></div></li></ol>
+<h2>Solution</h2><div class="file">MarinaRegistry.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">MarinaRegistry</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// True when the typed name is the registered boat, whatever the capitals.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">sameBoat</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">registered</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">registered</span><span class="t-p">.</span><span class="t-na">equalsIgnoreCase</span><span class="t-p">(</span><span class="t-n">typed</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The name that comes first in the slip list; a if they are identical.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">firstInList</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">a</span><span class="t-p">.</span><span class="t-na">compareTo</span><span class="t-p">(</span><span class="t-n">b</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// How the nickname column shows a nickname.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">nicknameLabel</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">nickname</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">nickname</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"(not recorded)"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-p">(</span><span class="t-n">nickname</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"(none)"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">nickname</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>equalsIgnoreCase()</code> is the book&#x27;s choice for text people type, because you can&#x27;t predict when they use Shift or Caps Lock; a trailing space still makes two names different. <code>compareTo()</code> returns 0 for identical Strings, a negative number when the calling String comes first and a positive number when it comes later. Only the sign matters, so <code>a.compareTo(b) &lt;= 0</code> returns <code>a</code> for a tie as required. The comparison uses Unicode values: every capital (65 to 90) is less than every lowercase letter (97 to 122), so <code>Zodiac</code> comes before <code>zephyr</code>, and a space (32) comes before any letter, so <code>Sea Otter</code> comes before <code>Seahorse</code>. An empty String refers to an object with no characters, so you can call its methods; a null String refers to nothing, so <code>nickname.equals(&quot;&quot;)</code> crashes with a <code>NullPointerException</code>. Testing <code>nickname == null</code> first is the one place where <code>==</code> is the right test for a String: it asks whether the variable holds an address at all. <code>&quot;&quot;.equals(nickname)</code> would also avoid the crash, but it would show <code>(none)</code> for null instead of <code>(not recorded)</code>, losing a distinction the registry needs.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestMarinaRegistry.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestMarinaRegistry</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sea Otter / SEA OTTER: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarinaRegistry</span><span class="t-p">.</span><span class="t-na">sameBoat</span><span class="t-p">(</span><span class="t-s">"Sea Otter"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"SEA OTTER"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sea Otter / sea otter + space: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarinaRegistry</span><span class="t-p">.</span><span class="t-na">sameBoat</span><span class="t-p">(</span><span class="t-s">"Sea Otter"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"sea otter "</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">first</span><span class="t-p">(</span><span class="t-s">"Petrel"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Pelican"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">first</span><span class="t-p">(</span><span class="t-s">"Seahorse"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Sea Otter"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">first</span><span class="t-p">(</span><span class="t-s">"Albatross"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Zodiac"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">first</span><span class="t-p">(</span><span class="t-s">"zephyr"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Zodiac"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">first</span><span class="t-p">(</span><span class="t-s">"Marlin"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Marlin"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Nickname: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarinaRegistry</span><span class="t-p">.</span><span class="t-na">nicknameLabel</span><span class="t-p">(</span><span class="t-s">"The Old Lady"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Nickname: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarinaRegistry</span><span class="t-p">.</span><span class="t-na">nicknameLabel</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Nickname: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarinaRegistry</span><span class="t-p">.</span><span class="t-na">nicknameLabel</span><span class="t-p">(</span><span class="t-kc">null</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">first</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"First of "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">a</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" / "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">MarinaRegistry</span><span class="t-p">.</span><span class="t-na">firstInList</span><span class="t-p">(</span><span class="t-n">a</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">b</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Sea Otter / SEA OTTER: true
+Sea Otter / sea otter + space: false
+First of Petrel / Pelican: Pelican
+First of Seahorse / Sea Otter: Sea Otter
+First of Albatross / Zodiac: Albatross
+First of zephyr / Zodiac: Zodiac
+First of Marlin / Marlin: Marlin
+Nickname: &quot;The Old Lady&quot;
+Nickname: (none)
+Nickname: (not recorded)
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Names are matched with equalsIgnoreCase()<div class="small">in <code>MarinaRegistry.sameBoat</code></div></td><td><div><span class="tag">require</span> <code>\b(?:registered\s*\.\s*equalsIgnoreCase\s*\(\s*typed|typed\s*\.\s*equalsIgnoreCase\s*\(\s*registered)\s*\)</code></div><div><span class="tag">forbid</span> <code>\.\s*equals\s*\(|==</code></div></td></tr><tr><td>C2</td><td>R2</td><td>firstInList() decides with the sign of compareTo()<div class="small">in <code>MarinaRegistry.firstInList</code></div></td><td><div><span class="tag">require</span> <code>\b(?:a\s*\.\s*compareTo\s*\(\s*b|b\s*\.\s*compareTo\s*\(\s*a)\s*\)\s*(?:&lt;|&gt;|&lt;=|&gt;=)\s*0\b</code></div><div><span class="tag">forbid</span> <code>\bcompareToIgnoreCase\b|[!=]=\s*-?\s*[1-9]</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Null is tested with == before any method call<div class="small">in <code>MarinaRegistry.nicknameLabel</code></div></td><td><div><span class="tag">require</span> <code>^(?:(?!\bnickname\s*\.)[\s\S])*?\b(?:nickname\s*==\s*null|null\s*==\s*nickname)\b</code></div><div><span class="tag">forbid</span> <code>\.\s*equals\s*\(\s*null\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Names are matched with equalsIgnoreCase()</dt><dd><p>Return <code>registered.equalsIgnoreCase(typed)</code>. <code>equals()</code> is true only when every character matches exactly, so <code>SEA OTTER</code> and <code>Sea Otter</code> count as different boats.</p></dd><dt>C2 · firstInList() decides with the sign of compareTo()</dt><dd><p>Compare with <code>a.compareTo(b)</code> and test only its sign: <code>&lt;= 0</code> means <code>a</code> comes first or the names are identical, so return <code>a</code>; otherwise return <code>b</code>. Don&#x27;t test for a specific value such as <code>== -1</code>: <code>compareTo()</code> returns the difference between the first two characters that differ, which can be any number.</p><div class='small'><strong>Hint:</strong></div><p>The registry orders by Unicode values, as <code>compareTo()</code> does, so don&#x27;t switch to a case-insensitive comparison here.</p></dd><dt>C3 · Null is tested with == before any method call</dt><dd><p>Start with <code>if(nickname == null) return &quot;(not recorded)&quot;;</code>. A null String holds no address, so calling <code>nickname.equals(&quot;&quot;)</code> on it crashes; <code>==</code> is the right test here because it asks whether the variable refers to an object at all.</p><div class='small'><strong>Hint:</strong></div><p><code>nickname.equals(null)</code> can never help: if <code>nickname</code> is null, the call itself crashes before <code>equals()</code> runs.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>The <code>String</code> class has a version of <code>equals()</code> that ignores case. Its name says so.</p></li><li><p><code>compareTo()</code> returns an <code>int</code>. You only care whether it is negative, zero or positive, so compare it with 0.</p></li><li><p>For R3, order matters: the first test must not call a method on <code>nickname</code>, because if it is null there is no object to call it on.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your registry files <code>Zodiac</code> before <code>zephyr</code>. Explain why, using Unicode values.</p><div class="answer"><p>compareTo() compares the first characters, Z and z. Capital Z is 90 and lowercase z is 122, so Z is smaller and Zodiac comes first. Every capital comes before every lowercase letter.</p></div></li><li><p>Lesson 7.1 said never to compare Strings with <code>==</code>, yet R3 requires <code>nickname == null</code>. Why is <code>==</code> correct here?</p><div class="answer"><p>== compares references. Here we want to know whether the variable refers to any object at all, which is a question about the reference, not about the characters. A method such as equals() can&#x27;t be called on null.</p></div></li><li><p>Why does <code>sameBoat(&quot;Sea Otter&quot;, &quot;sea otter &quot;)</code> still return false with <code>equalsIgnoreCase()</code>?</p><div class="answer"><p>equalsIgnoreCase() ignores only differences in case. The typed name has an extra space at the end, so the two Strings have different characters (and lengths).</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>lastInList(String a, String b, String c)</code> that returns whichever of three names comes last, using only <code>compareTo()</code>. Test it with <code>&quot;Marlin&quot;</code>, <code>&quot;marlin&quot;</code> and <code>&quot;Zodiac&quot;</code>: which wins, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; the null test comes first and reads clearly; comparisons test the sign of compareTo(), not a specific number.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
