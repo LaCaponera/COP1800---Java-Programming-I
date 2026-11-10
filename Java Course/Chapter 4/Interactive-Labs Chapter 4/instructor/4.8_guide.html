@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The beach cleanup&#x27;s volunteer badges</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 4.8</div>
+  <h1>The beach cleanup&#x27;s volunteer badges</h1>
+<h2>Objectives</h2><ul><li>Use a <code>static</code> field as a class variable that every object shares</li><li>Write a <code>static</code> method that works without an object, and explain why it has no <code>this</code></li><li>Choose correctly between <code>static</code>, <code>final</code> and <code>static final</code> for a field</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>volunteerCount</code> is a class variable: one copy shared by every <code>Volunteer</code>, still able to change (<code>static</code>, not <code>final</code>).</li><li><strong>R2</strong> The badge number is a nonstatic <code>final</code> field, assigned once in the constructor from the count.</li><li><strong>R3</strong> The event name is a <code>static final</code> constant whose value is given where it is declared.</li><li><strong>R4</strong> <code>getVolunteerCount()</code> is a class method (<code>static</code>), so it can be called as <code>Volunteer.getVolunteerCount()</code> without any object.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Apply the reading&#x27;s question, &quot;once per class or once per object?&quot;, to each of the four fields.</p><div class="answer"><p>The event name and the sign-up count occur once for the whole class. The badge number and the volunteer&#x27;s name occur once per volunteer object.</p></div></li><li><p>With the starter, why does every volunteer get badge #1?</p><div class="answer"><p><code>volunteerCount</code> is an instance variable, so each new volunteer gets its own count starting at 0. The constructor adds 1 to that fresh copy, so every badge is 1 and no count is ever shared.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Volunteer.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Volunteer</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">EVENT_NAME</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Harbor Beach Cleanup"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">volunteerCount</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">BADGE_NUMBER</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Volunteer</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">volunteerName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">volunteerName</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">volunteerCount</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">volunteerCount</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">BADGE_NUMBER</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">volunteerCount</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getVolunteerCount</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">volunteerCount</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">display</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">EVENT_NAME</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": badge #"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">BADGE_NUMBER</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" ("</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">volunteerCount</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" signed up)"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Ask of each field how many times it occurs and whether it may change. The count occurs once per class and changes: <code>static</code>, not <code>final</code>, so every constructor call adds to the one shared copy, and Ana&#x27;s line shows 3 after Lena signs up although Ana&#x27;s object was never touched. The badge occurs once per volunteer and never changes: <code>final</code> but not <code>static</code>, assigned in the constructor, like <code>NUM_EVENTS</code> in the reading&#x27;s dog triathlon. The event name is shared and fixed: <code>static final</code>, with its value in the declaration. Constants are conventionally named in capitals (<code>EVENT_NAME</code>, <code>BADGE_NUMBER</code>); keeping the old names also passes. <code>getVolunteerCount()</code> uses only a class variable, so it can be <code>static</code>; it could not return <code>name</code>, because a static method has no <code>this</code> and so no particular volunteer.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestVolunteer.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestVolunteer</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Volunteer</span><span class="t-w"> </span><span class="t-n">ana</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Volunteer</span><span class="t-p">(</span><span class="t-s">"Ana"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Volunteer</span><span class="t-w"> </span><span class="t-n">kofi</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Volunteer</span><span class="t-p">(</span><span class="t-s">"Kofi"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ana</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">kofi</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">Volunteer</span><span class="t-w"> </span><span class="t-n">lena</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Volunteer</span><span class="t-p">(</span><span class="t-s">"Lena"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">lena</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">ana</span><span class="t-p">.</span><span class="t-na">display</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total volunteers: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Volunteer</span><span class="t-p">.</span><span class="t-na">getVolunteerCount</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Harbor Beach Cleanup: badge #1 Ana (2 signed up)
+Harbor Beach Cleanup: badge #2 Kofi (2 signed up)
+Harbor Beach Cleanup: badge #3 Lena (3 signed up)
+Harbor Beach Cleanup: badge #1 Ana (3 signed up)
+Total volunteers: 3
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The count is static and not final<div class="small">in <code>Volunteer</code></div></td><td><div><span class="tag">require</span> <code>\b(?:private\s+static|static\s+private)\s+int\s+volunteerCount\b</code></div><div><span class="tag">forbid</span> <code>\bfinal\b[^;(){}]*\bvolunteerCount\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The badge number is final but not static<div class="small">in <code>Volunteer</code></div></td><td><div><span class="tag">require</span> <code>\b(?:private\s+final|final\s+private)\s+int\s+(\w+)\s*;[\s\S]*\b\1\s*=\s*volunteerCount\s*;</code></div><div><span class="tag">forbid</span> <code>\bstatic\s+final\s+int\b|\bfinal\s+static\s+int\b|\bstatic\b[^;(){}]*\bbadgeNumber\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The event name is a static final constant set in its declaration<div class="small">in <code>Volunteer</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\b(?:private\s+)?(?:static\s+final|final\s+static)\s+String\s+\w+\s*=\s*&quot;Harbor Beach Cleanup&quot;\s*;</code></div></td></tr><tr><td>C4</td><td>R4</td><td>getVolunteerCount() is a class method<div class="small">in <code>Volunteer</code></div></td><td><div><span class="tag">require</span> <code>\bpublic\s+static\s+int\s+getVolunteerCount\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The count is static and not final</dt><dd><p>Declare <code>volunteerCount</code> as <code>private static int</code>. A static field exists once for the whole class, so each new volunteer adds to the same count. It can&#x27;t be <code>final</code>: it changes every time someone signs up.</p><div class='small'><strong>Hint:</strong></div><p>Once per class, or once per volunteer?</p></dd><dt>C2 · The badge number is final but not static</dt><dd><p>Declare the badge number <code>private final int</code> with no value and no <code>static</code>, and assign it once in the constructor from the count. <code>final</code> stops it from ever changing; leaving out <code>static</code> gives every volunteer their own badge.</p></dd><dt>C3 · The event name is a static final constant set in its declaration</dt><dd><p>Make the event name <code>private static final String</code>, with its value in the declaration. It&#x27;s the same for every volunteer (<code>static</code>) and never changes (<code>final</code>); a <code>static final</code> field must get its value where it is declared.</p></dd><dt>C4 · getVolunteerCount() is a class method</dt><dd><p>Add <code>static</code> to <code>getVolunteerCount()</code>. It returns only a class variable, so it needs no object and can be called as <code>Volunteer.getVolunteerCount()</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Two fields hold one value for the whole event; two hold one value per volunteer. Only the first kind is <code>static</code>.</p></li><li><p><code>final</code> means &quot;assigned once&quot;. A count that grows can&#x27;t be <code>final</code>; a badge given in the constructor can be, as long as it isn&#x27;t <code>static</code>.</p></li><li><p>A <code>static final</code> field must get its value in its declaration. A method that uses only class variables, and is called with the class name, needs one more word in its header.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Could <code>getVolunteerCount()</code> stay <code>static</code> if it returned <code>name</code> instead? Explain using the <code>this</code> reference.</p><div class="answer"><p>No. A static method has no <code>this</code> reference because no object is associated with it, so it can&#x27;t know which volunteer&#x27;s name to return; the compiler rejects using an instance variable there.</p></div></li><li><p>Why must the badge number be <code>final</code> but not <code>static</code>, while the event name is both?</p><div class="answer"><p>Each volunteer needs their own badge that never changes, so it is one value per object (not static) that is fixed once assigned (final). The event name is one value for everyone (static) that never changes (final).</p></div></li></ol>
+<h2>Extension</h2><p>Inside <code>display()</code>, try <code>BADGE_NUMBER = 7;</code> and read the compiler&#x27;s message. Then remove <code>static</code> from <code>volunteerCount</code> and predict the five lines before you run them again.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,1268 @@
+{
+  "course": "COP1800 · Java Programming I",
+  "collection_title": "Chapter 4: Using Classes and Objects",
+  "collection_intro": "Hands-on labs for each section of Chapter 4 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict, write or fix the classes, check their structure, run the test program in your IDE and compare the output, then explain your choices. Submit the lab report to Blackboard.",
+  "theme": "harbor",
+  "background": "pattern",
+  "language": "java",
+  "labs": [
+    {
+      "id": "4.1",
+      "title": "The event hall's booking board",
+      "subtitle": "Classes versus objects, is-a relationships, and sending each object its own messages",
+      "source": "Ch. 4, section 4.1 (pp. 115–117)",
+      "minutes": 20,
+      "objectives": [
+        "Tell a class (the general description) from an object (one concrete instance), and state an *is-a* relationship in the right order",
+        "Send a message to an object: the object's name, a dot, the method and its arguments",
+        "Explain why every object of a class has the same methods but keeps its own values",
+        "Recognize a class client: a program that uses objects of a class written by someone else"
+      ],
+      "scenario": "Seabright Event Hall keeps its bookings in `Party` objects. The `Party` class was written by another programmer and is finished: you only read it. Your job is the booking board, `EventBoard`, a **class client** of `Party`.\n\nTwo parties are booked: a graduation on **May 12 at 6 P.M.** and an anniversary on **June 3 at 7 P.M.** A colleague copied the graduation lines for the anniversary and forgot to change something. The board also types the anniversary's details by hand instead of asking the object.\n\nThe board must show:\n\n```\nSeabright Event Hall bookings\nGraduation: May 12 at 6 P.M.\nAnniversary: June 3 at 7 P.M.\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "The anniversary's date and time are set by sending `setDate()` and `setTime()` to the `anniversary` object with its own arguments, `\"June 3\"` and `\"7 P.M.\"`; the graduation stays May 12 at 6 P.M."
+        },
+        {
+          "id": "R2",
+          "text": "Every date and time on the board comes from asking that party object, with `getDate()` and `getTime()`; no date or time is typed into a `println()`."
+        },
+        {
+          "id": "R3",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "files": [
+        {
+          "name": "EventBoard.java",
+          "starter": "public class EventBoard\n{\n    public static void main(String[] args)\n    {\n        Party graduation = new Party();\n        Party anniversary = new Party();\n\n        graduation.setDate(\"May 12\");\n        graduation.setTime(\"6 P.M.\");\n        // TODO (R1): the anniversary is June 3 at 7 P.M.\n        graduation.setDate(\"June 3\");\n        graduation.setTime(\"7 P.M.\");\n\n        System.out.println(\"Seabright Event Hall bookings\");\n        System.out.println(\"Graduation: \" + graduation.getDate() + \" at \"\n            + graduation.getTime());\n        // TODO (R2): ask the anniversary object for its date and time.\n        System.out.println(\"Anniversary: June 3 at 7 P.M.\");\n    }\n}\n",
+          "solution": "public class EventBoard\n{\n    public static void main(String[] args)\n    {\n        Party graduation = new Party();\n        Party anniversary = new Party();\n\n        graduation.setDate(\"May 12\");\n        graduation.setTime(\"6 P.M.\");\n        anniversary.setDate(\"June 3\");\n        anniversary.setTime(\"7 P.M.\");\n\n        System.out.println(\"Seabright Event Hall bookings\");\n        System.out.println(\"Graduation: \" + graduation.getDate() + \" at \"\n            + graduation.getTime());\n        System.out.println(\"Anniversary: \" + anniversary.getDate() + \" at \"\n            + anniversary.getTime());\n    }\n}\n"
+        },
+        {
+          "name": "Party.java",
+          "editable": false,
+          "starter": "// Written by another programmer. Read it; you don't need to change it.\npublic class Party\n{\n    private String date;\n    private String time;\n\n    public void setDate(String partyDate)\n    {\n        date = partyDate;\n    }\n\n    public void setTime(String partyTime)\n    {\n        time = partyTime;\n    }\n\n    public String getDate()\n    {\n        return date;\n    }\n\n    public String getTime()\n    {\n        return time;\n    }\n}\n"
+        }
+      ],
+      "main_file": "EventBoard.java",
+      "solution_notes": "The name before the dot decides which object receives the message. In the starter, all four `set` messages went to `graduation`, so its date was overwritten with June 3 and `anniversary` was never told anything. Both objects have the same methods because both are `Party` objects, but each keeps its own `date` and `time`, so the same `setDate()` stores May 12 in one and June 3 in the other. Asking each object with `getDate()` and `getTime()` means the board can never disagree with the bookings. `EventBoard` is a class client: it uses `Party` without knowing or changing how `Party` is written.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The anniversary object receives its own date and time",
+          "file": "EventBoard.java",
+          "within": "EventBoard.main",
+          "strings": true,
+          "require": "^(?=[\\s\\S]*\\banniversary\\s*\\.\\s*setDate\\s*\\(\\s*\"June 3\"\\s*\\)\\s*;)(?=[\\s\\S]*\\banniversary\\s*\\.\\s*setTime\\s*\\(\\s*\"7 P\\.M\\.\"\\s*\\)\\s*;)",
+          "forbid": "\\bgraduation\\s*\\.\\s*set(?:Date|Time)\\s*\\(\\s*\"(?:June 3|7 P\\.M\\.)\"",
+          "message": "Send the June 3 and 7 P.M. messages to `anniversary`, not to `graduation`. The name before the dot is the object that receives the message; sending them to `graduation` overwrites its May 12 booking.",
+          "hint": "Read each booking line from the left: who is being told the date?"
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "The board asks the anniversary object for its details",
+          "file": "EventBoard.java",
+          "within": "EventBoard.main",
+          "strings": true,
+          "require": "^(?=[\\s\\S]*\\banniversary\\s*\\.\\s*getDate\\s*\\(\\s*\\))(?=[\\s\\S]*\\banniversary\\s*\\.\\s*getTime\\s*\\(\\s*\\))",
+          "forbid": "println\\s*\\([^;]*\"[^\"]*(?:June 3|May 12|P\\.M\\.)",
+          "message": "Build the anniversary line from `anniversary.getDate()` and `anniversary.getTime()`, the way the graduation line is built. A date typed into `println()` stays wrong when the booking changes.",
+          "hint": "Copy the graduation line's shape and change the object."
+        }
+      ],
+      "hints": [
+        "Read each booking line from left to right: the name before the dot is the object receiving the message, and the text in parentheses is the argument.",
+        "`anniversary` has exactly the same methods as `graduation`, because both are `Party` objects. It needs its own two messages with its own arguments.",
+        "For the board, each line should be built from the answers a party object gives, the way the graduation line already is."
+      ],
+      "test_program": {
+        "file_name": "TestEventBoard.java",
+        "code": "public class TestEventBoard\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java EventBoard\" would.\n        EventBoard.main(new String[0]);\n        System.out.println();\n\n        // A third Party object: the same methods, its own values.\n        Party reunion = new Party();\n        reunion.setDate(\"August 9\");\n        reunion.setTime(\"1 P.M.\");\n        System.out.println(\"Reunion: \" + reunion.getDate() + \" at \"\n            + reunion.getTime());\n    }\n}\n",
+        "expected_output": "Seabright Event Hall bookings\nGraduation: May 12 at 6 P.M.\nAnniversary: June 3 at 7 P.M.\n\nReunion: August 9 at 1 P.M.\n",
+        "how_to_run": "Put `EventBoard.java`, `Party.java` and `TestEventBoard.java` in the same folder, then run `javac *.java` and `java TestEventBoard`. In an IDE, add all of them to one project and run `TestEventBoard.java`. If the files are in different folders, the compiler reports *cannot find symbol*.",
+        "predict": "Before you change anything: predict the Graduation line the starter prints, and explain why it isn't May 12."
+      },
+      "warmup": [
+        {
+          "question": "Which sentence is a correct *is-a* statement: \"A Party is my graduation party\" or \"My graduation party is a Party\"? Why is the other one wrong?",
+          "model_answer": "\"My graduation party is a Party.\" The object is one concrete example of the general class. The other sentence defines the whole class by a single example, which is backwards: a Party is more general than any one party."
+        },
+        {
+          "question": "Read the starter's four booking lines. Which object receives all four messages, and what will `graduation.getDate()` return when the board prints?",
+          "model_answer": "All four go to `graduation`, so its date is set to May 12 and then overwritten with June 3: `getDate()` returns \"June 3\". `anniversary` never receives a message."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "`graduation` and `anniversary` use the very same `setDate()` method. How can that one method store two different dates?",
+          "model_answer": "Each object keeps its own `date` value. The method works on whichever object the message is sent to, with the argument sent in that call, so May 12 is stored in the graduation object and June 3 in the anniversary object."
+        },
+        {
+          "question": "`EventBoard` uses `Party` but didn't create it. What does the reading call a class like `EventBoard`, and why is it useful that `Party` is written separately?",
+          "model_answer": "A class client (or class user). Because `Party` is its own class, other programs, such as catering or ticketing, can create `Party` objects too without rewriting it; a client only needs to know the methods' names and arguments."
+        }
+      ],
+      "extension": "Book a third party on the board: a retirement party on September 20 at 4 P.M. How many new methods did you have to write, and why?",
+      "worth_knowing": "The idea of sending messages to objects comes from Smalltalk, built in the 1970s by Alan Kay's team at Xerox PARC. Kay, who coined the term *object-oriented*, later said he regretted the name, because the big idea was the messaging between objects, not the objects themselves.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.2",
+      "title": "The ferry tickets that all say the same name",
+      "subtitle": "Class headers, data fields, instance variables versus static fields, and private data with public methods",
+      "source": "Ch. 4, section 4.2 (pp. 117–119)",
+      "minutes": 20,
+      "objectives": [
+        "Name the parts of a class header and say which one is optional",
+        "Explain the difference between an instance variable (one copy per object) and a `static` field (one copy per class)",
+        "Make data fields `private` so other classes reach them only through public methods (information hiding)"
+      ],
+      "scenario": "Bay Ferry Lines sells a `FerryTicket` for every passenger. The booth sold two tickets this morning, but the printout shows **the same passenger on both**, and a client program writes straight into a ticket's field.\n\nFix the class so every ticket keeps its own passenger and only `FerryTicket`'s own methods can touch its data. Then make `TicketBooth` go through those methods. The booth must print:\n\n```\nTrip 7: Ana Ruiz\nTrip 19: Leo Park\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`passengerName` is an instance variable: no `static`, so each ticket has its own copy."
+        },
+        {
+          "id": "R2",
+          "text": "Both data fields, `passengerName` and `tripNumber`, are `private`; the methods stay `public`."
+        },
+        {
+          "id": "R3",
+          "text": "`TicketBooth` sets the evening ticket's trip with `setTripNumber(19)` instead of assigning the field."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "files": [
+        {
+          "name": "FerryTicket.java",
+          "starter": "public class FerryTicket\n{\n    // TODO (R1, R2): each ticket needs its own passenger, and other\n    // classes should reach this data only through the methods below.\n    public static String passengerName;\n    public int tripNumber;\n\n    public void setPassengerName(String name)\n    {\n        passengerName = name;\n    }\n\n    public String getPassengerName()\n    {\n        return passengerName;\n    }\n\n    public void setTripNumber(int trip)\n    {\n        tripNumber = trip;\n    }\n\n    public int getTripNumber()\n    {\n        return tripNumber;\n    }\n}\n",
+          "solution": "public class FerryTicket\n{\n    private String passengerName;\n    private int tripNumber;\n\n    public void setPassengerName(String name)\n    {\n        passengerName = name;\n    }\n\n    public String getPassengerName()\n    {\n        return passengerName;\n    }\n\n    public void setTripNumber(int trip)\n    {\n        tripNumber = trip;\n    }\n\n    public int getTripNumber()\n    {\n        return tripNumber;\n    }\n}\n"
+        },
+        {
+          "name": "TicketBooth.java",
+          "starter": "public class TicketBooth\n{\n    public static void main(String[] args)\n    {\n        FerryTicket morning = new FerryTicket();\n        FerryTicket evening = new FerryTicket();\n\n        morning.setPassengerName(\"Ana Ruiz\");\n        morning.setTripNumber(7);\n        evening.setPassengerName(\"Leo Park\");\n        // TODO (R3): set the evening trip without touching the field.\n        evening.tripNumber = 19;\n\n        System.out.println(\"Trip \" + morning.getTripNumber() + \": \"\n            + morning.getPassengerName());\n        System.out.println(\"Trip \" + evening.getTripNumber() + \": \"\n            + evening.getPassengerName());\n    }\n}\n",
+          "solution": "public class TicketBooth\n{\n    public static void main(String[] args)\n    {\n        FerryTicket morning = new FerryTicket();\n        FerryTicket evening = new FerryTicket();\n\n        morning.setPassengerName(\"Ana Ruiz\");\n        morning.setTripNumber(7);\n        evening.setPassengerName(\"Leo Park\");\n        evening.setTripNumber(19);\n\n        System.out.println(\"Trip \" + morning.getTripNumber() + \": \"\n            + morning.getPassengerName());\n        System.out.println(\"Trip \" + evening.getTripNumber() + \": \"\n            + evening.getPassengerName());\n    }\n}\n"
+        }
+      ],
+      "main_file": "FerryTicket.java",
+      "solution_notes": "With `static`, one `passengerName` exists for the whole class, so setting Leo Park on the evening ticket replaced Ana Ruiz everywhere. Without `static`, the field is an instance variable: every `FerryTicket` object gets its own copy. Making both fields `private` is information hiding: only `FerryTicket`'s methods may use them, so `evening.tripNumber = 19;` no longer compiles (*tripNumber has private access in FerryTicket*) and the booth must call `setTripNumber(19)`. The methods stay `public`: they are the class's receptionist, the only way in.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "passengerName is an instance variable",
+          "file": "FerryTicket.java",
+          "within": "FerryTicket",
+          "require": "\\bString\\s+passengerName\\s*;",
+          "forbid": "\\bstatic\\b[^;(){}]*\\bpassengerName\\s*;",
+          "message": "Remove `static` from `passengerName`. A `static` field exists once for the whole class, so every ticket shares one name and the last one set wins. Without `static`, each ticket object gets its own copy.",
+          "hint": "Ask: does a passenger name occur once per class or once per ticket?"
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "Both fields are private",
+          "file": "FerryTicket.java",
+          "within": "FerryTicket",
+          "require": "^(?=[\\s\\S]*\\bprivate\\s+String\\s+passengerName\\s*;)(?=[\\s\\S]*\\bprivate\\s+int\\s+tripNumber\\s*;)",
+          "forbid": "\\bpublic\\b[^;(){}]*\\b(?:passengerName|tripNumber)\\s*;",
+          "message": "Declare both fields `private`. Private data can be used only by the class's own methods, so other classes must go through `setTripNumber()` and the other public methods, which is where rules about valid values can later be enforced."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "TicketBooth uses the setter, not the field",
+          "file": "TicketBooth.java",
+          "within": "TicketBooth.main",
+          "require": "\\bevening\\s*\\.\\s*setTripNumber\\s*\\(\\s*19\\s*\\)\\s*;",
+          "forbid": "\\.\\s*(?:tripNumber|passengerName)\\s*=",
+          "message": "Replace `evening.tripNumber = 19;` with a call to the ticket's public `setTripNumber()` method. Once the field is private, assigning it from another class doesn't compile.",
+          "hint": "The morning ticket already shows how its trip is set."
+        }
+      ],
+      "hints": [
+        "Ask of each field: does it occur once per ticket, or once for the whole class? Only the second kind is `static`.",
+        "A field that another class can assign directly isn't hidden. Which access specifier lets only `FerryTicket`'s own methods use it?",
+        "Once the fields are hidden, `TicketBooth` must go through the class's methods: there is already a public one for the trip number."
+      ],
+      "test_program": {
+        "file_name": "TestTicketBooth.java",
+        "code": "public class TestTicketBooth\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java TicketBooth\" would.\n        TicketBooth.main(new String[0]);\n\n        // Selling a second ticket must not change the first one.\n        FerryTicket first = new FerryTicket();\n        FerryTicket second = new FerryTicket();\n        first.setPassengerName(\"Mia Chen\");\n        second.setPassengerName(\"Sam Okafor\");\n        System.out.println(\"First ticket after the second is sold: \"\n            + first.getPassengerName());\n    }\n}\n",
+        "expected_output": "Trip 7: Ana Ruiz\nTrip 19: Leo Park\nFirst ticket after the second is sold: Mia Chen\n",
+        "how_to_run": "Put `FerryTicket.java`, `TicketBooth.java` and `TestTicketBooth.java` in the same folder, then run `javac *.java` and `java TestTicketBooth`. In an IDE, add all of them to one project and run `TestTicketBooth.java`. If the files are in different folders, the compiler reports *cannot find symbol*.",
+        "predict": "Before you change anything: predict both lines the starter's booth prints, then run it and compare."
+      },
+      "warmup": [
+        {
+          "question": "The class header is `public class FerryTicket`. Name its three parts and say which one is optional.",
+          "model_answer": "`public` is the access specifier (optional), `class` is the keyword, and `FerryTicket` is the identifier, which conventionally starts with an uppercase letter."
+        },
+        {
+          "question": "`passengerName` is declared `static`. Predict the name the morning ticket will print, and explain why.",
+          "model_answer": "Leo Park. A `static` field has one copy shared by every ticket, so setting the evening ticket's name overwrote the only copy, including the morning ticket's."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "After your change, how many copies of `passengerName` exist when the booth sells 100 tickets? How many would exist with `static`?",
+          "model_answer": "100 copies, one per ticket object, because it is an instance variable. With `static` there would be exactly one, shared by all 100 tickets."
+        },
+        {
+          "question": "`setTripNumber()` accepts any number today. Why is it still better than a public field, even before it checks anything?",
+          "model_answer": "All changes now pass through one method, so a rule such as \"only trips that exist\" can be added there later and every client obeys it automatically. With a public field any class could store anything, and every client would need changing."
+        }
+      ],
+      "extension": "Add a private `double fare` field to `FerryTicket` with a setter and a getter, and print each ticket's fare. Which word did you deliberately leave out of the field's declaration, and why?",
+      "worth_knowing": "Java's own `String` keeps its characters in a `private` field. That's why no program can change a string in place: every \"change\", such as `toUpperCase()`, builds a new `String`. Information hiding is what lets the class make that promise.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.3",
+      "title": "The climbing gym's member cards",
+      "subtitle": "Writing setters and getters as instance methods, and a value calculated instead of stored",
+      "source": "Ch. 4, section 4.3 (pp. 119–124)",
+      "minutes": 25,
+      "objectives": [
+        "Write mutator (set) and accessor (get) methods with the right return types and parameters",
+        "Decide when a method should be an instance method (no `static`) and when a class method (`static`)",
+        "Use a class's fields directly inside its own methods",
+        "Compute a value from fields in a getter instead of storing it"
+      ],
+      "scenario": "Tidewater Climbing Gym prints a card for every member. `MemberCard` has its three fields and one finished pair of methods for the member ID. The front desk's program also needs the member's name, the monthly rate and the yearly cost, which the gym always calculates from the monthly rate.\n\n`printGymRules()` is already `static`: the rules are the same for every member. The methods you add belong to each member. The desk's program will print:\n\n```\nTidewater Climbing Gym: chalk bags only.\n1041 Ana Silva: $54.5 a month, $654.0 a year\n1042 Ben Ito: $39.0 a month, $468.0 a year\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`setMemberName(String)` stores a name and returns nothing; `getMemberName()` returns it as a `String`. Both are public instance methods (no `static`)."
+        },
+        {
+          "id": "R2",
+          "text": "`setMonthlyRate(double)` and `getMonthlyRate()` do the same for the monthly rate, which is a `double`."
+        },
+        {
+          "id": "R3",
+          "text": "`getAnnualCost()` returns twelve times the member's monthly rate as a `double`. It is calculated each time it's called: the class has no annual-cost field."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "MemberCard.java",
+      "starter_code": "public class MemberCard\n{\n    private int memberId;\n    private String memberName;\n    private double monthlyRate;\n\n    // A class method: the rules are the same for every member.\n    public static void printGymRules()\n    {\n        System.out.println(\"Tidewater Climbing Gym: chalk bags only.\");\n    }\n\n    public void setMemberId(int id)\n    {\n        memberId = id;\n    }\n\n    public int getMemberId()\n    {\n        return memberId;\n    }\n\n    // TODO (R1): a setter and a getter for memberName.\n\n    // TODO (R2): a setter and a getter for monthlyRate.\n\n    // TODO (R3): getAnnualCost(), twelve months at this member's rate.\n}\n",
+      "solution": "public class MemberCard\n{\n    private int memberId;\n    private String memberName;\n    private double monthlyRate;\n\n    // A class method: the rules are the same for every member.\n    public static void printGymRules()\n    {\n        System.out.println(\"Tidewater Climbing Gym: chalk bags only.\");\n    }\n\n    public void setMemberId(int id)\n    {\n        memberId = id;\n    }\n\n    public int getMemberId()\n    {\n        return memberId;\n    }\n\n    public void setMemberName(String name)\n    {\n        memberName = name;\n    }\n\n    public String getMemberName()\n    {\n        return memberName;\n    }\n\n    public void setMonthlyRate(double rate)\n    {\n        monthlyRate = rate;\n    }\n\n    public double getMonthlyRate()\n    {\n        return monthlyRate;\n    }\n\n    public double getAnnualCost()\n    {\n        return monthlyRate * 12;\n    }\n}\n",
+      "solution_notes": "A setter takes one parameter of the field's type and returns `void`; a getter takes nothing and returns the field's type. None of them is `static`: each works with one member's own fields, so it must be called with an object, as in `ana.getMemberName()`. If you write `static` on one, the compiler reports *non-static variable memberName cannot be referenced from a static context*. Inside the class, every method uses the fields directly; they don't need to be passed in. `getAnnualCost()` calculates its answer from `monthlyRate`, so it can never fall out of step with the rate. `printGymRules()` stays `static` because it uses no member's data.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "Instance setter and getter for memberName",
+          "within": "MemberCard",
+          "require": "^(?=[\\s\\S]*\\bpublic\\s+void\\s+setMemberName\\s*\\(\\s*String\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bpublic\\s+String\\s+getMemberName\\s*\\(\\s*\\))(?=[\\s\\S]*\\bmemberName\\s*=\\s*\\w+\\s*;)(?=[\\s\\S]*\\breturn\\s+(?:this\\s*\\.\\s*)?memberName\\s*;)",
+          "forbid": "\\bstatic\\b[^;{}]*\\b(?:set|get)MemberName\\b",
+          "message": "Write `setMemberName()` with one `String` parameter and a `void` return type, storing it in `memberName`, and `getMemberName()` with no parameters, returning `memberName` as a `String`. Leave out `static`: these methods work with one member's own field.",
+          "hint": "The `memberId` pair shows the shape; only the type and names change."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "Instance setter and getter for monthlyRate",
+          "within": "MemberCard",
+          "require": "^(?=[\\s\\S]*\\bpublic\\s+void\\s+setMonthlyRate\\s*\\(\\s*double\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bpublic\\s+double\\s+getMonthlyRate\\s*\\(\\s*\\))(?=[\\s\\S]*\\bmonthlyRate\\s*=\\s*\\w+\\s*;)(?=[\\s\\S]*\\breturn\\s+(?:this\\s*\\.\\s*)?monthlyRate\\s*;)",
+          "forbid": "\\bstatic\\b[^;{}]*\\b(?:set|get)MonthlyRate\\b",
+          "message": "Write `setMonthlyRate()` taking a `double` and `getMonthlyRate()` returning a `double`, both without `static`. The rate is a `double` because it holds dollars and cents."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "getAnnualCost() is a double instance method, with no stored field",
+          "within": "MemberCard",
+          "require": "\\bpublic\\s+double\\s+getAnnualCost\\s*\\(\\s*\\)",
+          "forbid": "\\bstatic\\b[^;{}]*\\bgetAnnualCost\\b|\\b(?:private|public)\\s+(?:double|int)\\s+annual\\w*\\s*[;=]",
+          "message": "Add `public double getAnnualCost()` with no `static` and no parameters. Don't add an annual-cost field: a stored copy would go out of date the moment the monthly rate changes."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "The annual cost is calculated from the monthly rate",
+          "within": "MemberCard.getAnnualCost",
+          "require": [
+            "\\breturn\\b[^;]*\\b(?:monthlyRate|getMonthlyRate\\s*\\(\\s*\\))[^;]*\\*[^;]*;",
+            "\\breturn\\b[^;]*\\*[^;]*\\b(?:monthlyRate|getMonthlyRate\\s*\\(\\s*\\))[^;]*;"
+          ],
+          "message": "Return the monthly rate multiplied by the number of months in a year. The method reads the field directly; it needs no parameter."
+        }
+      ],
+      "hints": [
+        "Copy the shape of the `memberId` pair: a setter returns nothing and takes one parameter; a getter takes nothing and returns the field's type.",
+        "Methods that belong to each member never use `static`. If the compiler mentions a *static context*, look for that word in your headers.",
+        "The yearly cost isn't stored anywhere: compute it from the rate in the `return` statement, and keep the result a `double`."
+      ],
+      "test_program": {
+        "file_name": "TestMemberCard.java",
+        "code": "public class TestMemberCard\n{\n    public static void main(String[] args)\n    {\n        MemberCard.printGymRules();\n\n        MemberCard ana = new MemberCard();\n        MemberCard ben = new MemberCard();\n        ana.setMemberId(1041);\n        ana.setMemberName(\"Ana Silva\");\n        ana.setMonthlyRate(54.5);\n        ben.setMemberId(1042);\n        ben.setMemberName(\"Ben Ito\");\n        ben.setMonthlyRate(39.0);\n\n        System.out.println(ana.getMemberId() + \" \" + ana.getMemberName() + \": $\"\n            + ana.getMonthlyRate() + \" a month, $\" + ana.getAnnualCost()\n            + \" a year\");\n        System.out.println(ben.getMemberId() + \" \" + ben.getMemberName() + \": $\"\n            + ben.getMonthlyRate() + \" a month, $\" + ben.getAnnualCost()\n            + \" a year\");\n    }\n}\n",
+        "expected_output": "Tidewater Climbing Gym: chalk bags only.\n1041 Ana Silva: $54.5 a month, $654.0 a year\n1042 Ben Ito: $39.0 a month, $468.0 a year\n",
+        "predict": "Before you write anything: the test program calls `MemberCard.printGymRules()` with the class name but `ana.getMemberName()` with an object. Predict what the compiler would say about `MemberCard.getMemberName()`."
+      },
+      "warmup": [
+        {
+          "question": "`printGymRules()` is `static` but `getMemberId()` is not. Using the reading's question \"how many times does it occur?\", explain why each choice is right.",
+          "model_answer": "The rules occur once for the whole gym, so a class method is right and needs no object. A member ID occurs once per member, so the getter must work with one object's field: it is an instance method, called with a member object."
+        },
+        {
+          "question": "From another class, which of these compile, and why? (a) `MemberCard.printGymRules();` (b) `MemberCard.getMemberId();` (c) `card.getMemberId();` where `card` is a `MemberCard` object.",
+          "model_answer": "(a) and (c). (a) is a public static method, usable with the class name. (b) fails because `getMemberId()` is nonstatic and needs an object to know whose ID to return. (c) uses an object, so it works."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "Why doesn't `setMemberName()` need to return anything, and why doesn't `getMemberName()` need a parameter?",
+          "model_answer": "The setter's job is to store a value in the object, so it has nothing to send back. The getter reads the object's own field, which every method of the class can use directly, so it needs no information from the caller."
+        },
+        {
+          "question": "A colleague suggests adding an `annualCost` field with its own setter. What could go wrong that can't happen with your `getAnnualCost()`?",
+          "model_answer": "The stored annual cost could disagree with the monthly rate: if the rate changes and nobody updates the field, the card shows a wrong yearly cost. Calculating it from the rate each time keeps the two consistent."
+        }
+      ],
+      "extension": "Add `private int visits`, a method `recordVisit()` that adds 1 to it, and `getVisits()`. Is `recordVisit()` a setter? What does it change, and does it need a parameter?",
+      "worth_knowing": "The get/set naming habit became a formal rule in the JavaBeans specification (1997): tools such as GUI builders find an object's \"properties\" just by looking for methods named `getX()` and `setX()`. That's why many Java libraries still depend on the convention, even though the compiler doesn't care.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.4",
+      "title": "The bakery's pickup shelf",
+      "subtitle": "Declaring references, allocating objects with new, and data hiding through set and get methods",
+      "source": "Ch. 4, section 4.4 (pp. 124–128)",
+      "minutes": 25,
+      "objectives": [
+        "Declare an object reference and allocate the object with `new` and its constructor",
+        "Call an object's methods with its identifier, a dot and the method",
+        "Explain why a client can't assign a private field, and what the set and get methods offer instead",
+        "Write a getter that controls how a value leaves the object"
+      ],
+      "scenario": "Harbor Bakery labels every order on its pickup shelf with a code: the prefix **HB-** and the order number. The `Order` class is almost ready, but its `getOrderCode()` returns only the number. The shelf program, `OrderDesk`, is still empty.\n\nToday's orders: **order 301**, 12 sourdough rolls, and **order 302**, 2 lemon tarts. The shelf must print:\n\n```\nHarbor Bakery pickup shelf\nHB-301: 12 x sourdough roll\nHB-302: 2 x lemon tart\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`OrderDesk.main()` declares two `Order` references, `pickup` and `delivery`, and allocates each object with `new Order()` (in one statement or two)."
+        },
+        {
+          "id": "R2",
+          "text": "Each order's number, item and quantity are set through its public setters, and each line is printed from its getters; `OrderDesk` never names a field."
+        },
+        {
+          "id": "R3",
+          "text": "`getOrderCode()` returns `\"HB-\"` followed by the order number: the getter decides how the number leaves the object."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "files": [
+        {
+          "name": "OrderDesk.java",
+          "starter": "public class OrderDesk\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Harbor Bakery pickup shelf\");\n\n        // TODO (R1): declare and create two Order objects, pickup and delivery.\n\n        // TODO (R2): pickup is order 301, 12 x sourdough roll;\n        //            delivery is order 302, 2 x lemon tart.\n\n        // TODO (R2): print one line per order, as on the shelf above.\n    }\n}\n",
+          "solution": "public class OrderDesk\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Harbor Bakery pickup shelf\");\n\n        Order pickup = new Order();\n        Order delivery;\n        delivery = new Order();\n\n        pickup.setOrderNumber(301);\n        pickup.setItem(\"sourdough roll\");\n        pickup.setQuantity(12);\n        delivery.setOrderNumber(302);\n        delivery.setItem(\"lemon tart\");\n        delivery.setQuantity(2);\n\n        System.out.println(pickup.getOrderCode() + \": \"\n            + pickup.getQuantity() + \" x \" + pickup.getItem());\n        System.out.println(delivery.getOrderCode() + \": \"\n            + delivery.getQuantity() + \" x \" + delivery.getItem());\n    }\n}\n"
+        },
+        {
+          "name": "Order.java",
+          "starter": "public class Order\n{\n    private int orderNumber;\n    private String item;\n    private int quantity;\n\n    public void setOrderNumber(int number)\n    {\n        orderNumber = number;\n    }\n\n    // TODO (R3): every code is the bakery's prefix \"HB-\"\n    // followed by the order number, for example HB-301.\n    public String getOrderCode()\n    {\n        return \"\" + orderNumber;\n    }\n\n    public void setItem(String itemName)\n    {\n        item = itemName;\n    }\n\n    public String getItem()\n    {\n        return item;\n    }\n\n    public void setQuantity(int count)\n    {\n        quantity = count;\n    }\n\n    public int getQuantity()\n    {\n        return quantity;\n    }\n}\n",
+          "solution": "public class Order\n{\n    private int orderNumber;\n    private String item;\n    private int quantity;\n\n    public void setOrderNumber(int number)\n    {\n        orderNumber = number;\n    }\n\n    public String getOrderCode()\n    {\n        return \"HB-\" + orderNumber;\n    }\n\n    public void setItem(String itemName)\n    {\n        item = itemName;\n    }\n\n    public String getItem()\n    {\n        return item;\n    }\n\n    public void setQuantity(int count)\n    {\n        quantity = count;\n    }\n\n    public int getQuantity()\n    {\n        return quantity;\n    }\n}\n"
+        }
+      ],
+      "main_file": "OrderDesk.java",
+      "solution_notes": "`Order pickup;` only declares a name; `new Order()` sets aside memory for an order and calls its constructor, and `pickup` then holds that object's memory address: it is a reference. One statement (`Order pickup = new Order();`) and two statements do the same thing; the solution shows both. Because the fields are private, `pickup.orderNumber = 301;` would fail with *orderNumber has private access in Order*, so the desk uses the setters. `getOrderCode()` shows why that matters: the bakery's prefix is added in one method, and every client gets codes in the right format without knowing how they are made.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "Two Order objects are declared and created with new",
+          "file": "OrderDesk.java",
+          "within": "OrderDesk.main",
+          "require": "^(?=[\\s\\S]*\\bOrder\\s+pickup\\b)(?=[\\s\\S]*\\bOrder\\s+delivery\\b)(?=[\\s\\S]*\\bpickup\\s*=\\s*new\\s+Order\\s*\\(\\s*\\))(?=[\\s\\S]*\\bdelivery\\s*=\\s*new\\s+Order\\s*\\(\\s*\\))",
+          "message": "Declare `pickup` and `delivery` with the type `Order`, and give each one an object with `new Order()`. A declaration alone only reserves a name: `new` sets aside the memory and calls the constructor.",
+          "hint": "Compare it with how you create a `Scanner`."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "Each order is set and read through its methods",
+          "file": "OrderDesk.java",
+          "within": "OrderDesk.main",
+          "require": "^(?=[\\s\\S]*\\bpickup\\s*\\.\\s*setOrderNumber\\s*\\(\\s*301\\s*\\))(?=[\\s\\S]*\\bdelivery\\s*\\.\\s*setOrderNumber\\s*\\(\\s*302\\s*\\))(?=[\\s\\S]*\\bpickup\\s*\\.\\s*setQuantity\\s*\\(\\s*12\\s*\\))(?=[\\s\\S]*\\bdelivery\\s*\\.\\s*setQuantity\\s*\\(\\s*2\\s*\\))(?=[\\s\\S]*\\bpickup\\s*\\.\\s*getOrderCode\\s*\\(\\s*\\))(?=[\\s\\S]*\\bdelivery\\s*\\.\\s*getOrderCode\\s*\\(\\s*\\))",
+          "forbid": "\\.\\s*(?:orderNumber|item|quantity)\\b",
+          "message": "Set each order's number, item and quantity with its setters (`pickup.setOrderNumber(301)` and so on) and build each line from `getOrderCode()`, `getQuantity()` and `getItem()`. The fields are private: another class can't name them.",
+          "hint": "Object name, dot, method: one call per value."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "getOrderCode() adds the HB- prefix",
+          "file": "Order.java",
+          "within": "Order.getOrderCode",
+          "strings": true,
+          "require": "\\breturn\\s*\"HB-\"\\s*\\+\\s*(?:this\\s*\\.\\s*)?orderNumber\\s*;",
+          "message": "Return the text `\"HB-\"` joined with `+` to `orderNumber`. The getter controls how the number leaves the object, so every client gets the bakery's format automatically."
+        }
+      ],
+      "hints": [
+        "Creating an object takes a type and a name, like any variable, plus `new` and the constructor to set aside its memory.",
+        "The fields are private, so `OrderDesk` talks to each order only through its public methods: the object's name, a dot, the method and its argument.",
+        "The code is text: start the returned value with the prefix in quotes and join the number to it with `+`."
+      ],
+      "test_program": {
+        "file_name": "TestOrderDesk.java",
+        "code": "public class TestOrderDesk\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java OrderDesk\" would.\n        OrderDesk.main(new String[0]);\n\n        // One more object, created here, to check the code format.\n        Order sample = new Order();\n        sample.setOrderNumber(45);\n        System.out.println(\"Code check: \" + sample.getOrderCode());\n    }\n}\n",
+        "expected_output": "Harbor Bakery pickup shelf\nHB-301: 12 x sourdough roll\nHB-302: 2 x lemon tart\nCode check: HB-45\n",
+        "how_to_run": "Put `OrderDesk.java`, `Order.java` and `TestOrderDesk.java` in the same folder, then run `javac *.java` and `java TestOrderDesk`. In an IDE, add all of them to one project and run `TestOrderDesk.java`. If the files are in different folders, the compiler reports *cannot find symbol*.",
+        "predict": "Before you write the setter calls: predict the compiler's message if `OrderDesk` tried `pickup.orderNumber = 301;`. Try it once, read the message, then remove it."
+      },
+      "warmup": [
+        {
+          "question": "After `Order pickup;` runs, but before `pickup = new Order();`, has memory been set aside for an order's number, item and quantity? What does `pickup` hold after the second statement?",
+          "model_answer": "No. The declaration only tells the compiler the name will be used. After `new Order()`, `pickup` holds a reference: the memory address of the newly allocated `Order` object."
+        },
+        {
+          "question": "In `new Order()`, what is `Order()`? Nobody wrote a method with that name in `Order.java`; where does it come from?",
+          "model_answer": "It is the constructor, the special method that creates and initializes the object. When a class has no constructor of its own, Java writes a default one, always named after the class."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "The bakery's code format changed once, and you edited one method. What would the change have cost if `OrderDesk` and three other programs read the `orderNumber` field directly?",
+          "model_answer": "Every one of those programs would need to add the prefix itself, and any one that was missed would print the wrong code. With the getter, the format lives in one place, and clients get it without changes: that is data hiding through encapsulation."
+        },
+        {
+          "question": "`pickup` and `delivery` call the very same `getOrderCode()`. How does it return HB-301 for one and HB-302 for the other?",
+          "model_answer": "Each object has its own `orderNumber`, and the method is called through a particular object, so it reads that object's field: 301 for `pickup`, 302 for `delivery`."
+        }
+      ],
+      "extension": "Add `getShelfLine()` to `Order` that returns a whole shelf line, such as `HB-301: 12 x sourdough roll`. How much shorter does `OrderDesk.main()` get?",
+      "worth_knowing": "In the standard (HotSpot) JVM, `new` is surprisingly cheap: each thread allocates from its own pre-reserved slice of memory (a thread-local allocation buffer), so creating a small object is often just moving a pointer forward. The real cost comes later, when the garbage collector reclaims objects nobody references.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.5",
+      "title": "The shipping counter's labels",
+      "subtitle": "Classes as data types: passing objects to methods and returning them",
+      "source": "Ch. 4, section 4.5 (pp. 128–131)",
+      "minutes": 25,
+      "objectives": [
+        "Explain why a class you write is a programmer-defined, composite data type",
+        "Write a method whose return type is a class, and return an object from it",
+        "Write a method with an object parameter",
+        "Assign a returned object to a declared reference, as you would an `int`"
+      ],
+      "scenario": "Pelican Point Shipping prints a label for every parcel. The `Parcel` class is finished. The counter program, though, repeats the same six statements for every parcel, and tomorrow it handles forty.\n\nMove the work into two methods: one that **builds and returns** a `Parcel`, and one that **receives** a `Parcel` and prints its label. `main()` then only declares the parcels, receives them from the first method and hands them to the second. The labels stay the same:\n\n```\nSHIP TO: Portland\nWEIGHT:  4.5 lb\n--------\nSHIP TO: Savannah\nWEIGHT:  12.25 lb\n--------\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`public static Parcel makeParcel(String destination, double weight)` creates a new `Parcel`, sets both values and returns it: its return type is the class `Parcel`."
+        },
+        {
+          "id": "R2",
+          "text": "`public static void printLabel(Parcel parcel)` receives a `Parcel` and prints its three label lines."
+        },
+        {
+          "id": "R3",
+          "text": "`main()` assigns `first` and `second` the parcels returned by `makeParcel()` and prints each with `printLabel()`; `main()` itself has no `new`, no setter calls and no `println()`."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "files": [
+        {
+          "name": "ShippingCounter.java",
+          "starter": "public class ShippingCounter\n{\n    public static void main(String[] args)\n    {\n        // TODO (R3): main() should only declare, receive and print parcels.\n        Parcel first = new Parcel();\n        first.setDestination(\"Portland\");\n        first.setWeight(4.5);\n        System.out.println(\"SHIP TO: \" + first.getDestination());\n        System.out.println(\"WEIGHT:  \" + first.getWeight() + \" lb\");\n        System.out.println(\"--------\");\n\n        Parcel second = new Parcel();\n        second.setDestination(\"Savannah\");\n        second.setWeight(12.25);\n        System.out.println(\"SHIP TO: \" + second.getDestination());\n        System.out.println(\"WEIGHT:  \" + second.getWeight() + \" lb\");\n        System.out.println(\"--------\");\n    }\n\n    // TODO (R1): makeParcel(String destination, double weight) builds a\n    // Parcel from its two arguments and returns it.\n\n    // TODO (R2): printLabel(Parcel parcel) prints the label\n    // of the parcel it receives.\n}\n",
+          "solution": "public class ShippingCounter\n{\n    public static void main(String[] args)\n    {\n        Parcel first;\n        Parcel second;\n        first = makeParcel(\"Portland\", 4.5);\n        second = makeParcel(\"Savannah\", 12.25);\n        printLabel(first);\n        printLabel(second);\n    }\n\n    public static Parcel makeParcel(String destination, double weight)\n    {\n        Parcel tempParcel = new Parcel();\n        tempParcel.setDestination(destination);\n        tempParcel.setWeight(weight);\n        return tempParcel;\n    }\n\n    public static void printLabel(Parcel parcel)\n    {\n        System.out.println(\"SHIP TO: \" + parcel.getDestination());\n        System.out.println(\"WEIGHT:  \" + parcel.getWeight() + \" lb\");\n        System.out.println(\"--------\");\n    }\n}\n"
+        },
+        {
+          "name": "Parcel.java",
+          "editable": false,
+          "starter": "// Finished class. Read it; you don't need to change it.\npublic class Parcel\n{\n    private String destination;\n    private double weight;\n\n    public void setDestination(String city)\n    {\n        destination = city;\n    }\n\n    public String getDestination()\n    {\n        return destination;\n    }\n\n    public void setWeight(double pounds)\n    {\n        weight = pounds;\n    }\n\n    public double getWeight()\n    {\n        return weight;\n    }\n}\n"
+        }
+      ],
+      "main_file": "ShippingCounter.java",
+      "solution_notes": "`Parcel` is a type you invented, so it goes wherever a type goes: as a return type (`static Parcel makeParcel(...)`), as a parameter type (`printLabel(Parcel parcel)`) and as the type of a variable in `main()`. As in Figure 4-10, the object is constructed inside `makeParcel()` and returned; `main()` assigns the returned reference to `first`, exactly as it would assign an `int` a method returns. Writing `new Parcel()` in `main()` as well would create an object that is immediately replaced. The label format now lives in one method, so a new line on every label is one edit.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "makeParcel() has Parcel as its return type",
+          "file": "ShippingCounter.java",
+          "within": "ShippingCounter",
+          "require": "\\bstatic\\s+Parcel\\s+makeParcel\\s*\\(\\s*String\\s+\\w+\\s*,\\s*double\\s+\\w+\\s*\\)",
+          "message": "Write the header `public static Parcel makeParcel(String destination, double weight)`. The return type is `Parcel`: a class you write is a data type, just like `double`."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "makeParcel() builds a new Parcel and returns it",
+          "file": "ShippingCounter.java",
+          "within": "ShippingCounter.makeParcel",
+          "require": "^(?=[\\s\\S]*\\bnew\\s+Parcel\\s*\\(\\s*\\))(?=[\\s\\S]*\\.\\s*setDestination\\s*\\()(?=[\\s\\S]*\\.\\s*setWeight\\s*\\()(?=[\\s\\S]*\\breturn\\s+\\w+\\s*;)",
+          "message": "Inside `makeParcel()`, create a `Parcel` with `new`, set its destination and weight from the parameters, and `return` the object."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "printLabel() receives a Parcel",
+          "file": "ShippingCounter.java",
+          "within": "ShippingCounter",
+          "require": "\\bstatic\\s+void\\s+printLabel\\s*\\(\\s*Parcel\\s+\\w+\\s*\\)",
+          "message": "Write `public static void printLabel(Parcel parcel)`: the parameter's type is the class, and the method prints the label using that parcel's getters."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "main() receives the parcels and passes them on",
+          "file": "ShippingCounter.java",
+          "within": "ShippingCounter.main",
+          "require": "^(?=[\\s\\S]*\\bfirst\\s*=\\s*(?:ShippingCounter\\s*\\.\\s*)?makeParcel\\s*\\()(?=[\\s\\S]*\\bsecond\\s*=\\s*(?:ShippingCounter\\s*\\.\\s*)?makeParcel\\s*\\()(?=[\\s\\S]*\\bprintLabel\\s*\\(\\s*first\\s*\\))(?=[\\s\\S]*\\bprintLabel\\s*\\(\\s*second\\s*\\))",
+          "forbid": "\\bnew\\s+Parcel\\b|\\bprintln\\s*\\(|\\.\\s*set\\w+\\s*\\(",
+          "message": "In `main()`, assign each parcel the object `makeParcel()` returns, then pass it to `printLabel()`. Leave the `new`, the setters and the `println()` statements to the two methods: that's the repetition you are removing.",
+          "hint": "`first = makeParcel(...)` works the same way as assigning an `int` a method returns."
+        }
+      ],
+      "hints": [
+        "Write the two method headers first. A method that hands back a parcel has `Parcel` where you have always written `int`, `double` or `void`.",
+        "Inside `makeParcel()`, build the object exactly as the starter does in `main()`, but with the parameters, then send it back with `return`.",
+        "In `main()`, a call to `makeParcel(...)` *is* a `Parcel`: store it in `first` the way you would store a returned `int`."
+      ],
+      "test_program": {
+        "file_name": "TestShippingCounter.java",
+        "code": "public class TestShippingCounter\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java ShippingCounter\" would.\n        ShippingCounter.main(new String[0]);\n\n        // Uses your two methods directly.\n        Parcel extra = ShippingCounter.makeParcel(\"Tampa\", 0.75);\n        ShippingCounter.printLabel(extra);\n        System.out.println(\"Returned object holds: \" + extra.getDestination()\n            + \", \" + extra.getWeight());\n    }\n}\n",
+        "expected_output": "SHIP TO: Portland\nWEIGHT:  4.5 lb\n--------\nSHIP TO: Savannah\nWEIGHT:  12.25 lb\n--------\nSHIP TO: Tampa\nWEIGHT:  0.75 lb\n--------\nReturned object holds: Tampa, 0.75\n",
+        "how_to_run": "Put `ShippingCounter.java`, `Parcel.java` and `TestShippingCounter.java` in the same folder, then run `javac *.java` and `java TestShippingCounter`. In an IDE, add all of them to one project and run `TestShippingCounter.java`. If the files are in different folders, the compiler reports *cannot find symbol*.",
+        "predict": "Your `main()` won't contain `new Parcel()`. Before you run: predict whether `printLabel(first)` still finds a real parcel, and say in which method that object was created."
+      },
+      "warmup": [
+        {
+          "question": "Compare `int count;` with `Parcel first;`. In what ways does the reading say a class you write can be used like a primitive type such as `int`?",
+          "model_answer": "Both are declared with a type and an identifier, and both can be passed into a method, returned from a method and assigned to another variable of the same type. A class is just a new, programmer-defined (composite) data type."
+        },
+        {
+          "question": "The two halves of the starter's `main()` differ only in a few values. Which ones? Those are exactly what the two methods will need.",
+          "model_answer": "The destination and the weight (\"Portland\", 4.5 versus \"Savannah\", 12.25), which become `makeParcel()`'s parameters, and which parcel is printed, which becomes `printLabel()`'s parameter."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "In Figure 4-10 and in your program, `main()` declares a parcel but never constructs one. Why would writing `new Parcel()` in `main()` as well be wasted work?",
+          "model_answer": "The assignment from `makeParcel()` replaces the reference straight away, so the object created in `main()` would never be used; its values would be overwritten by the returned parcel."
+        },
+        {
+          "question": "The shipping company adds a barcode line to every label. Compare the work in the starter with the work in your version.",
+          "model_answer": "In the starter, the line must be added after every parcel's statements, forty times tomorrow, and one could be missed. In my version, it is one `println()` in `printLabel()`, and every label gets it."
+        }
+      ],
+      "extension": "Write `public static Parcel copyParcel(Parcel original)` that returns a new `Parcel` with the same destination and weight. Change the copy's weight and print both. Did the original change? What does that tell you about `new`?",
+      "worth_knowing": "Java always passes arguments by value. For an object, the value copied into the parameter is the reference, the object's address. So `printLabel(first)` doesn't copy the parcel: the parameter `parcel` and the variable `first` point at the same single object in memory.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.6",
+      "title": "The bike rental's missing constructor",
+      "subtitle": "Automatic default values, writing a default constructor, constructors with parameters, and overloading",
+      "source": "Ch. 4, section 4.6 (pp. 131–134)",
+      "minutes": 25,
+      "objectives": [
+        "State the values Java gives numeric, boolean and reference fields when no constructor sets them",
+        "Write a constructor: the class's name and no return type, not even `void`",
+        "Write a constructor with parameters and overload it with a parameterless one",
+        "Explain why `new X()` stops compiling once a class has only constructors with parameters"
+      ],
+      "scenario": "Sandpiper Bike Rental starts every walk-in customer on a **Cruiser for 1 hour**. A programmer wrote what was meant to be the constructor that sets this up, yet every walk-in rental prints `null for 0 h`.\n\nCustomers who book online choose the bike and the hours, so the class also needs a way to create a rental with those two values. The counter must print:\n\n```\nWalk-in: Cruiser for 1 h, helmet: false\nBooked: Tandem for 3 h, helmet: false\n```\n\nNo constructor sets `helmetIncluded`: its `false` comes from Java's automatic default.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "The parameterless version is a real default constructor: the class's name and no return type, not even `void`. It still starts every walk-in as a `Cruiser` for 1 hour."
+        },
+        {
+          "id": "R2",
+          "text": "An overloaded constructor `BikeRental(String type, int rentalHours)` sets both fields from its parameters, and the parameterless constructor stays, so `new BikeRental()` still compiles."
+        },
+        {
+          "id": "R3",
+          "text": "`RentalCounter` creates the booked rental with the two-argument constructor, a `\"Tandem\"` for `3` hours, and prints its line after `Booked: `."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "files": [
+        {
+          "name": "BikeRental.java",
+          "starter": "public class BikeRental\n{\n    private String bikeType;\n    private int hours;\n    private boolean helmetIncluded;\n\n    // TODO (R1): meant to run whenever a rental is created.\n    public void BikeRental()\n    {\n        bikeType = \"Cruiser\";\n        hours = 1;\n    }\n\n    // TODO (R2): a second constructor that takes the bike type and the hours.\n\n    public String getSummary()\n    {\n        return bikeType + \" for \" + hours + \" h, helmet: \" + helmetIncluded;\n    }\n}\n",
+          "solution": "public class BikeRental\n{\n    private String bikeType;\n    private int hours;\n    private boolean helmetIncluded;\n\n    public BikeRental()\n    {\n        bikeType = \"Cruiser\";\n        hours = 1;\n    }\n\n    public BikeRental(String type, int rentalHours)\n    {\n        bikeType = type;\n        hours = rentalHours;\n    }\n\n    public String getSummary()\n    {\n        return bikeType + \" for \" + hours + \" h, helmet: \" + helmetIncluded;\n    }\n}\n"
+        },
+        {
+          "name": "RentalCounter.java",
+          "starter": "public class RentalCounter\n{\n    public static void main(String[] args)\n    {\n        BikeRental walkIn = new BikeRental();\n        System.out.println(\"Walk-in: \" + walkIn.getSummary());\n\n        // TODO (R3): create the online booking, a Tandem for 3 hours,\n        // and print it after \"Booked: \".\n    }\n}\n",
+          "solution": "public class RentalCounter\n{\n    public static void main(String[] args)\n    {\n        BikeRental walkIn = new BikeRental();\n        System.out.println(\"Walk-in: \" + walkIn.getSummary());\n\n        BikeRental booked = new BikeRental(\"Tandem\", 3);\n        System.out.println(\"Booked: \" + booked.getSummary());\n    }\n}\n"
+        }
+      ],
+      "main_file": "BikeRental.java",
+      "solution_notes": "With `void` in its header, `BikeRental()` was an ordinary method that happened to share the class's name. Nothing called it, so `new BikeRental()` ran the default constructor Java supplies when a class has none, which leaves `bikeType` null, `hours` 0 and `helmetIncluded` false. Removing `void` makes it a constructor. The two-parameter version overloads it: same name, different parameter list, so the compiler picks one by the arguments in each `new`. Keeping the parameterless constructor matters: once a class has any constructor you wrote, Java no longer supplies one, and `new BikeRental()` would fail with *constructor BikeRental in class BikeRental cannot be applied to given types*.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "BikeRental() is a constructor, not a void method",
+          "file": "BikeRental.java",
+          "within": "BikeRental",
+          "require": "(?:^|[;{}\\s])(?:public\\s+)?BikeRental\\s*\\(\\s*\\)\\s*\\{",
+          "forbid": "\\b(?:void|int|String|double|boolean)\\s+BikeRental\\s*\\(",
+          "message": "Remove `void` from `BikeRental()`. A constructor has the class's name and no return type, not even `void`; with a return type, it's an ordinary method that `new` never calls.",
+          "hint": "Compare its header with the headers of the class's other methods."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "An overloaded constructor takes the type and the hours, and the parameterless one stays",
+          "file": "BikeRental.java",
+          "within": "BikeRental",
+          "require": "^(?=[\\s\\S]*(?:^|[;{}\\s])(?:public\\s+)?BikeRental\\s*\\(\\s*String\\s+\\w+\\s*,\\s*int\\s+\\w+\\s*\\)\\s*\\{)(?=[\\s\\S]*(?:^|[;{}\\s])(?:public\\s+)?BikeRental\\s*\\(\\s*\\)\\s*\\{)",
+          "forbid": "\\bvoid\\s+BikeRental\\s*\\(",
+          "message": "Add a second constructor, `BikeRental(String type, int rentalHours)`, that stores both values, and keep the parameterless one. Once a class has any constructor you wrote, Java stops supplying a default one, so `new BikeRental()` needs yours."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "The booking uses the two-argument constructor",
+          "file": "RentalCounter.java",
+          "within": "RentalCounter.main",
+          "strings": true,
+          "require": "^(?=[\\s\\S]*\\bnew\\s+BikeRental\\s*\\(\\s*\"Tandem\"\\s*,\\s*3\\s*\\))(?=[\\s\\S]*\"Booked: \")",
+          "message": "Create the booking with `new BikeRental(\"Tandem\", 3)`: the arguments are a `String` and an `int`, in the same order as the constructor's parameters. Then print its summary after `Booked: `."
+        }
+      ],
+      "hints": [
+        "A constructor's header has the class's name and *nothing* where a return type would go.",
+        "Overloaded constructors share one name and differ only in their parameter lists. The booking will pass a `String` and then an `int`.",
+        "If `new BikeRental()` stops compiling, the parameterless constructor is gone: once you write any constructor, Java no longer supplies one."
+      ],
+      "test_program": {
+        "file_name": "TestRentalCounter.java",
+        "code": "public class TestRentalCounter\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java RentalCounter\" would.\n        RentalCounter.main(new String[0]);\n\n        // Both constructors, used again.\n        BikeRental family = new BikeRental(\"Cargo\", 2);\n        BikeRental standby = new BikeRental();\n        System.out.println(\"Family: \" + family.getSummary());\n        System.out.println(\"Standby: \" + standby.getSummary());\n    }\n}\n",
+        "expected_output": "Walk-in: Cruiser for 1 h, helmet: false\nBooked: Tandem for 3 h, helmet: false\nFamily: Cargo for 2 h, helmet: false\nStandby: Cruiser for 1 h, helmet: false\n",
+        "how_to_run": "Put `BikeRental.java`, `RentalCounter.java` and `TestRentalCounter.java` in the same folder, then run `javac *.java` and `java TestRentalCounter`. In an IDE, add all of them to one project and run `TestRentalCounter.java`. If the files are in different folders, the compiler reports *cannot find symbol*.",
+        "predict": "Before you fix anything, run `RentalCounter` on its own (the test program needs your new constructor first). Predict, word for word, the Walk-in line it prints."
+      },
+      "warmup": [
+        {
+          "question": "The starter's `BikeRental()` has `void` in its header. To the compiler, is it a constructor or an ordinary method? What will `walkIn.getSummary()` return?",
+          "model_answer": "An ordinary method, because constructors have no return type. Nothing calls it, so Java's automatic default constructor runs instead and the summary is `null for 0 h, helmet: false`."
+        },
+        {
+          "question": "Which starting values does Java give a numeric field, a `boolean` field and a `String` field when no constructor sets them?",
+          "model_answer": "Numeric fields get 0, boolean fields get `false`, and reference fields such as a `String` get `null`."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "Suppose you had written only the two-parameter constructor and deleted the parameterless one. Which line would break, and why didn't it break before you wrote any constructor?",
+          "model_answer": "`new BikeRental()` in `RentalCounter`. Before, Java supplied a default constructor because the class had none. Once you write any constructor, Java no longer supplies one, so a call with no arguments has nothing to match."
+        },
+        {
+          "question": "`helmetIncluded` is never assigned, yet it prints `false`. Is relying on that automatic value a good idea? What does the reading suggest?",
+          "model_answer": "It works, but the reading suggests initializing a field explicitly in the constructor for clarity, even when the value equals the default, so a reader sees it is intended rather than forgotten."
+        }
+      ],
+      "extension": "Add a third constructor, `BikeRental(String type)`, for a 1-hour rental of any bike. Then try to add `BikeRental(String model)` as a fourth. What does the compiler say, and why?",
+      "worth_knowing": "In Java, a constructor isn't technically a method: the language specification treats constructors as a separate kind of declaration, and they are never inherited. That's also why the compiler accepts a *method* that shares its class's name, like the starter's `void BikeRental()`, without a single warning.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.7",
+      "title": "The marina's empty moorings",
+      "subtitle": "The this reference, shadowed fields, and one constructor calling another",
+      "source": "Ch. 4, section 4.7 (pp. 134–139)",
+      "minutes": 30,
+      "objectives": [
+        "Explain how one copy of an instance method reaches the right object's fields through the implicit `this` reference",
+        "Recognize when a parameter shadows a field, and reach the field with `this.field`",
+        "Call one constructor from another with `this(...)` to remove repeated code"
+      ],
+      "scenario": "Gull Harbor Marina records every boat in a `Mooring` object. Reserved boats get their slip, name and nightly rate. Visitors without a reservation go to the guest dock, **slip 99 at $45.0 a night**, and a slip can also be held for a boat whose name isn't known yet (**TBA**).\n\nEvery reserved mooring prints `Slip 0: null at $0.0 a night`. On top of that, the guest-dock values are typed into two constructors, and the harbor master expects them to change.\n\nThe harbor office's test must print:\n\n```\nSlip 12: Sea Lark at $62.5 a night\nSlip 99: Blue Heron at $45.0 a night\nSlip 99: TBA at $45.0 a night\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "The three-parameter constructor keeps its parameter names and stores each one in its field with the explicit `this` reference."
+        },
+        {
+          "id": "R2",
+          "text": "The other two constructors each call another constructor with `this(...)`; only the three-parameter constructor assigns the fields."
+        },
+        {
+          "id": "R3",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "Mooring.java",
+      "starter_code": "public class Mooring\n{\n    private int slipNumber;\n    private String boatName;\n    private double nightlyRate;\n\n    public Mooring(int slipNumber, String boatName, double nightlyRate)\n    {\n        // TODO (R1): these three assignments accomplish nothing.\n        slipNumber = slipNumber;\n        boatName = boatName;\n        nightlyRate = nightlyRate;\n    }\n\n    // Visitors without a reservation: the guest dock, slip 99.\n    public Mooring(String name)\n    {\n        // TODO (R2): let the three-parameter constructor do the work.\n        slipNumber = 99;\n        boatName = name;\n        nightlyRate = 45.0;\n    }\n\n    // A guest-dock slip held for a boat whose name isn't known yet.\n    public Mooring()\n    {\n        // TODO (R2)\n        slipNumber = 99;\n        boatName = \"TBA\";\n        nightlyRate = 45.0;\n    }\n\n    public String describe()\n    {\n        return \"Slip \" + slipNumber + \": \" + boatName + \" at $\"\n            + nightlyRate + \" a night\";\n    }\n}\n",
+      "solution": "public class Mooring\n{\n    private int slipNumber;\n    private String boatName;\n    private double nightlyRate;\n\n    public Mooring(int slipNumber, String boatName, double nightlyRate)\n    {\n        this.slipNumber = slipNumber;\n        this.boatName = boatName;\n        this.nightlyRate = nightlyRate;\n    }\n\n    // Visitors without a reservation: the guest dock, slip 99.\n    public Mooring(String name)\n    {\n        this(99, name, 45.0);\n    }\n\n    // A guest-dock slip held for a boat whose name isn't known yet.\n    public Mooring()\n    {\n        this(\"TBA\");\n    }\n\n    public String describe()\n    {\n        return \"Slip \" + slipNumber + \": \" + boatName + \" at $\"\n            + nightlyRate + \" a night\";\n    }\n}\n",
+      "solution_notes": "Inside the first constructor, the parameters `slipNumber`, `boatName` and `nightlyRate` are closer in scope than the fields with the same names, so they shadow them: `slipNumber = slipNumber;` copies the parameter onto itself, and the fields keep their defaults, 0, null and 0.0. `this.slipNumber` names the field of the object being constructed. `describe()` needs no `this` because it has no local variable with those names; the reference is there implicitly. The short constructors now pass their values to another constructor with `this(...)`, which must be the first statement; the solution chains `Mooring()` to `Mooring(String)`, and `this(99, \"TBA\", 45.0)` is equally correct. A change to the guest-dock rate is now one edit.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The fields are reached with this",
+          "within": "Mooring",
+          "require": "^(?=[\\s\\S]*\\bthis\\s*\\.\\s*slipNumber\\s*=\\s*slipNumber\\s*;)(?=[\\s\\S]*\\bthis\\s*\\.\\s*boatName\\s*=\\s*boatName\\s*;)(?=[\\s\\S]*\\bthis\\s*\\.\\s*nightlyRate\\s*=\\s*nightlyRate\\s*;)",
+          "forbid": "[;{}]\\s*(slipNumber|boatName|nightlyRate)\\s*=\\s*\\1\\s*;",
+          "message": "Write `this.` before each field on the left of the `=`: `this.slipNumber = slipNumber;` and so on. Without it, both names mean the parameter, which shadows the field, and the assignment does nothing.",
+          "hint": "Keep the parameter names: the reading's fix is `this`, not renaming."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "Two constructors call another with this(...)",
+          "within": "Mooring",
+          "require": "^(?:[\\s\\S]*?\\bthis\\s*\\([^)]*\\)\\s*;){2}",
+          "forbid": "^(?:[\\s\\S]*?\\bnightlyRate\\s*=(?!=)){2}|^(?:[\\s\\S]*?\\bslipNumber\\s*=(?!=)){2}",
+          "message": "Replace the assignments in `Mooring(String name)` and `Mooring()` with one statement each: `this(...)` with the arguments for another constructor. Then only the three-parameter constructor assigns fields, so a change to the guest dock is made once.",
+          "hint": "What slip, name and rate does a visitor's mooring hand over?"
+        }
+      ],
+      "hints": [
+        "Inside a method, a parameter with the same name as a field hides (shadows) the field. Something has to tell the compiler you mean the object's own field.",
+        "One constructor can call another constructor of the same class with the word `this` followed by an argument list. It must be the first statement.",
+        "The guest-dock values become arguments: which slip number, name and rate does each short constructor hand to the one that does the work?"
+      ],
+      "test_program": {
+        "file_name": "TestMooring.java",
+        "code": "public class TestMooring\n{\n    public static void main(String[] args)\n    {\n        Mooring reserved = new Mooring(12, \"Sea Lark\", 62.5);\n        Mooring visitor = new Mooring(\"Blue Heron\");\n        Mooring held = new Mooring();\n\n        System.out.println(reserved.describe());\n        System.out.println(visitor.describe());\n        System.out.println(held.describe());\n    }\n}\n",
+        "expected_output": "Slip 12: Sea Lark at $62.5 a night\nSlip 99: Blue Heron at $45.0 a night\nSlip 99: TBA at $45.0 a night\n",
+        "predict": "Before you change anything: predict all three lines the starter prints. Which of them are already right?"
+      },
+      "warmup": [
+        {
+          "question": "In the first constructor, which `slipNumber` does `slipNumber = slipNumber;` mean on each side of the `=`? What does `describe()` print for the Sea Lark?",
+          "model_answer": "Both sides mean the parameter, which shadows the field because it is closer in scope. The field is never assigned and keeps its default, so it prints `Slip 0: null at $0.0 a night`."
+        },
+        {
+          "question": "`describe()` uses `slipNumber` without `this`, and it reaches the field. Why does it work there but not in the constructor?",
+          "model_answer": "`describe()` has no parameter or local variable named `slipNumber`, so the name means the field of the object the method was called with, through the implicit `this` reference. In the constructor, the parameter hides the field."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "The harbor master changes the guest-dock rate to $48.0. How many places do you edit in your version, and how many in the starter?",
+          "model_answer": "One in my version, the `this(...)` call that passes 45.0 (in the solution's chain, only `Mooring(String)`). In the starter, two constructors typed 45.0, and missing one would give visitors and held slips different rates."
+        },
+        {
+          "question": "Only one copy of `describe()` exists in memory, however many moorings there are. How does it print slip 12 for one object and slip 99 for another?",
+          "model_answer": "Every call to a nonstatic method passes the calling object's address as the hidden `this` reference, so the single copy of `describe()` reads the fields of whichever object it was called with."
+        }
+      ],
+      "extension": "Add `public Mooring(int slipNumber, String boatName)` for reserved boats at the standard rate of $62.5, written with `this(...)`. Can you call `this(...)` from `describe()`? Try it and read the message.",
+      "worth_knowing": "The compiler really does pass `this` as a hidden argument. In the bytecode of every instance method and constructor, `this` sits in local-variable slot 0 and your own parameters start at slot 1. Static methods have no such slot, which is exactly why they have no `this`.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.8",
+      "title": "The beach cleanup's volunteer badges",
+      "subtitle": "Static class variables, static methods, and choosing between static, final and static final",
+      "source": "Ch. 4, section 4.8 (pp. 139–143)",
+      "minutes": 30,
+      "objectives": [
+        "Use a `static` field as a class variable that every object shares",
+        "Write a `static` method that works without an object, and explain why it has no `this`",
+        "Choose correctly between `static`, `final` and `static final` for a field"
+      ],
+      "scenario": "The Harbor Beach Cleanup gives every volunteer a badge numbered in sign-up order, and every badge shows how many people have signed up so far. Right now **everyone gets badge #1** and the count never passes 1.\n\nDecide, for each field, whether it belongs to the class or to each volunteer, and whether it may ever change:\n\n- the event name: the same for everyone, never changes\n- the sign-up count: the same for everyone, grows with every volunteer\n- the badge number: different for each volunteer, never changes once given\n- the volunteer's name: different for each volunteer\n\nThe test signs up Ana and Kofi, shows both, signs up Lena, then shows Lena and Ana again:\n\n```\nHarbor Beach Cleanup: badge #1 Ana (2 signed up)\nHarbor Beach Cleanup: badge #2 Kofi (2 signed up)\nHarbor Beach Cleanup: badge #3 Lena (3 signed up)\nHarbor Beach Cleanup: badge #1 Ana (3 signed up)\nTotal volunteers: 3\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`volunteerCount` is a class variable: one copy shared by every `Volunteer`, still able to change (`static`, not `final`)."
+        },
+        {
+          "id": "R2",
+          "text": "The badge number is a nonstatic `final` field, assigned once in the constructor from the count."
+        },
+        {
+          "id": "R3",
+          "text": "The event name is a `static final` constant whose value is given where it is declared."
+        },
+        {
+          "id": "R4",
+          "text": "`getVolunteerCount()` is a class method (`static`), so it can be called as `Volunteer.getVolunteerCount()` without any object."
+        },
+        {
+          "id": "R5",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "Volunteer.java",
+      "starter_code": "public class Volunteer\n{\n    // TODO (R1, R2, R3): decide which fields are static, final, or both.\n    private String eventName = \"Harbor Beach Cleanup\";\n    private int volunteerCount = 0;\n    private int badgeNumber;\n    private String name;\n\n    public Volunteer(String volunteerName)\n    {\n        name = volunteerName;\n        volunteerCount = volunteerCount + 1;\n        badgeNumber = volunteerCount;\n    }\n\n    // TODO (R4): the test calls this as Volunteer.getVolunteerCount().\n    public int getVolunteerCount()\n    {\n        return volunteerCount;\n    }\n\n    public void display()\n    {\n        System.out.println(eventName + \": badge #\" + badgeNumber + \" \" + name\n            + \" (\" + volunteerCount + \" signed up)\");\n    }\n}\n",
+      "solution": "public class Volunteer\n{\n    private static final String EVENT_NAME = \"Harbor Beach Cleanup\";\n    private static int volunteerCount = 0;\n    private final int BADGE_NUMBER;\n    private String name;\n\n    public Volunteer(String volunteerName)\n    {\n        name = volunteerName;\n        volunteerCount = volunteerCount + 1;\n        BADGE_NUMBER = volunteerCount;\n    }\n\n    public static int getVolunteerCount()\n    {\n        return volunteerCount;\n    }\n\n    public void display()\n    {\n        System.out.println(EVENT_NAME + \": badge #\" + BADGE_NUMBER + \" \" + name\n            + \" (\" + volunteerCount + \" signed up)\");\n    }\n}\n",
+      "solution_notes": "Ask of each field how many times it occurs and whether it may change. The count occurs once per class and changes: `static`, not `final`, so every constructor call adds to the one shared copy, and Ana's line shows 3 after Lena signs up although Ana's object was never touched. The badge occurs once per volunteer and never changes: `final` but not `static`, assigned in the constructor, like `NUM_EVENTS` in the reading's dog triathlon. The event name is shared and fixed: `static final`, with its value in the declaration. Constants are conventionally named in capitals (`EVENT_NAME`, `BADGE_NUMBER`); keeping the old names also passes. `getVolunteerCount()` uses only a class variable, so it can be `static`; it could not return `name`, because a static method has no `this` and so no particular volunteer.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The count is static and not final",
+          "within": "Volunteer",
+          "require": "\\b(?:private\\s+static|static\\s+private)\\s+int\\s+volunteerCount\\b",
+          "forbid": "\\bfinal\\b[^;(){}]*\\bvolunteerCount\\b",
+          "message": "Declare `volunteerCount` as `private static int`. A static field exists once for the whole class, so each new volunteer adds to the same count. It can't be `final`: it changes every time someone signs up.",
+          "hint": "Once per class, or once per volunteer?"
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "The badge number is final but not static",
+          "within": "Volunteer",
+          "require": "\\b(?:private\\s+final|final\\s+private)\\s+int\\s+(\\w+)\\s*;[\\s\\S]*\\b\\1\\s*=\\s*volunteerCount\\s*;",
+          "forbid": "\\bstatic\\s+final\\s+int\\b|\\bfinal\\s+static\\s+int\\b|\\bstatic\\b[^;(){}]*\\bbadgeNumber\\b",
+          "message": "Declare the badge number `private final int` with no value and no `static`, and assign it once in the constructor from the count. `final` stops it from ever changing; leaving out `static` gives every volunteer their own badge."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "The event name is a static final constant set in its declaration",
+          "within": "Volunteer",
+          "strings": true,
+          "require": "\\b(?:private\\s+)?(?:static\\s+final|final\\s+static)\\s+String\\s+\\w+\\s*=\\s*\"Harbor Beach Cleanup\"\\s*;",
+          "message": "Make the event name `private static final String`, with its value in the declaration. It's the same for every volunteer (`static`) and never changes (`final`); a `static final` field must get its value where it is declared."
+        },
+        {
+          "id": "C4",
+          "requirement": "R4",
+          "title": "getVolunteerCount() is a class method",
+          "within": "Volunteer",
+          "require": "\\bpublic\\s+static\\s+int\\s+getVolunteerCount\\s*\\(\\s*\\)",
+          "message": "Add `static` to `getVolunteerCount()`. It returns only a class variable, so it needs no object and can be called as `Volunteer.getVolunteerCount()`."
+        }
+      ],
+      "hints": [
+        "Two fields hold one value for the whole event; two hold one value per volunteer. Only the first kind is `static`.",
+        "`final` means \"assigned once\". A count that grows can't be `final`; a badge given in the constructor can be, as long as it isn't `static`.",
+        "A `static final` field must get its value in its declaration. A method that uses only class variables, and is called with the class name, needs one more word in its header."
+      ],
+      "test_program": {
+        "file_name": "TestVolunteer.java",
+        "code": "public class TestVolunteer\n{\n    public static void main(String[] args)\n    {\n        Volunteer ana = new Volunteer(\"Ana\");\n        Volunteer kofi = new Volunteer(\"Kofi\");\n        ana.display();\n        kofi.display();\n\n        Volunteer lena = new Volunteer(\"Lena\");\n        lena.display();\n        ana.display();\n\n        System.out.println(\"Total volunteers: \"\n            + Volunteer.getVolunteerCount());\n    }\n}\n",
+        "expected_output": "Harbor Beach Cleanup: badge #1 Ana (2 signed up)\nHarbor Beach Cleanup: badge #2 Kofi (2 signed up)\nHarbor Beach Cleanup: badge #3 Lena (3 signed up)\nHarbor Beach Cleanup: badge #1 Ana (3 signed up)\nTotal volunteers: 3\n",
+        "predict": "Predict the five lines before you run. In particular: does Ana's second line differ from her first, even though nothing was done to Ana's object in between?"
+      },
+      "warmup": [
+        {
+          "question": "Apply the reading's question, \"once per class or once per object?\", to each of the four fields.",
+          "model_answer": "The event name and the sign-up count occur once for the whole class. The badge number and the volunteer's name occur once per volunteer object."
+        },
+        {
+          "question": "With the starter, why does every volunteer get badge #1?",
+          "model_answer": "`volunteerCount` is an instance variable, so each new volunteer gets its own count starting at 0. The constructor adds 1 to that fresh copy, so every badge is 1 and no count is ever shared."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "Could `getVolunteerCount()` stay `static` if it returned `name` instead? Explain using the `this` reference.",
+          "model_answer": "No. A static method has no `this` reference because no object is associated with it, so it can't know which volunteer's name to return; the compiler rejects using an instance variable there."
+        },
+        {
+          "question": "Why must the badge number be `final` but not `static`, while the event name is both?",
+          "model_answer": "Each volunteer needs their own badge that never changes, so it is one value per object (not static) that is fixed once assigned (final). The event name is one value for everyone (static) that never changes (final)."
+        }
+      ],
+      "extension": "Inside `display()`, try `BADGE_NUMBER = 7;` and read the compiler's message. Then remove `static` from `volunteerCount` and predict the five lines before you run them again.",
+      "worth_knowing": "A `static final` field holding a literal, like `\"Harbor Beach Cleanup\"`, is a compile-time constant: `javac` copies its value straight into every class that uses it. Change the constant, recompile only `Volunteer.java`, and other classes compiled earlier keep printing the old value.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.9",
+      "title": "The pool-cover quote",
+      "subtitle": "The Math class, importing classes and packages, and LocalDate",
+      "source": "Ch. 4, section 4.9 (pp. 143–150)",
+      "minutes": 30,
+      "objectives": [
+        "Explain why `Math` needs no import and no object, and use `Math.PI` and `Math.round()`",
+        "Import a class or a whole package, and know what an import does and doesn't do",
+        "Create dates with `LocalDate.of()` and calculate with `plusWeeks()` and `getDayOfWeek()`"
+      ],
+      "scenario": "Coastal Pool Covers quotes a cover for a round pool: its area, the price at $18.75 per square metre (rounded to whole dollars), and the install date, **three weeks after the order**.\n\nThe quote program has three problems: it types `java.time.LocalDate` everywhere, uses 3.14 for pi and never rounds, and adds 21 to the day of the month. For an order on **December 21, 2026**, it doesn't print a wrong date: it crashes.\n\nThe quote must read:\n\n```\nPool radius: 3.5 m\nCover area: 38.48 sq m\nCover price: $722\nOrdered: 2026-12-21\nInstall: 2027-01-11 (MONDAY)\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "The program imports `LocalDate` (the class, `import java.time.LocalDate;`, or the package, `import java.time.*;`) and then uses the short name `LocalDate` everywhere."
+        },
+        {
+          "id": "R2",
+          "text": "The area uses `Math.PI`, not a typed approximation. The area shown is rounded to two decimals and the price to whole dollars with `Math.round()`; no `Math` object is created."
+        },
+        {
+          "id": "R3",
+          "text": "The install date comes from `orderDate.plusWeeks(WEEKS_TO_INSTALL)`, and its line shows the day of the week with `getDayOfWeek()`."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "PoolQuote.java",
+      "starter_code": "// TODO (R1): import what this program needs from java.time.\n\npublic class PoolQuote\n{\n    public static void main(String[] args)\n    {\n        final double RADIUS = 3.5;          // metres\n        final double COVER_PRICE = 18.75;   // dollars per square metre\n        final int WEEKS_TO_INSTALL = 3;\n\n        // TODO (R2): use the Math class for pi and for rounding.\n        double area = 3.14 * RADIUS * RADIUS;\n        double roundedArea = area;\n        double price = area * COVER_PRICE;\n\n        java.time.LocalDate orderDate = java.time.LocalDate.of(2026, 12, 21);\n        // TODO (R3): install WEEKS_TO_INSTALL weeks after the order.\n        java.time.LocalDate installDate =\n            java.time.LocalDate.of(2026, 12, 21 + 7 * WEEKS_TO_INSTALL);\n\n        System.out.println(\"Pool radius: \" + RADIUS + \" m\");\n        System.out.println(\"Cover area: \" + roundedArea + \" sq m\");\n        System.out.println(\"Cover price: $\" + price);\n        System.out.println(\"Ordered: \" + orderDate);\n        System.out.println(\"Install: \" + installDate);\n    }\n}\n",
+      "solution": "import java.time.LocalDate;\n\npublic class PoolQuote\n{\n    public static void main(String[] args)\n    {\n        final double RADIUS = 3.5;          // metres\n        final double COVER_PRICE = 18.75;   // dollars per square metre\n        final int WEEKS_TO_INSTALL = 3;\n\n        double area = Math.PI * RADIUS * RADIUS;\n        double roundedArea = Math.round(area * 100) / 100.0;\n        long price = Math.round(area * COVER_PRICE);\n\n        LocalDate orderDate = LocalDate.of(2026, 12, 21);\n        LocalDate installDate = orderDate.plusWeeks(WEEKS_TO_INSTALL);\n\n        System.out.println(\"Pool radius: \" + RADIUS + \" m\");\n        System.out.println(\"Cover area: \" + roundedArea + \" sq m\");\n        System.out.println(\"Cover price: $\" + price);\n        System.out.println(\"Ordered: \" + orderDate);\n        System.out.println(\"Install: \" + installDate + \" (\"\n            + installDate.getDayOfWeek() + \")\");\n    }\n}\n",
+      "solution_notes": "`Math` lives in `java.lang`, the only package imported automatically, and every member is `static`, so `Math.PI` and `Math.round()` are used with the class name; `new Math()` isn't even possible, because its constructor is private. `Math.round()` returns the closest whole number (a `long` for a `double` argument), so the price is a `long`; rounding to cents multiplies by 100, rounds, and divides by `100.0` so the division isn't integer division. `LocalDate` is in `java.time`, so it needs its full path, an import of the class, or an import of the package; `import java.*;` is not allowed, and an import copies no code. `LocalDate.of(2026, 12, 42)` throws an exception because December has no 42nd day; `plusWeeks()` lets the date itself roll into January 2027, and `getDayOfWeek()` returns the `DayOfWeek` value `MONDAY`.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "LocalDate is imported and used by its short name",
+          "require": "^\\s*import\\s+java\\.time\\.(?:LocalDate|\\*)\\s*;",
+          "forbid": "(?<!import )\\bjava\\.time\\.LocalDate\\b|\\bimport\\s+java\\.\\*",
+          "flags": "m",
+          "message": "Add `import java.time.LocalDate;` (or `import java.time.*;`) at the top of the file, above the class, and shorten every `java.time.LocalDate` to `LocalDate`. `import java.*;` isn't allowed: a wildcard works only for one specific package.",
+          "hint": "Look at how your earlier programs reached `Scanner`."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "Math.PI for the area and Math.round() for both roundings",
+          "within": "PoolQuote.main",
+          "require": "^(?=[\\s\\S]*\\bMath\\s*\\.\\s*PI\\b)(?=(?:[\\s\\S]*?\\bMath\\s*\\.\\s*round\\s*\\(){2})",
+          "forbid": "\\b3\\.14\\d*|\\bnew\\s+Math\\b|\\b22\\s*/\\s*7",
+          "message": "Use `Math.PI` instead of 3.14, and `Math.round()` twice: for the area to two decimals (scale by 100, round, divide by `100.0`) and for the price to whole dollars. Every `Math` member is `static`, so use the class name and never create a `Math` object.",
+          "hint": "`Math.round()` returns a `long`; store the price in a variable of that type."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "The install date is calculated by the date, with its day of the week",
+          "within": "PoolQuote.main",
+          "require": "^(?=[\\s\\S]*\\borderDate\\s*\\.\\s*plusWeeks\\s*\\(\\s*WEEKS_TO_INSTALL\\s*\\))(?=[\\s\\S]*\\.\\s*getDayOfWeek\\s*\\(\\s*\\))",
+          "forbid": "\\bLocalDate\\s*\\.\\s*of\\s*\\([^;]*\\+",
+          "message": "Get the install date from `orderDate.plusWeeks(WEEKS_TO_INSTALL)` instead of adding to the day number, and add the install date's `getDayOfWeek()` to its line. The date handles month and year changes; December 42 doesn't exist."
+        }
+      ],
+      "hints": [
+        "`java.time.LocalDate` appears four times. One line at the very top of the file lets every one of them shrink to `LocalDate`.",
+        "Every member of `Math` is `static`: the class name, a dot, the member. `Math.round()` gives the closest whole number, so rounding to cents means scaling up first and back down afterwards.",
+        "Dates aren't plain numbers: ask the order date itself for the date some weeks later, then ask that date which day of the week it is."
+      ],
+      "test_program": {
+        "file_name": "TestPoolQuote.java",
+        "code": "public class TestPoolQuote\n{\n    public static void main(String[] args)\n    {\n        // Runs your program exactly as \"java PoolQuote\" would.\n        PoolQuote.main(new String[0]);\n    }\n}\n",
+        "expected_output": "Pool radius: 3.5 m\nCover area: 38.48 sq m\nCover price: $722\nOrdered: 2026-12-21\nInstall: 2027-01-11 (MONDAY)\n",
+        "predict": "Before you run the starter: will it print anything at all? Predict where it stops, and why."
+      },
+      "warmup": [
+        {
+          "question": "The program uses `Math` and `LocalDate`, but only one of them needs an import. Which one, and why?",
+          "model_answer": "`LocalDate`, which is in the `java.time` package. `Math` is in `java.lang`, the one package Java imports into every program automatically."
+        },
+        {
+          "question": "The starter calculates the install day as `21 + 7 * WEEKS_TO_INSTALL`. Which day number is that, and what do you predict `LocalDate.of(2026, 12, 42)` does?",
+          "model_answer": "Day 42. December has 31 days, so there is no such date: the program stops with an error (an exception saying the day of the month is invalid) instead of printing January 11."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "Why does `Math.PI` work without `new Math()`, and why couldn't you create a `Math` object even if you tried?",
+          "model_answer": "All of `Math`'s constants and methods are `static`, so they belong to the class and are used with its name. And `Math`'s constructor is private, so other classes can't instantiate it."
+        },
+        {
+          "question": "`import java.time.*;` and `import java.time.LocalDate;` both work here. Give one reason to prefer each.",
+          "model_answer": "The wildcard saves typing when several classes from the package are used. Naming the class documents exactly what the program uses and avoids conflicts when two packages have classes with the same name. Neither one copies code into the program."
+        }
+      ],
+      "extension": "The customer can pay in four monthly instalments starting on the install date. Print each due date with `plusMonths()`. Then predict and check: what does `LocalDate.of(2027, 1, 31).plusMonths(1)` give?",
+      "worth_knowing": "`java.time` (JSR 310, Java 8) was led by Stephen Colebourne, author of the popular Joda-Time library. It replaced the old `java.util.Date`, in which January was month 0 and the year was counted from 1900, a frequent source of bugs.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    },
+    {
+      "id": "4.10",
+      "title": "The kayak tour that crashes on display",
+      "subtitle": "Composition (has-a), constructing contained objects, and a private inner helper class",
+      "source": "Ch. 4, section 4.10 (pp. 150–152)",
+      "minutes": 25,
+      "objectives": [
+        "Describe composition as a has-a relationship: an object of one class is a field of another",
+        "Construct a contained object, supplying arguments when it has no default constructor",
+        "Reuse a contained object's own methods instead of copying its work",
+        "Explain when a private inner (nested) class is a better fit than a separate class"
+      ],
+      "scenario": "Tidewater Kayak Tours describes each trip with a `Tour`. A tour **has a** guide, an object of the shop's `Guide` class, which payroll and the lesson schedule also use. A tour also has a meeting point, which only `Tour` needs, so it is a private inner class, `MeetingPoint`.\n\nThe class compiles, but the first `display()` crashes: the fields were declared and nothing was ever put in them. Two tours must display as:\n\n```\nTour: Sunrise Paddle\nGuide: Rosa Diaz, 555-0142\nMeet at North Dock, 6:15 am\n\nTour: Mangrove Trail\nGuide: Eli Brooks, 555-0177\nMeet at Boat Ramp B, 9:30 am\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`Tour`'s constructor gives each tour its own `Guide` by calling `Guide`'s constructor with the guide's name and phone (`Guide` has no default constructor)."
+        },
+        {
+          "id": "R2",
+          "text": "`display()` shows the guide by calling the contained guide's own `display()`; `Tour` does not print the guide's details itself."
+        },
+        {
+          "id": "R3",
+          "text": "The constructor also creates the tour's `MeetingPoint`, the private inner helper class, from the place and time."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "files": [
+        {
+          "name": "Tour.java",
+          "starter": "public class Tour\n{\n    private String tourName;\n    private Guide guide;\n    private MeetingPoint meetingPoint;\n\n    public Tour(String name, String guideName, String guidePhone,\n        String place, String time)\n    {\n        tourName = name;\n        // TODO (R1): give this tour its guide.\n        // TODO (R3): give this tour its meeting point.\n    }\n\n    public void display()\n    {\n        System.out.println(\"Tour: \" + tourName);\n        // TODO (R2): show the guide's details.\n        System.out.println(\"Meet at \" + meetingPoint.place + \", \"\n            + meetingPoint.time);\n    }\n\n    // A helper class used only by Tour.\n    private class MeetingPoint\n    {\n        private String place;\n        private String time;\n\n        public MeetingPoint(String place, String time)\n        {\n            this.place = place;\n            this.time = time;\n        }\n    }\n}\n",
+          "solution": "public class Tour\n{\n    private String tourName;\n    private Guide guide;\n    private MeetingPoint meetingPoint;\n\n    public Tour(String name, String guideName, String guidePhone,\n        String place, String time)\n    {\n        tourName = name;\n        guide = new Guide(guideName, guidePhone);\n        meetingPoint = new MeetingPoint(place, time);\n    }\n\n    public void display()\n    {\n        System.out.println(\"Tour: \" + tourName);\n        guide.display();\n        System.out.println(\"Meet at \" + meetingPoint.place + \", \"\n            + meetingPoint.time);\n    }\n\n    // A helper class used only by Tour.\n    private class MeetingPoint\n    {\n        private String place;\n        private String time;\n\n        public MeetingPoint(String place, String time)\n        {\n            this.place = place;\n            this.time = time;\n        }\n    }\n}\n"
+        },
+        {
+          "name": "Guide.java",
+          "editable": false,
+          "starter": "// The shop's Guide class, also used by payroll and the lesson schedule.\n// Read it; you don't need to change it.\npublic class Guide\n{\n    private String name;\n    private String phone;\n\n    public Guide(String guideName, String guidePhone)\n    {\n        name = guideName;\n        phone = guidePhone;\n    }\n\n    public void display()\n    {\n        System.out.println(\"Guide: \" + name + \", \" + phone);\n    }\n}\n"
+        }
+      ],
+      "main_file": "Tour.java",
+      "solution_notes": "`private Guide guide;` declares only a reference, which starts as `null`; calling a method through a null reference stops the program with a *NullPointerException*. The containing class must construct its contained objects, and since `Guide`'s only constructor takes a name and a phone, `Tour` passes on the two values its own constructor received, as `School` does with `NameAndAddress` in Figure 4-37. `guide.display()` reuses `Guide`'s own work, so a change to how guides are shown is made once, in `Guide`. `MeetingPoint` is constructed the same way. It is a private inner class because only `Tour` uses it; `Tour` may read its private `place` and `time`, but no other class can use it. `Guide`, needed by several classes, stays a separate class so it can be reused through composition.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The constructor builds the tour's Guide with two arguments",
+          "file": "Tour.java",
+          "within": "Tour.Tour",
+          "require": "\\b(?:this\\s*\\.\\s*)?guide\\s*=\\s*new\\s+Guide\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)\\s*;",
+          "message": "In `Tour`'s constructor, assign `guide` a new `Guide` built from `guideName` and `guidePhone`. A declared field holds only `null` until something constructs an object for it, and `Guide` has no default constructor, so its two arguments are required."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "display() asks the guide to display itself",
+          "file": "Tour.java",
+          "within": "Tour.display",
+          "strings": true,
+          "require": "\\bguide\\s*\\.\\s*display\\s*\\(\\s*\\)\\s*;",
+          "forbid": "\"Guide:",
+          "message": "Show the guide by calling `display()` on the `guide` object. `Tour` has a `Guide`, so it reuses the guide's own method instead of printing a copy of its details.",
+          "hint": "Figure 4-37: `School.display()` calls `nameAdd.display()`."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "The constructor builds the inner MeetingPoint",
+          "file": "Tour.java",
+          "within": "Tour.Tour",
+          "require": "\\b(?:this\\s*\\.\\s*)?meetingPoint\\s*=\\s*new\\s+MeetingPoint\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)\\s*;",
+          "message": "Also assign `meetingPoint` a new `MeetingPoint` built from `place` and `time`. An inner class is constructed like any other class; until it is, the field is `null` and `display()` crashes."
+        }
+      ],
+      "hints": [
+        "Declaring `private Guide guide;` creates only a reference, and it stays `null` until something constructs a `Guide` for it.",
+        "`Guide` has one constructor, and it needs two arguments. `Tour`'s constructor has already received both values.",
+        "`Tour` shouldn't know how a guide is shown: ask the guide to show itself. The inner class is constructed the same way as any other."
+      ],
+      "test_program": {
+        "file_name": "TestTour.java",
+        "code": "public class TestTour\n{\n    public static void main(String[] args)\n    {\n        Tour sunrise = new Tour(\"Sunrise Paddle\", \"Rosa Diaz\", \"555-0142\",\n            \"North Dock\", \"6:15 am\");\n        Tour mangrove = new Tour(\"Mangrove Trail\", \"Eli Brooks\", \"555-0177\",\n            \"Boat Ramp B\", \"9:30 am\");\n\n        sunrise.display();\n        System.out.println();\n        mangrove.display();\n    }\n}\n",
+        "expected_output": "Tour: Sunrise Paddle\nGuide: Rosa Diaz, 555-0142\nMeet at North Dock, 6:15 am\n\nTour: Mangrove Trail\nGuide: Eli Brooks, 555-0177\nMeet at Boat Ramp B, 9:30 am\n",
+        "how_to_run": "Put `Tour.java`, `Guide.java` and `TestTour.java` in the same folder, then run `javac *.java` and `java TestTour`. In an IDE, add all of them to one project and run `TestTour.java`. If the files are in different folders, the compiler reports *cannot find symbol*.",
+        "predict": "Before you change anything: predict the first line the starter prints, and the name of the error that stops it."
+      },
+      "warmup": [
+        {
+          "question": "Read `Tour`'s fields and complete the sentence: \"A tour ___ a guide.\" Is that an *is-a* or a *has-a* relationship, and what is it called?",
+          "model_answer": "A tour *has a* guide. It's a has-a relationship, called composition: an object of one class (`Guide`) is a data field of another (`Tour`)."
+        },
+        {
+          "question": "The starter compiles. What happens when the test calls `sunrise.display()`, and which fields cause it?",
+          "model_answer": "It prints `Tour: Sunrise Paddle` and then crashes with a NullPointerException: `meetingPoint` (and `guide`) are reference fields that were never constructed, so they hold their default value, `null`."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "`Guide` is a separate public class, but `MeetingPoint` is a private inner class. Using the reading's reasoning, why is that a sensible split?",
+          "model_answer": "Payroll and the lesson schedule also need guides, so `Guide` must be a regular class others can reuse through composition. `MeetingPoint` only helps `Tour`, so packaging it inside `Tour` keeps the connection obvious and hides it from other classes."
+        },
+        {
+          "question": "`display()` reads `meetingPoint.place` even though `place` is private. Why is that allowed, and could `TestTour` do the same?",
+          "model_answer": "An outer class can access its inner class's members, even private ones. `TestTour` can't: `MeetingPoint` is a private inner class, hidden from every class except `Tour`."
+        }
+      ],
+      "extension": "Give each tour a second `Guide`, an assistant, shown after the lead guide. How many lines did you add to `Guide.java`? What does that say about composition?",
+      "worth_knowing": "To the JVM, there's no such thing as a class inside a class: `javac` writes `MeetingPoint` to its own file, `Tour$MeetingPoint.class`, next to `Tour.class`. Look in your compiled-output folder and you'll find it.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals."
+        }
+      ]
+    }
+  ]
+}

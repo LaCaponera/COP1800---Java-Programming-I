@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The event hall&#x27;s booking board</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 4.1</div>
+  <h1>The event hall&#x27;s booking board</h1>
+<h2>Objectives</h2><ul><li>Tell a class (the general description) from an object (one concrete instance), and state an <em>is-a</em> relationship in the right order</li><li>Send a message to an object: the object&#x27;s name, a dot, the method and its arguments</li><li>Explain why every object of a class has the same methods but keeps its own values</li><li>Recognize a class client: a program that uses objects of a class written by someone else</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The anniversary&#x27;s date and time are set by sending <code>setDate()</code> and <code>setTime()</code> to the <code>anniversary</code> object with its own arguments, <code>&quot;June 3&quot;</code> and <code>&quot;7 P.M.&quot;</code>; the graduation stays May 12 at 6 P.M.</li><li><strong>R2</strong> Every date and time on the board comes from asking that party object, with <code>getDate()</code> and <code>getTime()</code>; no date or time is typed into a <code>println()</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Which sentence is a correct <em>is-a</em> statement: &quot;A Party is my graduation party&quot; or &quot;My graduation party is a Party&quot;? Why is the other one wrong?</p><div class="answer"><p>&quot;My graduation party is a Party.&quot; The object is one concrete example of the general class. The other sentence defines the whole class by a single example, which is backwards: a Party is more general than any one party.</p></div></li><li><p>Read the starter&#x27;s four booking lines. Which object receives all four messages, and what will <code>graduation.getDate()</code> return when the board prints?</p><div class="answer"><p>All four go to <code>graduation</code>, so its date is set to May 12 and then overwritten with June 3: <code>getDate()</code> returns &quot;June 3&quot;. <code>anniversary</code> never receives a message.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">EventBoard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">EventBoard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Party</span><span class="t-w"> </span><span class="t-n">graduation</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Party</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">Party</span><span class="t-w"> </span><span class="t-n">anniversary</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Party</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">setDate</span><span class="t-p">(</span><span class="t-s">"May 12"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">setTime</span><span class="t-p">(</span><span class="t-s">"6 P.M."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): the anniversary is June 3 at 7 P.M.</span>
+<span class="t-w">        </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">setDate</span><span class="t-p">(</span><span class="t-s">"June 3"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">setTime</span><span class="t-p">(</span><span class="t-s">"7 P.M."</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seabright Event Hall bookings"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Graduation: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">getDate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" at "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">getTime</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): ask the anniversary object for its date and time.</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Anniversary: June 3 at 7 P.M."</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Party.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// Written by another programmer. Read it; you don't need to change it.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Party</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">date</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setDate</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">partyDate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">date</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">partyDate</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setTime</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">partyTime</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">time</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">partyTime</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getDate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">date</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getTime</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">EventBoard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">EventBoard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Party</span><span class="t-w"> </span><span class="t-n">graduation</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Party</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">Party</span><span class="t-w"> </span><span class="t-n">anniversary</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Party</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">setDate</span><span class="t-p">(</span><span class="t-s">"May 12"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">setTime</span><span class="t-p">(</span><span class="t-s">"6 P.M."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">anniversary</span><span class="t-p">.</span><span class="t-na">setDate</span><span class="t-p">(</span><span class="t-s">"June 3"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">anniversary</span><span class="t-p">.</span><span class="t-na">setTime</span><span class="t-p">(</span><span class="t-s">"7 P.M."</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seabright Event Hall bookings"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Graduation: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">getDate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" at "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">graduation</span><span class="t-p">.</span><span class="t-na">getTime</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Anniversary: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">anniversary</span><span class="t-p">.</span><span class="t-na">getDate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" at "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">anniversary</span><span class="t-p">.</span><span class="t-na">getTime</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The name before the dot decides which object receives the message. In the starter, all four <code>set</code> messages went to <code>graduation</code>, so its date was overwritten with June 3 and <code>anniversary</code> was never told anything. Both objects have the same methods because both are <code>Party</code> objects, but each keeps its own <code>date</code> and <code>time</code>, so the same <code>setDate()</code> stores May 12 in one and June 3 in the other. Asking each object with <code>getDate()</code> and <code>getTime()</code> means the board can never disagree with the bookings. <code>EventBoard</code> is a class client: it uses <code>Party</code> without knowing or changing how <code>Party</code> is written.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestEventBoard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestEventBoard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java EventBoard" would.</span>
+<span class="t-w">        </span><span class="t-n">EventBoard</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-c1">// A third Party object: the same methods, its own values.</span>
+<span class="t-w">        </span><span class="t-n">Party</span><span class="t-w"> </span><span class="t-n">reunion</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Party</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">reunion</span><span class="t-p">.</span><span class="t-na">setDate</span><span class="t-p">(</span><span class="t-s">"August 9"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">reunion</span><span class="t-p">.</span><span class="t-na">setTime</span><span class="t-p">(</span><span class="t-s">"1 P.M."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Reunion: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">reunion</span><span class="t-p">.</span><span class="t-na">getDate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" at "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">reunion</span><span class="t-p">.</span><span class="t-na">getTime</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Seabright Event Hall bookings
+Graduation: May 12 at 6 P.M.
+Anniversary: June 3 at 7 P.M.
+
+Reunion: August 9 at 1 P.M.
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The anniversary object receives its own date and time<div class="small">in <code>EventBoard.main</code> of <code>EventBoard.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\banniversary\s*\.\s*setDate\s*\(\s*&quot;June 3&quot;\s*\)\s*;)(?=[\s\S]*\banniversary\s*\.\s*setTime\s*\(\s*&quot;7 P\.M\.&quot;\s*\)\s*;)</code></div><div><span class="tag">forbid</span> <code>\bgraduation\s*\.\s*set(?:Date|Time)\s*\(\s*&quot;(?:June 3|7 P\.M\.)&quot;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The board asks the anniversary object for its details<div class="small">in <code>EventBoard.main</code> of <code>EventBoard.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\banniversary\s*\.\s*getDate\s*\(\s*\))(?=[\s\S]*\banniversary\s*\.\s*getTime\s*\(\s*\))</code></div><div><span class="tag">forbid</span> <code>println\s*\([^;]*&quot;[^&quot;]*(?:June 3|May 12|P\.M\.)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The anniversary object receives its own date and time</dt><dd><p>Send the June 3 and 7 P.M. messages to <code>anniversary</code>, not to <code>graduation</code>. The name before the dot is the object that receives the message; sending them to <code>graduation</code> overwrites its May 12 booking.</p><div class='small'><strong>Hint:</strong></div><p>Read each booking line from the left: who is being told the date?</p></dd><dt>C2 · The board asks the anniversary object for its details</dt><dd><p>Build the anniversary line from <code>anniversary.getDate()</code> and <code>anniversary.getTime()</code>, the way the graduation line is built. A date typed into <code>println()</code> stays wrong when the booking changes.</p><div class='small'><strong>Hint:</strong></div><p>Copy the graduation line&#x27;s shape and change the object.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Read each booking line from left to right: the name before the dot is the object receiving the message, and the text in parentheses is the argument.</p></li><li><p><code>anniversary</code> has exactly the same methods as <code>graduation</code>, because both are <code>Party</code> objects. It needs its own two messages with its own arguments.</p></li><li><p>For the board, each line should be built from the answers a party object gives, the way the graduation line already is.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p><code>graduation</code> and <code>anniversary</code> use the very same <code>setDate()</code> method. How can that one method store two different dates?</p><div class="answer"><p>Each object keeps its own <code>date</code> value. The method works on whichever object the message is sent to, with the argument sent in that call, so May 12 is stored in the graduation object and June 3 in the anniversary object.</p></div></li><li><p><code>EventBoard</code> uses <code>Party</code> but didn&#x27;t create it. What does the reading call a class like <code>EventBoard</code>, and why is it useful that <code>Party</code> is written separately?</p><div class="answer"><p>A class client (or class user). Because <code>Party</code> is its own class, other programs, such as catering or ticketing, can create <code>Party</code> objects too without rewriting it; a client only needs to know the methods&#x27; names and arguments.</p></div></li></ol>
+<h2>Extension</h2><p>Book a third party on the board: a retirement party on September 20 at 4 P.M. How many new methods did you have to write, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

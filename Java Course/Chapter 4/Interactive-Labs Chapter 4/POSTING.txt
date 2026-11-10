@@ -1,0 +1,61 @@
+POSTING CHECKLIST
+=================
+
+  Lab 4.1: The event hall's booking board
+    students : 4.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.1_guide.html
+
+  Lab 4.2: The ferry tickets that all say the same name
+    students : 4.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.2_guide.html
+
+  Lab 4.3: The climbing gym's member cards
+    students : 4.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.3_guide.html
+
+  Lab 4.4: The bakery's pickup shelf
+    students : 4.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.4_guide.html
+
+  Lab 4.5: The shipping counter's labels
+    students : 4.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.5_guide.html
+
+  Lab 4.6: The bike rental's missing constructor
+    students : 4.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.6_guide.html
+
+  Lab 4.7: The marina's empty moorings
+    students : 4.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.7_guide.html
+
+  Lab 4.8: The beach cleanup's volunteer badges
+    students : 4.8.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.8_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.8_guide.html
+
+  Lab 4.9: The pool-cover quote
+    students : 4.9.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.9_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.9_guide.html
+
+  Lab 4.10: The kayak tour that crashes on display
+    students : 4.10.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.10_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.10_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

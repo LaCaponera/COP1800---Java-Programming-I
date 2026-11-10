@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bike rental&#x27;s missing constructor</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 4.6</div>
+  <h1>The bike rental&#x27;s missing constructor</h1>
+<h2>Objectives</h2><ul><li>State the values Java gives numeric, boolean and reference fields when no constructor sets them</li><li>Write a constructor: the class&#x27;s name and no return type, not even <code>void</code></li><li>Write a constructor with parameters and overload it with a parameterless one</li><li>Explain why <code>new X()</code> stops compiling once a class has only constructors with parameters</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The parameterless version is a real default constructor: the class&#x27;s name and no return type, not even <code>void</code>. It still starts every walk-in as a <code>Cruiser</code> for 1 hour.</li><li><strong>R2</strong> An overloaded constructor <code>BikeRental(String type, int rentalHours)</code> sets both fields from its parameters, and the parameterless constructor stays, so <code>new BikeRental()</code> still compiles.</li><li><strong>R3</strong> <code>RentalCounter</code> creates the booked rental with the two-argument constructor, a <code>&quot;Tandem&quot;</code> for <code>3</code> hours, and prints its line after <code>Booked: </code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s <code>BikeRental()</code> has <code>void</code> in its header. To the compiler, is it a constructor or an ordinary method? What will <code>walkIn.getSummary()</code> return?</p><div class="answer"><p>An ordinary method, because constructors have no return type. Nothing calls it, so Java&#x27;s automatic default constructor runs instead and the summary is <code>null for 0 h, helmet: false</code>.</p></div></li><li><p>Which starting values does Java give a numeric field, a <code>boolean</code> field and a <code>String</code> field when no constructor sets them?</p><div class="answer"><p>Numeric fields get 0, boolean fields get <code>false</code>, and reference fields such as a <code>String</code> get <code>null</code>.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">BikeRental.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BikeRental</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">bikeType</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">helmetIncluded</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): meant to run whenever a rental is created.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">BikeRental</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">bikeType</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Cruiser"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R2): a second constructor that takes the bike type and the hours.</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getSummary</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">bikeType</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" for "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" h, helmet: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">helmetIncluded</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">RentalCounter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RentalCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BikeRental</span><span class="t-w"> </span><span class="t-n">walkIn</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeRental</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Walk-in: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">walkIn</span><span class="t-p">.</span><span class="t-na">getSummary</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): create the online booking, a Tandem for 3 hours,</span>
+<span class="t-w">        </span><span class="t-c1">// and print it after "Booked: ".</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">BikeRental.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BikeRental</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">bikeType</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">helmetIncluded</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">BikeRental</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">bikeType</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Cruiser"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">BikeRental</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">type</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">rentalHours</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">bikeType</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">type</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">rentalHours</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getSummary</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">bikeType</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" for "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" h, helmet: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">helmetIncluded</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">RentalCounter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RentalCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BikeRental</span><span class="t-w"> </span><span class="t-n">walkIn</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeRental</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Walk-in: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">walkIn</span><span class="t-p">.</span><span class="t-na">getSummary</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">BikeRental</span><span class="t-w"> </span><span class="t-n">booked</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeRental</span><span class="t-p">(</span><span class="t-s">"Tandem"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Booked: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">booked</span><span class="t-p">.</span><span class="t-na">getSummary</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>With <code>void</code> in its header, <code>BikeRental()</code> was an ordinary method that happened to share the class&#x27;s name. Nothing called it, so <code>new BikeRental()</code> ran the default constructor Java supplies when a class has none, which leaves <code>bikeType</code> null, <code>hours</code> 0 and <code>helmetIncluded</code> false. Removing <code>void</code> makes it a constructor. The two-parameter version overloads it: same name, different parameter list, so the compiler picks one by the arguments in each <code>new</code>. Keeping the parameterless constructor matters: once a class has any constructor you wrote, Java no longer supplies one, and <code>new BikeRental()</code> would fail with <em>constructor BikeRental in class BikeRental cannot be applied to given types</em>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRentalCounter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRentalCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java RentalCounter" would.</span>
+<span class="t-w">        </span><span class="t-n">RentalCounter</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Both constructors, used again.</span>
+<span class="t-w">        </span><span class="t-n">BikeRental</span><span class="t-w"> </span><span class="t-n">family</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeRental</span><span class="t-p">(</span><span class="t-s">"Cargo"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">BikeRental</span><span class="t-w"> </span><span class="t-n">standby</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeRental</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Family: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">family</span><span class="t-p">.</span><span class="t-na">getSummary</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Standby: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">standby</span><span class="t-p">.</span><span class="t-na">getSummary</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Walk-in: Cruiser for 1 h, helmet: false
+Booked: Tandem for 3 h, helmet: false
+Family: Cargo for 2 h, helmet: false
+Standby: Cruiser for 1 h, helmet: false
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>BikeRental() is a constructor, not a void method<div class="small">in <code>BikeRental</code> of <code>BikeRental.java</code></div></td><td><div><span class="tag">require</span> <code>(?:^|[;{}\s])(?:public\s+)?BikeRental\s*\(\s*\)\s*\{</code></div><div><span class="tag">forbid</span> <code>\b(?:void|int|String|double|boolean)\s+BikeRental\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>An overloaded constructor takes the type and the hours, and the parameterless one stays<div class="small">in <code>BikeRental</code> of <code>BikeRental.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*(?:^|[;{}\s])(?:public\s+)?BikeRental\s*\(\s*String\s+\w+\s*,\s*int\s+\w+\s*\)\s*\{)(?=[\s\S]*(?:^|[;{}\s])(?:public\s+)?BikeRental\s*\(\s*\)\s*\{)</code></div><div><span class="tag">forbid</span> <code>\bvoid\s+BikeRental\s*\(</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The booking uses the two-argument constructor<div class="small">in <code>RentalCounter.main</code> of <code>RentalCounter.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bnew\s+BikeRental\s*\(\s*&quot;Tandem&quot;\s*,\s*3\s*\))(?=[\s\S]*&quot;Booked: &quot;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · BikeRental() is a constructor, not a void method</dt><dd><p>Remove <code>void</code> from <code>BikeRental()</code>. A constructor has the class&#x27;s name and no return type, not even <code>void</code>; with a return type, it&#x27;s an ordinary method that <code>new</code> never calls.</p><div class='small'><strong>Hint:</strong></div><p>Compare its header with the headers of the class&#x27;s other methods.</p></dd><dt>C2 · An overloaded constructor takes the type and the hours, and the parameterless one stays</dt><dd><p>Add a second constructor, <code>BikeRental(String type, int rentalHours)</code>, that stores both values, and keep the parameterless one. Once a class has any constructor you wrote, Java stops supplying a default one, so <code>new BikeRental()</code> needs yours.</p></dd><dt>C3 · The booking uses the two-argument constructor</dt><dd><p>Create the booking with <code>new BikeRental(&quot;Tandem&quot;, 3)</code>: the arguments are a <code>String</code> and an <code>int</code>, in the same order as the constructor&#x27;s parameters. Then print its summary after <code>Booked: </code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>A constructor&#x27;s header has the class&#x27;s name and <em>nothing</em> where a return type would go.</p></li><li><p>Overloaded constructors share one name and differ only in their parameter lists. The booking will pass a <code>String</code> and then an <code>int</code>.</p></li><li><p>If <code>new BikeRental()</code> stops compiling, the parameterless constructor is gone: once you write any constructor, Java no longer supplies one.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Suppose you had written only the two-parameter constructor and deleted the parameterless one. Which line would break, and why didn&#x27;t it break before you wrote any constructor?</p><div class="answer"><p><code>new BikeRental()</code> in <code>RentalCounter</code>. Before, Java supplied a default constructor because the class had none. Once you write any constructor, Java no longer supplies one, so a call with no arguments has nothing to match.</p></div></li><li><p><code>helmetIncluded</code> is never assigned, yet it prints <code>false</code>. Is relying on that automatic value a good idea? What does the reading suggest?</p><div class="answer"><p>It works, but the reading suggests initializing a field explicitly in the constructor for clarity, even when the value equals the default, so a reader sees it is intended rather than forgotten.</p></div></li></ol>
+<h2>Extension</h2><p>Add a third constructor, <code>BikeRental(String type)</code>, for a 1-hour rental of any bike. Then try to add <code>BikeRental(String model)</code> as a fourth. What does the compiler say, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The ferry tickets that all say the same name</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 4.2</div>
+  <h1>The ferry tickets that all say the same name</h1>
+<h2>Objectives</h2><ul><li>Name the parts of a class header and say which one is optional</li><li>Explain the difference between an instance variable (one copy per object) and a <code>static</code> field (one copy per class)</li><li>Make data fields <code>private</code> so other classes reach them only through public methods (information hiding)</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>passengerName</code> is an instance variable: no <code>static</code>, so each ticket has its own copy.</li><li><strong>R2</strong> Both data fields, <code>passengerName</code> and <code>tripNumber</code>, are <code>private</code>; the methods stay <code>public</code>.</li><li><strong>R3</strong> <code>TicketBooth</code> sets the evening ticket&#x27;s trip with <code>setTripNumber(19)</code> instead of assigning the field.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The class header is <code>public class FerryTicket</code>. Name its three parts and say which one is optional.</p><div class="answer"><p><code>public</code> is the access specifier (optional), <code>class</code> is the keyword, and <code>FerryTicket</code> is the identifier, which conventionally starts with an uppercase letter.</p></div></li><li><p><code>passengerName</code> is declared <code>static</code>. Predict the name the morning ticket will print, and explain why.</p><div class="answer"><p>Leo Park. A <code>static</code> field has one copy shared by every ticket, so setting the evening ticket&#x27;s name overwrote the only copy, including the morning ticket&#x27;s.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">FerryTicket.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">FerryTicket</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1, R2): each ticket needs its own passenger, and other</span>
+<span class="t-w">    </span><span class="t-c1">// classes should reach this data only through the methods below.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">passengerName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">tripNumber</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setPassengerName</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">passengerName</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getPassengerName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">passengerName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setTripNumber</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">trip</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">tripNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">trip</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getTripNumber</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">tripNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">TicketBooth.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TicketBooth</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">FerryTicket</span><span class="t-w"> </span><span class="t-n">morning</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FerryTicket</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">FerryTicket</span><span class="t-w"> </span><span class="t-n">evening</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FerryTicket</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">setPassengerName</span><span class="t-p">(</span><span class="t-s">"Ana Ruiz"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">setTripNumber</span><span class="t-p">(</span><span class="t-mi">7</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">setPassengerName</span><span class="t-p">(</span><span class="t-s">"Leo Park"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): set the evening trip without touching the field.</span>
+<span class="t-w">        </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">tripNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">19</span><span class="t-p">;</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Trip "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">getTripNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">getPassengerName</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Trip "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">getTripNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">getPassengerName</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">FerryTicket.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">FerryTicket</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">passengerName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">tripNumber</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setPassengerName</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">passengerName</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getPassengerName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">passengerName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setTripNumber</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">trip</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">tripNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">trip</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getTripNumber</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">tripNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">TicketBooth.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TicketBooth</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">FerryTicket</span><span class="t-w"> </span><span class="t-n">morning</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FerryTicket</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">FerryTicket</span><span class="t-w"> </span><span class="t-n">evening</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FerryTicket</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">setPassengerName</span><span class="t-p">(</span><span class="t-s">"Ana Ruiz"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">setTripNumber</span><span class="t-p">(</span><span class="t-mi">7</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">setPassengerName</span><span class="t-p">(</span><span class="t-s">"Leo Park"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">setTripNumber</span><span class="t-p">(</span><span class="t-mi">19</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Trip "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">getTripNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">morning</span><span class="t-p">.</span><span class="t-na">getPassengerName</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Trip "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">getTripNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">evening</span><span class="t-p">.</span><span class="t-na">getPassengerName</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>With <code>static</code>, one <code>passengerName</code> exists for the whole class, so setting Leo Park on the evening ticket replaced Ana Ruiz everywhere. Without <code>static</code>, the field is an instance variable: every <code>FerryTicket</code> object gets its own copy. Making both fields <code>private</code> is information hiding: only <code>FerryTicket</code>&#x27;s methods may use them, so <code>evening.tripNumber = 19;</code> no longer compiles (<em>tripNumber has private access in FerryTicket</em>) and the booth must call <code>setTripNumber(19)</code>. The methods stay <code>public</code>: they are the class&#x27;s receptionist, the only way in.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestTicketBooth.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestTicketBooth</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java TicketBooth" would.</span>
+<span class="t-w">        </span><span class="t-n">TicketBooth</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Selling a second ticket must not change the first one.</span>
+<span class="t-w">        </span><span class="t-n">FerryTicket</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FerryTicket</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">FerryTicket</span><span class="t-w"> </span><span class="t-n">second</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FerryTicket</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">setPassengerName</span><span class="t-p">(</span><span class="t-s">"Mia Chen"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">second</span><span class="t-p">.</span><span class="t-na">setPassengerName</span><span class="t-p">(</span><span class="t-s">"Sam Okafor"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"First ticket after the second is sold: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-p">.</span><span class="t-na">getPassengerName</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Trip 7: Ana Ruiz
+Trip 19: Leo Park
+First ticket after the second is sold: Mia Chen
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>passengerName is an instance variable<div class="small">in <code>FerryTicket</code> of <code>FerryTicket.java</code></div></td><td><div><span class="tag">require</span> <code>\bString\s+passengerName\s*;</code></div><div><span class="tag">forbid</span> <code>\bstatic\b[^;(){}]*\bpassengerName\s*;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Both fields are private<div class="small">in <code>FerryTicket</code> of <code>FerryTicket.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bprivate\s+String\s+passengerName\s*;)(?=[\s\S]*\bprivate\s+int\s+tripNumber\s*;)</code></div><div><span class="tag">forbid</span> <code>\bpublic\b[^;(){}]*\b(?:passengerName|tripNumber)\s*;</code></div></td></tr><tr><td>C3</td><td>R3</td><td>TicketBooth uses the setter, not the field<div class="small">in <code>TicketBooth.main</code> of <code>TicketBooth.java</code></div></td><td><div><span class="tag">require</span> <code>\bevening\s*\.\s*setTripNumber\s*\(\s*19\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>\.\s*(?:tripNumber|passengerName)\s*=</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · passengerName is an instance variable</dt><dd><p>Remove <code>static</code> from <code>passengerName</code>. A <code>static</code> field exists once for the whole class, so every ticket shares one name and the last one set wins. Without <code>static</code>, each ticket object gets its own copy.</p><div class='small'><strong>Hint:</strong></div><p>Ask: does a passenger name occur once per class or once per ticket?</p></dd><dt>C2 · Both fields are private</dt><dd><p>Declare both fields <code>private</code>. Private data can be used only by the class&#x27;s own methods, so other classes must go through <code>setTripNumber()</code> and the other public methods, which is where rules about valid values can later be enforced.</p></dd><dt>C3 · TicketBooth uses the setter, not the field</dt><dd><p>Replace <code>evening.tripNumber = 19;</code> with a call to the ticket&#x27;s public <code>setTripNumber()</code> method. Once the field is private, assigning it from another class doesn&#x27;t compile.</p><div class='small'><strong>Hint:</strong></div><p>The morning ticket already shows how its trip is set.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Ask of each field: does it occur once per ticket, or once for the whole class? Only the second kind is <code>static</code>.</p></li><li><p>A field that another class can assign directly isn&#x27;t hidden. Which access specifier lets only <code>FerryTicket</code>&#x27;s own methods use it?</p></li><li><p>Once the fields are hidden, <code>TicketBooth</code> must go through the class&#x27;s methods: there is already a public one for the trip number.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>After your change, how many copies of <code>passengerName</code> exist when the booth sells 100 tickets? How many would exist with <code>static</code>?</p><div class="answer"><p>100 copies, one per ticket object, because it is an instance variable. With <code>static</code> there would be exactly one, shared by all 100 tickets.</p></div></li><li><p><code>setTripNumber()</code> accepts any number today. Why is it still better than a public field, even before it checks anything?</p><div class="answer"><p>All changes now pass through one method, so a rule such as &quot;only trips that exist&quot; can be added there later and every client obeys it automatically. With a public field any class could store anything, and every client would need changing.</p></div></li></ol>
+<h2>Extension</h2><p>Add a private <code>double fare</code> field to <code>FerryTicket</code> with a setter and a getter, and print each ticket&#x27;s fare. Which word did you deliberately leave out of the field&#x27;s declaration, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

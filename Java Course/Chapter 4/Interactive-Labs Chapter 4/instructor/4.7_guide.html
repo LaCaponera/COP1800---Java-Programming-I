@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The marina&#x27;s empty moorings</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 4.7</div>
+  <h1>The marina&#x27;s empty moorings</h1>
+<h2>Objectives</h2><ul><li>Explain how one copy of an instance method reaches the right object&#x27;s fields through the implicit <code>this</code> reference</li><li>Recognize when a parameter shadows a field, and reach the field with <code>this.field</code></li><li>Call one constructor from another with <code>this(...)</code> to remove repeated code</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The three-parameter constructor keeps its parameter names and stores each one in its field with the explicit <code>this</code> reference.</li><li><strong>R2</strong> The other two constructors each call another constructor with <code>this(...)</code>; only the three-parameter constructor assigns the fields.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the first constructor, which <code>slipNumber</code> does <code>slipNumber = slipNumber;</code> mean on each side of the <code>=</code>? What does <code>describe()</code> print for the Sea Lark?</p><div class="answer"><p>Both sides mean the parameter, which shadows the field because it is closer in scope. The field is never assigned and keeps its default, so it prints <code>Slip 0: null at $0.0 a night</code>.</p></div></li><li><p><code>describe()</code> uses <code>slipNumber</code> without <code>this</code>, and it reaches the field. Why does it work there but not in the constructor?</p><div class="answer"><p><code>describe()</code> has no parameter or local variable named <code>slipNumber</code>, so the name means the field of the object the method was called with, through the implicit <code>this</code> reference. In the constructor, the parameter hides the field.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Mooring.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Mooring</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">slipNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">boatName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Mooring</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">slipNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">boatName</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">slipNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">slipNumber</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">boatName</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">boatName</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">nightlyRate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Visitors without a reservation: the guest dock, slip 99.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Mooring</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">(</span><span class="t-mi">99</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">45.0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// A guest-dock slip held for a boat whose name isn't known yet.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Mooring</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">(</span><span class="t-s">"TBA"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">describe</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Slip "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">slipNumber</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">boatName</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" at $"</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" a night"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Inside the first constructor, the parameters <code>slipNumber</code>, <code>boatName</code> and <code>nightlyRate</code> are closer in scope than the fields with the same names, so they shadow them: <code>slipNumber = slipNumber;</code> copies the parameter onto itself, and the fields keep their defaults, 0, null and 0.0. <code>this.slipNumber</code> names the field of the object being constructed. <code>describe()</code> needs no <code>this</code> because it has no local variable with those names; the reference is there implicitly. The short constructors now pass their values to another constructor with <code>this(...)</code>, which must be the first statement; the solution chains <code>Mooring()</code> to <code>Mooring(String)</code>, and <code>this(99, &quot;TBA&quot;, 45.0)</code> is equally correct. A change to the guest-dock rate is now one edit.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestMooring.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestMooring</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Mooring</span><span class="t-w"> </span><span class="t-n">reserved</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Mooring</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Sea Lark"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">62.5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Mooring</span><span class="t-w"> </span><span class="t-n">visitor</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Mooring</span><span class="t-p">(</span><span class="t-s">"Blue Heron"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Mooring</span><span class="t-w"> </span><span class="t-n">held</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Mooring</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">reserved</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">visitor</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">held</span><span class="t-p">.</span><span class="t-na">describe</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Slip 12: Sea Lark at $62.5 a night
+Slip 99: Blue Heron at $45.0 a night
+Slip 99: TBA at $45.0 a night
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The fields are reached with this<div class="small">in <code>Mooring</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bthis\s*\.\s*slipNumber\s*=\s*slipNumber\s*;)(?=[\s\S]*\bthis\s*\.\s*boatName\s*=\s*boatName\s*;)(?=[\s\S]*\bthis\s*\.\s*nightlyRate\s*=\s*nightlyRate\s*;)</code></div><div><span class="tag">forbid</span> <code>[;{}]\s*(slipNumber|boatName|nightlyRate)\s*=\s*\1\s*;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Two constructors call another with this(...)<div class="small">in <code>Mooring</code></div></td><td><div><span class="tag">require</span> <code>^(?:[\s\S]*?\bthis\s*\([^)]*\)\s*;){2}</code></div><div><span class="tag">forbid</span> <code>^(?:[\s\S]*?\bnightlyRate\s*=(?!=)){2}|^(?:[\s\S]*?\bslipNumber\s*=(?!=)){2}</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The fields are reached with this</dt><dd><p>Write <code>this.</code> before each field on the left of the <code>=</code>: <code>this.slipNumber = slipNumber;</code> and so on. Without it, both names mean the parameter, which shadows the field, and the assignment does nothing.</p><div class='small'><strong>Hint:</strong></div><p>Keep the parameter names: the reading&#x27;s fix is <code>this</code>, not renaming.</p></dd><dt>C2 · Two constructors call another with this(...)</dt><dd><p>Replace the assignments in <code>Mooring(String name)</code> and <code>Mooring()</code> with one statement each: <code>this(...)</code> with the arguments for another constructor. Then only the three-parameter constructor assigns fields, so a change to the guest dock is made once.</p><div class='small'><strong>Hint:</strong></div><p>What slip, name and rate does a visitor&#x27;s mooring hand over?</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Inside a method, a parameter with the same name as a field hides (shadows) the field. Something has to tell the compiler you mean the object&#x27;s own field.</p></li><li><p>One constructor can call another constructor of the same class with the word <code>this</code> followed by an argument list. It must be the first statement.</p></li><li><p>The guest-dock values become arguments: which slip number, name and rate does each short constructor hand to the one that does the work?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The harbor master changes the guest-dock rate to $48.0. How many places do you edit in your version, and how many in the starter?</p><div class="answer"><p>One in my version, the <code>this(...)</code> call that passes 45.0 (in the solution&#x27;s chain, only <code>Mooring(String)</code>). In the starter, two constructors typed 45.0, and missing one would give visitors and held slips different rates.</p></div></li><li><p>Only one copy of <code>describe()</code> exists in memory, however many moorings there are. How does it print slip 12 for one object and slip 99 for another?</p><div class="answer"><p>Every call to a nonstatic method passes the calling object&#x27;s address as the hidden <code>this</code> reference, so the single copy of <code>describe()</code> reads the fields of whichever object it was called with.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>public Mooring(int slipNumber, String boatName)</code> for reserved boats at the standard rate of $62.5, written with <code>this(...)</code>. Can you call <code>this(...)</code> from <code>describe()</code>? Try it and read the message.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

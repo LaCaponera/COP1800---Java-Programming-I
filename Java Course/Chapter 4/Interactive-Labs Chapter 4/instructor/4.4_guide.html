@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bakery&#x27;s pickup shelf</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 4.4</div>
+  <h1>The bakery&#x27;s pickup shelf</h1>
+<h2>Objectives</h2><ul><li>Declare an object reference and allocate the object with <code>new</code> and its constructor</li><li>Call an object&#x27;s methods with its identifier, a dot and the method</li><li>Explain why a client can&#x27;t assign a private field, and what the set and get methods offer instead</li><li>Write a getter that controls how a value leaves the object</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>OrderDesk.main()</code> declares two <code>Order</code> references, <code>pickup</code> and <code>delivery</code>, and allocates each object with <code>new Order()</code> (in one statement or two).</li><li><strong>R2</strong> Each order&#x27;s number, item and quantity are set through its public setters, and each line is printed from its getters; <code>OrderDesk</code> never names a field.</li><li><strong>R3</strong> <code>getOrderCode()</code> returns <code>&quot;HB-&quot;</code> followed by the order number: the getter decides how the number leaves the object.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>After <code>Order pickup;</code> runs, but before <code>pickup = new Order();</code>, has memory been set aside for an order&#x27;s number, item and quantity? What does <code>pickup</code> hold after the second statement?</p><div class="answer"><p>No. The declaration only tells the compiler the name will be used. After <code>new Order()</code>, <code>pickup</code> holds a reference: the memory address of the newly allocated <code>Order</code> object.</p></div></li><li><p>In <code>new Order()</code>, what is <code>Order()</code>? Nobody wrote a method with that name in <code>Order.java</code>; where does it come from?</p><div class="answer"><p>It is the constructor, the special method that creates and initializes the object. When a class has no constructor of its own, Java writes a default one, always named after the class.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">OrderDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">OrderDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Harbor Bakery pickup shelf"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): declare and create two Order objects, pickup and delivery.</span>
+
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): pickup is order 301, 12 x sourdough roll;</span>
+<span class="t-w">        </span><span class="t-c1">//            delivery is order 302, 2 x lemon tart.</span>
+
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): print one line per order, as on the shelf above.</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Order.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Order</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">orderNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setOrderNumber</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">orderNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R3): every code is the bakery's prefix "HB-"</span>
+<span class="t-w">    </span><span class="t-c1">// followed by the order number, for example HB-301.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getOrderCode</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">orderNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setItem</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">itemName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">itemName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getItem</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setQuantity</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">quantity</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getQuantity</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">OrderDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">OrderDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Harbor Bakery pickup shelf"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Order</span><span class="t-w"> </span><span class="t-n">pickup</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Order</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">Order</span><span class="t-w"> </span><span class="t-n">delivery</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">delivery</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Order</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">pickup</span><span class="t-p">.</span><span class="t-na">setOrderNumber</span><span class="t-p">(</span><span class="t-mi">301</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">pickup</span><span class="t-p">.</span><span class="t-na">setItem</span><span class="t-p">(</span><span class="t-s">"sourdough roll"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">pickup</span><span class="t-p">.</span><span class="t-na">setQuantity</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">delivery</span><span class="t-p">.</span><span class="t-na">setOrderNumber</span><span class="t-p">(</span><span class="t-mi">302</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">delivery</span><span class="t-p">.</span><span class="t-na">setItem</span><span class="t-p">(</span><span class="t-s">"lemon tart"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">delivery</span><span class="t-p">.</span><span class="t-na">setQuantity</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">pickup</span><span class="t-p">.</span><span class="t-na">getOrderCode</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pickup</span><span class="t-p">.</span><span class="t-na">getQuantity</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" x "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pickup</span><span class="t-p">.</span><span class="t-na">getItem</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">delivery</span><span class="t-p">.</span><span class="t-na">getOrderCode</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">delivery</span><span class="t-p">.</span><span class="t-na">getQuantity</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" x "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">delivery</span><span class="t-p">.</span><span class="t-na">getItem</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Order.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Order</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">orderNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setOrderNumber</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">orderNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getOrderCode</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"HB-"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">orderNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setItem</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">itemName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">itemName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getItem</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setQuantity</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">quantity</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getQuantity</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">quantity</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>Order pickup;</code> only declares a name; <code>new Order()</code> sets aside memory for an order and calls its constructor, and <code>pickup</code> then holds that object&#x27;s memory address: it is a reference. One statement (<code>Order pickup = new Order();</code>) and two statements do the same thing; the solution shows both. Because the fields are private, <code>pickup.orderNumber = 301;</code> would fail with <em>orderNumber has private access in Order</em>, so the desk uses the setters. <code>getOrderCode()</code> shows why that matters: the bakery&#x27;s prefix is added in one method, and every client gets codes in the right format without knowing how they are made.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestOrderDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestOrderDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Runs your program exactly as "java OrderDesk" would.</span>
+<span class="t-w">        </span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">main</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// One more object, created here, to check the code format.</span>
+<span class="t-w">        </span><span class="t-n">Order</span><span class="t-w"> </span><span class="t-n">sample</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Order</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">sample</span><span class="t-p">.</span><span class="t-na">setOrderNumber</span><span class="t-p">(</span><span class="t-mi">45</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Code check: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">sample</span><span class="t-p">.</span><span class="t-na">getOrderCode</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Harbor Bakery pickup shelf
+HB-301: 12 x sourdough roll
+HB-302: 2 x lemon tart
+Code check: HB-45
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Two Order objects are declared and created with new<div class="small">in <code>OrderDesk.main</code> of <code>OrderDesk.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bOrder\s+pickup\b)(?=[\s\S]*\bOrder\s+delivery\b)(?=[\s\S]*\bpickup\s*=\s*new\s+Order\s*\(\s*\))(?=[\s\S]*\bdelivery\s*=\s*new\s+Order\s*\(\s*\))</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Each order is set and read through its methods<div class="small">in <code>OrderDesk.main</code> of <code>OrderDesk.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bpickup\s*\.\s*setOrderNumber\s*\(\s*301\s*\))(?=[\s\S]*\bdelivery\s*\.\s*setOrderNumber\s*\(\s*302\s*\))(?=[\s\S]*\bpickup\s*\.\s*setQuantity\s*\(\s*12\s*\))(?=[\s\S]*\bdelivery\s*\.\s*setQuantity\s*\(\s*2\s*\))(?=[\s\S]*\bpickup\s*\.\s*getOrderCode\s*\(\s*\))(?=[\s\S]*\bdelivery\s*\.\s*getOrderCode\s*\(\s*\))</code></div><div><span class="tag">forbid</span> <code>\.\s*(?:orderNumber|item|quantity)\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>getOrderCode() adds the HB- prefix<div class="small">in <code>Order.getOrderCode</code> of <code>Order.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\breturn\s*&quot;HB-&quot;\s*\+\s*(?:this\s*\.\s*)?orderNumber\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Two Order objects are declared and created with new</dt><dd><p>Declare <code>pickup</code> and <code>delivery</code> with the type <code>Order</code>, and give each one an object with <code>new Order()</code>. A declaration alone only reserves a name: <code>new</code> sets aside the memory and calls the constructor.</p><div class='small'><strong>Hint:</strong></div><p>Compare it with how you create a <code>Scanner</code>.</p></dd><dt>C2 · Each order is set and read through its methods</dt><dd><p>Set each order&#x27;s number, item and quantity with its setters (<code>pickup.setOrderNumber(301)</code> and so on) and build each line from <code>getOrderCode()</code>, <code>getQuantity()</code> and <code>getItem()</code>. The fields are private: another class can&#x27;t name them.</p><div class='small'><strong>Hint:</strong></div><p>Object name, dot, method: one call per value.</p></dd><dt>C3 · getOrderCode() adds the HB- prefix</dt><dd><p>Return the text <code>&quot;HB-&quot;</code> joined with <code>+</code> to <code>orderNumber</code>. The getter controls how the number leaves the object, so every client gets the bakery&#x27;s format automatically.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Creating an object takes a type and a name, like any variable, plus <code>new</code> and the constructor to set aside its memory.</p></li><li><p>The fields are private, so <code>OrderDesk</code> talks to each order only through its public methods: the object&#x27;s name, a dot, the method and its argument.</p></li><li><p>The code is text: start the returned value with the prefix in quotes and join the number to it with <code>+</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The bakery&#x27;s code format changed once, and you edited one method. What would the change have cost if <code>OrderDesk</code> and three other programs read the <code>orderNumber</code> field directly?</p><div class="answer"><p>Every one of those programs would need to add the prefix itself, and any one that was missed would print the wrong code. With the getter, the format lives in one place, and clients get it without changes: that is data hiding through encapsulation.</p></div></li><li><p><code>pickup</code> and <code>delivery</code> call the very same <code>getOrderCode()</code>. How does it return HB-301 for one and HB-302 for the other?</p><div class="answer"><p>Each object has its own <code>orderNumber</code>, and the method is called through a particular object, so it reads that object&#x27;s field: 301 for <code>pickup</code>, 302 for <code>delivery</code>.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>getShelfLine()</code> to <code>Order</code> that returns a whole shelf line, such as <code>HB-301: 12 x sourdough roll</code>. How much shorter does <code>OrderDesk.main()</code> get?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Consistent Allman braces and indentation; private fields and public methods; method names start with a verb in camel case; named constants in all capitals.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
