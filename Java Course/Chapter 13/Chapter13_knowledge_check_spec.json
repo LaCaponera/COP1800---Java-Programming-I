@@ -1,0 +1,1288 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 13: Collections and Generics",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 13 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "13.1",
+   "title": "Understanding the Collection Interface",
+   "subtitle": "Arrays versus collections, objects only, and what Collection methods such as retainAll() and remove() do",
+   "source": "Ch. 13, section 13.1 (pp. 511–512)",
+   "intro": "A club's sign-up list starts with three names, ends the semester with forty, and loses a few along the way. Five questions on what makes a collection different from an array and what the `Collection` interface promises.",
+   "takeaways": [
+    "An array's size is fixed when it is created; a collection grows and shrinks as elements are added and removed. Both hold references, but only arrays can hold primitives, so collections use wrapper classes such as `Integer`.",
+    "`Collection` is an interface: it declares methods such as `add()`, `remove()`, `contains()` and `retainAll()`, and classes such as `ArrayList` supply the code that does the work."
+   ],
+   "questions": [
+    {
+     "id": "array-vs-collection",
+     "concept": "Collections resize; arrays do not",
+     "level": "understand",
+     "stem": "A program records club members as they sign up and drop out during the semester. Nobody knows the final count in advance. Why is a collection a better fit than an array?",
+     "options": [
+      {
+       "text": "An array's size is set when it is created; a collection grows and shrinks as members come and go.",
+       "feedback": "This is the defining difference. An array gets its size at instantiation and keeps it; a collection is dynamically resizable, so adding and removing members needs no copying on your part.",
+       "correct": true
+      },
+      {
+       "text": "A collection can hold the members' `String` names, but an array can only hold primitive values.",
+       "feedback": "Arrays hold references too: `String[]` is an ordinary array. Holding primitives is actually something arrays can do and collections can't."
+      },
+      {
+       "text": "A collection stores copies of the member objects, while an array stores only references to them.",
+       "feedback": "Arrays of objects and collections both hold references to objects. The difference that matters here is whether the size can change."
+      },
+      {
+       "text": "An array can grow, but only up to the size it was declared with, while a collection has no upper limit at all.",
+       "feedback": "An array can't grow at all: its size is set once, at instantiation. A bigger array means creating a new one and copying the elements over."
+      }
+     ],
+     "hint": "What happens to an array's size after the statement that creates it?",
+     "explanation": "Arrays and collections both hold references to objects and can be passed around as a group. The difference is that an array's size is set when it is instantiated and never changes, while a collection is dynamically resizable: it grows and shrinks as elements are added and removed.",
+     "ref": "Ch. 13.1, Understanding the Collection Interface (p. 511)"
+    },
+    {
+     "id": "no-primitives",
+     "concept": "Collections hold objects, not primitives",
+     "level": "apply",
+     "stem": "Why doesn't this declaration compile?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "ArrayList<int> scores = new ArrayList<int>();",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "unexpected type"
+       ],
+       "program": "import java.util.ArrayList;\n\npublic class Scores\n{\n    public static void main(String[] args)\n    {\n        ArrayList<int> scores = new ArrayList<int>();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Collections hold only objects, so the type must be the wrapper class `Integer`, not `int`.",
+       "feedback": "A collection stores references to objects. `int` is a primitive type, so the type in angle brackets has to be its wrapper class, `Integer`.",
+       "correct": true
+      },
+      {
+       "text": "The angle brackets on the right side must be left empty, as in `new ArrayList<>()`.",
+       "feedback": "Empty brackets on the right are allowed shorthand, but they wouldn't fix anything: `ArrayList<int>` on the left is still illegal."
+      },
+      {
+       "text": "An `ArrayList` needs a starting capacity, such as `new ArrayList<int>(10)`.",
+       "feedback": "The default constructor is fine and gives a capacity of 10. Adding a capacity leaves the real problem, the primitive type `int`, in place."
+      },
+      {
+       "text": "An `ArrayList` holds only `String` objects unless you first write a class for the element type yourself.",
+       "feedback": "An `ArrayList` can hold any reference type: `String`, `Integer`, `Double`, `Employee` and more. The only rule is that the type must be a class, not a primitive."
+      }
+     ],
+     "hint": "Which kinds of data can a collection hold, and which kind is `int`?",
+     "explanation": "Collections can hold objects of any class but not primitive values. For numbers you use the wrapper classes: `ArrayList<Integer>`, `ArrayList<Double>`. Arrays are different: `int[]` is legal.",
+     "aside": "You can still write `scores.add(90);` on an `ArrayList<Integer>`. Since Java 5 the compiler *autoboxes* the `int` into an `Integer` for you, and unboxes it again when you read the value back into an `int` variable.",
+     "ref": "Ch. 13.1 (p. 511) and Ch. 13.3, ArrayList of Integer (pp. 517–518)"
+    },
+    {
+     "id": "retain-all",
+     "concept": "retainAll() keeps only the shared elements",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> a = new ArrayList<String>();\na.add(\"red\"); a.add(\"green\"); a.add(\"blue\"); a.add(\"green\");\nArrayList<String> b = new ArrayList<String>();\nb.add(\"green\"); b.add(\"blue\"); b.add(\"yellow\");\na.retainAll(b);\nSystem.out.println(a);",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class RetainDemo\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> a = new ArrayList<String>();\n        a.add(\"red\"); a.add(\"green\"); a.add(\"blue\"); a.add(\"green\");\n        ArrayList<String> b = new ArrayList<String>();\n        b.add(\"green\"); b.add(\"blue\"); b.add(\"yellow\");\n        a.retainAll(b);\n        System.out.println(a);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[green, blue, green]`",
+       "feedback": "`retainAll()` removes from `a` every element that is *not* in `b`. Only `red` goes; both copies of `green` stay because `green` is in `b`, and `a` keeps its own order.",
+       "correct": true
+      },
+      {
+       "text": "`[green, blue]`",
+       "feedback": "This drops the duplicate, as a set would. `retainAll()` only removes elements missing from `b`, and the second `green` is in `b`."
+      },
+      {
+       "text": "`[red]`",
+       "feedback": "That's what `removeAll(b)` would leave: the elements of `a` that are not in `b`. `retainAll()` keeps the shared ones instead."
+      },
+      {
+       "text": "`[green, blue, yellow]`",
+       "feedback": "`retainAll()` never adds anything to `a`. `yellow` was only ever in `b`."
+      }
+     ],
+     "hint": "Does `retainAll()` keep or remove the elements both lists share?",
+     "explanation": "`retainAll(c)` removes every element of the invoking collection that is not in `c`, and returns `true` if anything was removed. `removeAll(c)` is its mirror image. Neither one changes the parameter collection.",
+     "ref": "Ch. 13.1, Table 13-1 Collection methods (p. 512)"
+    },
+    {
+     "id": "remove-one-instance",
+     "concept": "remove(Object) removes one instance",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> tags = new ArrayList<String>();\ntags.add(\"java\"); tags.add(\"lab\"); tags.add(\"java\");\nboolean removed = tags.remove(\"java\");\nSystem.out.println(removed + \" \" + tags);",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class RemoveDemo\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> tags = new ArrayList<String>();\n        tags.add(\"java\"); tags.add(\"lab\"); tags.add(\"java\");\n        boolean removed = tags.remove(\"java\");\n        System.out.println(removed + \" \" + tags);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`true [lab, java]`",
+       "feedback": "`remove(Object)` removes *one* instance, the first one it finds, and returns `true` because something was removed.",
+       "correct": true
+      },
+      {
+       "text": "`true [lab]`",
+       "feedback": "That removes every copy. `remove(Object)` removes one instance; removing all of them takes `removeAll()` or a loop."
+      },
+      {
+       "text": "`true [java, lab]`",
+       "feedback": "This removes the last copy. The search starts at the front of the list, so the first `java` is the one that goes."
+      },
+      {
+       "text": "`false [java, lab, java]`",
+       "feedback": "`\"java\"` is in the list, so the removal succeeds and returns `true`, and the list changes in place."
+      }
+     ],
+     "hint": "How many instances does `remove(Object)` take out, and where does it start looking?",
+     "explanation": "`remove(Object obj)` removes one instance of `obj` and returns `true` if it found one. When the collection is a list, the instance removed is the first one in list order.",
+     "ref": "Ch. 13.1, Table 13-1 Collection methods (p. 512)"
+    },
+    {
+     "id": "interface-vs-class",
+     "concept": "The interface declares; classes implement",
+     "level": "understand",
+     "stem": "The `Collection` interface declares `add()` and `remove()`. A classmate asks where the code that actually stores an element lives. What is the best answer?",
+     "options": [
+      {
+       "text": "In classes that implement the interface, such as `ArrayList`; the interface lists only headers.",
+       "feedback": "An interface declares which methods exist, not how they work. Classes such as `ArrayList` and `LinkedList` implement `Collection` and supply the method bodies.",
+       "correct": true
+      },
+      {
+       "text": "In the `Collection` interface itself, whose method code every collection class inherits.",
+       "feedback": "An interface's methods are implicitly abstract: it lists headers only, with no instructions inside them."
+      },
+      {
+       "text": "In the `Collections` class, which stores the elements for every collection object in the program.",
+       "feedback": "`Collections`, with an *s*, is a utility class with methods such as `sort()`. Each collection object stores its own elements."
+      },
+      {
+       "text": "In the program that uses the collection, which has to write its own `add()` method first.",
+       "feedback": "You call `add()` on an `ArrayList` without writing it. The implementing class in `java.util` already provides the body."
+      }
+     ],
+     "hint": "What does an interface contain: method headers, method bodies, or both?",
+     "explanation": "The Java Collections framework splits the work: its interfaces define what a collection can do, and its classes implement those interfaces with real code. That's why `ArrayList` and `LinkedList` share method names but store their data differently.",
+     "ref": "Ch. 13.1 (pp. 511–512)"
+    }
+   ]
+  },
+  {
+   "id": "13.2",
+   "title": "Understanding the List Interface",
+   "subtitle": "Ordered collections with duplicates, index-based methods, ranges, compaction, and what List adds to Collection",
+   "source": "Ch. 13, section 13.2 (pp. 513–514)",
+   "intro": "A music app's playlist plays songs in the order you set and lets the same song appear twice. Five questions on the `List` interface, which adds positions to `Collection`.",
+   "takeaways": [
+    "A `List` is an ordered collection that allows duplicates and gives every element an index from 0. It has all the `Collection` methods plus index-based ones such as `get()`, `set()`, `indexOf()` and `subList()`.",
+    "Removing by index compacts the list: later elements move down one position. A range such as `subList(start, end)` includes `start` and stops before `end`, and a search that fails returns `-1`."
+   ],
+   "questions": [
+    {
+     "id": "list-vs-set",
+     "concept": "What makes a List a List",
+     "level": "understand",
+     "stem": "A playlist must keep songs in the order the user chooses, let the same song appear more than once, and jump straight to the song at position 7. Which interface fits?",
+     "options": [
+      {
+       "text": "`List`, because it is ordered, allows duplicates and accesses elements by index.",
+       "feedback": "All three requirements match the features `List` adds to `Collection`: positions you can insert at or read from, and duplicates allowed.",
+       "correct": true
+      },
+      {
+       "text": "`Set`, because it stores each song exactly once and keeps all the songs in a fixed order.",
+       "feedback": "A `Set` doesn't allow duplicates, so the repeated song would be lost, and it isn't ordered by position."
+      },
+      {
+       "text": "`Queue`, because the songs play in the order they were added.",
+       "feedback": "A `Queue` removes elements first-in, first-out, but it doesn't let you jump to position 7 or rearrange the songs."
+      },
+      {
+       "text": "`Collection`, because it already provides `get(int)` for positions.",
+       "feedback": "`get(int)` is one of the methods `List` adds. `Collection` itself has no notion of position."
+      }
+     ],
+     "hint": "Which of the three requirements does each interface rule out?",
+     "explanation": "`List` extends `Collection` and adds two features: elements have positions (indexes) you can insert at or read from, and duplicates are allowed. A `Set` forbids duplicates and isn't ordered; a `Queue` removes elements first-in, first-out.",
+     "ref": "Ch. 13.2, Understanding the List Interface (p. 513)"
+    },
+    {
+     "id": "index-of",
+     "concept": "indexOf(), lastIndexOf() and -1",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> pets = new ArrayList<String>();\npets.add(\"cat\"); pets.add(\"dog\"); pets.add(\"cat\"); pets.add(\"emu\");\nSystem.out.println(pets.indexOf(\"cat\") + \" \" +\n    pets.lastIndexOf(\"cat\") + \" \" + pets.indexOf(\"owl\"));",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class IndexDemo\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> pets = new ArrayList<String>();\n        pets.add(\"cat\"); pets.add(\"dog\"); pets.add(\"cat\"); pets.add(\"emu\");\n        System.out.println(pets.indexOf(\"cat\") + \" \" +\n            pets.lastIndexOf(\"cat\") + \" \" + pets.indexOf(\"owl\"));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0 2 -1`",
+       "feedback": "The first `cat` is at index 0 and the last at index 2, and `owl` isn't in the list, so `indexOf()` returns `-1`.",
+       "correct": true
+      },
+      {
+       "text": "`1 3 -1`",
+       "feedback": "This counts positions from 1. List indexes start at 0, just like array subscripts."
+      },
+      {
+       "text": "`0 2 null`",
+       "feedback": "A failed search returns an `int`, and `null` isn't an `int` value. `indexOf()` returns `-1`, which can never be a real index."
+      },
+      {
+       "text": "`2 0 -1`",
+       "feedback": "This swaps the two methods. `indexOf()` finds the *first* instance and `lastIndexOf()` the last."
+      }
+     ],
+     "hint": "Where does indexing start, and which value could never be a real index?",
+     "explanation": "`indexOf()` returns the index of the first instance and `lastIndexOf()` the index of the last, counting from 0. Both return `-1` when the object isn't in the list, a value that can't be confused with a real position.",
+     "ref": "Ch. 13.2, Table 13-2 List methods (p. 513)"
+    },
+    {
+     "id": "sublist-range",
+     "concept": "subList() includes start, excludes end",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> letters = new ArrayList<String>();\nletters.add(\"A\"); letters.add(\"B\"); letters.add(\"C\");\nletters.add(\"D\"); letters.add(\"E\");\nSystem.out.println(letters.subList(1, 3));",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class SubListDemo\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> letters = new ArrayList<String>();\n        letters.add(\"A\"); letters.add(\"B\"); letters.add(\"C\");\n        letters.add(\"D\"); letters.add(\"E\");\n        System.out.println(letters.subList(1, 3));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[B, C]`",
+       "feedback": "The range starts at index 1 (`B`) and stops *before* index 3, so you get indexes 1 and 2: `end - start` elements.",
+       "correct": true
+      },
+      {
+       "text": "`[B, C, D]`",
+       "feedback": "This includes the element at index 3. `subList()` stops one short of `end`."
+      },
+      {
+       "text": "`[A, B, C]`",
+       "feedback": "This counts positions 1 to 3 starting from 1. Indexes start at 0, so index 1 is `B`."
+      },
+      {
+       "text": "`[C, D]`",
+       "feedback": "This skips the start and includes the end, the reverse of the rule. The start index is included and the end index is not."
+      }
+     ],
+     "hint": "Is the element at index `start` part of the result? Is the element at index `end`?",
+     "explanation": "`subList(start, end)` returns the elements from index `start` up to `end - 1`. The start is included and the end excluded, so the result has `end - start` elements, the same convention `substring()` uses.",
+     "ref": "Ch. 13.2, Table 13-2 List methods (p. 513)"
+    },
+    {
+     "id": "remove-compacts",
+     "concept": "remove(int) compacts the list",
+     "level": "analyze",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> line = new ArrayList<String>();\nline.add(\"Ana\"); line.add(\"Ben\"); line.add(\"Cy\"); line.add(\"Dee\");\nline.remove(1);\nSystem.out.println(line.get(1) + \" \" + line.size());",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class CompactDemo\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> line = new ArrayList<String>();\n        line.add(\"Ana\"); line.add(\"Ben\"); line.add(\"Cy\"); line.add(\"Dee\");\n        line.remove(1);\n        System.out.println(line.get(1) + \" \" + line.size());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Cy 3`",
+       "feedback": "Removing index 1 deletes `Ben`, and every later element moves down one index, so `Cy` is now at index 1 and the size is 3.",
+       "correct": true
+      },
+      {
+       "text": "`null 4`",
+       "feedback": "This leaves a gap where `Ben` was. A list never keeps holes: removing an element compacts it."
+      },
+      {
+       "text": "`Ben 3`",
+       "feedback": "This counts from 1 in both calls, so it removes `Ana` and then reads the first remaining element. Indexes start at 0."
+      },
+      {
+       "text": "`Cy 4`",
+       "feedback": "The shift is right, but `size()` always reports how many elements the list holds right now, and one was removed."
+      }
+     ],
+     "hint": "Once the element at index 1 is gone, what happens to the indexes of the elements after it?",
+     "explanation": "`remove(int index)` deletes the element at that position, returns it, and compacts the list: every later element moves down one index and `size()` drops by one. There is never a gap.",
+     "aside": "On a `List<Integer>`, `nums.remove(1)` looks ambiguous, but Java picks `remove(int index)` for an `int` argument, so it removes *position* 1. To remove the *value* 1, write `nums.remove(Integer.valueOf(1))`.",
+     "ref": "Ch. 13.2, Table 13-2 List methods (p. 513)"
+    },
+    {
+     "id": "collection-has-no-get",
+     "concept": "List extends Collection, not the reverse",
+     "level": "analyze",
+     "stem": "What happens when this code is compiled and run?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nCollection<String> items = new ArrayList<String>();\nitems.add(\"pen\");\nSystem.out.println(items.get(0));",
+      "verify": {
+       "expect": "compile_error",
+       "program": "import java.util.*;\n\npublic class CollectionGet\n{\n    public static void main(String[] args)\n    {\n        Collection<String> items = new ArrayList<String>();\n        items.add(\"pen\");\n        System.out.println(items.get(0));\n    }\n}\n",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It doesn't compile, because `get(int)` is a `List` method that `Collection` doesn't declare.",
+       "feedback": "The compiler allows only the methods of the variable's declared type. `Collection` has no positions, so it has no `get(int)`, even though the object is an `ArrayList`.",
+       "correct": true
+      },
+      {
+       "text": "It prints `pen`, because the object is an `ArrayList`, which does have `get()`.",
+       "feedback": "The object has `get()`, but the compiler checks the variable's type, `Collection`, and that interface doesn't declare it."
+      },
+      {
+       "text": "It compiles but throws an exception when it runs, because a `Collection` can't be indexed.",
+       "feedback": "The problem is caught earlier: calling a method the declared type lacks is a compile-time error, not a run-time one."
+      },
+      {
+       "text": "It prints `null`, because a `Collection` stores its elements without positions.",
+       "feedback": "Nothing runs. The call to `get()` is rejected when the code is compiled."
+      }
+     ],
+     "hint": "When the compiler checks `items.get(0)`, which type does it look at: the variable's or the object's?",
+     "explanation": "`List` extends `Collection`, so a `List` has every `Collection` method plus index-based ones such as `get()`, `set()` and `indexOf()`. The reverse isn't true: through a `Collection` reference you can call only `Collection` methods.",
+     "ref": "Ch. 13.2 (p. 513) and Two Truths & a Lie (p. 514)"
+    }
+   ]
+  },
+  {
+   "id": "13.3",
+   "title": "Using the ArrayList Class",
+   "subtitle": "Tracing add, insert, set and remove, capacity versus size, sorting with compareTo(), and printing your own objects",
+   "source": "Ch. 13, section 13.3 (pp. 514–522)",
+   "intro": "A course roster changes all week as students join, drop and swap sections, and the instructor wants the final list sorted by ID. Six questions on `ArrayList`, from tracing its methods to sorting objects of your own class.",
+   "takeaways": [
+    "`add(item)` appends, `add(index, item)` inserts, `set(index, item)` replaces, and `remove(index)` deletes and shifts. Only indexes from 0 to `size() - 1` are valid; capacity is just storage set aside in advance.",
+    "`Collections.sort()` orders elements with their `compareTo()` method. Your own class can be sorted only after it implements `Comparable` and defines which field decides the order.",
+    "Printing a list calls `toString()` on every element, so override `toString()` in the classes you store."
+   ],
+   "questions": [
+    {
+     "id": "trace-roster",
+     "concept": "add(), add(index), remove() and set()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> names = new ArrayList<String>();\nnames.add(\"Ana\");\nnames.add(\"Ben\");\nnames.add(\"Cy\");\nnames.add(1, \"Dee\");\nnames.remove(2);\nnames.set(0, \"Eli\");\nSystem.out.println(names);",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class RosterTrace\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> names = new ArrayList<String>();\n        names.add(\"Ana\");\n        names.add(\"Ben\");\n        names.add(\"Cy\");\n        names.add(1, \"Dee\");\n        names.remove(2);\n        names.set(0, \"Eli\");\n        System.out.println(names);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[Eli, Dee, Cy]`",
+       "feedback": "`add(1, \"Dee\")` inserts and shifts `Ben` and `Cy` right; `remove(2)` then removes `Ben`; `set(0, ...)` replaces `Ana`.",
+       "correct": true
+      },
+      {
+       "text": "`[Eli, Ana, Dee, Cy]`",
+       "feedback": "This treats `set()` like an insert. `set()` replaces the element at that index, so the size doesn't change."
+      },
+      {
+       "text": "`[Eli, Ben, Cy]`",
+       "feedback": "This counts from 1 in `remove(2)` and removes `Dee`. Indexes start at 0, and after the insert, index 2 holds `Ben`."
+      },
+      {
+       "text": "`[Eli, Dee]`",
+       "feedback": "This treats `add(1, ...)` like `set()`, replacing `Ben` instead of inserting. The two-argument `add()` keeps every element and shifts the later ones right."
+      }
+     ],
+     "hint": "Write the list down after each line. Which calls change the size, and which only replace?",
+     "explanation": "`add(item)` appends, `add(index, item)` inserts and shifts later elements right, `remove(index)` deletes and shifts them left, and `set(index, item)` replaces without changing the size. Writing the list down after every call is the reliable way to trace it.",
+     "ref": "Ch. 13.3, ArrayList methods and Figure 13-1 (pp. 515–516)"
+    },
+    {
+     "id": "capacity-vs-size",
+     "concept": "Capacity is not size",
+     "level": "understand",
+     "stem": "This list was created with a capacity of 20. What happens on the last line?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nArrayList<String> names = new ArrayList<String>(20);\nnames.add(\"Ana\");\nnames.add(\"Ben\");\nnames.set(5, \"Zoe\");",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "import java.util.*;\n\npublic class CapacityDemo\n{\n    public static void main(String[] args)\n    {\n        ArrayList<String> names = new ArrayList<String>(20);\n        names.add(\"Ana\");\n        names.add(\"Ben\");\n        names.set(5, \"Zoe\");\n    }\n}\n",
+       "error_contains": [
+        "IndexOutOfBoundsException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It throws an `IndexOutOfBoundsException`, because the list's size is only 2.",
+       "feedback": "Capacity is storage the list has set aside; size is how many elements it holds. Methods that take an index accept only positions that hold an element.",
+       "correct": true
+      },
+      {
+       "text": "It stores `Zoe` at index 5 and fills indexes 2 to 4 with `null`.",
+       "feedback": "An `ArrayList` never creates gaps. Indexes 2 to 4 don't exist yet, so neither does index 5."
+      },
+      {
+       "text": "It adds `Zoe` at index 2, the next free position, because 5 is past the end.",
+       "feedback": "`set()` never appends. It replaces an existing element, and when there's none at that index it throws an exception."
+      },
+      {
+       "text": "It doesn't compile, because the compiler can see that index 5 is past the end of the list.",
+       "feedback": "The compiler doesn't track how many elements a list holds; that's only known while the program runs, so the problem appears as an exception."
+      }
+     ],
+     "hint": "Which number limits the valid indexes: the capacity you asked for, or the number of elements actually added?",
+     "explanation": "An `ArrayList`'s capacity is how many items it can hold before it has to grow; its size is how many it holds now, and the capacity is always at least the size. Only indexes from 0 to `size() - 1` are valid, whatever the capacity.",
+     "aside": "When an `ArrayList` runs out of capacity, it allocates a bigger internal array and copies every element across. In OpenJDK, the standard Java implementation, the new array is about one and a half times the size of the old one.",
+     "ref": "Ch. 13.3, capacity and invalid positions (p. 515)"
+    },
+    {
+     "id": "sort-by-id",
+     "concept": "Collections.sort() uses compareTo()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Student implements Comparable<Student>\n{\n   private int id;\n   private String name;\n   public Student(int id, String name)\n   {\n      this.id = id;\n      this.name = name;\n   }\n   public String getName() { return name; }\n   @Override\n   public int compareTo(Student s)\n   {\n      if(id == s.id) return 0;\n      else if(id > s.id) return 1;\n      else return -1;\n   }\n}\n// in main()\nArrayList<Student> list = new ArrayList<Student>();\nlist.add(new Student(204, \"Bo\"));\nlist.add(new Student(201, \"Zed\"));\nlist.add(new Student(203, \"Ava\"));\nCollections.sort(list);\nfor(Student s : list)\n   System.out.print(s.getName() + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\nclass Student implements Comparable<Student>\n{\n   private int id;\n   private String name;\n   public Student(int id, String name)\n   {\n      this.id = id;\n      this.name = name;\n   }\n   public String getName() { return name; }\n   @Override\n   public int compareTo(Student s)\n   {\n      if(id == s.id) return 0;\n      else if(id > s.id) return 1;\n      else return -1;\n   }\n}\n\npublic class SortStudents\n{\n    public static void main(String[] args)\n    {\n        ArrayList<Student> list = new ArrayList<Student>();\n        list.add(new Student(204, \"Bo\"));\n        list.add(new Student(201, \"Zed\"));\n        list.add(new Student(203, \"Ava\"));\n        Collections.sort(list);\n        for(Student s : list)\n           System.out.print(s.getName() + \" \");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Zed Ava Bo`",
+       "feedback": "`compareTo()` compares `id` values, so the sort puts the lowest ID first: 201 (Zed), 203 (Ava), 204 (Bo).",
+       "correct": true
+      },
+      {
+       "text": "`Ava Bo Zed`",
+       "feedback": "That's alphabetical by name, the natural order for `String`. `Student` defines its own natural order in `compareTo()`, and that method looks only at `id`."
+      },
+      {
+       "text": "`Bo Zed Ava`",
+       "feedback": "That's the order the students were added. `Collections.sort()` rearranges the list itself, so the loop sees the new order."
+      },
+      {
+       "text": "`Bo Ava Zed`",
+       "feedback": "That's descending order. `compareTo()` returns 1 when the calling object's `id` is greater, which tells the sort it belongs *after* the other student."
+      }
+     ],
+     "hint": "Which field does `compareTo()` look at, and which object goes first when it returns `-1`?",
+     "explanation": "`Collections.sort()` arranges objects in their natural order, which it learns by calling `compareTo()`. A negative result means the calling object comes first, zero means a tie, and a positive result means it comes after.",
+     "aside": "`Object` has no `compareTo()` method: it comes from the `Comparable` interface, and `@Override` asks the compiler to confirm you really are implementing that interface's method. A typo such as `compareto()` then becomes a compile error instead of a silent bug.",
+     "ref": "Ch. 13.3, Collections.sort() and the Student class (pp. 518–521)"
+    },
+    {
+     "id": "missing-comparable",
+     "concept": "Your own class needs a natural ordering",
+     "level": "analyze",
+     "stem": "Why doesn't this program compile?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import java.util.*;\nclass Pet\n{\n   String name;\n   Pet(String name) { this.name = name; }\n}\npublic class SortPets\n{\n   public static void main(String[] args)\n   {\n      ArrayList<Pet> pets = new ArrayList<Pet>();\n      pets.add(new Pet(\"Rex\"));\n      pets.add(new Pet(\"Ada\"));\n      Collections.sort(pets);\n   }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "no suitable method found for sort"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "`Pet` doesn't implement `Comparable<Pet>`, so `sort()` has no `compareTo()` to call.",
+       "feedback": "With one argument, `Collections.sort()` relies on the elements' natural ordering. Until `Pet` implements `Comparable<Pet>` and defines `compareTo()`, it has none.",
+       "correct": true
+      },
+      {
+       "text": "`Collections.sort()` works only with `String` and number types, never with classes you write.",
+       "feedback": "Your own classes can be sorted, as the `Student` example shows. They just have to define their natural ordering first."
+      },
+      {
+       "text": "The list has to be copied into an array with `toArray()` before it can be sorted.",
+       "feedback": "`Collections.sort()` takes a `List` directly. The issue is how to compare two pets, not the container."
+      },
+      {
+       "text": "`Pet` needs a `toString()` method so `sort()` can compare the pets' text.",
+       "feedback": "`toString()` controls how an object prints; sorting never calls it. Sorting calls `compareTo()`."
+      }
+     ],
+     "hint": "How does `Collections.sort()` decide which of two objects goes first?",
+     "explanation": "`String`, `Integer`, `Double` and the other wrapper classes already have a natural ordering. For your own class you choose it: pick the field to compare, implement `Comparable<YourClass>` and write `compareTo()`. Without that, `Collections.sort(list)` doesn't compile.",
+     "ref": "Ch. 13.3, sorting objects of your own class (pp. 520–521)"
+    },
+    {
+     "id": "print-with-tostring",
+     "concept": "Lists print with each element's toString()",
+     "level": "apply",
+     "stem": "`System.out.println(emps)` prints a list of `Employee` objects as `[Employee@1b6d3586, Employee@4554617c]`. What change makes it print each employee's number and pay rate instead?",
+     "options": [
+      {
+       "text": "Add a `toString()` method to `Employee` that builds a `String` from its fields.",
+       "feedback": "Printing a list calls `toString()` on each element. `Employee` currently inherits `Object`'s version, which shows the class name and a hash code; overriding it fixes every place an employee prints.",
+       "correct": true
+      },
+      {
+       "text": "Print `emps.toString()` instead of passing `emps` to `println()`.",
+       "feedback": "`println(emps)` already calls the list's `toString()`, which calls each element's `toString()`. The output is identical."
+      },
+      {
+       "text": "Loop over the list and print `emps.get(x)` for each index.",
+       "feedback": "Each `get(x)` returns an `Employee`, and printing it still uses the inherited `toString()`, so you'd see the same hash codes, one per line."
+      },
+      {
+       "text": "Declare the list as `ArrayList<String>` instead and add the employees to that list.",
+       "feedback": "An `ArrayList<String>` accepts only `String` objects, so adding an `Employee` wouldn't compile. The fix belongs in `Employee`."
+      }
+     ],
+     "hint": "Which method does Java call to turn an object into text when it prints?",
+     "explanation": "Every class inherits `toString()` from `Object`, and the inherited version returns the class name and a hash code. Printing a list calls `toString()` on each element, so overriding it in your class is what makes a list of your objects readable.",
+     "ref": "Ch. 13.3, the Employee class and the Note on toString() (pp. 517–519)"
+    },
+    {
+     "id": "initial-capacity",
+     "concept": "Choosing an initial capacity",
+     "level": "evaluate",
+     "stem": "A program loads exactly 5,000 sensor readings into an `ArrayList<Double>` at startup and rarely adds more. Which choice is the most efficient?",
+     "options": [
+      {
+       "text": "Create it with `new ArrayList<Double>(5000)` so it never has to grow while loading.",
+       "feedback": "Asking for the capacity you know you'll need means the list never has to stop and grow while it loads.",
+       "correct": true
+      },
+      {
+       "text": "Create it with the default constructor, then call `trimToSize()` before loading the readings.",
+       "feedback": "`trimToSize()` shrinks the capacity to the current size. On an empty list, that makes the list grow even more often while loading."
+      },
+      {
+       "text": "Use a `double[5000]` array, because an `ArrayList` can't hold more than 10 items.",
+       "feedback": "10 is only the default starting capacity; an `ArrayList` grows automatically. The array would work, but the list can also take the rare extra reading."
+      },
+      {
+       "text": "Create it with `new ArrayList<Double>(10)`; growing as needed costs nothing.",
+       "feedback": "Growing does cost something: each time the list outgrows its capacity it must set aside more storage. Starting at 10 means many of those steps."
+      }
+     ],
+     "hint": "What does the list have to do each time it runs out of capacity?",
+     "explanation": "The default constructor gives a capacity of 10. When you know at the outset that you'll need more, it's more efficient to pass that capacity to the constructor. `trimToSize()` handles the opposite case, releasing unused capacity once the list is filled.",
+     "ref": "Ch. 13.3, capacity and trimToSize() (p. 515)"
+    }
+   ]
+  },
+  {
+   "id": "13.4",
+   "title": "Using the LinkedList Class",
+   "subtitle": "Nodes and references, singly versus doubly linked, and when a LinkedList beats an ArrayList",
+   "source": "Ch. 13, section 13.4 (pp. 524–527)",
+   "intro": "A clinic's waiting list changes constantly as patients are added, moved up after triage and called in. Five questions on how a `LinkedList` stores its elements and when it beats an `ArrayList`.",
+   "takeaways": [
+    "Each node in Java's doubly-linked `LinkedList` stores its data plus references to the previous and next nodes, so nodes can sit anywhere in memory, and inserting or removing an element only rewires its neighbors.",
+    "Choose by workload: `LinkedList` for frequent insertions and removals, `ArrayList` for storing and reading data in sequence or by index. Both implement `List`, so the method calls are the same."
+   ],
+   "questions": [
+    {
+     "id": "relink-on-remove",
+     "concept": "Removing a node rewires its neighbors",
+     "level": "understand",
+     "stem": "A doubly-linked list holds three nodes in order: 101, 102 and 103. When node 102 is removed, what changes?",
+     "options": [
+      {
+       "text": "101's *next* now points to 103, and 103's *previous* now points to 101.",
+       "feedback": "Removing a node only rewires its two neighbors so they point past it. No other data moves.",
+       "correct": true
+      },
+      {
+       "text": "103 moves into the memory 102 used, so the remaining nodes stay side by side.",
+       "feedback": "Linked-list nodes don't need to be adjacent in memory, so nothing has to move. Shifting elements is what an `ArrayList` does."
+      },
+      {
+       "text": "102's own references are set to `null`, and 101 and 103 stay exactly as they were.",
+       "feedback": "If the neighbors kept their old references, 101 would still point *to* 102 and the list would still pass through it. The neighbors are what must change."
+      },
+      {
+       "text": "Every node after 102 gets a new index number stored inside it.",
+       "feedback": "Nodes don't store index numbers; a node's position is just how many links you follow to reach it."
+      }
+     ],
+     "hint": "Which nodes hold a reference *to* 102?",
+     "explanation": "In a doubly-linked list, each node holds its data plus the address of the node before it and the node after it. Removing a node means changing those two neighbors' references so they point to each other; the elements themselves stay where they are in memory.",
+     "ref": "Ch. 13.4, Figures 13-17 and 13-18 (pp. 525–526)"
+    },
+    {
+     "id": "singly-vs-doubly",
+     "concept": "Singly- versus doubly-linked lists",
+     "level": "understand",
+     "stem": "Each node in a *singly*-linked list holds its data and the address of the next node only. Compared with Java's `LinkedList`, which task does that make harder?",
+     "options": [
+      {
+       "text": "Moving backward from a node to the node before it.",
+       "feedback": "Without a *previous* reference, a node can't tell you what comes before it; you'd have to start again from the front. Java's `LinkedList` is doubly-linked, so each node knows both neighbors.",
+       "correct": true
+      },
+      {
+       "text": "Moving forward from a node to the node after it.",
+       "feedback": "Moving forward is exactly what the one stored address is for: it points to the following node."
+      },
+      {
+       "text": "Keeping the nodes in separate, non-adjacent places in memory.",
+       "feedback": "Every linked list, singly or doubly linked, can scatter its nodes through memory. The stored addresses are what connect them."
+      },
+      {
+       "text": "Holding objects of a class you wrote yourself.",
+       "feedback": "A linked list can hold any reference type. The number of stored addresses affects navigation, not what the data can be."
+      }
+     ],
+     "hint": "Which direction does the one stored address let you travel?",
+     "explanation": "A singly-linked node stores only the address of the next element; a doubly-linked node stores the next and the previous. The extra reference costs memory but lets you move in either direction, and Java's `LinkedList` is doubly-linked.",
+     "ref": "Ch. 13.4, Using the LinkedList Class (p. 524)"
+    },
+    {
+     "id": "choose-list",
+     "concept": "Choosing LinkedList or ArrayList",
+     "level": "evaluate",
+     "stem": "A waiting list of thousands of patients changes all day: patients are inserted near the front after triage and removed from the middle when called. The full list is displayed only occasionally. Which class fits better, and why?",
+     "options": [
+      {
+       "text": "`LinkedList`, because adding or removing an element changes only its neighbors' references.",
+       "feedback": "Most of this program's work is moving entries around, and that's where a linked list is efficient: no other element has to shift.",
+       "correct": true
+      },
+      {
+       "text": "`ArrayList`, because its elements sit side by side in memory, so removing one takes a single step.",
+       "feedback": "Sitting side by side is what makes removal *slow* in an `ArrayList`: every element after the removed one has to move down a position."
+      },
+      {
+       "text": "`ArrayList`, because it can grow and shrink while a `LinkedList` keeps a fixed size.",
+       "feedback": "Both classes are dynamically resizable. What separates them is how they store elements, not whether the size can change."
+      },
+      {
+       "text": "`LinkedList`, because it displays every element faster than an `ArrayList` can.",
+       "feedback": "`LinkedList` is the right choice, but for the opposite reason: displaying everything in sequence is where an `ArrayList` does better."
+      }
+     ],
+     "hint": "When one element is removed from the middle, what must each class do to the *other* elements?",
+     "explanation": "Pick by the operations a program does most. A `LinkedList` is better when you insert, remove or relocate a lot of data, since only neighboring references change. An `ArrayList` is better when you mostly store and retrieve data in sequence, since its elements sit side by side.",
+     "ref": "Ch. 13.4, comparing LinkedList and ArrayList (pp. 525–526)"
+    },
+    {
+     "id": "get-is-slow",
+     "concept": "Index access walks the links",
+     "level": "analyze",
+     "stem": "This loop runs over 100,000 numbers. It finishes quickly when `list` is an `ArrayList` but takes far longer when `list` is a `LinkedList`. Why?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "for(int x = 0; x < list.size(); ++x)\n   total += list.get(x);",
+      "verify": {
+       "expect": "runs",
+       "program": "import java.util.*;\n\npublic class SumList\n{\n    public static void main(String[] args)\n    {\n        LinkedList<Integer> list = new LinkedList<Integer>();\n        list.add(1);\n        list.add(2);\n        int total = 0;\n        for(int x = 0; x < list.size(); ++x)\n           total += list.get(x);\n        System.out.println(total);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Each `get(x)` must follow references node by node until it reaches position `x`.",
+       "feedback": "A linked list can't jump to a position. Every call walks the chain again, so the loop repeats more and more work as `x` grows.",
+       "correct": true
+      },
+      {
+       "text": "`size()` has to count every node again on each pass through the loop.",
+       "feedback": "`size()` is cheap for both classes: the list keeps a running count as elements are added and removed. The slow part is reaching position `x`."
+      },
+      {
+       "text": "A `LinkedList` must copy all its elements into an array before `get()` can read one.",
+       "feedback": "No copying happens. `get()` reaches an element by following links, which is slow in a different way."
+      },
+      {
+       "text": "Linked-list nodes are larger, so adding each one to `total` takes longer.",
+       "feedback": "Each node is larger because it stores two addresses, but adding a number costs the same. The time goes into finding the node."
+      }
+     ],
+     "hint": "How does an `ArrayList` find element `x`, and how does a linked list find it?",
+     "explanation": "An `ArrayList` finds element `x` with arithmetic: the start address plus `x` times the element size. A `LinkedList` must start at an end and follow references until it arrives. That makes index-based loops a poor fit for linked lists.",
+     "aside": "OpenJDK's `LinkedList.get(x)` starts from whichever end of the list is closer to `x`. That halves the walk, but a loop over every index still does work that grows with the square of the list's length.",
+     "ref": "Ch. 13.4 (p. 526) and Ch. 13.5, Figure 13-21 (p. 528)"
+    },
+    {
+     "id": "linked-trace",
+     "concept": "LinkedList has the same List methods",
+     "level": "apply",
+     "stem": "`LinkedList` has the same `add()`, `remove()` and `set()` methods as `ArrayList`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nLinkedList<String> names = new LinkedList<String>();\nnames.add(\"A\");\nnames.add(\"B\");\nnames.add(\"C\");\nnames.add(1, \"D\");\nnames.remove(2);\nnames.set(2, \"E\");\nSystem.out.println(names);",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class LinkedTrace\n{\n    public static void main(String[] args)\n    {\n        LinkedList<String> names = new LinkedList<String>();\n        names.add(\"A\");\n        names.add(\"B\");\n        names.add(\"C\");\n        names.add(1, \"D\");\n        names.remove(2);\n        names.set(2, \"E\");\n        System.out.println(names);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[A, D, E]`",
+       "feedback": "Insert `D` at 1 (`[A, D, B, C]`), remove index 2 (`B`), then replace index 2 (`C`) with `E`. The methods behave exactly as they do on an `ArrayList`.",
+       "correct": true
+      },
+      {
+       "text": "`[A, D, E, C]`",
+       "feedback": "This treats `set()` like an insert. `set()` replaces the element at index 2, so the size stays at three."
+      },
+      {
+       "text": "`[A, B, E]`",
+       "feedback": "This counts from 1 in `remove(2)` and removes `D`. Indexes start at 0, so index 2 holds `B` at that point."
+      },
+      {
+       "text": "It throws an `IndexOutOfBoundsException` at `set(2, \"E\")`.",
+       "feedback": "That happens only if `add(1, \"D\")` replaced `B`. The two-argument `add()` inserts, so three elements remain after `remove(2)` and index 2 exists."
+      }
+     ],
+     "hint": "Does a `LinkedList` treat these calls any differently from an `ArrayList`?",
+     "explanation": "`LinkedList` and `ArrayList` both implement `List`, so the same calls produce the same results; only the speed of each operation differs. Changing `ArrayList` to `LinkedList` in Figure 13-1 gives identical output.",
+     "ref": "Ch. 13.4, Figure 13-19 LinkedListDemo (pp. 526–527)"
+    }
+   ]
+  },
+  {
+   "id": "13.5",
+   "title": "Using Iterators",
+   "subtitle": "Index loops, the enhanced for loop and Iterator objects: hasNext(), next() and remove()",
+   "source": "Ch. 13, section 13.5 (pp. 528–529)",
+   "intro": "A sales report should print every daily total above 50, but it keeps skipping days. Five questions on looping through collections with `for`, the enhanced `for`, and `Iterator` objects.",
+   "takeaways": [
+    "`hasNext()` only checks; `next()` returns the next element *and* moves past it. Call `next()` once per pass, and store the result if you need it twice.",
+    "The enhanced `for` loop uses a hidden iterator and gives you no index. An explicit `Iterator` adds `remove()`, which deletes the last element returned, and a used-up iterator is replaced with a new `iterator()`, not reset."
+   ],
+   "questions": [
+    {
+     "id": "next-twice",
+     "concept": "Every next() call advances",
+     "level": "analyze",
+     "stem": "This loop was meant to print every sale above 50. What does it actually print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nLinkedList<Integer> sales = new LinkedList<Integer>();\nsales.add(75); sales.add(81); sales.add(43);\nsales.add(55); sales.add(90);\nIterator<Integer> iter = sales.iterator();\nwhile(iter.hasNext())\n   if(iter.next() > 50)\n      System.out.print(iter.next() + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class NextTwice\n{\n    public static void main(String[] args)\n    {\n        LinkedList<Integer> sales = new LinkedList<Integer>();\n        sales.add(75); sales.add(81); sales.add(43);\n        sales.add(55); sales.add(90);\n        Iterator<Integer> iter = sales.iterator();\n        while(iter.hasNext())\n           if(iter.next() > 50)\n              System.out.print(iter.next() + \" \");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`81 90`",
+       "feedback": "Each `next()` call moves forward. The test reads 75 and the print reads 81; the test reads 43, then 55, and the print reads 90.",
+       "correct": true
+      },
+      {
+       "text": "`75 81 55 90`",
+       "feedback": "That's the intended output. It assumes the second `next()` returns the same element again, but every call to `next()` advances."
+      },
+      {
+       "text": "`75 55`",
+       "feedback": "These are the values that pass the test. The print statement calls `next()` again, so it prints the element *after* the one tested."
+      },
+      {
+       "text": "`81`, then a `NoSuchElementException`",
+       "feedback": "That would happen if the test passed on the last element, leaving nothing for the print's `next()`. Here the print reads 90, the last element, so the loop ends normally."
+      }
+     ],
+     "hint": "How many times does `next()` run during one pass through the loop body?",
+     "explanation": "`hasNext()` only reports whether another element exists; `next()` returns the next element *and* moves past it. When you need an element more than once, store it first: `int amt = iter.next();`.",
+     "ref": "Ch. 13.5, Figure 13-24 and the Iterator methods (p. 529)"
+    },
+    {
+     "id": "iterator-remove",
+     "concept": "Iterator.remove() deletes from the collection",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nLinkedList<Integer> sales = new LinkedList<Integer>();\nsales.add(75); sales.add(43); sales.add(81); sales.add(55);\nIterator<Integer> iter = sales.iterator();\nwhile(iter.hasNext())\n   if(iter.next() < 60)\n      iter.remove();\nSystem.out.println(sales);",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class IterRemove\n{\n    public static void main(String[] args)\n    {\n        LinkedList<Integer> sales = new LinkedList<Integer>();\n        sales.add(75); sales.add(43); sales.add(81); sales.add(55);\n        Iterator<Integer> iter = sales.iterator();\n        while(iter.hasNext())\n           if(iter.next() < 60)\n              iter.remove();\n        System.out.println(sales);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[75, 81]`",
+       "feedback": "`remove()` deletes the element the last `next()` returned, so 43 and 55 leave `sales` itself; the iterator isn't working on a copy.",
+       "correct": true
+      },
+      {
+       "text": "`[43, 55]`",
+       "feedback": "This keeps the values that passed the test. The `if` sends the small sales to `remove()`, so they're the ones that go."
+      },
+      {
+       "text": "`[75, 43, 81, 55]`",
+       "feedback": "The iterator walks the list itself, not a copy, so removing through it changes `sales`."
+      },
+      {
+       "text": "`[75, 81, 55]`",
+       "feedback": "This stops after the first removal. `remove()` doesn't end the loop: `hasNext()` keeps it going until every element has been checked."
+      }
+     ],
+     "hint": "Which element does `iter.remove()` delete, and from where?",
+     "explanation": "An `Iterator` offers `hasNext()`, `next()` and `remove()`, which deletes the last element `next()` returned from the underlying collection. It's the safe way to remove elements while looping.",
+     "aside": "Calling `sales.remove(...)` directly inside an enhanced `for` loop over `sales` usually throws a `ConcurrentModificationException`: the hidden iterator notices the list changed behind its back. `Iterator.remove()` is the way around that.",
+     "ref": "Ch. 13.5, Iterator methods (p. 529)"
+    },
+    {
+     "id": "used-up-iterator",
+     "concept": "An iterator doesn't rewind",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nLinkedList<Integer> sales = new LinkedList<Integer>();\nsales.add(75);\nsales.add(81);\nIterator<Integer> iter = sales.iterator();\nwhile(iter.hasNext())\n   System.out.print(iter.next() + \" \");\nSystem.out.print(\"| \");\nwhile(iter.hasNext())\n   System.out.print(iter.next() + \" \");",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class UsedUp\n{\n    public static void main(String[] args)\n    {\n        LinkedList<Integer> sales = new LinkedList<Integer>();\n        sales.add(75);\n        sales.add(81);\n        Iterator<Integer> iter = sales.iterator();\n        while(iter.hasNext())\n           System.out.print(iter.next() + \" \");\n        System.out.print(\"| \");\n        while(iter.hasNext())\n           System.out.print(iter.next() + \" \");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`75 81 |`",
+       "feedback": "After the first loop the iterator is at the end, so `hasNext()` returns `false` straight away and the second loop's body never runs.",
+       "correct": true
+      },
+      {
+       "text": "`75 81 | 75 81`",
+       "feedback": "An iterator doesn't rewind when a loop ends. A second pass needs a new iterator from `sales.iterator()`."
+      },
+      {
+       "text": "It throws a `NoSuchElementException` in the second loop.",
+       "feedback": "That exception comes from calling `next()` with nothing left. Here `hasNext()` is checked first and returns `false`, so `next()` is never called."
+      }
+     ],
+     "hint": "Where is the iterator positioned when the first loop finishes?",
+     "explanation": "An iterator moves only forward and is used up once it reaches the end. You don't reset it; when you need another pass, you ask the collection for a new one with `iterator()`.",
+     "ref": "Ch. 13.5, the Note on looping again (p. 529)"
+    },
+    {
+     "id": "foreach-no-index",
+     "concept": "The enhanced for loop has no index",
+     "level": "apply",
+     "stem": "A student wants to print `1. 75`, `2. 81` and so on from a `LinkedList<Integer>` named `sales`, and starts with `for(int amt : sales)`. What does the loop need?",
+     "options": [
+      {
+       "text": "A counter declared before the loop and incremented in the body; the enhanced `for` has no index.",
+       "feedback": "The enhanced `for` hands you each element in turn but no position. Keeping your own count, as `displayNumberedList()` does in section 13.7, gives you the numbers.",
+       "correct": true
+      },
+      {
+       "text": "Nothing extra: print `amt`, because it holds each element's position in turn.",
+       "feedback": "`amt` holds each element's *value*: 75, then 81. The enhanced `for` hides positions entirely."
+      },
+      {
+       "text": "A call to `sales.indexOf(amt)` inside the loop body to look up each element's current position.",
+       "feedback": "`indexOf()` returns the *first* position of a value, so a total that appears twice would get the same number both times, and every call searches from the start."
+      },
+      {
+       "text": "A call to `sales.get(amt)` inside the loop to read the element at the current position.",
+       "feedback": "`amt` is a value, not an index, so `get(amt)` would ask for position 75 and throw an exception."
+      }
+     ],
+     "hint": "What does the variable in an enhanced `for` loop hold: a position or an element?",
+     "explanation": "The enhanced `for` (foreach) loop gives you each element of a collection in turn, with no index to manage. That's its strength; when you also need the position, you keep a counter yourself.",
+     "ref": "Ch. 13.5, Figure 13-23 ForEachDemo (p. 528)"
+    },
+    {
+     "id": "loop-styles",
+     "concept": "How the three loop styles relate",
+     "level": "understand",
+     "stem": "Which statement about the three ways to loop through a `LinkedList` is accurate?",
+     "options": [
+      {
+       "text": "An enhanced `for` uses a hidden iterator, so it steps through elements just as an `Iterator` does.",
+       "feedback": "The foreach loop is shorthand: Java creates an iterator for it and calls `hasNext()` and `next()` for you.",
+       "correct": true
+      },
+      {
+       "text": "An enhanced `for` loop works only on arrays, so looping through a collection needs an explicit `Iterator`.",
+       "feedback": "The enhanced `for` works on collections too; Figure 13-23 uses it on a `LinkedList`."
+      },
+      {
+       "text": "An explicit `Iterator` must call `size()` first so that it knows when to stop.",
+       "feedback": "`hasNext()` replaces the size check: you keep calling `next()` until no elements remain. That's why the book calls the iterator more efficient."
+      },
+      {
+       "text": "A `for` loop with `get(x)` is fastest, because it goes straight to each index.",
+       "feedback": "That's true of an `ArrayList`. On a `LinkedList`, each `get(x)` follows links from an end of the list, which makes the index loop the slowest of the three."
+      }
+     ],
+     "hint": "What does Java create for you when it runs a foreach loop over a collection?",
+     "explanation": "An index loop uses `size()` and `get()`; an enhanced `for` and an explicit `Iterator` both move from each element to the next with `hasNext()` and `next()`. An explicit `Iterator` also lets you `remove()` elements while looping.",
+     "ref": "Ch. 13.5, Using Iterators (pp. 528–529)"
+    }
+   ]
+  },
+  {
+   "id": "13.6",
+   "title": "Creating Generic Classes",
+   "subtitle": "Type parameters, declaring and using a generic class, and why ArrayList is written generically",
+   "source": "Ch. 13, section 13.6 (pp. 530–532)",
+   "intro": "You need a container class that works for `Integer` today, `String` tomorrow and `Book` next week, without writing it three times. Four questions on generic classes and their type parameters.",
+   "takeaways": [
+    "A generic class declares type parameters in angle brackets after its name, as in `class Box<T>`. Each object supplies a reference type, never a primitive, and that type replaces `T` in every field, parameter and return type.",
+    "Generics let one class serve many types while the compiler still checks every use; that's how `ArrayList` and `LinkedList` are built."
+   ],
+   "questions": [
+    {
+     "id": "legal-declaration",
+     "concept": "Supplying a type argument",
+     "level": "apply",
+     "stem": "Given `public class GenericClass<T>`, whose constructor takes one parameter of type `T`, which statement compiles?",
+     "options": [
+      {
+       "text": "`GenericClass<Integer> a = new GenericClass<Integer>(37);`",
+       "feedback": "`Integer` is a reference type and 37 can be stored in an `Integer`, so `T` becomes `Integer` throughout this object.",
+       "correct": true
+      },
+      {
+       "text": "`GenericClass<int> a = new GenericClass<int>(37);`",
+       "feedback": "A type parameter must be replaced by a reference type. Primitives such as `int` aren't allowed; use the wrapper class."
+      },
+      {
+       "text": "`GenericClass<T> a = new GenericClass<T>(37);`",
+       "feedback": "`T` is a placeholder used only inside the class. Code that *uses* the class must name a real type in its place."
+      },
+      {
+       "text": "`GenericClass<Integer> a = new GenericClass<Integer>(\"37\");`",
+       "feedback": "With `T` as `Integer`, the constructor expects an `Integer`. `\"37\"` is a `String`, so the call doesn't compile."
+      }
+     ],
+     "hint": "What kind of type can replace `T`, and what must the constructor's argument then match?",
+     "explanation": "When you create an object of a generic class, you write an actual reference type in the angle brackets, and that type replaces the type parameter everywhere in the object. The compiler then checks every argument against it.",
+     "ref": "Ch. 13.6, Figures 13-25 and 13-27 (pp. 530–531)"
+    },
+    {
+     "id": "box-types",
+     "concept": "T becomes the actual type",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Box<T>\n{\n   private T item;\n   public Box(T item) { this.item = item; }\n   public T get() { return item; }\n}\n// in main()\nBox<Integer> a = new Box<Integer>(4);\nBox<String> b = new Box<String>(\"4\");\nSystem.out.println(a.get() + a.get() + b.get() + b.get());",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\nclass Box<T>\n{\n   private T item;\n   public Box(T item) { this.item = item; }\n   public T get() { return item; }\n}\n\npublic class BoxDemo\n{\n    public static void main(String[] args)\n    {\n        Box<Integer> a = new Box<Integer>(4);\n        Box<String> b = new Box<String>(\"4\");\n        System.out.println(a.get() + a.get() + b.get() + b.get());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`844`",
+       "feedback": "`a.get()` returns an `Integer`, so the first `+` adds: 8. Once a `String` joins, `+` concatenates: `\"8\" + \"4\" + \"4\"`.",
+       "correct": true
+      },
+      {
+       "text": "`4444`",
+       "feedback": "This treats both boxes as holding text. `a` was created with `Integer`, so its `get()` returns a number and the first `+` is addition."
+      },
+      {
+       "text": "`16`",
+       "feedback": "This treats both boxes as holding numbers. `b` holds the `String` `\"4\"`, and once a `String` is involved, `+` concatenates."
+      },
+      {
+       "text": "`88`",
+       "feedback": "This adds the two strings as if they were numbers. `\"4\" + \"4\"` would be `\"44\"`; only the `Integer` pair is added arithmetically."
+      }
+     ],
+     "hint": "What type does each `get()` return, and what does `+` do with that type?",
+     "explanation": "Whatever type you put in the angle brackets replaces `T` throughout that object, return types included. `Box<Integer>`'s `get()` returns an `Integer` and `Box<String>`'s returns a `String`, so the compiler treats each result exactly as that type.",
+     "aside": "Java checks generic types when it compiles and then *erases* them: at run time `a` and `b` are both plain `Box` objects, and `a.getClass() == b.getClass()` is `true`. This design, called type erasure, kept generic code compatible with libraries written before Java 5 added generics.",
+     "ref": "Ch. 13.6, Creating Generic Classes (pp. 530–531)"
+    },
+    {
+     "id": "generic-tostring",
+     "concept": "The stored object keeps its own behavior",
+     "level": "understand",
+     "stem": "`TestGenericClass` prints `bookObj.getObject().getTitle()`. If it printed `bookObj.getObject()` instead, and `Book` has no `toString()` method, what would appear?",
+     "options": [
+      {
+       "text": "Something like `Book@4f023edb`, from the `toString()` that `Book` inherits from `Object`.",
+       "feedback": "`getObject()` returns the `Book` itself. Printing calls `toString()`, and `Book` inherits `Object`'s version.",
+       "correct": true
+      },
+      {
+       "text": "`The Hunger Games`, because the title is the book's only field.",
+       "feedback": "Java doesn't pick a field to print for you. Without its own `toString()`, `Book` uses the version inherited from `Object`."
+      },
+      {
+       "text": "Nothing at all: it doesn't compile, because `println()` can't accept a type parameter `T`.",
+       "feedback": "For `bookObj`, `T` is `Book`, so `getObject()` returns a `Book`, and `println()` accepts any object."
+      },
+      {
+       "text": "The letter `T`, because the generic class doesn't know which type it holds.",
+       "feedback": "Each object knows its type: `bookObj` was created with `Book`, so `T` means `Book` for that object. The letter `T` never appears in output."
+      }
+     ],
+     "hint": "What type does `getObject()` return for `bookObj`, and which `toString()` does that type have?",
+     "explanation": "A generic class hands back exactly the object you stored, with all of its own behavior. How that object prints depends on its class's `toString()`: override it, or call a method such as `getTitle()`, to get readable output.",
+     "ref": "Ch. 13.6, Figure 13-27 and the Note on toString() (p. 531)"
+    },
+    {
+     "id": "why-generics",
+     "concept": "What generics buy you",
+     "level": "evaluate",
+     "stem": "Java's designers wrote `ArrayList` once, as the generic class `ArrayList<E>`, instead of writing `IntegerArrayList`, `StringArrayList` and so on. What is the main benefit?",
+     "options": [
+      {
+       "text": "One class serves every reference type, and the compiler still checks what each list gets.",
+       "feedback": "That's the point of type parameters: the same logic is reused for any reference type, and the type in angle brackets lets the compiler check every addition.",
+       "correct": true
+      },
+      {
+       "text": "A generic class can store primitive values such as `int` without wrapper classes.",
+       "feedback": "Type parameters must be reference types, so `ArrayList<int>` is illegal. Wrapper classes are still needed."
+      },
+      {
+       "text": "One `ArrayList` object can hold `Integer`, `String` and `Book` objects mixed together.",
+       "feedback": "An `ArrayList<String>` accepts only `String`s; each object's type is fixed when you create it. Generics give you one *class*, not one mixed-up object."
+      },
+      {
+       "text": "Generic classes run faster, because the element type is chosen while the program is running.",
+       "feedback": "The type is chosen and checked when the code compiles, and the benefit is reuse and safety, not speed."
+      }
+     ],
+     "hint": "What would the separate classes have in common, and what does the type in angle brackets let the compiler do?",
+     "explanation": "Generic programming writes code with data types to be specified later. A generic class such as `ArrayList<E>` contains one copy of the logic, and each object gets a specific reference type that the compiler enforces.",
+     "ref": "Ch. 13.6, Creating Generic Classes (pp. 530–531)"
+    }
+   ]
+  },
+  {
+   "id": "13.7",
+   "title": "Creating Generic Methods",
+   "subtitle": "Declaring type parameters on a method, reference types only, overloading, and methods with two type parameters",
+   "source": "Ch. 13, section 13.7 (pp. 532–535)",
+   "intro": "Your team keeps three nearly identical methods that print numbered lists of `Integer`s, `String`s and `Employee`s. Five questions on replacing them with one generic method.",
+   "takeaways": [
+    "A generic method declares its type parameters in angle brackets before the return type, as in `public static <T> void show(T[] array)`. Several type parameters are separated by commas: `<T, U>`.",
+    "Type parameters are worked out separately for each call and must be reference types, so pass an `Integer[]`, not an `int[]`. When a non-generic overload matches exactly, Java calls it instead of the generic version."
+   ],
+   "questions": [
+    {
+     "id": "header-syntax",
+     "concept": "Where the type parameter goes",
+     "level": "remember",
+     "stem": "Which header correctly declares a generic method that accepts an array of any reference type?",
+     "options": [
+      {
+       "text": "`public static <T> void show(T[] array)`",
+       "feedback": "The type parameter section goes after the modifiers and immediately before the return type.",
+       "correct": true
+      },
+      {
+       "text": "`public static void <T> show(T[] array)`",
+       "feedback": "Here `<T>` comes after the return type. It must come before `void`."
+      },
+      {
+       "text": "`public static void show<T>(T[] array)`",
+       "feedback": "Putting `<T>` after the method name is how C# declares generic methods. Java puts it before the return type."
+      },
+      {
+       "text": "`public static void show(T[] array)`",
+       "feedback": "Without a `<T>` section, the compiler looks for a class named `T`, finds none, and reports an error."
+      }
+     ],
+     "hint": "In a generic class the angle brackets follow the class name. In a generic method, which part of the header do they come right before?",
+     "explanation": "A generic method declares its type parameters in angle brackets placed before the return type: `public static <T> void name(...)`. Once declared, `T` can be used for parameters, local variables and the return type.",
+     "ref": "Ch. 13.7, Creating Generic Methods (p. 532)"
+    },
+    {
+     "id": "int-array",
+     "concept": "Type parameters must be reference types",
+     "level": "apply",
+     "stem": "What happens when this code is compiled and run?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static <T> void displayNumberedList(T[] array)\n{\n   int count = 1;\n   for(T element : array)\n   {\n      System.out.println(count + \". \" + element);\n      ++count;\n   }\n}\n// in main()\nint[] scores = {90, 85};\ndisplayNumberedList(scores);",
+      "verify": {
+       "expect": "compile_error",
+       "program": "import java.util.*;\n\npublic class NumberedInts\n{\n    public static <T> void displayNumberedList(T[] array)\n    {\n       int count = 1;\n       for(T element : array)\n       {\n          System.out.println(count + \". \" + element);\n          ++count;\n       }\n    }\n    public static void main(String[] args)\n    {\n        int[] scores = {90, 85};\n        displayNumberedList(scores);\n    }\n}\n",
+       "error_contains": [
+        "displayNumberedList"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It doesn't compile: `T` must be a reference type, so an `int[]` can't match `T[]`.",
+       "feedback": "`T` can stand for `Integer` but never `int`. Declaring the array as `Integer[] scores` makes the call compile.",
+       "correct": true
+      },
+      {
+       "text": "It prints `1. 90` and `2. 85`, because `T` becomes `int` for this call.",
+       "feedback": "Type parameters stand only for reference types. That rule is why Figure 13-29 declares `Integer[]`, `Double[]` and `Character[]` arrays."
+      },
+      {
+       "text": "It compiles, then throws an exception when the loop reaches the first `int`.",
+       "feedback": "The compiler catches this before the program runs: no reference type `T` makes `T[]` match `int[]`."
+      },
+      {
+       "text": "It prints the array's hash code once, treating the whole `int[]` as one element.",
+       "feedback": "That would need a parameter of type `T`, not `T[]`. With `T[]`, Java needs an array whose elements are objects."
+      }
+     ],
+     "hint": "What kind of type can `T` stand for, and what type are the elements of `scores`?",
+     "explanation": "As with generic classes, a generic method's type parameter must be a reference type. An array of primitives doesn't fit `T[]`; use the wrapper-class array (`Integer[]`, `Double[]`) instead.",
+     "ref": "Ch. 13.7, Figure 13-29 (p. 532) and Two Truths & a Lie (p. 535)"
+    },
+    {
+     "id": "overload-generic",
+     "concept": "Overloading a generic method",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void show(Integer[] array)\n{\n   System.out.print(\"I \");\n}\npublic static <T> void show(T[] array)\n{\n   System.out.print(\"T \");\n}\n// in main()\nshow(new Integer[] {1, 2});\nshow(new String[] {\"x\"});\nshow(new Double[] {2.5});",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class OverloadShow\n{\n    public static void show(Integer[] array)\n    {\n       System.out.print(\"I \");\n    }\n    public static <T> void show(T[] array)\n    {\n       System.out.print(\"T \");\n    }\n    public static void main(String[] args)\n    {\n        show(new Integer[] {1, 2});\n        show(new String[] {\"x\"});\n        show(new Double[] {2.5});\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`I T T`",
+       "feedback": "The `Integer[]` call matches the non-generic method exactly, so Java picks it; the other two arrays fit only the generic version.",
+       "correct": true
+      },
+      {
+       "text": "`T T T`",
+       "feedback": "The generic method *can* accept an `Integer[]`, but when a more specific overload matches, Java prefers it."
+      },
+      {
+       "text": "`I I I`",
+       "feedback": "The `Integer[]` method accepts only `Integer` arrays. A `String[]` or `Double[]` can't be passed to it, so those calls go to the generic method."
+      },
+      {
+       "text": "It doesn't compile, because both methods can accept an `Integer[]`.",
+       "feedback": "Both can accept it, but that isn't ambiguous: Java chooses the more specific method, and `Integer[]` is more specific than an array of any type."
+      }
+     ],
+     "hint": "When two overloads can both accept an argument, which one does Java choose?",
+     "explanation": "Generic methods can be overloaded like any other method. When a call matches a specific non-generic version, that version runs; arguments that match only the generic version go there. That lets you treat one type specially and handle the rest with one method.",
+     "ref": "Ch. 13.7, overloading a generic method (p. 533)"
+    },
+    {
+     "id": "two-type-params",
+     "concept": "Type parameters are inferred per call",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static <T, U> void pair(T first, U second)\n{\n   System.out.print(second + \"-\" + first + \" \");\n}\n// in main()\npair(1, \"x\");\npair(\"y\", 2.5);\npair(3, 4);",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class PairDemo\n{\n    public static <T, U> void pair(T first, U second)\n    {\n       System.out.print(second + \"-\" + first + \" \");\n    }\n    public static void main(String[] args)\n    {\n        pair(1, \"x\");\n        pair(\"y\", 2.5);\n        pair(3, 4);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`x-1 2.5-y 4-3`",
+       "feedback": "Each call fills in `T` and `U` from its own arguments, and the method prints `second` before `first`.",
+       "correct": true
+      },
+      {
+       "text": "`1-x y-2.5 3-4`",
+       "feedback": "This prints the arguments in the order they were passed. The method prints `second` first, then `first`."
+      },
+      {
+       "text": "It doesn't compile: `pair(\"y\", 2.5)` passes a `String` where `T` was `Integer`.",
+       "feedback": "Type parameters are inferred fresh for every call. `T` is `Integer` in the first call and `String` in the second."
+      },
+      {
+       "text": "It doesn't compile: `T` and `U` can't both be `Integer` in `pair(3, 4)`.",
+       "feedback": "`T` and `U` are separate type parameters, but nothing requires them to be different types."
+      }
+     ],
+     "hint": "Are `T` and `U` fixed once for the whole program, or worked out again for each call?",
+     "explanation": "A generic method can declare several type parameters, each with its own identifier, separated by commas: `<T, U>`. The compiler infers them from each call's arguments, and two of them may turn out to be the same type.",
+     "aside": "Java's documentation follows a naming convention for type parameters: `E` for element, `K` and `V` for a map's key and value, `N` for number, `T` for type, and `S`, `U` and `V` for the second, third and fourth types.",
+     "ref": "Ch. 13.7, Creating a Generic Method with More than One Type Parameter (pp. 533–535)"
+    },
+    {
+     "id": "generic-return",
+     "concept": "T can be the return type",
+     "level": "analyze",
+     "stem": "This generic method *returns* a `T`. What does the code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static <T> T last(T[] array)\n{\n   return array[array.length - 1];\n}\n// in main()\nString[] words = {\"table\", \"chair\", \"bed\"};\nString w = last(words);\nSystem.out.println(w.toUpperCase());",
+      "verify": {
+       "expect": "output",
+       "program": "import java.util.*;\n\npublic class LastDemo\n{\n    public static <T> T last(T[] array)\n    {\n       return array[array.length - 1];\n    }\n    public static void main(String[] args)\n    {\n        String[] words = {\"table\", \"chair\", \"bed\"};\n        String w = last(words);\n        System.out.println(w.toUpperCase());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`BED`",
+       "feedback": "With a `String[]` argument, `T` is `String`, so `last()` returns a `String` and `w` can call `toUpperCase()` with no cast.",
+       "correct": true
+      },
+      {
+       "text": "It doesn't compile: `last()` returns `T`, so `w` needs a cast to `String`.",
+       "feedback": "The compiler infers `T` as `String` from the argument, and that includes the return type. No cast is needed."
+      },
+      {
+       "text": "`TABLE`",
+       "feedback": "`array.length - 1` is the index of the *last* element, and the array has three, so the method returns `bed`."
+      },
+      {
+       "text": "`CHAIR`",
+       "feedback": "This treats `array.length - 1` as the second-to-last index. With three elements, `length - 1` is 2, the index of the last one."
+      }
+     ],
+     "hint": "When `last()` is called with a `String[]`, what does `T` become, including in the return type?",
+     "explanation": "A type parameter can also be a method's return type. Each call infers `T` from its arguments, so `last()` returns a `String` for a `String[]` and an `Integer` for an `Integer[]`, and the caller can use the result as that type.",
+     "ref": "Ch. 13.7, Creating Generic Methods (p. 532)"
+    }
+   ]
+  }
+ ]
+}
