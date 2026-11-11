@@ -1,0 +1,1612 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 14: Introduction to Swing Components",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 14 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "14.1",
+   "title": "Understanding Swing Components",
+   "subtitle": "GUI components, the J naming convention, javax.swing, containers and the Component hierarchy",
+   "source": "Ch. 14, section 14.1 (pp. 545–546)",
+   "intro": "Every desktop app you use is built from buttons, text boxes and windows. Five questions on Swing, the Java toolkit you will use to build them, and how its classes fit together.",
+   "takeaways": [
+    "Swing components are the newer GUI classes whose names start with `J` (`JFrame`, `JButton`); the older AWT classes have plain names (`Frame`, `Button`). You make all of them available with `import javax.swing.*;`.",
+    "A container is a component that holds other components so they can be treated as one unit. Because `Container` extends `Component`, every container *is a* component, and every component *is an* `Object`."
+   ],
+   "questions": [
+    {
+     "id": "swing-names",
+     "concept": "Recognizing Swing components",
+     "level": "understand",
+     "stem": "A classmate's program uses four classes: `Frame`, `JLabel`, `Button` and `JTextField`. Which of them are Swing components?",
+     "options": [
+      {
+       "text": "`JLabel` and `JTextField`, because Swing class names begin with `J`.",
+       "feedback": "When Java's creators built the improved Swing classes, they reused the AWT names with a `J` in front, so the `J` marks the Swing version.",
+       "correct": true
+      },
+      {
+       "text": "`Frame` and `Button`, because Swing kept the simple, original names.",
+       "feedback": "This reverses the history. The simple names belong to the older AWT; Swing added the `J` to tell its new classes apart."
+      },
+      {
+       "text": "All four, because every GUI component in Java belongs to Swing.",
+       "feedback": "Java has more than one GUI toolkit. `Frame` and `Button` come from the older Abstract Windows Toolkit (AWT), not Swing."
+      },
+      {
+       "text": "None, because Swing class names contain the word `Swing`.",
+       "feedback": "This is the false statement in the section's Two Truths & a Lie. No Swing class name contains the word Swing; they start with `J`."
+      }
+     ],
+     "hint": "What did Java's creators add to the old AWT names when they designed the new classes?",
+     "explanation": "The AWT's components have simple names such as `Frame` and `Button`. Swing, the newer and still widely used toolkit, names its classes with a leading `J`: `JFrame`, `JButton`, `JLabel`, `JTextField`.",
+     "ref": "Ch. 14.1, Understanding Swing Components (pp. 545–546)"
+    },
+    {
+     "id": "is-a-chain",
+     "concept": "The Component and Container hierarchy",
+     "level": "analyze",
+     "stem": "The hierarchy is `Object` → `Component` → `Container` → `Window` → `Frame` → `JFrame`. Which statement **must** be true?",
+     "options": [
+      {
+       "text": "Every `JFrame` is also a `Container`, so it can hold other components.",
+       "feedback": "Each class *is a* kind of every class above it. A `JFrame` inherits from `Container`, so it gets the ability to hold components.",
+       "correct": true
+      },
+      {
+       "text": "Every `Container` is also a `JFrame`, so any container has a title bar.",
+       "feedback": "This reads the arrow backward. A child *is a* parent, not the other way round: many containers are not frames and have no title bar."
+      },
+      {
+       "text": "A `JFrame` is a `Component` but not an `Object`, since it uses `javax`.",
+       "feedback": "Every Java class descends from `Object`, whatever package it is in. The package name doesn't change the inheritance chain."
+      },
+      {
+       "text": "`Window` and `Frame` are interfaces, so `JFrame` only implements them.",
+       "feedback": "They are classes in `java.awt`, and `JFrame` extends `Frame`, which extends `Window`. Interfaces would be used with `implements`."
+      }
+     ],
+     "hint": "In an inheritance chain, which direction does the \"is a\" relationship run?",
+     "explanation": "An object of a child class *is an* object of each ancestor class. Because `JFrame` descends from `Container`, a frame can hold components; because everything descends from `Object`, every component is an `Object`. The reverse is not true: a `Container` need not be a `JFrame`.",
+     "ref": "Ch. 14.1, containers and the Component class (p. 546); Figure 14-1 (p. 547)"
+    },
+    {
+     "id": "javax-import",
+     "concept": "Importing javax.swing",
+     "level": "apply",
+     "stem": "This program does **not** compile. What is the cause?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import java.swing.*;\npublic class FirstGui\n{\n    public static void main(String[] args)\n    {\n        JFrame aFrame = new JFrame(\"First GUI\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "java.swing"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "The package is `javax.swing`; there is no package named `java.swing`.",
+       "feedback": "The import names a package that doesn't exist, so `JFrame` can't be found either. Swing lives in `javax.swing`: the x originally stood for extension.",
+       "correct": true
+      },
+      {
+       "text": "`JFrame` needs its own import: `import java.swing.JFrame;`.",
+       "feedback": "Importing the single class from the same misspelled package fails too. The package name itself is wrong, not the wildcard."
+      },
+      {
+       "text": "A `JFrame` must be created outside `main()`, in its own class.",
+       "feedback": "The chapter creates `JFrame` objects inside `main()` (Figure 14-2). Where the object is created isn't the problem here."
+      },
+      {
+       "text": "The program must import `java.awt.*` before it can use any Swing class.",
+       "feedback": "`java.awt` is needed for classes such as `Font` and `FlowLayout`, not for `JFrame`. The real error is in the Swing import itself."
+      }
+     ],
+     "hint": "Read the import statement letter by letter. What does Swing's package name start with?",
+     "explanation": "Swing classes are in the `javax.swing` package, so a program that uses them starts with `import javax.swing.*;`. Forgetting the x is one of the chapter's \"Don't Do It\" warnings, and it causes a \"package does not exist\" compiler error.",
+     "ref": "Ch. 14.1, import javax.swing.* (p. 546); Don't Do It (p. 580)"
+    },
+    {
+     "id": "heavy-light",
+     "concept": "Lightweight versus heavyweight components",
+     "level": "understand",
+     "stem": "Why is `JFrame` called a heavyweight component while `JButton` is lightweight?",
+     "options": [
+      {
+       "text": "A `JFrame` needs a native window from the operating system; a `JButton` is drawn in Java.",
+       "feedback": "Heavyweight means relying on the operating system: a frame gets its own native window, and lightweight components reuse that window and paint themselves in Java.",
+       "correct": true
+      },
+      {
+       "text": "A `JFrame` takes more memory because it can hold other components, and a `JButton` can't.",
+       "feedback": "Holding components makes something a container, not a heavyweight. Many lightweight Swing components are containers too."
+      },
+      {
+       "text": "A `JFrame` belongs to the older AWT toolkit, while `JButton` belongs to Swing.",
+       "feedback": "`JFrame` is a Swing class; its `J` says so. It is heavyweight because it must interact with the operating system, not because it is from the AWT."
+      },
+      {
+       "text": "A `JFrame` is created with `new`, while a `JButton` is created automatically by the frame.",
+       "feedback": "You create both with `new` (for example `new JButton(\"OK\")`). How objects are created doesn't decide whether they are lightweight."
+      }
+     ],
+     "hint": "Which of the two must ask Windows or macOS for something in order to appear?",
+     "explanation": "Almost all Swing components are lightweight: they are written completely in Java and don't depend on operating-system code. A few, such as `JFrame`, `JDialog` and `JWindow`, are heavyweight because they need a native window; lightweight components reuse the window of their closest heavyweight ancestor.",
+     "aside": "Because lightweight Swing components paint themselves, one program can look identical on Windows, macOS and Linux, or switch its whole look at run time. Java's own cross-platform look, Metal, is the one you'll meet in section 14.2.",
+     "ref": "Ch. 14.1, lightweight and heavyweight components (p. 546)"
+    },
+    {
+     "id": "container-purpose",
+     "concept": "What a container is for",
+     "level": "apply",
+     "stem": "A sign-up form has a label, a text field and a button that should be moved, shown and hidden together. Which idea from this section makes that possible?",
+     "options": [
+      {
+       "text": "Placing them in a container, which treats a group of components as one unit.",
+       "feedback": "That is exactly a container's job: it holds components so a group can be handled as a single entity, and a window is the most common container.",
+       "correct": true
+      },
+      {
+       "text": "Giving all three the same `J` prefix, which links Swing components together at run time.",
+       "feedback": "The `J` is only a naming convention that marks Swing classes. It creates no connection between objects."
+      },
+      {
+       "text": "Importing `javax.swing.*`, which groups every component in the program.",
+       "feedback": "An import only makes class names available to the compiler. It doesn't group any objects at run time."
+      },
+      {
+       "text": "Making each one a lightweight component, so they share one native window.",
+       "feedback": "Lightweight components do reuse a heavyweight ancestor's window, but that is about drawing, not about handling them as a group."
+      }
+     ],
+     "hint": "Which kind of component is defined by its ability to hold other components?",
+     "explanation": "A container is a component that holds other components so that you can treat the group as a single entity. Containers are defined in the `Container` class, and a frame, a window with a title bar and border, is the container you will use most.",
+     "ref": "Ch. 14.1, containers (p. 546)"
+    }
+   ]
+  },
+  {
+   "id": "14.2",
+   "title": "Using the JFrame Class",
+   "subtitle": "Constructors, size and visibility defaults, setBounds(), close operations and look and feel",
+   "source": "Ch. 14, section 14.2 (pp. 547–551)",
+   "intro": "You run your first GUI program and nothing appears on screen; you fix that, close the window, and the command prompt never comes back. Five questions on how a `JFrame` behaves by default and how to change it.",
+   "takeaways": [
+    "A new `JFrame` is invisible and 0 × 0 pixels until you call `setSize()` (or `setBounds()`) and `setVisible(true)`.",
+    "Closing a frame only hides it by default (`HIDE_ON_CLOSE`), and the program keeps running. Call `setDefaultCloseOperation()` with `JFrame.EXIT_ON_CLOSE` to end the program, or `DISPOSE_ON_CLOSE` to dismiss just that frame."
+   ],
+   "questions": [
+    {
+     "id": "frame-defaults",
+     "concept": "A new JFrame's default state",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nJFrame aFrame = new JFrame(\"Hello\");\naFrame.setTitle(\"First frame\");\nSystem.out.println(aFrame.getTitle() + \" \" + aFrame.getWidth()\n    + \"x\" + aFrame.getHeight() + \" \" + aFrame.isVisible());",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\npublic class FrameDefaults\n{\n    public static void main(String[] args)\n    {\n        JFrame aFrame = new JFrame(\"Hello\");\n        aFrame.setTitle(\"First frame\");\n        System.out.println(aFrame.getTitle() + \" \" + aFrame.getWidth()\n            + \"x\" + aFrame.getHeight() + \" \" + aFrame.isVisible());\n        aFrame.dispose();\n        System.exit(0);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`First frame 0x0 false`",
+       "feedback": "`setTitle()` replaces the title from the constructor, and nothing set a size or made the frame visible, so it is still 0 × 0 and invisible.",
+       "correct": true
+      },
+      {
+       "text": "`Hello 0x0 false`",
+       "feedback": "The constructor's title is only a starting value. `setTitle()` changes it, and `getTitle()` returns the current title."
+      },
+      {
+       "text": "`First frame 250x100 true`",
+       "feedback": "There is no built-in starting size and no automatic display. A frame stays 0 × 0 and invisible until your code changes both."
+      },
+      {
+       "text": "`First frame 0x0 true`",
+       "feedback": "Frames start invisible on purpose, so you can build one in the background and show it when it's ready. Only `setVisible(true)` shows it."
+      }
+     ],
+     "hint": "Which two method calls from Figure 14-2 are missing here?",
+     "explanation": "A `JFrame` is invisible and 0 × 0 pixels by default. Forget `setVisible(true)` and you see nothing; forget `setSize()` and you see only the title bar. Methods such as `setTitle()` can change a property that a constructor set.",
+     "ref": "Ch. 14.2, Table 14-1 and default size and visibility (pp. 547–548)"
+    },
+    {
+     "id": "hide-on-close",
+     "concept": "The default close operation",
+     "level": "analyze",
+     "stem": "A student's frame disappears when the user clicks its Close button, but the command prompt never returns and the student must press Ctrl+C. What explains this?",
+     "options": [
+      {
+       "text": "By default, closing a `JFrame` only hides it, and the application keeps running.",
+       "feedback": "The default operation is `HIDE_ON_CLOSE`. The frame vanishes, but the program is still alive, which is why Ctrl+C is needed.",
+       "correct": true
+      },
+      {
+       "text": "The program has an infinite loop that keeps running after the frame closes.",
+       "feedback": "Ctrl+C does stop infinite loops, which is why this looks familiar, but here there is no loop: the program simply has no instruction to end."
+      },
+      {
+       "text": "The Close button is disabled until the program itself calls `setVisible(false)`.",
+       "feedback": "The Close button worked: the frame disappeared. What it did was hide the frame, which is the default behavior."
+      },
+      {
+       "text": "The frame was never given a size, so Java can't tell whether it closed.",
+       "feedback": "Size affects what the user sees, not what closing does. Closing behavior is controlled by `setDefaultCloseOperation()`."
+      }
+     ],
+     "hint": "When a frame disappears, has the program necessarily ended?",
+     "explanation": "Clicking a frame's Close button hides the frame and keeps the application running (`HIDE_ON_CLOSE`), because a program may still have work to do. To end the program when the frame closes, call `setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)`.",
+     "aside": "`JFrame.EXIT_ON_CLOSE` is just the int 3; the other constants are 0, 1 and 2. Because `JFrame` implements the `WindowConstants` interface, `JFrame.DISPOSE_ON_CLOSE` and `WindowConstants.DISPOSE_ON_CLOSE` name the same value.",
+     "ref": "Ch. 14.2, setDefaultCloseOperation() (p. 549)"
+    },
+    {
+     "id": "dispose-choice",
+     "concept": "Choosing a close operation",
+     "level": "apply",
+     "stem": "An app shows a main frame and a separate Help frame. Closing Help should get rid of that frame object and free its resources, while the main frame keeps working. Which constant suits the Help frame?",
+     "options": [
+      {
+       "text": "`WindowConstants.DISPOSE_ON_CLOSE`",
+       "feedback": "It closes the frame and disposes of the `JFrame` object while the application keeps running, which is exactly what Help needs.",
+       "correct": true
+      },
+      {
+       "text": "`JFrame.EXIT_ON_CLOSE`",
+       "feedback": "This ends the whole program, so closing Help would also close the main frame the user is still working in."
+      },
+      {
+       "text": "`WindowConstants.HIDE_ON_CLOSE`",
+       "feedback": "The app keeps running, but the Help frame is only hidden: the object stays in memory instead of being disposed of."
+      },
+      {
+       "text": "`WindowConstants.DO_NOTHING_ON_CLOSE`",
+       "feedback": "This disables the Close button, so the user couldn't close the Help frame at all."
+      }
+     ],
+     "hint": "Of the four options, which one both removes the frame object and leaves the program running?",
+     "explanation": "The four close operations differ in two ways: whether the program ends and what happens to the frame. `EXIT_ON_CLOSE` ends the program; `DISPOSE_ON_CLOSE` disposes of the frame and keeps running; `HIDE_ON_CLOSE` (the default) hides it and keeps running; `DO_NOTHING_ON_CLOSE` disables the Close button.",
+     "ref": "Ch. 14.2, setDefaultCloseOperation() values (p. 549)"
+    },
+    {
+     "id": "set-bounds",
+     "concept": "setBounds() arguments",
+     "level": "apply",
+     "stem": "You want a frame 300 pixels wide and 200 pixels tall whose upper-left corner sits 100 pixels from the left of the desktop and 50 pixels from the top. Which call does that?",
+     "options": [
+      {
+       "text": "`aFrame.setBounds(100, 50, 300, 200);`",
+       "feedback": "The first two arguments position the upper-left corner (horizontal, then vertical) and the last two set the width and height.",
+       "correct": true
+      },
+      {
+       "text": "`aFrame.setBounds(300, 200, 100, 50);`",
+       "feedback": "This puts the size first. In `setBounds()`, position comes first and size second, so this makes a 100 × 50 frame at (300, 200)."
+      },
+      {
+       "text": "`aFrame.setBounds(50, 100, 200, 300);`",
+       "feedback": "This lists vertical before horizontal. Like `setSize(width, height)`, `setBounds()` takes the horizontal value before the vertical one."
+      },
+      {
+       "text": "`aFrame.setSize(100, 50, 300, 200);`",
+       "feedback": "`setSize()` takes only a width and a height (or a `Dimension`), so this call has two arguments too many and doesn't compile."
+      }
+     ],
+     "hint": "Which pair of arguments describes where the frame goes, and which pair describes how big it is?",
+     "explanation": "`setBounds(x, y, width, height)` overrides the default position in the upper-left corner of the desktop: the first two arguments place the frame's upper-left corner, the last two set its size. Horizontal values always come before vertical ones.",
+     "ref": "Ch. 14.2, Table 14-1 Useful methods inherited by the JFrame class (pp. 547–548)",
+     "lock_order": true
+    },
+    {
+     "id": "look-and-feel",
+     "concept": "Window decorations and look and feel",
+     "level": "understand",
+     "stem": "Figure 14-4 calls `JFrame.setDefaultLookAndFeelDecorated(true);` before creating its frame. What does that change?",
+     "options": [
+      {
+       "text": "The title bar's icon and buttons come from Java's look and feel instead of the operating system.",
+       "feedback": "The window decorations (icon, Minimize, Restore, Close) normally come from the operating system; this asks Java's look and feel, called Metal, to supply them.",
+       "correct": true
+      },
+      {
+       "text": "The frame becomes visible as soon as it is constructed, so `setVisible(true)` isn't needed.",
+       "feedback": "Figure 14-4 still calls `setVisible(true)`. Look and feel changes how the frame looks, not whether it appears."
+      },
+      {
+       "text": "The program now ends when the frame closes, replacing the call to `setDefaultCloseOperation()`.",
+       "feedback": "Closing behavior is unaffected; it still depends on the close operation you set. Look and feel is about appearance."
+      },
+      {
+       "text": "All the text inside the frame switches to a larger, bold font unless `setFont()` is called.",
+       "feedback": "Fonts for a component's text are set with `setFont()` (section 14.3). This method affects the frame's decorations, not its text."
+      }
+     ],
+     "hint": "What are the coffee-cup icon and the Minimize, Restore and Close buttons called, and who normally draws them?",
+     "explanation": "Window decorations, the title bar icon and buttons, are supplied by the operating system by default. Look and feel is the design, style and functionality of a user interface, and `setDefaultLookAndFeelDecorated(true)` requests Java's own look and feel, known as Metal, for frames created afterward.",
+     "ref": "Ch. 14.2, Customizing a JFrame's Appearance (pp. 549–550)"
+    }
+   ]
+  },
+  {
+   "id": "14.3",
+   "title": "Using the JLabel Class",
+   "subtitle": "Creating and adding labels, setText() and getText(), refreshing after changes, and Font objects",
+   "source": "Ch. 14, section 14.3 (pp. 552–554)",
+   "intro": "A frame says \"Good day\" in small plain text, and you want it to say \"Howdy\" in a bold headline. Five questions on labels, changing their text and giving them a font.",
+   "takeaways": [
+    "A `JLabel` is an uneditable component for showing information. You put it on a frame with the frame's `add()` method and change its words with the label's own `setText()`.",
+    "A font is built from three arguments in a fixed order: a typeface `String`, a style constant (`Font.PLAIN`, `Font.BOLD`, `Font.ITALIC`) and a point size. The typeface is only a request; Java substitutes a default if it isn't available."
+   ],
+   "questions": [
+    {
+     "id": "label-settext",
+     "concept": "Changing a label's text",
+     "level": "understand",
+     "stem": "A frame `aFrame` displays a `JLabel` named `greeting` that says Good day. Which statement makes the frame show Howdy instead?",
+     "options": [
+      {
+       "text": "`greeting.setText(\"Howdy\");`",
+       "feedback": "`setText()` changes the text stored in the existing label, so the label already on the frame now shows Howdy.",
+       "correct": true
+      },
+      {
+       "text": "`aFrame.add(\"Howdy\");`",
+       "feedback": "This is the false statement in the section's Two Truths & a Lie. `add()` puts a component on a frame; it doesn't change a label's text, and it doesn't accept a plain `String`."
+      },
+      {
+       "text": "`greeting = new JLabel(\"Howdy\");`",
+       "feedback": "This creates a second label and points the variable at it, but the new label was never added to the frame. The original label still shows Good day."
+      },
+      {
+       "text": "`greeting.getText(\"Howdy\");`",
+       "feedback": "`getText()` *returns* the current text and takes no argument. Changing the text needs the matching setter."
+      }
+     ],
+     "hint": "Do you want to change the existing label or create a new component?",
+     "explanation": "To change what a label shows, call `setText()` on that label with the new `String`; `getText()` returns the current text. The frame's `add()` method has a different job: it places a component such as a label on the frame.",
+     "ref": "Ch. 14.3, setText() and getText() (p. 553)"
+    },
+    {
+     "id": "add-after-visible",
+     "concept": "Adding a component after the frame is visible",
+     "level": "analyze",
+     "stem": "A frame is already on screen. Later, the program calls `aFrame.add(newLabel);`, but the new label never appears. What is the most likely fix?",
+     "options": [
+      {
+       "text": "Call `invalidate()`, `validate()` and `repaint()` after adding the label.",
+       "feedback": "Changing a container's components after it is visible doesn't redraw it on its own. These three calls make the layout change take effect.",
+       "correct": true
+      },
+      {
+       "text": "Call `newLabel.setText()` again, since a label's text resets when it is added.",
+       "feedback": "Adding a label doesn't erase its text. The label isn't showing because the frame hasn't laid itself out and redrawn yet."
+      },
+      {
+       "text": "Use `aFrame.remove(newLabel)` first, because a label must be removed before it can be added.",
+       "feedback": "`remove()` is the counterpart of `add()`, not a required first step. Removing the label would only take it away again."
+      },
+      {
+       "text": "Create the frame again with `new JFrame()`, since a visible frame can't accept new components.",
+       "feedback": "Visible frames can gain and lose components. They just need to be told to recalculate their layout and repaint."
+      }
+     ],
+     "hint": "What has to happen for the screen to reflect a change in a container's contents?",
+     "explanation": "If you add or remove a component after a container has been made visible, call `invalidate()`, `validate()` and `repaint()` so the change shows. Changing a component's content, such as a label's text, doesn't require this.",
+     "aside": "`repaint()` doesn't paint anything immediately. It asks Swing to redraw the component soon, and Swing merges several quick requests into a single repaint, which is why many changes in a row don't make the screen flicker.",
+     "ref": "Ch. 14.3, invalidate(), validate() and repaint() (p. 553)"
+    },
+    {
+     "id": "font-quotes",
+     "concept": "Constructing a Font",
+     "level": "apply",
+     "stem": "This program does **not** compile. What is wrong?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import javax.swing.*;\nimport java.awt.*;\npublic class JFrame4\n{\n    public static void main(String[] args)\n    {\n        JLabel greeting = new JLabel(\"Good day\");\n        greeting.setFont(new Font(Arial, Font.BOLD, 36));\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "`Arial` has no quotation marks, so the compiler looks for a variable named `Arial`.",
+       "feedback": "The typeface argument is a `String`, so it must be in double quotation marks: `new Font(\"Arial\", Font.BOLD, 36)`.",
+       "correct": true
+      },
+      {
+       "text": "The program needs `import java.awt.Font;` because `java.awt.*` doesn't include `Font`.",
+       "feedback": "The wildcard import `java.awt.*` does make `Font` available. The compiler complains about a symbol named `Arial`, not `Font`."
+      },
+      {
+       "text": "The style comes first: the call should be `new Font(Font.BOLD, Arial, 36)`.",
+       "feedback": "The order is typeface, style, point size. Moving the style first wouldn't help, and `Arial` would still need quotation marks."
+      },
+      {
+       "text": "`setFont()` can't take an anonymous `Font`; the font must be stored in a variable first.",
+       "feedback": "The chapter shows `greeting.setFont(new Font(\"Arial\", Font.BOLD, 36));` as valid. Naming the `Font` is optional."
+      }
+     ],
+     "hint": "What data type is the typeface argument, and how is a value of that type written?",
+     "explanation": "The `Font` constructor takes a typeface `String`, a style (`Font.PLAIN`, `Font.BOLD` or `Font.ITALIC`) and an integer point size. The typeface name is a `String`, so it must be enclosed in double quotation marks.",
+     "ref": "Ch. 14.3, Changing a JLabel's Font (pp. 553–554)"
+    },
+    {
+     "id": "derive-font",
+     "concept": "Deriving one font from another",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nFont headlineFont = new Font(\"Arial\", Font.BOLD, 36);\nFont textBodyFont = headlineFont.deriveFont(Font.PLAIN, 14);\nSystem.out.println(textBodyFont.getName() + \" \" +\n    textBodyFont.getSize() + \" \" + textBodyFont.isBold());",
+      "verify": {
+       "expect": "output",
+       "program": "import java.awt.*;\npublic class DeriveDemo\n{\n    public static void main(String[] args)\n    {\n        Font headlineFont = new Font(\"Arial\", Font.BOLD, 36);\n        Font textBodyFont = headlineFont.deriveFont(Font.PLAIN, 14);\n        System.out.println(textBodyFont.getName() + \" \" +\n            textBodyFont.getSize() + \" \" + textBodyFont.isBold());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Arial 14 false`",
+       "feedback": "`deriveFont()` makes a new font from the original typeface with the style and size you pass: plain, 14 points. The original font is unchanged.",
+       "correct": true
+      },
+      {
+       "text": "`Arial 36 true`",
+       "feedback": "This assumes the derived font is a copy of the original. `deriveFont(Font.PLAIN, 14)` replaces both the style and the size."
+      },
+      {
+       "text": "`Arial 14 true`",
+       "feedback": "This treats the new style as something added to the old one. The style you pass replaces the old style, so the result is plain, not bold."
+      },
+      {
+       "text": "`Dialog 14 false`",
+       "feedback": "Deriving keeps the original typeface; only the style and size you specify change. The new font is still Arial."
+      }
+     ],
+     "hint": "Which properties do the two arguments to `deriveFont()` replace, and which property is kept?",
+     "explanation": "`deriveFont()` creates a new `Font` based on an existing one, keeping its typeface and changing the style and size you pass. Basing body text on a headline font this way keeps the two consistent if the headline font later changes.",
+     "aside": "`headlineFont.deriveFont(14)` with only one argument doesn't make a 14-point font. Java picks the `deriveFont(int style)` version for an `int`, so the size stays 36. Write `deriveFont(14f)` to call the `float` size version.",
+     "ref": "Ch. 14.3, deriveFont() (p. 554)"
+    },
+    {
+     "id": "typeface-request",
+     "concept": "A typeface is only a request",
+     "level": "understand",
+     "stem": "A program asks for `new Font(\"Century\", Font.ITALIC, 20)` and runs on a computer that doesn't have the Century typeface. What happens?",
+     "options": [
+      {
+       "text": "The program still runs, and Java substitutes a default typeface for the label.",
+       "feedback": "The typeface argument is a request. If the system can't supply it, Java uses a default font instead, with the requested style and size.",
+       "correct": true
+      },
+      {
+       "text": "The program throws an exception when `setFont()` is called with the missing font.",
+       "feedback": "Java doesn't treat a missing typeface as an error. It quietly substitutes a font it does have."
+      },
+      {
+       "text": "The program doesn't compile, because the compiler checks which fonts are installed.",
+       "feedback": "The compiler only sees a `String`. It can't know which fonts will exist on the computer that eventually runs the program."
+      },
+      {
+       "text": "The label shows its text with no font at all, so the text is invisible.",
+       "feedback": "Text is always drawn in some font. When the requested one isn't available, a default is used, so the text still appears."
+      }
+     ],
+     "hint": "When is the font actually looked up: when the program is compiled or when it runs on a particular machine?",
+     "explanation": "Creating a `Font` with a typeface name is only a request. The computer that runs the program might not have that typeface, and if necessary Java substitutes a default font. This is one reason to choose common typefaces such as Arial or Monospaced.",
+     "ref": "Ch. 14.3, the typeface argument (p. 553)"
+    }
+   ]
+  },
+  {
+   "id": "14.4",
+   "title": "Using a Layout Manager",
+   "subtitle": "Why only one component shows, BorderLayout as the default, FlowLayout rows and alignment",
+   "source": "Ch. 14, section 14.4 (pp. 555–556)",
+   "intro": "You add a greeting and a question to a frame, run the program, and only the question shows up. Five questions on layout managers, the objects that decide where components go.",
+   "takeaways": [
+    "A `JFrame` uses `BorderLayout` by default. Components added without a region all go into the same region, so only the last one added is visible.",
+    "`setLayout(new FlowLayout())` places components side by side in rows, in the order you add them, and wraps to a new row when a row is full. Rows are centered unless you pass `FlowLayout.LEFT` or `FlowLayout.RIGHT`."
+   ],
+   "questions": [
+    {
+     "id": "only-last-visible",
+     "concept": "Default layout with several components",
+     "level": "analyze",
+     "stem": "This program adds two labels to a frame. What does the user see when it runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "JFrame aFrame = new JFrame(\"Fifth frame\");\naFrame.setSize(250, 100);\naFrame.setVisible(true);\naFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\nJLabel greeting = new JLabel(\"Hello\");\nJLabel greeting2 = new JLabel(\"Who are you?\");\naFrame.add(greeting);\naFrame.add(greeting2);",
+      "verify": {
+       "expect": "compiles",
+       "program": "import javax.swing.*;\npublic class JFrame5\n{\n    public static void main(String[] args)\n    {\n        JFrame aFrame = new JFrame(\"Fifth frame\");\n        aFrame.setSize(250, 100);\n        aFrame.setVisible(true);\n        aFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        JLabel greeting = new JLabel(\"Hello\");\n        JLabel greeting2 = new JLabel(\"Who are you?\");\n        aFrame.add(greeting);\n        aFrame.add(greeting2);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Only Who are you?, because both labels share one region and the second covers the first.",
+       "feedback": "The frame uses `BorderLayout` by default. With no region given, both labels land in the same place, and the last one added hides the first.",
+       "correct": true
+      },
+      {
+       "text": "Hello and Who are you? appear side by side, in the order they were added.",
+       "feedback": "Side-by-side placement is what `FlowLayout` does. This frame never calls `setLayout()`, so it uses the default `BorderLayout`."
+      },
+      {
+       "text": "Only Hello, because a frame keeps its first component and ignores any added later.",
+       "feedback": "The opposite happens: each later component is placed on top of the earlier ones, so the *last* one added is the one visible."
+      },
+      {
+       "text": "Nothing at all, because the labels were added after the call to `setVisible(true)`.",
+       "feedback": "Figure 14-13 shows this exact program: the frame does display a label. The real issue is where the layout manager put the two labels."
+      }
+     ],
+     "hint": "Which layout manager does a frame use when you never call `setLayout()`, and where does it put components with no region?",
+     "explanation": "A `JFrame`'s default layout manager is `BorderLayout`, which divides the container into regions. If you add components without naming a region, they all go into the same one and obscure each other, so only the last component added is visible.",
+     "aside": "`BorderLayout` has five regions: `NORTH`, `SOUTH`, `EAST`, `WEST` and `CENTER`. Calling `add()` with no region uses `CENTER`, so `aFrame.add(greeting2, BorderLayout.SOUTH);` would have shown both labels.",
+     "ref": "Ch. 14.4, Figure 14-12 and BorderLayout (p. 555)"
+    },
+    {
+     "id": "set-layout-fix",
+     "concept": "Installing a layout manager",
+     "level": "apply",
+     "stem": "Which single statement, placed before the two `add()` calls in that program, makes both labels visible?",
+     "options": [
+      {
+       "text": "`aFrame.setLayout(new FlowLayout());`",
+       "feedback": "This replaces the frame's `BorderLayout` with a `FlowLayout`, which places the labels next to each other instead of on top of each other.",
+       "correct": true
+      },
+      {
+       "text": "`FlowLayout flow = new FlowLayout();`",
+       "feedback": "This creates a layout manager, but the frame never receives it. The frame keeps using `BorderLayout` until you pass the object to `setLayout()`."
+      },
+      {
+       "text": "`aFrame.add(new FlowLayout());`",
+       "feedback": "`add()` places components on the frame; a layout manager isn't a component. Layout managers are installed with `setLayout()`."
+      },
+      {
+       "text": "`aFrame.setLayout(new BorderLayout());`",
+       "feedback": "This installs the layout the frame already had. Both labels would still go to the same region."
+      }
+     ],
+     "hint": "Creating a layout manager and giving it to the frame are two separate actions. Which statement does both?",
+     "explanation": "To change how a container positions components, pass a layout manager object to the container's `setLayout()` method. The compact form `aFrame.setLayout(new FlowLayout());` creates an anonymous `FlowLayout` and installs it in one statement.",
+     "ref": "Ch. 14.4, setLayout() and FlowLayout (pp. 555–556)"
+    },
+    {
+     "id": "flow-right",
+     "concept": "FlowLayout alignment",
+     "level": "apply",
+     "stem": "With `new FlowLayout()`, a frame's buttons appear centered in each row. The designer wants them against the right edge instead. Which statement does that?",
+     "options": [
+      {
+       "text": "`aFrame.setLayout(new FlowLayout(FlowLayout.RIGHT));`",
+       "feedback": "`FlowLayout` defines `LEFT`, `RIGHT` and `CENTER` constants; passing `FlowLayout.RIGHT` to the constructor aligns each row to the right.",
+       "correct": true
+      },
+      {
+       "text": "`aFrame.setLayout(new FlowLayout(\"RIGHT\"));`",
+       "feedback": "The alignment is one of `FlowLayout`'s constants, not a `String`. There is no constructor that takes text, so this doesn't compile."
+      },
+      {
+       "text": "`aFrame.setLayout(new FlowLayout()); aFrame.add(FlowLayout.RIGHT);`",
+       "feedback": "Alignment is chosen when the layout manager is built, not added to the frame like a component. `add()` expects a component."
+      },
+      {
+       "text": "`aFrame.setLayout(new BorderLayout(FlowLayout.RIGHT));`",
+       "feedback": "This switches to a different layout manager. `BorderLayout` arranges regions, not rows, so the flow alignment constant doesn't apply."
+      }
+     ],
+     "hint": "Where are the three alignment constants defined, and when do you supply one?",
+     "explanation": "`FlowLayout` arranges components in rows and centers each row by default. To change that, pass `FlowLayout.LEFT` or `FlowLayout.RIGHT` (or `FlowLayout.CENTER`) to the `FlowLayout` constructor.",
+     "ref": "Ch. 14.4, FlowLayout constants (p. 555)"
+    },
+    {
+     "id": "flow-wrap",
+     "concept": "How FlowLayout wraps",
+     "level": "analyze",
+     "stem": "A frame uses `FlowLayout` and shows a label, a text field and a button in one row. When the user drags the frame's border to make it narrower, the button jumps below the text field. Why?",
+     "options": [
+      {
+       "text": "`FlowLayout` fills each row and moves components that don't fit into the next row.",
+       "feedback": "When the frame gets narrower, the row has less room. The button no longer fits, so the layout manager spills it into a new row underneath.",
+       "correct": true
+      },
+      {
+       "text": "The button was resized to zero width, so Java moved it out of the way.",
+       "feedback": "`FlowLayout` keeps each component at its preferred size; it rearranges components rather than shrinking them."
+      },
+      {
+       "text": "Resizing a frame switches it back to its default `BorderLayout`.",
+       "feedback": "A frame keeps the layout manager you installed. The rearranging you see is `FlowLayout` doing its normal job."
+      },
+      {
+       "text": "The user's drag sent an event that the program never handled, so the layout broke.",
+       "feedback": "No event handling is needed for this. Laying out components again after a resize is built into the layout manager."
+      }
+     ],
+     "hint": "What does a flow layout do when a row has no more room?",
+     "explanation": "A flow layout places components left to right in rows; after a row is filled, additional components automatically spill into the next row. Because the layout is recalculated when the container's size changes, the same components can occupy one row or several.",
+     "ref": "Ch. 14.4, FlowLayout (pp. 555–556); You Do It step 8, Figure 14-31 (pp. 568–569)"
+    },
+    {
+     "id": "lie-one-component",
+     "concept": "Evaluating a claim about layout",
+     "level": "evaluate",
+     "stem": "A student says: \"Without a layout manager, a `JFrame` can only hold one component, so the second `add()` call deletes the first label.\" What is the flaw?",
+     "options": [
+      {
+       "text": "Both labels are in the frame; the default layout stacks them, so only the last one shows.",
+       "feedback": "Hiding isn't deleting. The frame accepts several components, but `BorderLayout` without regions stacks them so the last one added covers the rest.",
+       "correct": true
+      },
+      {
+       "text": "There is no flaw: a frame without a layout manager has room for exactly one component.",
+       "feedback": "This is the false statement in the section's Two Truths & a Lie. A frame can hold many components; the problem is only where they are placed."
+      },
+      {
+       "text": "A `JFrame` has no layout manager at all until the program calls `setLayout()` itself.",
+       "feedback": "A frame always has a layout manager: `BorderLayout`, until you choose another. That default is what causes the stacking."
+      },
+      {
+       "text": "The second `add()` call is ignored, so the first label stays in the frame and remains visible.",
+       "feedback": "The second call isn't ignored. The most recently added component is the one you see."
+      }
+     ],
+     "hint": "Is a component that you can't see the same as a component that isn't there?",
+     "explanation": "Adding several components to a `JFrame` always works. With the default `BorderLayout` and no region specified, they all occupy the same region and only the most recently added one is visible; a layout manager such as `FlowLayout` positions them so they don't hide each other.",
+     "ref": "Ch. 14.4, Two Truths & a Lie, Using a Layout Manager (p. 556)"
+    }
+   ]
+  },
+  {
+   "id": "14.5",
+   "title": "Extending the JFrame Class",
+   "subtitle": "Setting frame properties in a child-class constructor, super(), implicit this, and shared close behavior",
+   "source": "Ch. 14, section 14.5 (pp. 557–558)",
+   "intro": "Your app needs five windows with the same title, size and close behavior, and you'd rather not repeat those lines five times. Five questions on writing your own class that extends `JFrame`.",
+   "takeaways": [
+    "A class that extends `JFrame` can set the title, size and close operation in its constructor, so every object of that class is created with those features. `super(title)` must be the first statement in that constructor.",
+    "Inside the child class, `setSize(...)` means `this.setSize(...)`: it acts on the frame being constructed. Every object built by the same constructor shares its settings, including what closing a frame does to the program."
+   ],
+   "questions": [
+    {
+     "id": "extend-advantage",
+     "concept": "Why extend JFrame",
+     "level": "understand",
+     "stem": "What is the main advantage of writing `class JMyFrame extends JFrame` rather than configuring a plain `JFrame` in `main()`?",
+     "options": [
+      {
+       "text": "Every `JMyFrame` gets its title, size and close behavior from the constructor.",
+       "feedback": "Setting the properties once in the constructor means each object you create already has them, with no repeated statements.",
+       "correct": true
+      },
+      {
+       "text": "A `JMyFrame` is visible automatically, even if no code calls `setVisible(true)`.",
+       "feedback": "Extending changes nothing about visibility. If neither the class nor the application calls `setVisible(true)`, the frame stays hidden."
+      },
+      {
+       "text": "Only a child class of `JFrame` is allowed to hold components such as labels and buttons.",
+       "feedback": "A plain `JFrame` holds components too, as Figures 14-8 to 14-14 show. Extending is about convenience, not capability."
+      },
+      {
+       "text": "A child class runs faster because it doesn't load the `javax.swing` package.",
+       "feedback": "`JMyFrame` still uses Swing; its file imports `javax.swing.*`. Inheritance doesn't remove the parent's package."
+      }
+     ],
+     "hint": "Where would you put statements that every frame of this kind should run?",
+     "explanation": "Creating a child class of `JFrame` lets you set the frame's properties in the child's constructor. Each object created from the class is then automatically given the title, size and close operation you specified.",
+     "ref": "Ch. 14.5, Extending the JFrame Class (p. 557)"
+    },
+    {
+     "id": "super-first",
+     "concept": "super() must come first",
+     "level": "apply",
+     "stem": "This class does **not** compile. What is the cause?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import javax.swing.*;\npublic class JMyFrame extends JFrame\n{\n    final int WIDTH = 300;\n    final int HEIGHT = 120;\n    public JMyFrame()\n    {\n        setSize(WIDTH, HEIGHT);\n        super(\"My frame\");\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "super"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "The parent constructor call `super(\"My frame\")` must come before `setSize()`.",
+       "feedback": "The `JFrame` part of the object must be built before the constructor can work with it, so the `super()` call has to be the first statement.",
+       "correct": true
+      },
+      {
+       "text": "`WIDTH` and `HEIGHT` are `final`, and a `final` field can't be passed to `setSize()`.",
+       "feedback": "`final` only stops the fields from being reassigned. Reading them and passing their values is fine, as Figure 14-16 does."
+      },
+      {
+       "text": "`setSize()` must be written as `this.setSize()` inside a constructor.",
+       "feedback": "Inside the class, `setSize(...)` and `this.setSize(...)` mean the same thing. Adding `this.` wouldn't fix the order problem."
+      },
+      {
+       "text": "A child of `JFrame` can't set its title in the constructor; it must call `setTitle()` from `main()`.",
+       "feedback": "Setting the title with `super(\"My frame\")` in the constructor is exactly what Figure 14-16 does. It only has to come first."
+      }
+     ],
+     "hint": "Which statement in a constructor is required to be first, and which statement is first here?",
+     "explanation": "A child-class constructor can call the parent constructor with `super(...)`, for example to pass a frame title to `JFrame`. That call must be the first statement in the constructor; work on the object, such as `setSize()`, comes after it.",
+     "aside": "Java 25 relaxed this rule slightly: statements that don't use the object, such as checking an argument, may now come before `super(...)`. Calling `setSize()` still can't, because the frame part of the object doesn't exist yet.",
+     "ref": "Ch. 14.5, super() and Figure 14-16 (p. 557)"
+    },
+    {
+     "id": "implicit-this",
+     "concept": "The implied this reference",
+     "level": "understand",
+     "stem": "Inside the `JMyFrame` constructor, which statement means exactly the same as `setSize(WIDTH, HEIGHT);`?",
+     "options": [
+      {
+       "text": "`this.setSize(WIDTH, HEIGHT);`",
+       "feedback": "With no object in front, a method call in an instance method or constructor acts on the current object, the frame being built: `this`.",
+       "correct": true
+      },
+      {
+       "text": "`JFrame.setSize(WIDTH, HEIGHT);`",
+       "feedback": "This calls the method through the class name, as you would a `static` method. `setSize()` belongs to an object, so this doesn't compile."
+      },
+      {
+       "text": "`new JFrame().setSize(WIDTH, HEIGHT);`",
+       "feedback": "This sizes a brand-new, separate frame that is then thrown away. The `JMyFrame` being constructed keeps its 0 × 0 size."
+      },
+      {
+       "text": "`myFrame.setSize(WIDTH, HEIGHT);`",
+       "feedback": "`myFrame` is a variable in the application's `main()`, not in `JMyFrame`. The constructor can't see it, and the frame doesn't exist there yet anyway."
+      }
+     ],
+     "hint": "When a method is called with no object and a dot in front of it, which object does it act on?",
+     "explanation": "Inside a class's constructors and instance methods, calling an inherited method with no object, such as `setSize(WIDTH, HEIGHT)`, means calling it on the current object. Writing `this.setSize(WIDTH, HEIGHT)` makes that reference explicit; both statements size the frame being constructed.",
+     "ref": "Ch. 14.5, this reference in the JMyFrame constructor (p. 557)"
+    },
+    {
+     "id": "two-frames-exit",
+     "concept": "Objects share their constructor's settings",
+     "level": "analyze",
+     "stem": "An application creates two `JMyFrame` objects. The `JMyFrame` constructor calls `setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)`. What happens when the user closes just one of them?",
+     "options": [
+      {
+       "text": "The whole application ends, and both frames disappear.",
+       "feedback": "Both frames came from the same constructor, so both use `EXIT_ON_CLOSE`. Closing either one exits the program, taking the other frame with it.",
+       "correct": true
+      },
+      {
+       "text": "Only that frame closes; the other stays open because each object is independent.",
+       "feedback": "The objects are separate, but they share the behavior the constructor gave them. That behavior ends the whole program, not just one frame."
+      },
+      {
+       "text": "Nothing happens until both frames are closed, because the program waits for all of them.",
+       "feedback": "`EXIT_ON_CLOSE` doesn't wait for other frames. The first frame closed ends the application."
+      },
+      {
+       "text": "The frame that was created second closes, whichever one the user clicks.",
+       "feedback": "Closing affects the frame you click, and with `EXIT_ON_CLOSE` it ends the program. Creation order doesn't matter."
+      }
+     ],
+     "hint": "What close operation does each of the two objects have, and what does that operation do?",
+     "explanation": "Every object built by a constructor gets the settings that constructor applies. If the constructor sets `EXIT_ON_CLOSE`, closing any of the frames ends the application. To let only one frame control the exit, change the other frame's close operation, for example to `DISPOSE_ON_CLOSE`.",
+     "ref": "Ch. 14.5, Figure 14-17 and the discussion after Figure 14-18 (pp. 557–558)"
+    },
+    {
+     "id": "super-in-method",
+     "concept": "super() only works in a constructor",
+     "level": "evaluate",
+     "stem": "A student adds this method to `JMyFrame` so the title can change later. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public void changeTitle()\n{\n    super(\"New title\");\n}",
+      "verify": {
+       "expect": "compile_error",
+       "program": "import javax.swing.*;\npublic class JMyFrame extends JFrame\n{\n    public JMyFrame()\n    {\n        super(\"My frame\");\n    }\n    public void changeTitle()\n    {\n        super(\"New title\");\n    }\n}\n",
+       "error_contains": [
+        "constructor"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It doesn't compile, because `super(...)` is only allowed in a constructor; use `setTitle()`.",
+       "feedback": "`super(\"New title\")` calls the parent constructor, which only happens while an object is being built. In other methods, `setTitle()` changes the title.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the frame's title changes to New title each time the method runs.",
+       "feedback": "This is the false statement in the section's Two Truths & a Lie. `super()` sets the title only from within a constructor."
+      },
+      {
+       "text": "It compiles, but it creates a second, separate frame with the title New title.",
+       "feedback": "A `super(...)` call never creates a separate object. Here it can't run at all, because it isn't inside a constructor."
+      },
+      {
+       "text": "It doesn't compile, because a child of `JFrame` can never change its title after construction.",
+       "feedback": "Titles can be changed at any time with `setTitle()`. The problem is only the use of `super(...)` outside a constructor."
+      }
+     ],
+     "hint": "What does `super(...)` with parentheses call, and when does that happen?",
+     "explanation": "Within a child class's constructor you can set a frame's title with either `super(title)` or `setTitle(title)`. In any other method only `setTitle()` works, because `super(...)` is a call to the parent constructor and is allowed only as the first statement of a constructor.",
+     "ref": "Ch. 14.5, Two Truths & a Lie, Extending the JFrame Class (p. 558)"
+    }
+   ]
+  },
+  {
+   "id": "14.6",
+   "title": "Adding JTextFields and JButtons to a JFrame",
+   "subtitle": "Text field width, setText(), getText(), setEditable(), JButton constructors and buttons that do nothing yet",
+   "source": "Ch. 14, section 14.6 (pp. 559–563)",
+   "intro": "A login window needs a place to type your name and a button to press. Five questions on `JTextField` and `JButton`, and why a button can look pressed yet do nothing.",
+   "takeaways": [
+    "A `JTextField` holds one line of text. Its column count sets roughly how much text is visible, not a limit on what the user can type. `setText()` and `getText()` change and read its contents, and `setEditable(false)` stops the user from editing it.",
+    "Adding a `JButton` to a frame makes it clickable and makes it look pressed, but clicking it does nothing until you write event-handling code (section 14.7)."
+   ],
+   "questions": [
+    {
+     "id": "columns-meaning",
+     "concept": "What a JTextField's column count means",
+     "level": "understand",
+     "stem": "A program creates `new JTextField(10)`. What does the 10 control?",
+     "options": [
+      {
+       "text": "Its width: room to show about 10 characters, though the user can type more.",
+       "feedback": "The number sets the visible width in columns. Extra characters scroll out of view; they aren't refused.",
+       "correct": true
+      },
+      {
+       "text": "The maximum number of characters the user is allowed to type into the field.",
+       "feedback": "The user can keep typing past 10 characters; the extra text scrolls out of view. The number isn't a limit."
+      },
+      {
+       "text": "The exact number of characters shown, whichever characters are typed.",
+       "feedback": "How many characters fit depends on the font and the characters: a size-10 Arial field shows about 24 i characters but only 8 w characters."
+      },
+      {
+       "text": "The number of lines of text the field can hold before it scrolls.",
+       "feedback": "A text field holds a single line of text. The number describes its width in columns, not its height."
+      }
+     ],
+     "hint": "If a user types 15 characters into this field, are any of them rejected?",
+     "explanation": "The `int` argument to a `JTextField` constructor sets the number of columns, which determines roughly how many characters are visible. The exact count depends on the font and characters, and the user can type more than will display, so it is usually better to overestimate a field's size.",
+     "aside": "`JPasswordField`, the box used for passwords, is a subclass of `JTextField`. It holds text just the same but displays a dot for every character, and its `getPassword()` method returns a `char[]` instead of a `String`.",
+     "ref": "Ch. 14.6, Adding JTextFields to a JFrame (p. 559)"
+    },
+    {
+     "id": "clear-field",
+     "concept": "Clearing and reading a text field",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nJTextField response = new JTextField(\"Name\", 12);\nresponse.setText(\"\");\nSystem.out.println(\"[\" + response.getText() + \"] \" +\n    response.isEditable());",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\npublic class ClearField\n{\n    public static void main(String[] args)\n    {\n        JTextField response = new JTextField(\"Name\", 12);\n        response.setText(\"\");\n        System.out.println(\"[\" + response.getText() + \"] \" +\n            response.isEditable());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[] true`",
+       "feedback": "`setText(\"\")` replaces the starting text with the empty string, and clearing a field doesn't change whether it is editable, which it is by default.",
+       "correct": true
+      },
+      {
+       "text": "`[Name] true`",
+       "feedback": "The constructor's text is only the starting value. `setText(\"\")` replaces it, and `getText()` returns the current contents."
+      },
+      {
+       "text": "`[null] true`",
+       "feedback": "The field holds an empty `String`, not `null`. `getText()` returns `\"\"`, which prints as nothing between the brackets."
+      },
+      {
+       "text": "`[] false`",
+       "feedback": "Clearing a field doesn't lock it. A `JTextField` stays editable until you call `setEditable(false)`."
+      }
+     ],
+     "hint": "What string did `setText()` store, and what is a text field's editable status by default?",
+     "explanation": "`setText()` changes a text field's contents and `getText()` returns them as a `String`; assigning `\"\"` clears the field. A `JTextField` is editable by default, and only `setEditable(false)` changes that.",
+     "ref": "Ch. 14.6, setText(), getText() and setEditable() (pp. 559–560)"
+    },
+    {
+     "id": "lock-field",
+     "concept": "Preventing further edits",
+     "level": "apply",
+     "stem": "A quiz gives the user three tries to type an answer. After the third wrong try, the program should keep the last answer visible but stop the user from changing it. Which statement does that?",
+     "options": [
+      {
+       "text": "`response.setEditable(false);`",
+       "feedback": "A field that isn't editable still displays its text but no longer accepts keystrokes, which is exactly what the quiz needs.",
+       "correct": true
+      },
+      {
+       "text": "`response.setText(\"\");`",
+       "feedback": "This erases the answer the program wanted to keep visible, and the user can still type in the field."
+      },
+      {
+       "text": "`response.setVisible(false);`",
+       "feedback": "This hides the whole field, so the user can no longer see the last answer."
+      },
+      {
+       "text": "`aFrame.remove(response);`",
+       "feedback": "This takes the field off the frame entirely, so the answer disappears, and the frame would also need to be validated and repainted."
+      }
+     ],
+     "hint": "Which property describes whether a component accepts keystrokes?",
+     "explanation": "Editable describes a component that can accept keystrokes. A `JTextField` is editable by default; passing `false` to `setEditable()` prevents the user from replacing or editing its characters while the text stays on screen.",
+     "ref": "Ch. 14.6, setEditable() (p. 560)"
+    },
+    {
+     "id": "button-does-nothing",
+     "concept": "Buttons without event handling",
+     "level": "analyze",
+     "stem": "In Figure 14-21, the user types a name and clicks Click to continue. The button looks pressed, but nothing else happens. Why?",
+     "options": [
+      {
+       "text": "No code has been written to respond to the click, so nothing is run.",
+       "feedback": "Adding a button makes it clickable and gives it the pressed look, but responding to a click requires event-handling code, which comes in section 14.7.",
+       "correct": true
+      },
+      {
+       "text": "The button is disabled because the `JButton` constructor was given a `String`.",
+       "feedback": "A label `String` only sets the button's text. Disabling a button is a separate step, and a disabled button wouldn't look pressed."
+      },
+      {
+       "text": "The text field has to be cleared with `setText(\"\")` before the button can work.",
+       "feedback": "The text field's contents have no effect on whether the button responds. The program simply contains no instructions for the click."
+      },
+      {
+       "text": "`FlowLayout` positions the button but blocks its clicks; `BorderLayout` allows them.",
+       "feedback": "Layout managers only position components. Neither of them blocks or handles clicks."
+      }
+     ],
+     "hint": "What has the programmer written so far: instructions for drawing the frame, for reacting to the user, or both?",
+     "explanation": "Placing a `JButton` on a frame gives you a working-looking button, and placing a `JTextField` gives a field the user can type in. Nothing happens in response to typing or clicking until you write code to handle those user-initiated events.",
+     "ref": "Ch. 14.6, Figures 14-21 to 14-23 (p. 561)"
+    },
+    {
+     "id": "pick-components",
+     "concept": "Choosing the right component",
+     "level": "apply",
+     "stem": "A form needs three things: the caption Enter your name:, a box where the user types the name, and something the user clicks to submit. Which components fit, in that order?",
+     "options": [
+      {
+       "text": "A `JLabel`, a `JTextField` and a `JButton`.",
+       "feedback": "A label shows uneditable information, a text field accepts a line of typing, and a button triggers an action when clicked.",
+       "correct": true
+      },
+      {
+       "text": "A `JTextField`, a `JLabel` and a `JButton`.",
+       "feedback": "This swaps the first two. A label is uneditable, so the user couldn't type a name into it."
+      },
+      {
+       "text": "A `JLabel`, another `JLabel` and a `JButton`.",
+       "feedback": "The user can't type into a `JLabel`, so there would be nowhere to enter the name."
+      },
+      {
+       "text": "A `JButton`, a `JTextField` and a `JLabel`.",
+       "feedback": "A button is for clicking, not for showing a caption, and a label can't be used to submit the form."
+      }
+     ],
+     "hint": "Which of the three components accepts keystrokes, and which one is meant to be clicked?",
+     "explanation": "Each component has a job: a `JLabel` provides information the user can't edit, a `JTextField` lets the user type a single line, and a `JButton` triggers an action or makes a selection when clicked.",
+     "ref": "Ch. 14.6, JTextField and JButton (pp. 559–560); Figure 14-21 (p. 561)"
+    }
+   ]
+  },
+  {
+   "id": "14.7",
+   "title": "Learning About Event-Driven Programming",
+   "subtitle": "Sources and listeners, the three steps for handling events, getSource(), instanceof and setEnabled()",
+   "source": "Ch. 14, section 14.7 (pp. 563–569)",
+   "intro": "You click Press me and want the frame to say hello back. Six questions on event-driven programming: which object fires an event, which object hears it, and what you must write to connect them.",
+   "takeaways": [
+    "The component the user acts on is the event's source; an object that wants to know is a listener. To handle button clicks a class must implement `ActionListener` (importing `java.awt.event.*`), register with the source using `addActionListener()`, and write `actionPerformed(ActionEvent e)`.",
+    "One listener can handle several sources. Inside the handler, `e.getSource()` tells you which object fired the event (compare with `==`), and `instanceof` tells you what type of component it was."
+   ],
+   "questions": [
+    {
+     "id": "source-listener",
+     "concept": "Source and listener",
+     "level": "understand",
+     "stem": "In `JHelloFrame` (Figure 14-25), the constructor runs `pressMe.addActionListener(this);`. When the user clicks `pressMe`, what plays each role?",
+     "options": [
+      {
+       "text": "`pressMe` is the source; the frame is the listener whose `actionPerformed()` runs.",
+       "feedback": "The button is the component the user acted on, so it fires the event. The frame registered itself with `this`, so its handler responds.",
+       "correct": true
+      },
+      {
+       "text": "The `JHelloFrame` is the source, and `pressMe` is the listener that responds to it.",
+       "feedback": "This reverses the roles. The source is the component on which the event happens, and the user clicked the button, not the frame."
+      },
+      {
+       "text": "The `ActionEvent` is the listener, and `actionPerformed()` is the source.",
+       "feedback": "The event is the message passed from source to listener, and `actionPerformed()` is the listener's handler method. Neither is a source or a listener object."
+      },
+      {
+       "text": "`pressMe` is both the source and the listener, so the frame isn't involved at all.",
+       "feedback": "A source *can* be its own listener, but here the argument to `addActionListener()` is `this`, the frame, so the frame listens."
+      }
+     ],
+     "hint": "Which object did the user act on, and which object was passed to `addActionListener()`?",
+     "explanation": "The component on which an event is generated is the source; an object interested in the event is a listener. A source keeps a list of registered listeners and notifies all of them when the event occurs, at which point each listener's event-handling method runs.",
+     "ref": "Ch. 14.7, sources and listeners (p. 563); Figure 14-25 (p. 565)"
+    },
+    {
+     "id": "missing-registration",
+     "concept": "The registration step",
+     "level": "analyze",
+     "stem": "This class implements `ActionListener` and has an `actionPerformed()` method. `doClick()` clicks the button from code. What does the program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\npublic class JHelloFrame extends JFrame implements ActionListener\n{\n    JTextField answer = new JTextField(10);\n    JButton pressMe = new JButton(\"Press me\");\n    JLabel greeting = new JLabel(\"\");\n    public JHelloFrame()\n    {\n        super(\"Hello Frame\");\n        setLayout(new FlowLayout());\n        add(answer);\n        add(pressMe);\n        add(greeting);\n    }\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        greeting.setText(\"Hello, \" + answer.getText());\n    }\n    public static void main(String[] args)\n    {\n        JHelloFrame frame = new JHelloFrame();\n        frame.answer.setText(\"Ana\");\n        frame.pressMe.doClick();\n        System.out.println(\"[\" + frame.greeting.getText() + \"]\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\npublic class JHelloFrame extends JFrame implements ActionListener\n{\n    JTextField answer = new JTextField(10);\n    JButton pressMe = new JButton(\"Press me\");\n    JLabel greeting = new JLabel(\"\");\n    public JHelloFrame()\n    {\n        super(\"Hello Frame\");\n        setLayout(new FlowLayout());\n        add(answer);\n        add(pressMe);\n        add(greeting);\n    }\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        greeting.setText(\"Hello, \" + answer.getText());\n    }\n    public static void main(String[] args)\n    {\n        JHelloFrame frame = new JHelloFrame();\n        frame.answer.setText(\"Ana\");\n        frame.pressMe.doClick();\n        System.out.println(\"[\" + frame.greeting.getText() + \"]\");\n        frame.dispose();\n        System.exit(0);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[]`",
+       "feedback": "The class can handle action events, but the button never added the frame to its list of listeners, so the click notifies no one and `greeting` stays empty.",
+       "correct": true
+      },
+      {
+       "text": "`[Hello, Ana]`",
+       "feedback": "This assumes implementing `ActionListener` is enough. A source only notifies objects registered with `addActionListener()`, and nothing is registered here."
+      },
+      {
+       "text": "`[Hello, ]`",
+       "feedback": "This would need the handler to run before the name was typed. Here the handler never runs at all, so `greeting` keeps its empty starting text."
+      },
+      {
+       "text": "Nothing; the class doesn't compile without a call to `addActionListener()`.",
+       "feedback": "Registration is a run-time step, and the compiler doesn't require it. The class compiles; it just never receives the click."
+      }
+     ],
+     "hint": "List the three steps for responding to events. Which one is missing here?",
+     "explanation": "Responding to events takes three steps: implement the listener interface, register the object as a listener with the source (for example `pressMe.addActionListener(this)`), and write the handler method. Without registration, the code compiles but the handler never runs.",
+     "ref": "Ch. 14.7, the three steps and Telling Your Class to Expect Events to Happen (pp. 563–564)"
+    },
+    {
+     "id": "two-sources",
+     "concept": "One listener, two sources",
+     "level": "apply",
+     "stem": "The frame registers itself with both `button` and `field`. The user clicks the button, then types Ana in `field` and presses Enter. What does `label` show afterward?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in the JAction2 constructor\nbutton.addActionListener(this);\nfield.addActionListener(this);\n\n// the event handler\n@Override\npublic void actionPerformed(ActionEvent e)\n{\n    Object source = e.getSource();\n    if(source == button)\n        label.setText(\"You clicked the button\");\n    else\n        label.setText(\"You pressed Enter\");\n}",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\npublic class JAction2 extends JFrame implements ActionListener\n{\n    JLabel label = new JLabel(\"Name?\");\n    JTextField field = new JTextField(12);\n    JButton button = new JButton(\"OK\");\n    public JAction2()\n    {\n        super(\"Action\");\n        setLayout(new FlowLayout());\n        add(label);\n        add(field);\n        add(button);\n        button.addActionListener(this);\n        field.addActionListener(this);\n    }\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        Object source = e.getSource();\n        if(source == button)\n            label.setText(\"You clicked the button\");\n        else\n            label.setText(\"You pressed Enter\");\n    }\n    public static void main(String[] args)\n    {\n        JAction2 f = new JAction2();\n        f.button.doClick();\n        f.field.setText(\"Ana\");\n        f.field.postActionEvent();\n        System.out.println(f.label.getText());\n        f.dispose();\n        System.exit(0);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`You pressed Enter`",
+       "feedback": "Pressing Enter in a registered text field fires an `ActionEvent` too. The source isn't `button`, so the `else` branch replaces the label's text.",
+       "correct": true
+      },
+      {
+       "text": "`You clicked the button`",
+       "feedback": "This assumes only buttons fire action events. A `JTextField` fires one when the user presses Enter, and the frame is registered with it."
+      },
+      {
+       "text": "`You clicked the buttonYou pressed Enter`",
+       "feedback": "`setText()` replaces a label's text rather than adding to it, so only the most recent message remains."
+      },
+      {
+       "text": "`Name?`",
+       "feedback": "That is the label's starting text. Both actions reach `actionPerformed()`, because the frame registered with both sources."
+      }
+     ],
+     "hint": "Which events reach the handler, and does `setText()` add to the old text or replace it?",
+     "explanation": "A listener can be registered with several sources, and its handler runs for an event from any of them. Inside the handler, `e.getSource()` returns the object that fired this event, so comparing it with `==` lets one method take different actions for different components.",
+     "aside": "Swing runs every event handler on a single thread, the event dispatch thread, which also repaints the window. If `actionPerformed()` takes ten seconds, the whole window freezes for ten seconds; long jobs belong on another thread.",
+     "ref": "Ch. 14.7, Using Multiple Event Sources (p. 566); Distinguishing Event Sources (p. 569)"
+    },
+    {
+     "id": "instanceof-source",
+     "concept": "Reacting by component type",
+     "level": "apply",
+     "stem": "A frame has several text fields and buttons, all registered with it. Inside `actionPerformed()`, after `Object source = e.getSource();`, which test is true for an event from **any** `JTextField` but **not** from a button?",
+     "options": [
+      {
+       "text": "`if(source instanceof JTextField)`",
+       "feedback": "`instanceof` asks what type the source object is, so it matches every text field and no button.",
+       "correct": true
+      },
+      {
+       "text": "`if(source == JTextField)`",
+       "feedback": "`==` compares two references to objects, and `JTextField` is a class name, not an object. This doesn't compile."
+      },
+      {
+       "text": "`if(source == firstNameField)`",
+       "feedback": "This matches one particular field only. Events from the other text fields would fail the test."
+      },
+      {
+       "text": "`if(e instanceof JTextField)`",
+       "feedback": "`e` is the `ActionEvent`, not the component, and an event is never a text field. The component is in `source`."
+      }
+     ],
+     "hint": "Do you need to know *which* component fired the event, or only *what kind* of component it was?",
+     "explanation": "`e.getSource()` returns the component that generated the event as an `Object`. Compare it with `==` when you need to know exactly which component it was; use `instanceof` when only the component's type matters.",
+     "ref": "Ch. 14.7, getSource() and instanceof (pp. 566–567)"
+    },
+    {
+     "id": "set-enabled",
+     "concept": "Disabling a component",
+     "level": "apply",
+     "stem": "After the user clicks Submit once, the button should look dim and ignore further clicks so the order can't be sent twice. Which statement belongs in the handler?",
+     "options": [
+      {
+       "text": "`submitButton.setEnabled(false);`",
+       "feedback": "Components are enabled by default. Passing `false` to `setEnabled()` dims the button and makes it unresponsive.",
+       "correct": true
+      },
+      {
+       "text": "`submitButton.setEditable(false);`",
+       "feedback": "`setEditable()` controls whether a text component accepts keystrokes. It isn't how you stop a button from being clicked."
+      },
+      {
+       "text": "`submitButton.setVisible(false);`",
+       "feedback": "This hides the button entirely rather than showing it dimmed, so the user can't see that the order was submitted."
+      },
+      {
+       "text": "`submitButton.setText(\"\");`",
+       "feedback": "The button loses its words but stays fully clickable, so a second order can still be sent."
+      }
+     ],
+     "hint": "Which method's name describes whether a component is available for use?",
+     "explanation": "Components are enabled by default. `setEnabled(false)` makes a component unavailable, typically shown dim and unresponsive, and `setEnabled(true)` makes it available again.",
+     "ref": "Ch. 14.7, Using the setEnabled() Method (p. 567)"
+    },
+    {
+     "id": "handler-name",
+     "concept": "The required handler method",
+     "level": "analyze",
+     "stem": "This class does **not** compile. Why?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import javax.swing.*;\nimport java.awt.event.*;\npublic class JClick extends JFrame implements ActionListener\n{\n    JButton button = new JButton(\"Click\");\n    public JClick()\n    {\n        super(\"Click\");\n        add(button);\n        button.addActionListener(this);\n    }\n    public void buttonClicked(ActionEvent event)\n    {\n        button.setText(\"Thanks!\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "actionPerformed"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "The class has no `actionPerformed(ActionEvent)` method, which `ActionListener` requires.",
+       "feedback": "The interface's method is abstract, so a class that implements `ActionListener` must give `actionPerformed()` a body. A method with a different name doesn't count.",
+       "correct": true
+      },
+      {
+       "text": "An event handler must be `static`, because buttons call it without an object.",
+       "feedback": "Handlers are instance methods; the source calls them on the registered listener object, like `this` frame."
+      },
+      {
+       "text": "The handler's parameter must be named `e`, because `event` is a reserved word.",
+       "feedback": "The parameter can have any name you choose. The book uses `e`, but `event` is just as legal."
+      },
+      {
+       "text": "`addActionListener(this)` must come before the call to `super(\"Click\")` in the constructor.",
+       "feedback": "The `super()` call must be first. Registration goes later in the constructor, as here."
+      }
+     ],
+     "hint": "Can you choose your own name for the method that responds to an `ActionEvent`?",
+     "explanation": "When a class implements `ActionListener`, it must define `public void actionPerformed(ActionEvent e)`, because all the methods in an interface are abstract. The parameter name is your choice; the method name is fixed.",
+     "aside": "Since Java 8 you can skip writing a listener class: `button.addActionListener(e -> button.setText(\"Thanks!\"));` passes a lambda expression, and Java turns it into an `ActionListener` whose `actionPerformed()` runs that code.",
+     "ref": "Ch. 14.7, Telling Your Class How to Respond to Events (p. 564)"
+    }
+   ]
+  },
+  {
+   "id": "14.8",
+   "title": "Understanding Swing Event Listeners",
+   "subtitle": "Listener types, addXXXListener() registration, fixed handler names, multiple listeners and the java.awt.event import",
+   "source": "Ch. 14, section 14.8 (pp. 569–571)",
+   "intro": "A text field should check its contents the moment the user tabs away from it, not when they press a button. Five questions on choosing the right listener and wiring it up.",
+   "takeaways": [
+    "Each listener interface handles one kind of event: `ActionListener` for button clicks, `ItemListener` for check box changes, `FocusListener` for gaining or losing focus, and so on. You register with the source using `source.addXXXListener(responder)`.",
+    "Handler names are fixed by the interface (`actionPerformed`, `itemStateChanged`, `focusLost`...) and each takes the generated event as its parameter. A class can implement as many listener interfaces as it needs."
+   ],
+   "questions": [
+    {
+     "id": "pick-listener",
+     "concept": "Matching a listener to an event",
+     "level": "apply",
+     "stem": "A program must check a text field's contents as soon as the user moves the cursor out of it to another component. Which listener fits?",
+     "options": [
+      {
+       "text": "`FocusListener`",
+       "feedback": "Moving out of a field is a keyboard focus event, the field losing focus. A `FocusListener` responds through `focusLost()`.",
+       "correct": true
+      },
+      {
+       "text": "`ActionListener`",
+       "feedback": "A text field fires an action event when the user presses Enter, but leaving the field without pressing Enter fires none."
+      },
+      {
+       "text": "`KeyListener`",
+       "feedback": "Key events report individual keystrokes as text is entered. They don't say when the user leaves the field, for example by clicking elsewhere."
+      },
+      {
+       "text": "`ItemListener`",
+       "feedback": "Item events report changes of status, such as a check box being checked. Text fields don't generate them."
+      }
+     ],
+     "hint": "In Table 14-2, which event type is described by a text field gaining or losing something?",
+     "explanation": "Java has many listener interfaces, each for one type of event: `ActionListener` for action events such as button clicks, `FocusListener` for keyboard focus events, `ItemListener` for status changes such as check boxes, `KeyListener` for keyboard events, and others.",
+     "aside": "A `KeyListener` has three handler methods (`keyPressed`, `keyReleased` and `keyTyped`), and a `MouseListener` has five. Java's adapter classes, such as `KeyAdapter` and `MouseAdapter`, supply empty versions of all of them so you override only the one you need.",
+     "ref": "Ch. 14.8, Table 14-2 Alphabetical list of some event listeners (p. 570)"
+    },
+    {
+     "id": "item-header",
+     "concept": "The fixed handler for item events",
+     "level": "apply",
+     "stem": "A frame implements `ItemListener` so it can react when a check box is checked or unchecked. Which method header must it contain?",
+     "options": [
+      {
+       "text": "`public void itemStateChanged(ItemEvent e)`",
+       "feedback": "`ItemListener` declares exactly this method, and it receives the generated event as its parameter.",
+       "correct": true
+      },
+      {
+       "text": "`public void itemStateChange(ItemEvent e)`",
+       "feedback": "The name is missing its final d. `getStateChange()` has no d, but the handler `itemStateChanged()` does, a trap the chapter warns about."
+      },
+      {
+       "text": "`public void actionPerformed(ItemEvent e)`",
+       "feedback": "`actionPerformed()` belongs to `ActionListener` and takes an `ActionEvent`. Each listener has its own handler names."
+      },
+      {
+       "text": "`public void itemStateChanged(ItemListener e)`",
+       "feedback": "A handler's parameter is the event that was generated, not the listener. This is the false statement in the section's Two Truths & a Lie."
+      }
+     ],
+     "hint": "Which listener's table entry in Table 14-4 handles `ItemEvent`s, and what does its method receive?",
+     "explanation": "You can't choose your own names for event handlers: each listener interface fixes them, as Table 14-4 shows. Every handler accepts a parameter that represents the generated event, such as `ItemEvent` for `itemStateChanged()`.",
+     "ref": "Ch. 14.8, Table 14-4 Selected methods that respond to events (p. 571); Don't Do It (p. 580)"
+    },
+    {
+     "id": "register-direction",
+     "concept": "Writing the registration call",
+     "level": "apply",
+     "stem": "Inside a frame's constructor, which statement makes the frame (`this`) respond when the check box `giftWrap` is checked or unchecked?",
+     "options": [
+      {
+       "text": "`giftWrap.addItemListener(this);`",
+       "feedback": "The format is `source.addXXXListener(responder)`: the check box is the source of item events, and `this` frame is the object that should respond.",
+       "correct": true
+      },
+      {
+       "text": "`this.addItemListener(giftWrap);`",
+       "feedback": "This reverses source and responder. A `JFrame` has no `addItemListener()` method; the check box is what generates item events."
+      },
+      {
+       "text": "`giftWrap.itemStateChanged(this);`",
+       "feedback": "`itemStateChanged()` is the handler Java calls when the event happens. Calling it yourself doesn't register anything."
+      },
+      {
+       "text": "`giftWrap.addItemListener(new ItemEvent());`",
+       "feedback": "The argument is the object that should respond, not an event. Events are created by Java when the user acts."
+      }
+     ],
+     "hint": "Which object generates the event, and which object goes inside the parentheses?",
+     "explanation": "To connect a source to a listener, call the source's registering method and pass the responding object: `theSourceOfTheEvent.addListenerMethod(theClassThatShouldRespond);`. The responder is frequently `this`, the frame the code is in.",
+     "ref": "Ch. 14.8, Table 14-3 and the addXXXListener() format (p. 570)"
+    },
+    {
+     "id": "many-interfaces",
+     "concept": "Implementing several listeners",
+     "level": "evaluate",
+     "stem": "A student argues: \"A frame can't listen for both button clicks and check box changes, because Java allows only single inheritance.\" What is the flaw?",
+     "options": [
+      {
+       "text": "Single inheritance limits `extends` to one class; a class can implement several interfaces.",
+       "feedback": "Listeners are interfaces, and there is no limit on how many interfaces a class implements, so one frame can handle both kinds of event.",
+       "correct": true
+      },
+      {
+       "text": "There is no flaw: a frame must choose one listener interface and use it for every component.",
+       "feedback": "The section states that a class can implement as many event listeners as it needs, for example both `ActionListener` and `KeyListener`."
+      },
+      {
+       "text": "A class can listen for several events only if it extends a different class for each one.",
+       "feedback": "A class can extend only one class, which is exactly why listeners are interfaces. Implementing them doesn't use up the single `extends`."
+      },
+      {
+       "text": "Check boxes generate action events, so `ActionListener` alone covers both components.",
+       "feedback": "A check box can report action events, but its status changes arrive as `ItemEvent`s. The real flaw is the claim about inheritance."
+      }
+     ],
+     "hint": "Are listeners such as `ActionListener` classes that you extend, or interfaces that you implement?",
+     "explanation": "A class can implement as many listener interfaces as it needs. Single inheritance restricts a class to one parent class through `extends`, but `implements` can list several interfaces, such as `implements ActionListener, ItemListener`.",
+     "ref": "Ch. 14.8, Understanding Swing Event Listeners (p. 569); note on multiple listeners (p. 571)"
+    },
+    {
+     "id": "missing-event-import",
+     "concept": "Importing java.awt.event",
+     "level": "apply",
+     "stem": "This class does **not** compile. What is the cause?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import javax.swing.*;\nimport java.awt.*;\npublic class JOrder extends JFrame implements ActionListener\n{\n    JButton order = new JButton(\"Order\");\n    public JOrder()\n    {\n        super(\"Order\");\n        setLayout(new FlowLayout());\n        add(order);\n        order.addActionListener(this);\n    }\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        order.setText(\"Ordered\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "ActionListener"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It doesn't import `java.awt.event.*`, which holds `ActionListener` and `ActionEvent`.",
+       "feedback": "The event classes and listener interfaces live in their own package. `java.awt.*` doesn't include its subpackages, so the compiler can't find them.",
+       "correct": true
+      },
+      {
+       "text": "It must import `javax.swing.event.*`, the package for all Swing events.",
+       "feedback": "That package exists for some Swing-specific events, but `ActionListener` and `ActionEvent` are in `java.awt.event`."
+      },
+      {
+       "text": "`java.awt.*` already includes `java.awt.event`, so the error is the missing `@Override`.",
+       "feedback": "A wildcard import doesn't reach into subpackages. `@Override` is good practice but optional; leaving it out doesn't cause an error."
+      },
+      {
+       "text": "A class can't extend `JFrame` and implement an interface in the same header.",
+       "feedback": "`extends JFrame implements ActionListener` is exactly the header pattern the chapter uses in Figure 14-25."
+      }
+     ],
+     "hint": "Which package holds the listener interfaces, and does importing `java.awt.*` include it?",
+     "explanation": "The first task when declaring a class that handles events is to import the `java.awt.event` package. A wildcard import such as `java.awt.*` brings in classes in `java.awt` only, not those in its subpackages.",
+     "ref": "Ch. 14.8, the tasks for handling an event (p. 571); Preparing Your Class to Accept Event Messages (p. 564)"
+    }
+   ]
+  },
+  {
+   "id": "14.9",
+   "title": "Using the JCheckBox, ButtonGroup, and JComboBox Classes",
+   "subtitle": "Item events from check boxes, mutually exclusive groups, and combo box selection by index",
+   "source": "Ch. 14, section 14.9 (pp. 572–580)",
+   "intro": "A resort's price calculator must add $100 when the weekend box is checked and take it back off when it is unchecked. Six questions on check boxes, button groups and combo boxes.",
+   "takeaways": [
+    "Checking or unchecking a `JCheckBox`, by the user or by `setSelected()`, fires an `ItemEvent`. In `itemStateChanged()`, `getStateChange()` returns `ItemEvent.SELECTED` or `ItemEvent.DESELECTED`, so the handler can undo what it did.",
+    "A `ButtonGroup` makes only the boxes you explicitly `add()` to it mutually exclusive; it isn't a component, so each box must also be added to the frame. A `JComboBox` numbers its items from 0, and `getSelectedIndex()` returns `-1` when nothing in the list matches."
+   ],
+   "questions": [
+    {
+     "id": "resort-trace",
+     "concept": "Tracing item events",
+     "level": "apply",
+     "stem": "The resort calculator starts at $200; weekend adds $100, breakfast $20 and golf $75. The four `setSelected()` calls check and uncheck boxes. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "@Override\npublic void itemStateChanged(ItemEvent event)\n{\n    Object source = event.getSource();\n    int select = event.getStateChange();\n    int amount;\n    if(source == weekendBox)\n        amount = WEEKEND_PREMIUM;\n    else if(source == breakfastBox)\n        amount = BREAKFAST_PREMIUM;\n    else\n        amount = GOLF_PREMIUM;\n    if(select == ItemEvent.SELECTED)\n        totalPrice += amount;\n    else\n        totalPrice -= amount;\n}\n// in main(), after registering all three boxes\ncalc.weekendBox.setSelected(true);\ncalc.golfBox.setSelected(true);\ncalc.weekendBox.setSelected(false);\ncalc.breakfastBox.setSelected(true);\nSystem.out.println(\"$\" + calc.totalPrice);",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\npublic class JResortCalculator extends JFrame implements ItemListener\n{\n    final int BASE_PRICE = 200;\n    final int WEEKEND_PREMIUM = 100;\n    final int BREAKFAST_PREMIUM = 20;\n    final int GOLF_PREMIUM = 75;\n    int totalPrice = BASE_PRICE;\n    JCheckBox weekendBox = new JCheckBox(\"Weekend premium $\" + WEEKEND_PREMIUM, false);\n    JCheckBox breakfastBox = new JCheckBox(\"Breakfast $\" + BREAKFAST_PREMIUM, false);\n    JCheckBox golfBox = new JCheckBox(\"Golf $\" + GOLF_PREMIUM, false);\n    public JResortCalculator()\n    {\n        super(\"Resort Price Estimator\");\n        setLayout(new FlowLayout());\n        add(weekendBox);\n        add(breakfastBox);\n        add(golfBox);\n        weekendBox.addItemListener(this);\n        breakfastBox.addItemListener(this);\n        golfBox.addItemListener(this);\n    }\n    @Override\n    public void itemStateChanged(ItemEvent event)\n    {\n        Object source = event.getSource();\n        int select = event.getStateChange();\n        int amount;\n        if(source == weekendBox)\n            amount = WEEKEND_PREMIUM;\n        else if(source == breakfastBox)\n            amount = BREAKFAST_PREMIUM;\n        else\n            amount = GOLF_PREMIUM;\n        if(select == ItemEvent.SELECTED)\n            totalPrice += amount;\n        else\n            totalPrice -= amount;\n    }\n    public static void main(String[] args)\n    {\n        JResortCalculator calc = new JResortCalculator();\n        calc.weekendBox.setSelected(true);\n        calc.golfBox.setSelected(true);\n        calc.weekendBox.setSelected(false);\n        calc.breakfastBox.setSelected(true);\n        System.out.println(\"$\" + calc.totalPrice);\n        calc.dispose();\n        System.exit(0);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`$295`",
+       "feedback": "Weekend +100, golf +75, weekend unchecked −100, breakfast +20: 200 + 100 + 75 − 100 + 20 = 295. Each change fired `itemStateChanged()`.",
+       "correct": true
+      },
+      {
+       "text": "`$395`",
+       "feedback": "This treats unchecking as no event. Deselecting a box also fires an `ItemEvent`, and the `else` branch subtracts the weekend premium."
+      },
+      {
+       "text": "`$495`",
+       "feedback": "This adds the weekend premium again when the box is unchecked. `getStateChange()` reports `DESELECTED`, so the handler subtracts."
+      },
+      {
+       "text": "`$200`",
+       "feedback": "This assumes only real mouse clicks fire events. A check box fires an `ItemEvent` whenever its state changes, including through `setSelected()`."
+      }
+     ],
+     "hint": "For each of the four calls, is the event a selection or a deselection, and which box is its source?",
+     "explanation": "Whenever a `JCheckBox` changes between checked and unchecked, an `ItemEvent` is generated and `itemStateChanged()` runs. `getSource()` (or `getItem()`) identifies the box, and `getStateChange()` returns `ItemEvent.SELECTED` or `ItemEvent.DESELECTED`, so a handler can add a cost on selection and subtract it on deselection.",
+     "ref": "Ch. 14.9, getStateChange() (p. 574); You Do It, JResortCalculator (pp. 578–580)"
+    },
+    {
+     "id": "group-membership",
+     "concept": "Only grouped boxes are exclusive",
+     "level": "analyze",
+     "stem": "A pizza form should allow only one size. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nButtonGroup sizeGroup = new ButtonGroup();\nJCheckBox small = new JCheckBox(\"Small\");\nJCheckBox large = new JCheckBox(\"Large\");\nsizeGroup.add(small);\nsmall.setSelected(true);\nlarge.setSelected(true);\nSystem.out.println(small.isSelected() + \" \" + large.isSelected());",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\npublic class SizeGroup\n{\n    public static void main(String[] args)\n    {\n        ButtonGroup sizeGroup = new ButtonGroup();\n        JCheckBox small = new JCheckBox(\"Small\");\n        JCheckBox large = new JCheckBox(\"Large\");\n        sizeGroup.add(small);\n        small.setSelected(true);\n        large.setSelected(true);\n        System.out.println(small.isSelected() + \" \" + large.isSelected());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`true true`",
+       "feedback": "Only `small` was added to the group. `large` acts as an ordinary, independent check box, so checking it doesn't uncheck `small`.",
+       "correct": true
+      },
+      {
+       "text": "`false true`",
+       "feedback": "That is what a group containing both boxes would do. Creating a `ButtonGroup` doesn't group anything until each box is added to it."
+      },
+      {
+       "text": "`true false`",
+       "feedback": "This assumes the first box selected in a group can't be replaced. In a real group, a new selection replaces the previous one; here, `large` isn't in the group at all."
+      },
+      {
+       "text": "`false false`",
+       "feedback": "Nothing here clears both boxes. A box in a group is turned off only when another box *in the same group* is selected."
+      }
+     ],
+     "hint": "Which boxes were actually added to `sizeGroup`?",
+     "explanation": "A `ButtonGroup` makes its members mutually exclusive: selecting one turns the others off. Creating the group doesn't group anything by itself, though. Each component that should be in it must be added explicitly with the group's `add()` method; any box left out acts as an independent check box.",
+     "ref": "Ch. 14.9, The ButtonGroup Class (pp. 574–575); Don't Do It (p. 580)"
+    },
+    {
+     "id": "group-not-component",
+     "concept": "A ButtonGroup is not a component",
+     "level": "analyze",
+     "stem": "A student creates three size check boxes, adds all three to a `ButtonGroup`, and never calls the frame's `add()` for them. What does the user see when the frame appears?",
+     "options": [
+      {
+       "text": "No size boxes, because a `ButtonGroup` only links boxes; each must also be added to the frame.",
+       "feedback": "`ButtonGroup` descends directly from `Object`, not from `Component`. It manages selection but displays nothing, so the frame has no boxes to show.",
+       "correct": true
+      },
+      {
+       "text": "All three boxes, because adding them to the group places them on the frame too.",
+       "feedback": "The group's `add()` only makes the boxes mutually exclusive. Displaying a box takes a separate `add(aBox)` on the frame, step four of four."
+      },
+      {
+       "text": "All three boxes, but the user can check more than one because the group wasn't added to the frame.",
+       "feedback": "Grouping works without putting the group on a frame, and a `ButtonGroup` can't be put on a frame anyway, since it isn't a component."
+      },
+      {
+       "text": "A single drop-down list holding the three sizes, since grouped boxes are shown like a combo box.",
+       "feedback": "Only a `JComboBox` shows a drop-down list. A `ButtonGroup` doesn't change how its members look."
+      }
+     ],
+     "hint": "In Figure 14-36, what is `ButtonGroup`'s parent class, and is it a `Component`?",
+     "explanation": "Adding a check box to a group takes four steps: create the group, create the box, add the box to the group, and add the box to the frame. A `ButtonGroup` is part of `javax.swing` even though its name has no `J`, but it is not a component: it descends directly from `Object`.",
+     "aside": "The chapter's invisible-check-box trick for clearing a group dates from early Java. Since Java 6, `ButtonGroup` has a `clearSelection()` method that unchecks every member in one call.",
+     "ref": "Ch. 14.9, The ButtonGroup Class and Figure 14-36 (pp. 574–575)"
+    },
+    {
+     "id": "combo-parallel",
+     "concept": "getSelectedIndex() with a parallel array",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nJComboBox<String> historyChoice = new JComboBox<String>();\nhistoryChoice.addItem(\"Declaration of Independence\");\nhistoryChoice.addItem(\"Pearl Harbor\");\nhistoryChoice.addItem(\"Man walks on moon\");\nint[] dates = {1776, 1941, 1969};\nhistoryChoice.setSelectedItem(\"Man walks on moon\");\nint positionOfSelection = historyChoice.getSelectedIndex();\nSystem.out.println(positionOfSelection + \" \" +\n    dates[positionOfSelection]);",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\npublic class HistoryDemo\n{\n    public static void main(String[] args)\n    {\n        JComboBox<String> historyChoice = new JComboBox<String>();\n        historyChoice.addItem(\"Declaration of Independence\");\n        historyChoice.addItem(\"Pearl Harbor\");\n        historyChoice.addItem(\"Man walks on moon\");\n        int[] dates = {1776, 1941, 1969};\n        historyChoice.setSelectedItem(\"Man walks on moon\");\n        int positionOfSelection = historyChoice.getSelectedIndex();\n        System.out.println(positionOfSelection + \" \" +\n            dates[positionOfSelection]);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`2 1969`",
+       "feedback": "Combo box positions start at 0, so the third item is at index 2, and `dates[2]` holds the matching year, 1969.",
+       "correct": true
+      },
+      {
+       "text": "`3 1969`",
+       "feedback": "This counts positions from 1. A combo box's list works like an array: the first item is at position 0."
+      },
+      {
+       "text": "`2 1941`",
+       "feedback": "Index 2 is the *third* item, not the second. Both the combo box and the array count from 0, so they stay lined up."
+      },
+      {
+       "text": "`Man walks on moon 1969`",
+       "feedback": "`getSelectedIndex()` returns the item's position, an `int`. `getSelectedItem()` would return the item itself."
+      }
+     ],
+     "hint": "Where does a combo box's list start counting, and what type does `getSelectedIndex()` return?",
+     "explanation": "You can treat a `JComboBox`'s items like an array: the first is at position 0. `getSelectedIndex()` returns the selected item's position, which you can use to look up matching information in a parallel array.",
+     "ref": "Ch. 14.9, getSelectedIndex() and parallel arrays (pp. 576–577)"
+    },
+    {
+     "id": "editable-mismatch",
+     "concept": "Typed text that doesn't match",
+     "level": "analyze",
+     "stem": "In an editable combo box, the user types math, all lowercase. The `setSelectedItem()` call below does what that typing does. What does the program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nJComboBox<String> majorChoice = new JComboBox<String>();\nmajorChoice.addItem(\"English\");\nmajorChoice.addItem(\"Math\");\nmajorChoice.addItem(\"Sociology\");\nmajorChoice.setEditable(true);\nmajorChoice.setSelectedItem(\"math\");   // as if the user typed math\nSystem.out.println(majorChoice.getSelectedIndex());",
+      "verify": {
+       "expect": "output",
+       "program": "import javax.swing.*;\npublic class MajorDemo\n{\n    public static void main(String[] args)\n    {\n        JComboBox<String> majorChoice = new JComboBox<String>();\n        majorChoice.addItem(\"English\");\n        majorChoice.addItem(\"Math\");\n        majorChoice.addItem(\"Sociology\");\n        majorChoice.setEditable(true);\n        majorChoice.setSelectedItem(\"math\");\n        System.out.println(majorChoice.getSelectedIndex());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`-1`",
+       "feedback": "Typed text must match an item exactly, including case. math isn't in the list, so `getSelectedIndex()` returns a negative value.",
+       "correct": true
+      },
+      {
+       "text": "`1`",
+       "feedback": "This assumes the match ignores case. Math and math are different strings, so the typed text matches no item."
+      },
+      {
+       "text": "`0`",
+       "feedback": "The first item was selected before the user typed, but the typed text has now replaced it, and that text matches no position."
+      },
+      {
+       "text": "`3`",
+       "feedback": "Typing in an editable combo box doesn't add a new item to the list. It only sets the displayed text."
+      }
+     ],
+     "hint": "Does math equal any of the three items exactly, character by character?",
+     "explanation": "`setEditable(true)` lets users type into a combo box instead of picking from the list. The typed text must exactly match an item, including case; if it doesn't, `getSelectedIndex()` returns a negative value, which your program should test for before using it as an index.",
+     "ref": "Ch. 14.9, editable JComboBoxes (p. 577)"
+    },
+    {
+     "id": "choose-control",
+     "concept": "Choosing a selection component",
+     "level": "evaluate",
+     "stem": "A shipping form must let the user pick exactly one of 50 states, and the frame has little free space. Which design fits best?",
+     "options": [
+      {
+       "text": "A `JComboBox` of the 50 states, compact until the user opens its list.",
+       "feedback": "A combo box shows one choice and expands only when clicked, and picking an item replaces the previous one, so exactly one state is chosen.",
+       "correct": true
+      },
+      {
+       "text": "50 `JCheckBox` objects, one per state, with no `ButtonGroup`.",
+       "feedback": "Without a group the user could check several states, and 50 boxes would take far more room than the frame has."
+      },
+      {
+       "text": "50 `JCheckBox` objects in a `ButtonGroup`, so only one can be selected.",
+       "feedback": "This does enforce one choice, but 50 boxes would crowd the frame. The combo box gives the same single choice in a fraction of the space."
+      },
+      {
+       "text": "A `JTextField` where the user types the state name.",
+       "feedback": "Typed names can be misspelled or use different capitalization, and nothing restricts the user to the 50 valid choices."
+      }
+     ],
+     "hint": "Which component avoids taking up room in the frame until the user needs the choices?",
+     "explanation": "Check boxes suit options the user turns on or off; a `ButtonGroup` makes a set of them mutually exclusive. When there are many mutually exclusive choices, a `JComboBox` is usually better, because it takes up little room until its list is expanded.",
+     "aside": "By convention, round radio buttons (`JRadioButton`) mean \"choose one\" and square check boxes mean \"choose any\". Users read the shape before the label, so a grouped set of check boxes can surprise them.",
+     "ref": "Ch. 14.9, The JComboBox Class (p. 575)"
+    }
+   ]
+  }
+ ]
+}
