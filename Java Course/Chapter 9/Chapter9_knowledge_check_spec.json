@@ -1,0 +1,2420 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 9: Inheritance and Interfaces",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 9 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "9.1",
+   "title": "Learning About the Concept of Inheritance",
+   "subtitle": "Base and derived classes, the is-a test, and how inheritance differs from composition and aggregation",
+   "source": "Ch. 9, section 9.1 (pp. 329–332)",
+   "intro": "A payroll system already has a tested `Employee` class, and now the company hires salespeople who also need a territory. Four questions on reusing what already works.",
+   "takeaways": [
+    "Inheritance lets a new class acquire every field and method of an existing class, so you write only what is different. It adds no new power; it saves time and reuses code that is already tested.",
+    "Use the is-a test to find the base class: a derived class is always a more specific case of its base class (an `Evergreen` is a `Tree`), never the other way around.",
+    "\"Has-a\" is containment, not inheritance. In composition the contained objects stop existing with their container; in aggregation they continue to exist on their own."
+   ],
+   "questions": [
+    {
+     "id": "is-a-test",
+     "concept": "The is-a test identifies inheritance",
+     "level": "apply",
+     "stem": "Which pair of classes is best modeled with inheritance, the first class extending the second?",
+     "options": [
+      {
+       "text": "`Evergreen` and `Tree`",
+       "feedback": "\"An Evergreen is a Tree\" is true, and \"a Tree is an Evergreen\" is not. That one-way is-a relationship is exactly what inheritance models.",
+       "correct": true
+      },
+      {
+       "text": "`Department` and `Business`",
+       "feedback": "A business *has* departments; a department is not a kind of business. That is containment (composition), not inheritance."
+      },
+      {
+       "text": "`Employee` and `Department`",
+       "feedback": "A department *has* employees, and an employee is not a kind of department. That relationship is aggregation."
+      },
+      {
+       "text": "`Tree` and `Evergreen`",
+       "feedback": "This reverses the direction. Not every tree is an evergreen, so `Tree` is the more general base class."
+      }
+     ],
+     "hint": "Say each pair as a sentence: \"A ___ is a ___.\" Which sentence is true for every object of the first class?",
+     "explanation": "A derived class is always a more specific case of its base class, so \"Derived is a Base\" must be true for every derived object. When the honest sentence is \"A has a B\", the relationship is containment, not inheritance.",
+     "aside": "Experienced designers often reach for has-a first. The 1994 book *Design Patterns* (the \"Gang of Four\") advises \"favor object composition over class inheritance\", because a contained object can be swapped out later and an inherited parent cannot.",
+     "ref": "Ch. 9.1, Inheritance Terminology (p. 331)"
+    },
+    {
+     "id": "composition-aggregation",
+     "concept": "Composition versus aggregation",
+     "level": "understand",
+     "stem": "A `Business` contains `Department` objects, and each `Department` contains `Employee` objects. If the business closes, its departments disappear, but the employees still exist. How do the two relationships differ?",
+     "options": [
+      {
+       "text": "Business–Department is composition; Department–Employee is aggregation",
+       "feedback": "Departments don't outlive the business that contains them (composition); employees do outlive their department (aggregation).",
+       "correct": true
+      },
+      {
+       "text": "Business–Department is aggregation; Department–Employee is composition",
+       "feedback": "This swaps the definitions. The relationship where the parts die with the whole is composition."
+      },
+      {
+       "text": "Both are inheritance, because each class holds objects of the other",
+       "feedback": "Holding objects is has-a, not is-a. A department is not a kind of business, and an employee is not a kind of department."
+      },
+      {
+       "text": "Both are composition, because each class contains an array of members",
+       "feedback": "Containing members is true of both, but composition also means the members can't exist without the container. Employees can."
+      }
+     ],
+     "hint": "For each pair, ask what happens to the contained objects when their container goes away.",
+     "explanation": "Both composition and aggregation are has-a containment. They differ in lifetime: composed parts exist only as part of their container, while aggregated parts continue to exist without it.",
+     "ref": "Ch. 9.1, \"is a\" versus \"has a\" (p. 331)"
+    },
+    {
+     "id": "subclass-size",
+     "concept": "A subclass contains everything its superclass has",
+     "level": "understand",
+     "stem": "The `EmployeeWithTerritory` class file declares only one field and two methods; `Employee` declares two fields and four methods. Which statement about an `EmployeeWithTerritory` object is accurate?",
+     "options": [
+      {
+       "text": "It has three fields and six methods: its own plus all of `Employee`'s",
+       "feedback": "A subclass contains every field and method of its superclass as well as the ones it adds, so its objects are usually larger than the parent's.",
+       "correct": true
+      },
+      {
+       "text": "It has one field and two methods, because only those appear in its file",
+       "feedback": "A short class file can be misleading. Writing `extends Employee` brings in everything declared in `Employee`."
+      },
+      {
+       "text": "It has two fields and four methods, because the parent's members replace its own",
+       "feedback": "Nothing is replaced: the subclass keeps the parent's members and adds its own on top."
+      },
+      {
+       "text": "It has the parent's methods but none of its fields, which stay in `Employee`",
+       "feedback": "Fields are inherited too. Every `EmployeeWithTerritory` object holds an `id` and a `salary`, even though it can't reach them directly while they are private."
+      }
+     ],
+     "hint": "When you say \"extends Employee\", what comes along with the new class?",
+     "explanation": "A subclass description can look small, but every subclass object contains all of its superclass's fields and methods plus the new, more specific ones. That is why a subclass is usually larger than its superclass.",
+     "ref": "Ch. 9.1, Inheritance Terminology (p. 331)"
+    },
+    {
+     "id": "why-inherit",
+     "concept": "What inheritance does and doesn't give you",
+     "level": "evaluate",
+     "stem": "A classmate says, \"Inheritance lets Java programs do things that would be impossible without it.\" Which response is most accurate?",
+     "options": [
+      {
+       "text": "Nothing new becomes possible; it saves time and reuses tested code",
+       "feedback": "Without inheritance you could still write every class from scratch. Inheritance makes the job faster and less error-prone.",
+       "correct": true
+      },
+      {
+       "text": "It's right, because a subclass can reach its parent's private data",
+       "feedback": "Private members are exactly what a subclass *can't* reach directly. Inheritance respects information hiding."
+      },
+      {
+       "text": "It's right, because inherited methods run faster than rewritten ones",
+       "feedback": "Inherited methods are not faster. The gain is in programmer time and fewer errors, not execution speed."
+      },
+      {
+       "text": "Nothing is gained at all; copying the code by hand is equally safe",
+       "feedback": "Copied code must be retested and maintained in two places. Reusing tested methods is exactly what reduces errors."
+      }
+     ],
+     "hint": "Could you write `EmployeeWithTerritory` if Java had no `extends` keyword? What would it cost you?",
+     "explanation": "Inheritance does not give you the ability to write programs you could not write otherwise. It saves time because fields and methods already exist, reduces errors because they are already tested, and reduces learning for programmers who know the parent class.",
+     "ref": "Ch. 9.1, Learning About the Concept of Inheritance (pp. 330–331)"
+    }
+   ]
+  },
+  {
+   "id": "9.2",
+   "title": "Extending Classes",
+   "subtitle": "The extends keyword, what a subclass object can call, the one-way direction of inheritance, and instanceof",
+   "source": "Ch. 9, section 9.2 (pp. 332–336)",
+   "intro": "A party planner already has a `Party` class, and now some parties serve dinner. Five questions on what one word, `extends`, gives a new class.",
+   "takeaways": [
+    "`class Child extends Parent` gives every `Child` object the parent's fields and nonprivate methods; the child adds only what is new.",
+    "Inheritance is one-way. A parent object can't call methods that only a child declares, because the parent knows nothing about the subclasses that might be written later.",
+    "`obj instanceof SomeClass` is `true` when `obj` is a `SomeClass` or any descendant of it, so a child object is an instance of its parent's class as well as its own."
+   ],
+   "questions": [
+    {
+     "id": "extends-keyword",
+     "concept": "The extends keyword",
+     "level": "remember",
+     "stem": "Which class header makes `EmployeeWithTerritory` a subclass of `Employee` in Java?",
+     "options": [
+      {
+       "text": "`public class EmployeeWithTerritory extends Employee`",
+       "feedback": "`extends` names the one superclass, and the new class receives its fields and methods.",
+       "correct": true
+      },
+      {
+       "text": "`public class EmployeeWithTerritory inherits Employee`",
+       "feedback": "\"Inherits\" describes what happens, but it isn't a Java keyword. The header would not compile."
+      },
+      {
+       "text": "`public class EmployeeWithTerritory : Employee`",
+       "feedback": "The colon is how C# and C++ write inheritance. Java spells the relationship out with a keyword."
+      },
+      {
+       "text": "`public class Employee extends EmployeeWithTerritory`",
+       "feedback": "This makes `Employee` the child. The more specific class is the one that extends the general one."
+      }
+     ],
+     "hint": "Which keyword says the new class *adds to* an existing one?",
+     "explanation": "In Java, a subclass names its superclass after the keyword `extends` in its class header. The subclass automatically receives the superclass's data fields and methods and then adds its own.",
+     "ref": "Ch. 9.2, Extending Classes (p. 332)"
+    },
+    {
+     "id": "inherited-methods",
+     "concept": "A subclass object can call inherited methods",
+     "level": "apply",
+     "stem": "`DinnerParty` declares no `setGuests()` or `getGuests()`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Party\n{\n    private int guests;\n    public int getGuests() { return guests; }\n    public void setGuests(int n) { guests = n; }\n}\nclass DinnerParty extends Party\n{\n    private int dinnerChoice;\n    public int getDinnerChoice() { return dinnerChoice; }\n    public void setDinnerChoice(int c) { dinnerChoice = c; }\n}\n\n// in main()\nDinnerParty aDinnerParty = new DinnerParty();\naDinnerParty.setGuests(12);\naDinnerParty.setDinnerChoice(2);\nSystem.out.println(aDinnerParty.getGuests() + \" guests, menu \"\n    + aDinnerParty.getDinnerChoice());",
+      "verify": {
+       "expect": "output",
+       "program": "class Party\n{\n    private int guests;\n    public int getGuests() { return guests; }\n    public void setGuests(int n) { guests = n; }\n}\nclass DinnerParty extends Party\n{\n    private int dinnerChoice;\n    public int getDinnerChoice() { return dinnerChoice; }\n    public void setDinnerChoice(int c) { dinnerChoice = c; }\n}\n\npublic class UseDinnerParty\n{\n    public static void main(String[] args)\n    {\n        DinnerParty aDinnerParty = new DinnerParty();\n        aDinnerParty.setGuests(12);\n        aDinnerParty.setDinnerChoice(2);\n        System.out.println(aDinnerParty.getGuests() + \" guests, menu \"\n            + aDinnerParty.getDinnerChoice());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`12 guests, menu 2`",
+       "feedback": "`setGuests()` and `getGuests()` come from `Party`, so the `DinnerParty` object stores and returns its guest count through them.",
+       "correct": true
+      },
+      {
+       "text": "`0 guests, menu 2`",
+       "feedback": "This assumes the inherited method sets a different object's field. The `guests` field set here belongs to `aDinnerParty` itself."
+      },
+      {
+       "text": "It does not compile, because `DinnerParty` has no `setGuests()` method",
+       "feedback": "`DinnerParty` doesn't *declare* one, but it inherits one from `Party`. Inherited methods are callable as if written in the child."
+      },
+      {
+       "text": "It does not compile, because `guests` is private in `Party`",
+       "feedback": "The code never touches `guests` directly; it uses the public `setGuests()` and `getGuests()`, which can reach the private field."
+      }
+     ],
+     "hint": "Where does `aDinnerParty` find a method it doesn't declare?",
+     "explanation": "A subclass object can call every nonprivate method of its superclass as if the subclass had declared it. Those methods work on the subclass object's own copy of the inherited fields.",
+     "ref": "Ch. 9.2, You Do It: Creating an Application That Uses the DinnerParty Class (pp. 335–336)"
+    },
+    {
+     "id": "one-way",
+     "concept": "Inheritance is one-way",
+     "level": "apply",
+     "stem": "What happens when this code is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Employee\n{\n    private int id;\n    public int getId() { return id; }\n    public void setId(int idNum) { id = idNum; }\n}\nclass EmployeeWithTerritory extends Employee\n{\n    private int territory;\n    public int getTerritory() { return territory; }\n    public void setTerritory(int terr) { territory = terr; }\n}\n\n// in main()\nEmployee clerk = new Employee();\nclerk.setId(101);\nclerk.setTerritory(5);",
+      "verify": {
+       "expect": "compile_error",
+       "program": "class Employee\n{\n    private int id;\n    public int getId() { return id; }\n    public void setId(int idNum) { id = idNum; }\n}\nclass EmployeeWithTerritory extends Employee\n{\n    private int territory;\n    public int getTerritory() { return territory; }\n    public void setTerritory(int terr) { territory = terr; }\n}\n\npublic class UseEmployee\n{\n    public static void main(String[] args)\n    {\n        Employee clerk = new Employee();\n        clerk.setId(101);\n        clerk.setTerritory(5);\n    }\n}\n",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error at `clerk.setTerritory(5)`: `Employee` has no such method",
+       "feedback": "Only the child declares `setTerritory()`. The compiler looks at `Employee` and finds no such method.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and runs; `clerk` simply ignores the territory",
+       "feedback": "Java doesn't silently ignore calls. A method the type doesn't have is a compile-time error."
+      },
+      {
+       "text": "It compiles, then throws an exception when `setTerritory()` runs",
+       "feedback": "The compiler catches this before the program ever runs, because it knows `Employee` declares no `setTerritory()`."
+      },
+      {
+       "text": "It compiles and works, because every class can use its subclasses' methods",
+       "feedback": "That's the reverse of inheritance. A child gets the parent's methods; a parent never gets a child's."
+      }
+     ],
+     "hint": "Which class declares `setTerritory()`, and which class is `clerk`?",
+     "explanation": "Inheritance is a one-way proposition: a child inherits from its parent, not the other way around. A parent class object has no access to methods that only a subclass declares.",
+     "ref": "Ch. 9.2, Extending Classes (p. 333)"
+    },
+    {
+     "id": "why-one-way",
+     "concept": "Why a parent can't use a child's members",
+     "level": "understand",
+     "stem": "An `Orthodontist` object can call `Dentist`'s `billPatients()`. Why does calling `Orthodontist`'s `applyBraces()` on a plain `Dentist` object fail to compile?",
+     "options": [
+      {
+       "text": "`Dentist` is written before its subclasses and can't know what they'll add",
+       "feedback": "A parent is written first and can have any number of later children. It can't promise methods that only some future child will add.",
+       "correct": true
+      },
+      {
+       "text": "Methods declared in a subclass are private unless marked otherwise",
+       "feedback": "`applyBraces()` can be public and the rule still holds. The limit comes from the direction of inheritance, not access."
+      },
+      {
+       "text": "Java copies methods only from the newer class to the older class",
+       "feedback": "Methods flow from parent to child, and the parent is usually the older class. This has the direction reversed."
+      },
+      {
+       "text": "A `Dentist` object is too small in memory to hold the child's methods",
+       "feedback": "Memory size isn't the reason. A plain `Dentist` simply isn't an `Orthodontist`, so it has no braces to apply."
+      }
+     ],
+     "hint": "Which class has to exist first, and how much can it know about the classes that extend it?",
+     "explanation": "Subclasses are more specific than the superclass they extend. Every child is a parent, so it gets the parent's general methods, but a parent object is not any particular child, so it can't use a child's specialized methods.",
+     "ref": "Ch. 9.2, Extending Classes (p. 333)"
+    },
+    {
+     "id": "instanceof",
+     "concept": "instanceof is true for the class and its ancestors",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Employee\n{\n    private int id;\n    public int getId() { return id; }\n    public void setId(int idNum) { id = idNum; }\n}\nclass EmployeeWithTerritory extends Employee\n{\n    private int territory;\n    public int getTerritory() { return territory; }\n    public void setTerritory(int terr) { territory = terr; }\n}\n\n// in main()\nEmployeeWithTerritory northernRep = new EmployeeWithTerritory();\nEmployee aClerk = new Employee();\nboolean a = northernRep instanceof EmployeeWithTerritory;\nboolean b = northernRep instanceof Employee;\nboolean c = aClerk instanceof EmployeeWithTerritory;\nSystem.out.println(a + \" \" + b + \" \" + c);",
+      "verify": {
+       "expect": "output",
+       "program": "class Employee\n{\n    private int id;\n    public int getId() { return id; }\n    public void setId(int idNum) { id = idNum; }\n}\nclass EmployeeWithTerritory extends Employee\n{\n    private int territory;\n    public int getTerritory() { return territory; }\n    public void setTerritory(int terr) { territory = terr; }\n}\n\npublic class InstanceTest\n{\n    public static void main(String[] args)\n    {\n        EmployeeWithTerritory northernRep = new EmployeeWithTerritory();\n        Employee aClerk = new Employee();\n        boolean a = northernRep instanceof EmployeeWithTerritory;\n        boolean b = northernRep instanceof Employee;\n        boolean c = aClerk instanceof EmployeeWithTerritory;\n        System.out.println(a + \" \" + b + \" \" + c);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`true true false`",
+       "feedback": "`northernRep` is an `EmployeeWithTerritory` and therefore also an `Employee`. A plain `Employee` is not an `EmployeeWithTerritory`.",
+       "correct": true
+      },
+      {
+       "text": "`true false false`",
+       "feedback": "This treats `instanceof` as an exact-class test. It is also true for every ancestor of the object's class."
+      },
+      {
+       "text": "`true true true`",
+       "feedback": "This runs the relationship both ways. A parent object is not an instance of its child class."
+      },
+      {
+       "text": "`false true false`",
+       "feedback": "An object is always an instance of the class that created it, so the first test must be true."
+      }
+     ],
+     "hint": "Can the object on the left be treated as the type on the right?",
+     "explanation": "`instanceof` yields `true` when the object on its left can be upcast to the type on its right: its own class or any superclass. A superclass object is not an instance of its subclasses.",
+     "aside": "Since Java 16, `instanceof` can also declare a variable: `if (obj instanceof Employee e)` tests the object and, when the test passes, gives you `e` already typed as an `Employee`, with no separate cast.",
+     "ref": "Ch. 9.2, the instanceof operator (p. 333)"
+    }
+   ]
+  },
+  {
+   "id": "9.3",
+   "title": "Overriding Superclass Methods",
+   "subtitle": "Overriding versus overloading, polymorphism, return types, and the @Override annotation",
+   "source": "Ch. 9, section 9.3 (pp. 336–339)",
+   "intro": "Hourly workers are paid per hour and contractors per contract, yet every paycheck screen calls one method: `displayRateOfPay()`. Five questions on giving one name many behaviors.",
+   "takeaways": [
+    "A subclass method overrides a superclass method only when it has the same name and the same parameter list. With the same name but different parameters, it overloads instead, and the object has both versions.",
+    "When a method is overridden, calling it on a subclass object runs the subclass version. Using one name for different implementations is polymorphism.",
+    "`@Override` tells the compiler you mean to override, so a misspelled name or wrong parameter list becomes a compile error instead of a silent new method."
+   ],
+   "questions": [
+    {
+     "id": "override-runs",
+     "concept": "The child's version runs for a child object",
+     "level": "apply",
+     "stem": "`DinnerParty2` overrides `displayInvitation()`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Party\n{\n    public void displayInvitation()\n    {\n        System.out.print(\"party! \");\n    }\n}\nclass DinnerParty2 extends Party\n{\n    @Override\n    public void displayInvitation()\n    {\n        System.out.print(\"dinner party! \");\n    }\n}\n\n// in main()\nParty aParty = new Party();\nDinnerParty2 aDinnerParty = new DinnerParty2();\naParty.displayInvitation();\naDinnerParty.displayInvitation();",
+      "verify": {
+       "expect": "output",
+       "program": "class Party\n{\n    public void displayInvitation()\n    {\n        System.out.print(\"party! \");\n    }\n}\nclass DinnerParty2 extends Party\n{\n    @Override\n    public void displayInvitation()\n    {\n        System.out.print(\"dinner party! \");\n    }\n}\n\npublic class UseDinnerParty2\n{\n    public static void main(String[] args)\n    {\n        Party aParty = new Party();\n        DinnerParty2 aDinnerParty = new DinnerParty2();\n        aParty.displayInvitation();\n        aDinnerParty.displayInvitation();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`party! dinner party!`",
+       "feedback": "Each object runs the version its own class provides: `Party`'s for the `Party`, the overriding one for the `DinnerParty2`.",
+       "correct": true
+      },
+      {
+       "text": "`party! party!`",
+       "feedback": "That would be true if `DinnerParty2` only inherited the method. Because it declares the same signature, its own version replaces the parent's for its objects."
+      },
+      {
+       "text": "`party! dinner party! party!`",
+       "feedback": "Overriding replaces the parent's version for the child object; Java doesn't run both unless the child calls `super.displayInvitation()`."
+      },
+      {
+       "text": "`dinner party! dinner party!`",
+       "feedback": "Overriding changes the behavior of child objects only. A plain `Party` object still uses `Party`'s method."
+      }
+     ],
+     "hint": "Which class created each object, and does that class declare its own `displayInvitation()`?",
+     "explanation": "When a child class declares a method with the same name and parameter list as a parent method, it overrides the parent's version. Calling the method on a child object runs the child's version; parent objects are unaffected.",
+     "ref": "Ch. 9.3, You Do It: Overriding a Superclass Method (pp. 338–339)"
+    },
+    {
+     "id": "overload-not-override",
+     "concept": "Different parameters overload rather than override",
+     "level": "analyze",
+     "stem": "`HourlyEmployee` adds a `displayRateOfPay(int hours)` method. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Employee\n{\n    public void displayRateOfPay()\n    {\n        System.out.print(\"per week \");\n    }\n}\nclass HourlyEmployee extends Employee\n{\n    public void displayRateOfPay(int hours)\n    {\n        System.out.print(\"per hour \");\n    }\n}\n\n// in main()\nHourlyEmployee worker = new HourlyEmployee();\nworker.displayRateOfPay();\nworker.displayRateOfPay(40);",
+      "verify": {
+       "expect": "output",
+       "program": "class Employee\n{\n    public void displayRateOfPay()\n    {\n        System.out.print(\"per week \");\n    }\n}\nclass HourlyEmployee extends Employee\n{\n    public void displayRateOfPay(int hours)\n    {\n        System.out.print(\"per hour \");\n    }\n}\n\npublic class PayDemo\n{\n    public static void main(String[] args)\n    {\n        HourlyEmployee worker = new HourlyEmployee();\n        worker.displayRateOfPay();\n        worker.displayRateOfPay(40);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`per week per hour`",
+       "feedback": "The child's method has a different parameter list, so it overloads rather than overrides. The no-argument call still finds `Employee`'s version.",
+       "correct": true
+      },
+      {
+       "text": "`per hour per hour`",
+       "feedback": "This assumes the child's method replaced the parent's. It can't: replacing needs the same parameter list, and these lists differ."
+      },
+      {
+       "text": "`per week per week`",
+       "feedback": "The call with an argument matches only the `int` version, which the child declares, so the second word is `per hour`."
+      },
+      {
+       "text": "It does not compile: a class can't have two methods with one name",
+       "feedback": "Two methods with the same name and different parameter lists are legal overloads. The object has access to both."
+      }
+     ],
+     "hint": "Compare the two parameter lists. Does the child's method replace the parent's, or sit beside it?",
+     "explanation": "A subclass method overrides a superclass method only if both the name and the parameter list match. With a different parameter list, the subclass method overloads the inherited one, and a subclass object can call either version.",
+     "ref": "Ch. 9.3, Overriding Superclass Methods (p. 337)"
+    },
+    {
+     "id": "override-annotation",
+     "concept": "@Override catches a mistyped header",
+     "level": "analyze",
+     "stem": "A student overrides `displayInvitation()` but types a lowercase *i*. What happens when `DinnerParty2` is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Party\n{\n    public void displayInvitation()\n    {\n        System.out.println(\"Please come to my party!\");\n    }\n}\nclass DinnerParty2 extends Party\n{\n    @Override\n    public void displayinvitation()\n    {\n        System.out.println(\"Please come to my dinner party!\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "method does not override or implement a method from a supertype"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: the method doesn't override anything in `Party`",
+       "feedback": "`@Override` promises an override. `displayinvitation()` matches no parent method, so the compiler reports the broken promise.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and overrides, because Java ignores case in method names",
+       "feedback": "Java is case-sensitive: `displayinvitation` and `displayInvitation` are two different identifiers."
+      },
+      {
+       "text": "It compiles and adds a new method; `@Override` is only a comment",
+       "feedback": "That would be the result *without* the annotation. With it, the compiler checks your intent and stops."
+      },
+      {
+       "text": "It compiles, then fails when a `DinnerParty2` object calls the method",
+       "feedback": "Annotation checks happen at compile time. The class never gets far enough to run."
+      }
+     ],
+     "hint": "What does `@Override` ask the compiler to confirm about the method below it?",
+     "explanation": "`@Override` announces that a method is meant to override a superclass method, and the compiler reports an error if it doesn't. Without the annotation, a typo silently creates a new, unrelated method, and the parent's version keeps running.",
+     "aside": "Annotations such as `@Override` arrived in Java 5 in 2004. Before then, a misspelled \"override\" compiled silently, and the only symptom was the parent's version running at the wrong moment.",
+     "ref": "Ch. 9.3, Using the @Override Annotation (pp. 337–339)"
+    },
+    {
+     "id": "return-type",
+     "concept": "Return types must be compatible",
+     "level": "analyze",
+     "stem": "The child keeps the name and the (empty) parameter list but changes the return type. What happens when this compiles?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Parent\n{\n    public int getValue() { return 1; }\n}\nclass Child extends Parent\n{\n    public double getValue() { return 1.5; }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "return type double is not compatible with int"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `double` is not compatible with the inherited `int`",
+       "feedback": "Same name and parameters means this method *would* override `getValue()`. An overriding method can't change the result to an incompatible type, so the compiler refuses.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the child's version overloads the parent's `getValue()`",
+       "feedback": "Overloading needs a different parameter list. Return type alone can't tell two methods apart, because a call doesn't mention it."
+      },
+      {
+       "text": "It compiles; the child's version overrides it and returns `double`",
+       "feedback": "The signature matches, so this is an override attempt, but Java won't let an override return an incompatible type."
+      },
+      {
+       "text": "It compiles; each class keeps its own version for its own objects",
+       "feedback": "A child can't have a second method with the parent's exact signature. With matching signatures there is one method slot, and its type must fit."
+      }
+     ],
+     "hint": "Which two things decide whether a child method overrides a parent method, and what does a call like `obj.getValue()` not mention?",
+     "explanation": "Overriding is decided by the method's name and parameter list (its signature), not by its return type. Once the signatures match, the child's return type must be compatible with the parent's, so changing it to an unrelated type is a compile error.",
+     "ref": "Ch. 9.3, Two Truths & a Lie (p. 338)"
+    },
+    {
+     "id": "subtype-polymorphism",
+     "concept": "Subtype polymorphism",
+     "level": "understand",
+     "stem": "Polymorphism means one name with many forms. Which example is the *subtype* polymorphism that this section builds with inheritance?",
+     "options": [
+      {
+       "text": "`Guitar` and `Drum` each override `MusicalInstrument`'s `play()`",
+       "feedback": "Subclasses of one parent each give the same inherited method their own implementation. That is subtype polymorphism.",
+       "correct": true
+      },
+      {
+       "text": "The `+` operator adds two `int`s but joins two `String`s together",
+       "feedback": "`+` is polymorphic, but it works by operand type, with no superclass or subclass involved."
+      },
+      {
+       "text": "One class declares both `setPay(double)` and `setPay(double, int)`",
+       "feedback": "Overloads are polymorphic too, but the call is chosen by its arguments, not by a subclass's version of an inherited method."
+      },
+      {
+       "text": "A local variable named `rate` hides a field named `rate`",
+       "feedback": "That reuse of a name is about scope. No method is given different implementations."
+      }
+     ],
+     "hint": "Which example needs a superclass and subclasses to exist?",
+     "explanation": "Polymorphism is any use of one name for different behaviors. When subclasses of the same parent each implement an inherited method in their own way, Java developers call it subtype polymorphism, and it is a basic requirement for a language to be considered object-oriented.",
+     "ref": "Ch. 9.3, Overriding Superclass Methods (pp. 336–337)"
+    }
+   ]
+  },
+  {
+   "id": "9.4",
+   "title": "Calling Constructors During Inheritance",
+   "subtitle": "Constructor order, superclass constructors that need arguments, and super(...)",
+   "source": "Ch. 9, section 9.4 (pp. 339–343)",
+   "intro": "A subclass that compiled yesterday fails today, and the only change was a new constructor in its *parent*. Five questions on how objects are built in layers.",
+   "takeaways": [
+    "Creating a subclass object runs the superclass constructor first, then the subclass constructor, all the way down the chain, even though only one object is created.",
+    "If you write no call, Java inserts `super()` with no arguments. So when a superclass has only constructors that need arguments, every subclass must write a constructor that calls `super(...)` with them.",
+    "A subclass constructor's parameter list doesn't have to match its parent's: it only has to pass the parent constructor what it needs, using the keyword `super`, never the parent's class name."
+   ],
+   "questions": [
+    {
+     "id": "ctor-order",
+     "concept": "Superclass constructors run first",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Party\n{\n    public Party() { System.out.print(\"Party \"); }\n}\nclass DinnerParty extends Party\n{\n    public DinnerParty() { System.out.print(\"Dinner \"); }\n}\nclass WeddingDinner extends DinnerParty\n{\n    public WeddingDinner() { System.out.print(\"Wedding \"); }\n}\n\n// in main()\nWeddingDinner event = new WeddingDinner();",
+      "verify": {
+       "expect": "output",
+       "program": "class Party\n{\n    public Party() { System.out.print(\"Party \"); }\n}\nclass DinnerParty extends Party\n{\n    public DinnerParty() { System.out.print(\"Dinner \"); }\n}\nclass WeddingDinner extends DinnerParty\n{\n    public WeddingDinner() { System.out.print(\"Wedding \"); }\n}\n\npublic class DemoConstructors\n{\n    public static void main(String[] args)\n    {\n        WeddingDinner event = new WeddingDinner();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Party Dinner Wedding`",
+       "feedback": "Before each constructor's own statements run, it calls its parent's. The chain starts at the top, so `Party` prints first.",
+       "correct": true
+      },
+      {
+       "text": "`Wedding Dinner Party`",
+       "feedback": "This reads the chain from the object you named upward. Construction runs the other way: the most general part is built first."
+      },
+      {
+       "text": "`Wedding`",
+       "feedback": "Only one object is created, but three constructors run. Each ancestor's constructor builds its part of the object."
+      },
+      {
+       "text": "`Dinner Wedding`",
+       "feedback": "The chain doesn't stop at the direct parent. `DinnerParty`'s constructor also calls `Party`'s before its own body runs."
+      }
+     ],
+     "hint": "Before any constructor's body runs, what must happen to the part of the object it inherits?",
+     "explanation": "When you create a subclass object, the superclass constructor must execute first, then the subclass constructor. With several generations, constructors run from the most general ancestor down to the class you instantiated.",
+     "ref": "Ch. 9.4, Calling Constructors During Inheritance (pp. 339–340)"
+    },
+    {
+     "id": "missing-super",
+     "concept": "A superclass that needs arguments forces a subclass constructor",
+     "level": "analyze",
+     "stem": "The only `PartyWithConstructor2` constructor now requires an `int`. Why does the subclass, unchanged, stop compiling?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class PartyWithConstructor2\n{\n    private int guests;\n    public PartyWithConstructor2(int numGuests)\n    {\n        guests = numGuests;\n    }\n}\nclass DinnerPartyWithConstructor2 extends PartyWithConstructor2\n{\n    private int dinnerChoice;\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "cannot be applied to given types"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "Its automatic constructor calls a no-argument `super()` that no longer exists",
+       "feedback": "Without a constructor of its own, the subclass gets a default one that calls the parent's no-argument constructor. The parent no longer has one.",
+       "correct": true
+      },
+      {
+       "text": "A subclass must redeclare the `guests` field that the parent's constructor sets",
+       "feedback": "The subclass already inherits `guests`. Redeclaring it wouldn't fix the missing constructor call."
+      },
+      {
+       "text": "No subclass can compile unless it declares at least one constructor of its own",
+       "feedback": "The subclass compiled fine before the parent changed. A subclass needs its own constructor only in this situation."
+      },
+      {
+       "text": "It still compiles; Java passes 0 for the missing `numGuests` argument",
+       "feedback": "Java never invents arguments. With no `int` to pass, the call to the parent's constructor fails to compile."
+      }
+     ],
+     "hint": "If you write no constructor, what does Java's automatic constructor call first?",
+     "explanation": "A class with no constructor gets a default one, and every constructor that doesn't call `super(...)` explicitly begins with an implicit `super()`. When the superclass has only constructors that need arguments, the subclass must write a constructor that calls one of them.",
+     "ref": "Ch. 9.4, Inheritance When the Superclass Requires Constructor Arguments (p. 343)"
+    },
+    {
+     "id": "valid-super-call",
+     "concept": "Calling a superclass constructor with super",
+     "level": "apply",
+     "stem": "`Employee`'s only constructor is `Employee(char dept, double rate, int hours)`. Which `HourlyEmployee` constructor compiles?",
+     "options": [
+      {
+       "text": "`public HourlyEmployee() { super('P', 22.35, 40); }`",
+       "feedback": "The subclass needs no parameters of its own; it just has to hand the parent constructor the three values it requires.",
+       "correct": true
+      },
+      {
+       "text": "`public HourlyEmployee() { Employee('P', 22.35, 40); }`",
+       "feedback": "It seems natural to call the parent constructor by name, but Java doesn't allow it. The call must use the keyword `super`."
+      },
+      {
+       "text": "`public HourlyEmployee() { this('P', 22.35, 40); }`",
+       "feedback": "`this(...)` calls another constructor of `HourlyEmployee` itself, and it has none with these parameters. The parent is reached with `super`."
+      },
+      {
+       "text": "`public HourlyEmployee() { }`",
+       "feedback": "An empty body still begins with an implicit `super()`, and `Employee` has no constructor without parameters."
+      }
+     ],
+     "hint": "What does `Employee`'s only constructor need, and what keyword reaches it from a subclass?",
+     "explanation": "A subclass calls a superclass constructor with `super(arguments)`, and the arguments must match a superclass constructor. They can come from the subclass constructor's parameters or be constants.",
+     "ref": "Ch. 9.4, Using Superclass Constructors That Require Arguments (p. 341)"
+    },
+    {
+     "id": "default-ctor-available",
+     "concept": "A default superclass constructor removes the requirement",
+     "level": "apply",
+     "stem": "`Party` has two constructors, and `DinnerParty` declares none. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Party\n{\n    public Party() { System.out.println(\"default\"); }\n    public Party(int guests) { System.out.println(\"int\"); }\n}\nclass DinnerParty extends Party\n{\n}\n\n// in main()\nDinnerParty event = new DinnerParty();",
+      "verify": {
+       "expect": "output",
+       "program": "class Party\n{\n    public Party() { System.out.println(\"default\"); }\n    public Party(int guests) { System.out.println(\"int\"); }\n}\nclass DinnerParty extends Party\n{\n}\n\npublic class DefaultCtorDemo\n{\n    public static void main(String[] args)\n    {\n        DinnerParty event = new DinnerParty();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`default`",
+       "feedback": "With no constructor of its own, `DinnerParty`'s automatic constructor calls `super()`, which matches `Party`'s no-argument version.",
+       "correct": true
+      },
+      {
+       "text": "`int`",
+       "feedback": "Nothing passes an `int` here. Java picks the parent constructor that matches the call, and `super()` has no arguments."
+      },
+      {
+       "text": "Nothing; a subclass with no constructor runs no constructors",
+       "feedback": "Every object creation runs constructors. The subclass gets an automatic one, and it calls the parent's."
+      },
+      {
+       "text": "It does not compile; `DinnerParty` needs its own constructor",
+       "feedback": "A subclass needs its own constructor only when every superclass constructor requires arguments. Here one doesn't."
+      }
+     ],
+     "hint": "Which superclass constructor does an automatic `super()` call match?",
+     "explanation": "If a superclass has a default (no-argument) constructor, its subclasses don't need constructors. A subclass without one gets Java's automatic constructor, which calls the superclass's default constructor.",
+     "aside": "Since Java 25, a constructor may run statements *before* its `super(...)` call, as long as they don't use the object being built: handy for checking an argument first. In Java 21 and earlier, `super(...)` must be the first statement.",
+     "ref": "Ch. 9.4, Table 9-1 (p. 341)"
+    },
+    {
+     "id": "ctor-params-differ",
+     "concept": "Subclass constructor parameters can differ from the parent's",
+     "level": "understand",
+     "stem": "`DinnerPartyWithConstructor2` must call `PartyWithConstructor2(int numGuests)`. Which statement about its constructor is accurate?",
+     "options": [
+      {
+       "text": "It must pass the parent an `int`; its own parameters are up to you",
+       "feedback": "It could take no parameters and pass a constant, or take several and pass one along. The only requirement is the call to `super`.",
+       "correct": true
+      },
+      {
+       "text": "It must have exactly one `int` parameter, matching the parent",
+       "feedback": "Matching is common but not required. `public DinnerPartyWithConstructor2() { super(0); }` is legal."
+      },
+      {
+       "text": "It must assign `guests` itself, because constructors aren't inherited",
+       "feedback": "Constructors aren't inherited, but the parent's still runs through `super(...)`, and it sets `guests`. The child sets only its own fields."
+      },
+      {
+       "text": "It may take parameters only if it passes all of them to `super`",
+       "feedback": "A subclass constructor can keep some arguments for its own fields, such as `dinnerChoice`, and pass the rest to its parent."
+      }
+     ],
+     "hint": "What exactly does the parent's constructor need from the child?",
+     "explanation": "When a superclass constructor requires arguments, the subclass constructor must call `super(...)` and give it what it needs. The subclass constructor's own parameter list is independent: it can supply constants, forward some parameters, or keep others for subclass fields.",
+     "ref": "Ch. 9.4, You Do It: Inheritance When the Superclass Requires Constructor Arguments (p. 343)"
+    }
+   ]
+  },
+  {
+   "id": "9.5",
+   "title": "Accessing Superclass Methods",
+   "subtitle": "Reusing an overridden method with super, and when this and super refer to different methods",
+   "source": "Ch. 9, section 9.5 (pp. 344–346)",
+   "intro": "A preferred customer's receipt needs everything a regular receipt shows, plus a discount line, and the regular version is already written. Four questions on reaching past your own override.",
+   "takeaways": [
+    "Inside a subclass, `super.method()` runs the superclass version of a method even when the subclass overrides it. Unlike `super(...)` in a constructor, it can appear anywhere in the method.",
+    "When a subclass overrides a method, the plain name and `this.method()` both mean the subclass version; only `super.method()` reaches the parent's. When it doesn't override, all three reach the same inherited method.",
+    "An overriding method that calls its own name without `super.` calls itself, and with no way to stop, it recurses until a `StackOverflowError` ends the program."
+   ],
+   "questions": [
+    {
+     "id": "super-display",
+     "concept": "super.method() reuses the parent's version",
+     "level": "apply",
+     "stem": "`PreferredCustomer` overrides `display()` and calls `super.display()` first. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Customer\n{\n    private int idNumber;\n    private double balanceOwed;\n    public Customer(int id, double bal)\n    {\n        idNumber = id;\n        balanceOwed = bal;\n    }\n    public void display()\n    {\n        System.out.print(\"#\" + idNumber + \" \");\n        System.out.print(\"$\" + balanceOwed + \" \");\n    }\n}\nclass PreferredCustomer extends Customer\n{\n    private double discountRate;\n    public PreferredCustomer(int id, double bal, double rate)\n    {\n        super(id, bal);\n        discountRate = rate;\n    }\n    @Override\n    public void display()\n    {\n        super.display();\n        System.out.print(\"rate \" + discountRate);\n    }\n}\n\n// in main()\nPreferredCustomer onePCust =\n    new PreferredCustomer(125, 3456.78, 0.15);\nonePCust.display();",
+      "verify": {
+       "expect": "output",
+       "program": "class Customer\n{\n    private int idNumber;\n    private double balanceOwed;\n    public Customer(int id, double bal)\n    {\n        idNumber = id;\n        balanceOwed = bal;\n    }\n    public void display()\n    {\n        System.out.print(\"#\" + idNumber + \" \");\n        System.out.print(\"$\" + balanceOwed + \" \");\n    }\n}\nclass PreferredCustomer extends Customer\n{\n    private double discountRate;\n    public PreferredCustomer(int id, double bal, double rate)\n    {\n        super(id, bal);\n        discountRate = rate;\n    }\n    @Override\n    public void display()\n    {\n        super.display();\n        System.out.print(\"rate \" + discountRate);\n    }\n}\n\npublic class TestCustomers\n{\n    public static void main(String[] args)\n    {\n        PreferredCustomer onePCust =\n            new PreferredCustomer(125, 3456.78, 0.15);\n        onePCust.display();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`#125 $3456.78 rate 0.15`",
+       "feedback": "`super.display()` runs `Customer`'s version, which prints the id and balance; then the child's own statement adds the rate.",
+       "correct": true
+      },
+      {
+       "text": "`#0 $0.0 rate 0.15`",
+       "feedback": "This treats `super.display()` as reading some other, empty `Customer`. It runs on this same object, whose id and balance `super(id, bal)` already set."
+      },
+      {
+       "text": "`#125 $3456.78 #125 $3456.78 rate 0.15`",
+       "feedback": "This runs the parent's version on its own and then again inside the child's. Only the child's `display()` runs for the object, and it calls the parent's once."
+      },
+      {
+       "text": "`rate 0.15 #125 $3456.78`",
+       "feedback": "The order follows the statements in the child's method, and `super.display()` comes first."
+      }
+     ],
+     "hint": "Trace the child's `display()` one statement at a time. What does its first statement run?",
+     "explanation": "When a subclass overrides a method but still wants the superclass behavior, it calls `super.methodName()`. The parent's version runs at that point, then the rest of the child's method continues.",
+     "ref": "Ch. 9.5, Figures 9-10 to 9-13 (pp. 344–345)"
+    },
+    {
+     "id": "this-vs-super-overridden",
+     "concept": "this and super differ after an override",
+     "level": "apply",
+     "stem": "`ChildClass` overrides `someMethod()`. What does `new ChildClass().aDifferentMethod()` print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class ParentClass\n{\n    public void someMethod() { System.out.print(\"P \"); }\n}\nclass ChildClass extends ParentClass\n{\n    @Override\n    public void someMethod() { System.out.print(\"C \"); }\n    public void aDifferentMethod()\n    {\n        someMethod();\n        this.someMethod();\n        super.someMethod();\n    }\n}\n\n// in main()\nnew ChildClass().aDifferentMethod();",
+      "verify": {
+       "expect": "output",
+       "program": "class ParentClass\n{\n    public void someMethod() { System.out.print(\"P \"); }\n}\nclass ChildClass extends ParentClass\n{\n    @Override\n    public void someMethod() { System.out.print(\"C \"); }\n    public void aDifferentMethod()\n    {\n        someMethod();\n        this.someMethod();\n        super.someMethod();\n    }\n}\n\npublic class ThisSuperDemo\n{\n    public static void main(String[] args)\n    {\n        new ChildClass().aDifferentMethod();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`C C P`",
+       "feedback": "The plain name and `this.` both mean the child's own `someMethod()`. Only `super.` skips past the override to the parent's.",
+       "correct": true
+      },
+      {
+       "text": "`C P P`",
+       "feedback": "`this` refers to the current object, a `ChildClass`, so `this.someMethod()` runs the child's version, just like the plain call."
+      },
+      {
+       "text": "`P P P`",
+       "feedback": "Inside the child, the override is in effect. Only the call through `super` gets the parent's version."
+      },
+      {
+       "text": "`C C C`",
+       "feedback": "`super.someMethod()` always reaches the superclass version, even when the child overrides it."
+      }
+     ],
+     "hint": "Which object does `this` refer to, and where does `super` start looking?",
+     "explanation": "If a subclass overrides `someMethod()`, then within the subclass `someMethod()` and `this.someMethod()` refer to the subclass version, and `super.someMethod()` refers to the superclass version.",
+     "ref": "Ch. 9.5, Comparing this and super (p. 345)"
+    },
+    {
+     "id": "this-vs-super-inherited",
+     "concept": "Without an override, all three reach the same method",
+     "level": "analyze",
+     "stem": "`ChildClass2` does **not** override `someMethod()`. What does `new ChildClass2().aDifferentMethod()` print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class ParentClass2\n{\n    public void someMethod() { System.out.print(\"P \"); }\n}\nclass ChildClass2 extends ParentClass2\n{\n    public void aDifferentMethod()\n    {\n        someMethod();\n        this.someMethod();\n        super.someMethod();\n    }\n}\n\n// in main()\nnew ChildClass2().aDifferentMethod();",
+      "verify": {
+       "expect": "output",
+       "program": "class ParentClass2\n{\n    public void someMethod() { System.out.print(\"P \"); }\n}\nclass ChildClass2 extends ParentClass2\n{\n    public void aDifferentMethod()\n    {\n        someMethod();\n        this.someMethod();\n        super.someMethod();\n    }\n}\n\npublic class ThisSuperDemo2\n{\n    public static void main(String[] args)\n    {\n        new ChildClass2().aDifferentMethod();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`P P P`",
+       "feedback": "The child has only the inherited method. The plain name, `this.` and `super.` all find that one `someMethod()`.",
+       "correct": true
+      },
+      {
+       "text": "It does not compile: `this.someMethod()` needs a method declared in `ChildClass2`",
+       "feedback": "An inherited method is a member of the subclass, so `this.someMethod()` finds it without the child declaring it."
+      },
+      {
+       "text": "It does not compile: `super` can only be used with an overridden method",
+       "feedback": "`super.someMethod()` works whether or not the child overrides it. It's only *needed* when it does."
+      },
+      {
+       "text": "`P P` and then nothing, because `super` has nothing new to call",
+       "feedback": "Every call runs the inherited method; `super.someMethod()` isn't skipped just because it runs the same code."
+      }
+     ],
+     "hint": "If the child declares no `someMethod()`, how many versions of it exist for a `ChildClass2` object?",
+     "explanation": "If a subclass has not overridden an inherited method, it can call that method with `super.`, with `this.` or with the name alone, because the superclass method is a member of the subclass by inheritance. All three run the same code.",
+     "ref": "Ch. 9.5, Comparing this and super (p. 345)"
+    },
+    {
+     "id": "forgot-super",
+     "concept": "Calling your own name instead of super recurses",
+     "level": "analyze",
+     "stem": "A student meant to reuse the parent's `display()` but left out `super.`. What happens when `display()` is called on a `PreferredCustomer`?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Customer\n{\n    public void display() { System.out.println(\"customer\"); }\n}\nclass PreferredCustomer extends Customer\n{\n    @Override\n    public void display()\n    {\n        display();\n        System.out.println(\"rate 0.15\");\n    }\n}\n\n// in main()\nnew PreferredCustomer().display();",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "class Customer\n{\n    public void display() { System.out.println(\"customer\"); }\n}\nclass PreferredCustomer extends Customer\n{\n    @Override\n    public void display()\n    {\n        display();\n        System.out.println(\"rate 0.15\");\n    }\n}\n\npublic class ForgotSuper\n{\n    public static void main(String[] args)\n    {\n        new PreferredCustomer().display();\n    }\n}\n",
+       "error_contains": [
+        "StackOverflowError"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It throws a `StackOverflowError`",
+       "feedback": "Inside the override, `display()` means the child's own method, so it calls itself again and again until the call stack runs out.",
+       "correct": true
+      },
+      {
+       "text": "It prints the customer line, then the rate",
+       "feedback": "That's what `super.display()` would do. Without `super.`, the call reaches the child's version, not `Customer`'s."
+      },
+      {
+       "text": "It does not compile, because a method can't call itself",
+       "feedback": "Java allows a method to call itself (recursion). The compiler can't tell that this one never stops."
+      },
+      {
+       "text": "It prints `rate 0.15` once, because Java skips a call to the current method",
+       "feedback": "Java never skips a call. The first statement calls `display()` again before the `print()` is ever reached."
+      }
+     ],
+     "hint": "Within `PreferredCustomer`, which version of `display()` does the plain name refer to?",
+     "explanation": "Within a subclass that overrides a method, the method's plain name means the subclass version. Calling it from inside that same method makes it call itself forever; only `super.methodName()` reaches the parent's version.",
+     "aside": "Each method call reserves a frame on the thread's call stack, and the stack has a fixed size, often 1 MB by default on 64-bit systems. Java's `-Xss` option changes it, but no size survives a recursion that never stops.",
+     "ref": "Ch. 9.5, Accessing Superclass Methods (p. 344)"
+    }
+   ]
+  },
+  {
+   "id": "9.6",
+   "title": "Employing Information Hiding",
+   "subtitle": "Private members in subclasses, protected access, and why classes that reach into their parents are fragile",
+   "source": "Ch. 9, section 9.6 (pp. 346–347)",
+   "intro": "A new `PartTimeStudent` class wants to change its own ID number directly, and the compiler says no. Four questions on who may touch a parent's data.",
+   "takeaways": [
+    "A subclass object contains its parent's private fields, but subclass methods can't name them. They reach that data through the parent's public methods, like any other class.",
+    "`protected` is the middle level: the class and its descendants can use the member directly, while outside classes can't. Use it sparingly.",
+    "Classes that use their parent's fields directly are fragile: a change inside the parent can break them, and they skip any rules the parent's methods enforce."
+   ],
+   "questions": [
+    {
+     "id": "private-in-child",
+     "concept": "Subclass methods can't use the parent's private fields",
+     "level": "apply",
+     "stem": "What happens when `PartTimeStudent` is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Student\n{\n    private int idNum;\n    public int getIdNum() { return idNum; }\n    public void setIdNum(int num) { idNum = num; }\n}\nclass PartTimeStudent extends Student\n{\n    public void resetId()\n    {\n        idNum = 0;\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "has private access"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `idNum` has private access in `Student`",
+       "feedback": "Private members can be used only by methods of the class that declares them. Not even a subclass gets an exception.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because a subclass inherits every field of its parent",
+       "feedback": "It does inherit the field, which is in every `PartTimeStudent` object, but inheriting it doesn't grant access to it."
+      },
+      {
+       "text": "It compiles, but `idNum` is a new field unrelated to `Student`'s",
+       "feedback": "Assigning to `idNum` doesn't declare anything. The compiler finds `Student`'s field and reports that it is private."
+      },
+      {
+       "text": "It compiles, then throws an exception when `resetId()` runs",
+       "feedback": "Access rules are checked when the code is compiled, so the program never gets as far as running."
+      }
+     ],
+     "hint": "Who is allowed to use a member marked `private`?",
+     "explanation": "Subclasses inherit all of their superclass's data and methods, but private members of the parent are not accessible within the child class's methods. Otherwise any class could bypass information hiding just by extending another.",
+     "ref": "Ch. 9.6, Employing Information Hiding (p. 347)"
+    },
+    {
+     "id": "private-via-public",
+     "concept": "Private data is still reachable through public methods",
+     "level": "apply",
+     "stem": "This version of `PartTimeStudent` goes through `Student`'s public methods. What does the code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Student\n{\n    private int idNum;\n    public int getIdNum() { return idNum; }\n    public void setIdNum(int num) { idNum = num; }\n}\nclass PartTimeStudent extends Student\n{\n    public void show()\n    {\n        System.out.println(getIdNum());\n    }\n}\n\n// in main()\nPartTimeStudent pts = new PartTimeStudent();\npts.setIdNum(812);\npts.show();",
+      "verify": {
+       "expect": "output",
+       "program": "class Student\n{\n    private int idNum;\n    public int getIdNum() { return idNum; }\n    public void setIdNum(int num) { idNum = num; }\n}\nclass PartTimeStudent extends Student\n{\n    public void show()\n    {\n        System.out.println(getIdNum());\n    }\n}\n\npublic class UsePartTime\n{\n    public static void main(String[] args)\n    {\n        PartTimeStudent pts = new PartTimeStudent();\n        pts.setIdNum(812);\n        pts.show();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`812`",
+       "feedback": "The child object contains `Student`'s `idNum` field. `setIdNum()` stores 812 there, and `getIdNum()` reads it back.",
+       "correct": true
+      },
+      {
+       "text": "`0`",
+       "feedback": "This imagines the child having a separate copy that `setIdNum()` doesn't touch. There is one `idNum` in the object, and the setter changes it."
+      },
+      {
+       "text": "It does not compile, because `show()` reads a private field",
+       "feedback": "`show()` never names `idNum`. It calls the public `getIdNum()`, which is allowed to read the private field."
+      },
+      {
+       "text": "It does not compile, because a subclass can't call its parent's setters",
+       "feedback": "A subclass can call any nonprivate method it inherits; `setIdNum()` is public."
+      }
+     ],
+     "hint": "Which line names `idNum` directly, if any?",
+     "explanation": "A child class can work with its parent's private fields by using the public methods the parent defines, just as any other class can. The private field still exists in the child object; only direct access is blocked.",
+     "ref": "Ch. 9.6, Employing Information Hiding (p. 347)"
+    },
+    {
+     "id": "protected-choice",
+     "concept": "protected gives descendants direct access",
+     "level": "apply",
+     "stem": "`FullTimeStudent` and `PartTimeStudent` should use `gpa` directly, but a class like `Registrar`, which is unrelated and in another package, should **not**. Which declaration in `Student` fits?",
+     "options": [
+      {
+       "text": "`protected double gpa;`",
+       "feedback": "`protected` members can be used by the class and its descendants, while unrelated outside classes are kept out.",
+       "correct": true
+      },
+      {
+       "text": "`public double gpa;`",
+       "feedback": "Public gives the subclasses access, but `Registrar` gets it too, which defeats information hiding."
+      },
+      {
+       "text": "`double gpa;` with no access specifier",
+       "feedback": "Without a specifier, access is package-level: subclasses in a different package lose access."
+      },
+      {
+       "text": "`private static double gpa;`",
+       "feedback": "`static` would make one `gpa` shared by every student, and `private` still locks the subclasses out."
+      }
+     ],
+     "hint": "You want an access level between `public` and `private`. Which keyword names it?",
+     "explanation": "`protected` provides an intermediate level of security between public and private: a protected field or method can be used within its own class and in any class extended from it, but not by unrelated outside classes.",
+     "aside": "Java's `protected` is a little more open than the name suggests: it also lets every class in the *same package* use the member. C# and C++ keep protected strictly to the class and its descendants.",
+     "ref": "Ch. 9.6, protected access (p. 347)"
+    },
+    {
+     "id": "fragile",
+     "concept": "Direct field access makes subclasses fragile",
+     "level": "evaluate",
+     "stem": "A teammate makes every `Student` field `protected` \"so subclasses run faster.\" What is the strongest objection?",
+     "options": [
+      {
+       "text": "Subclasses then depend on `Student`'s internals and skip its validation",
+       "feedback": "Children that use parent fields directly break when the parent changes, and they can store values the parent's setters would reject.",
+       "correct": true
+      },
+      {
+       "text": "Protected fields can't be read by `Student`'s own methods",
+       "feedback": "The class itself always has access to its own members, whatever their specifier."
+      },
+      {
+       "text": "Subclasses no longer inherit fields once they're protected",
+       "feedback": "Protected fields are inherited and usable in subclasses; that's exactly what the teammate is counting on."
+      },
+      {
+       "text": "It's not faster at all: protected access is slower than calling a method",
+       "feedback": "Direct access does avoid the method call, so it can be slightly faster. The objection is about safety, not speed."
+      }
+     ],
+     "hint": "If `Student` later renames `gpa` or adds a rule to `setGpa()`, what happens to classes that use `gpa` directly?",
+     "explanation": "Protected data can be convenient and slightly faster, but it should be used sparingly. Whenever possible, even child classes should go through public methods, because classes that use their parents' fields directly are fragile: they are easy to break.",
+     "ref": "Ch. 9.6, Employing Information Hiding (p. 347)"
+    }
+   ]
+  },
+  {
+   "id": "9.7",
+   "title": "Methods You Cannot Override",
+   "subtitle": "static methods are hidden, not overridden; final methods; final classes",
+   "source": "Ch. 9, section 9.7 (pp. 348–352)",
+   "intro": "A legal-notice method must say exactly the same thing in every subclass. Five questions on the three kinds of methods a subclass can't override.",
+   "takeaways": [
+    "A subclass can't override `static`, `final`, or `final`-class methods. A `final` class can't be extended at all.",
+    "A `static` method in a subclass with the same signature *hides* the parent's. The version that runs is chosen from the declared type at compile time, not from the object at run time.",
+    "A static method has no `this` object, so it can't use `super`; to reuse the parent's static method, call it with the class name, as in `BaseballPlayer.showOrigins()`."
+   ],
+   "questions": [
+    {
+     "id": "final-method",
+     "concept": "final methods can't be overridden",
+     "level": "apply",
+     "stem": "What happens when `ProfessionalBasketballPlayer` is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BasketballPlayer\n{\n    public final void displayMessage()\n    {\n        System.out.println(\"Michael Jordan is the greatest\");\n    }\n}\nclass ProfessionalBasketballPlayer extends BasketballPlayer\n{\n    @Override\n    public void displayMessage()\n    {\n        System.out.println(\"I have nothing to say\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "overridden method is final"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error, because `displayMessage()` is final in the parent",
+       "feedback": "`final` on a method means every subclass must use the parent's version. Declaring a replacement is an error.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and the child's message replaces the parent's",
+       "feedback": "That's normal overriding, which `final` exists to prevent."
+      },
+      {
+       "text": "It compiles, but the parent's message always runs instead",
+       "feedback": "Java doesn't quietly ignore the child's method; the compiler refuses the class."
+      },
+      {
+       "text": "It compiles, because `@Override` lets a child replace a final method",
+       "feedback": "`@Override` only checks that you are overriding. It can't unlock a `final` method."
+      }
+     ],
+     "hint": "What does `final` promise about a method's definition?",
+     "explanation": "A subclass cannot override a method declared `final` in its superclass. Use `final` when every child class must use the original parent version.",
+     "ref": "Ch. 9.7, A Subclass Cannot Override final Methods (pp. 350–351)"
+    },
+    {
+     "id": "final-class",
+     "concept": "A final class can't be extended",
+     "level": "understand",
+     "stem": "`HideAndGoSeekPlayer` is declared `public final class`. Which statement about it is accurate?",
+     "options": [
+      {
+       "text": "No class can extend it, so none of its methods can ever be overridden",
+       "feedback": "A final class can't be a parent at all, which makes every one of its methods effectively final.",
+       "correct": true
+      },
+      {
+       "text": "Classes can extend it, but they can't add new fields",
+       "feedback": "The restriction is stronger: `extends HideAndGoSeekPlayer` itself is a compile error."
+      },
+      {
+       "text": "Its fields become constants that can't change after construction",
+       "feedback": "`final` on a class says nothing about its fields. A final class can have ordinary fields that change."
+      },
+      {
+       "text": "It can't be instantiated; it only provides methods to other classes",
+       "feedback": "That describes an abstract class, the opposite case. A final class is meant to be used, not extended."
+      }
+     ],
+     "hint": "Can a final class appear after `extends` in another class header?",
+     "explanation": "When you declare a class `final`, all of its methods are final and the class cannot be a parent. Java's `Math` class is an example.",
+     "aside": "`java.lang.String` is final too. Because nobody can subclass it, code that receives a `String` can trust that it behaves like a real `String`, which matters when strings carry file names or passwords.",
+     "ref": "Ch. 9.7, A Subclass Cannot Override Methods in a final Superclass (pp. 351–352)"
+    },
+    {
+     "id": "static-hiding-output",
+     "concept": "Reusing a parent's static method by class name",
+     "level": "apply",
+     "stem": "The child's static method hides the parent's and calls it by class name. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.print(\"Doubleday \");\n    }\n}\nclass ProfessionalBaseballPlayer extends BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        BaseballPlayer.showOrigins();\n        System.out.print(\"1871\");\n    }\n}\n\n// in main()\nProfessionalBaseballPlayer aYankee =\n    new ProfessionalBaseballPlayer();\naYankee.showOrigins();",
+      "verify": {
+       "expect": "output",
+       "program": "class BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.print(\"Doubleday \");\n    }\n}\nclass ProfessionalBaseballPlayer extends BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        BaseballPlayer.showOrigins();\n        System.out.print(\"1871\");\n    }\n}\n\npublic class TestProPlayer\n{\n    public static void main(String[] args)\n    {\n        ProfessionalBaseballPlayer aYankee =\n            new ProfessionalBaseballPlayer();\n        aYankee.showOrigins();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Doubleday 1871`",
+       "feedback": "The child's static `showOrigins()` runs, and its first statement calls the parent's static version through the class name.",
+       "correct": true
+      },
+      {
+       "text": "`1871`",
+       "feedback": "This misses the first statement. `BaseballPlayer.showOrigins()` explicitly runs the parent's method."
+      },
+      {
+       "text": "`Doubleday`",
+       "feedback": "The child's method hides the parent's, so the call starts in the child's version, which prints both words."
+      },
+      {
+       "text": "It does not compile, because a static method can't call another class's method",
+       "feedback": "Any class can call another class's nonprivate static method with the class name and a dot."
+      }
+     ],
+     "hint": "Which `showOrigins()` does the call on `aYankee` start in, and what does its first statement do?",
+     "explanation": "A subclass can hide a superclass static method by declaring one with the same signature. It can't use `super` there, but it can call the parent's nonprivate static method by class name, as any class can.",
+     "ref": "Ch. 9.7, Figures 9-21 to 9-23 (pp. 349–350)"
+    },
+    {
+     "id": "static-binding",
+     "concept": "Hidden static methods follow the declared type",
+     "level": "analyze",
+     "stem": "The variable is declared as the parent type but holds a child object. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.print(\"Doubleday\");\n    }\n}\nclass ProfessionalBaseballPlayer extends BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.print(\"1871\");\n    }\n}\n\n// in main()\nBaseballPlayer player = new ProfessionalBaseballPlayer();\nplayer.showOrigins();",
+      "verify": {
+       "expect": "output",
+       "program": "class BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.print(\"Doubleday\");\n    }\n}\nclass ProfessionalBaseballPlayer extends BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.print(\"1871\");\n    }\n}\n\npublic class StaticBinding\n{\n    public static void main(String[] args)\n    {\n        BaseballPlayer player = new ProfessionalBaseballPlayer();\n        player.showOrigins();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Doubleday`",
+       "feedback": "Static methods aren't overridden, so the call is bound from the declared type, `BaseballPlayer`, when the code is compiled.",
+       "correct": true
+      },
+      {
+       "text": "`1871`",
+       "feedback": "That would be true for an instance method, which follows the object. Static methods follow the variable's declared type."
+      },
+      {
+       "text": "`Doubleday 1871`",
+       "feedback": "Nothing calls both methods. One `showOrigins()` runs, and the declared type decides which."
+      },
+      {
+       "text": "It does not compile, because a static method can't be called with a variable",
+       "feedback": "Java allows it (though it's misleading style); the compiler uses the variable's declared type to pick the method."
+      }
+     ],
+     "hint": "A static method belongs to a class, not an object. Which class does the compiler see for `player`?",
+     "explanation": "Instance methods use dynamic binding: the object's actual class decides at run time. Static methods use static binding: the declared type decides at compile time. That is why a subclass static method only hides, and never overrides, the parent's.",
+     "ref": "Ch. 9.7, A Subclass Cannot Override static Methods (p. 348); Ch. 9.9 (p. 360)"
+    },
+    {
+     "id": "static-to-instance",
+     "concept": "An instance method can't override a static one",
+     "level": "apply",
+     "stem": "A child class tries to replace a static method with an instance method. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BaseballPlayer\n{\n    public static void showOrigins()\n    {\n        System.out.println(\"Doubleday\");\n    }\n}\nclass ProfessionalBaseballPlayer extends BaseballPlayer\n{\n    @Override\n    public void showOrigins()\n    {\n        System.out.println(\"1871\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "overridden method is static"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: an instance method can't override a static method",
+       "feedback": "A static method belongs to the class, so there is nothing per-object to override. The compiler rejects the attempt.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; objects use the child's version and the class uses the parent's",
+       "feedback": "Java doesn't let one name be static in the parent and an instance method in the child; it refuses the class."
+      },
+      {
+       "text": "It compiles, but only after removing the `@Override` annotation",
+       "feedback": "The annotation isn't the problem. Even without it, an instance method with this signature clashes with the static one."
+      },
+      {
+       "text": "It compiles, and `showOrigins()` becomes an instance method in both classes",
+       "feedback": "A subclass can't change how its parent declares a method; `BaseballPlayer`'s version stays static."
+      }
+     ],
+     "hint": "Does a static method belong to an object or to a class?",
+     "explanation": "A subclass cannot override a static superclass method with an instance method; the compiler reports an error. The only legal same-signature method in the subclass is another static method, which hides the parent's.",
+     "ref": "Ch. 9.7, Figures 9-17 and 9-18 (pp. 348–349)"
+    }
+   ]
+  },
+  {
+   "id": "9.8",
+   "title": "Creating and Using Abstract Classes",
+   "subtitle": "Abstract classes and methods, what concrete subclasses must provide, and abstract-class constructors",
+   "source": "Ch. 9, section 9.8 (pp. 352–359)",
+   "intro": "Every animal in a petting-zoo app makes a sound, but there's no such thing as a plain \"animal\" sound. Five questions on classes made only to be extended.",
+   "takeaways": [
+    "An `abstract` class exists only to be extended; you can't instantiate it with `new`. It can still have fields, constructors and ordinary methods that its children inherit.",
+    "An abstract method has a header ending in a semicolon and no body. A class with an abstract method must itself be abstract.",
+    "A concrete subclass must implement every inherited abstract method; otherwise it must be declared abstract too."
+   ],
+   "questions": [
+    {
+     "id": "instantiate-abstract",
+     "concept": "Abstract classes can't be instantiated",
+     "level": "apply",
+     "stem": "`Animal` is declared `abstract`. What happens when this code is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public void setName(String n) { name = n; }\n}\n\n// in main()\nAnimal myPet = new Animal();\nmyPet.setName(\"Murphy\");",
+      "verify": {
+       "expect": "compile_error",
+       "program": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public void setName(String n) { name = n; }\n}\n\npublic class UseAnimal\n{\n    public static void main(String[] args)\n    {\n        Animal myPet = new Animal();\n        myPet.setName(\"Murphy\");\n    }\n}\n",
+       "error_contains": [
+        "is abstract; cannot be instantiated"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `Animal` is abstract and can't be instantiated",
+       "feedback": "An abstract class exists only to be extended. The compiler rejects any attempt to create one with `new`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, then throws an exception when `new Animal()` runs",
+       "feedback": "The compiler stops this before the program ever runs, because it can see the class is abstract."
+      },
+      {
+       "text": "It compiles; Java creates a plain `Animal` with no `speak()` behavior",
+       "feedback": "There is no such thing as a plain `Animal` object; preventing that is the point of `abstract`."
+      },
+      {
+       "text": "It compiles, because `Animal` has a concrete `setName()` method",
+       "feedback": "One abstract method is enough to make the class unfinished, and `abstract` on the class forbids `new` regardless."
+      }
+     ],
+     "hint": "What does declaring a class `abstract` say about creating objects of it?",
+     "explanation": "A concrete class is one you can instantiate; an abstract class is one you create only to extend. Any attempt to create an object of an abstract class with `new` fails to compile.",
+     "ref": "Ch. 9.8, Creating and Using Abstract Classes (pp. 352–354)"
+    },
+    {
+     "id": "must-implement",
+     "concept": "Concrete subclasses must implement abstract methods",
+     "level": "apply",
+     "stem": "`Cow` extends the abstract `Animal` but forgets `speak()`. What happens when `Cow` is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Cow extends Animal\n{\n    public void graze()\n    {\n        System.out.println(\"Munch\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "does not override abstract method speak()"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `Cow` doesn't override the abstract `speak()`",
+       "feedback": "A concrete subclass inherits the obligation. It must give `speak()` a body or be declared abstract itself.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and `Cow` inherits an empty `speak()` that does nothing",
+       "feedback": "An abstract method has no body to inherit, empty or otherwise. That's why the subclass must provide one."
+      },
+      {
+       "text": "It compiles, and calling `speak()` on a `Cow` throws an exception",
+       "feedback": "The compiler catches the missing method, so no `Cow` object can be created to call it."
+      },
+      {
+       "text": "It compiles, because `Cow` adds no fields that would need `speak()`",
+       "feedback": "The requirement doesn't depend on fields. Every inherited abstract method must be implemented."
+      }
+     ],
+     "hint": "Which methods must a class implement before you can create objects from it?",
+     "explanation": "When a class inherits an abstract method, it must either provide a body for it or be declared abstract itself. A concrete subclass that skips one doesn't compile.",
+     "ref": "Ch. 9.8, Creating and Using Abstract Classes (p. 353)"
+    },
+    {
+     "id": "abstract-method-class",
+     "concept": "An abstract method requires an abstract class",
+     "level": "analyze",
+     "stem": "A student declares an abstract method in a class that isn't marked `abstract`. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class Vehicle\n{\n    protected int price;\n    public abstract void setPrice();\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "Vehicle is not abstract"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: a class with an abstract method must be abstract",
+       "feedback": "An abstract method leaves the class unfinished, so the class can't be concrete. Adding `abstract` to the header fixes it.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and `Vehicle` becomes abstract automatically",
+       "feedback": "Java doesn't change your declarations for you; it reports the mismatch."
+      },
+      {
+       "text": "It compiles; `setPrice()` is treated as an empty method",
+       "feedback": "An abstract method has no body at all, and Java doesn't invent one."
+      },
+      {
+       "text": "It compiles, because only interfaces may not hold abstract methods",
+       "feedback": "Interfaces are full of abstract methods. The problem is a concrete class declaring one."
+      }
+     ],
+     "hint": "Could you create a `Vehicle` object and call `setPrice()` on it? What would run?",
+     "explanation": "If you declare a method abstract, you must also declare its class abstract. In an abstract class, each method can be abstract or not.",
+     "ref": "Ch. 9.8, abstract declarations (p. 353)"
+    },
+    {
+     "id": "abstract-ctor",
+     "concept": "Abstract classes have constructors that run",
+     "level": "analyze",
+     "stem": "An abstract class can't be instantiated. Can its constructor ever run? What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Vehicle\n{\n    private String powerSource;\n    public Vehicle(String powerSource)\n    {\n        this.powerSource = powerSource;\n        System.out.print(\"Vehicle \");\n    }\n}\nclass Sailboat extends Vehicle\n{\n    public Sailboat()\n    {\n        super(\"wind\");\n        System.out.print(\"Sailboat\");\n    }\n}\n\n// in main()\nSailboat aBoat = new Sailboat();",
+      "verify": {
+       "expect": "output",
+       "program": "abstract class Vehicle\n{\n    private String powerSource;\n    public Vehicle(String powerSource)\n    {\n        this.powerSource = powerSource;\n        System.out.print(\"Vehicle \");\n    }\n}\nclass Sailboat extends Vehicle\n{\n    public Sailboat()\n    {\n        super(\"wind\");\n        System.out.print(\"Sailboat\");\n    }\n}\n\npublic class DemoVehicles\n{\n    public static void main(String[] args)\n    {\n        Sailboat aBoat = new Sailboat();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Vehicle Sailboat`",
+       "feedback": "Creating a `Sailboat` runs its parent's constructor first. The abstract parent's constructor builds its part of the object.",
+       "correct": true
+      },
+      {
+       "text": "`Sailboat`",
+       "feedback": "This assumes an abstract class's constructor never runs. It runs every time a subclass object is created."
+      },
+      {
+       "text": "`Sailboat Vehicle`",
+       "feedback": "Constructors run from the most general class down, so `Vehicle` prints before `Sailboat`."
+      },
+      {
+       "text": "It does not compile, because an abstract class can't declare a constructor",
+       "feedback": "Abstract classes can and often do have constructors; you just can't call them with `new` directly."
+      }
+     ],
+     "hint": "When a `Sailboat` object is created, which constructor runs first?",
+     "explanation": "An abstract class can declare fields and constructors. Its constructor is invoked whenever a child class object is instantiated, usually through the child's `super(...)` call.",
+     "aside": "Java's own `Number` class is abstract. You never create a plain `Number`, but `Integer`, `Double` and `Long` all extend it, and its constructor runs every time one of them is created.",
+     "ref": "Ch. 9.8, You Do It: Creating an Abstract Class (pp. 355–357); Table 9-3 (p. 373)"
+    },
+    {
+     "id": "animals-speak",
+     "concept": "Each subclass supplies its own body",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public String getName() { return name; }\n    public void setName(String n) { name = n; }\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo!\"); }\n}\n\n// in main()\nDog myDog = new Dog();\nCow myCow = new Cow();\nmyDog.setName(\"Murphy\");\nmyCow.setName(\"Elsie\");\nSystem.out.print(myDog.getName() + \" says \");\nmyDog.speak();\nSystem.out.print(myCow.getName() + \" says \");\nmyCow.speak();",
+      "verify": {
+       "expect": "output",
+       "program": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public String getName() { return name; }\n    public void setName(String n) { name = n; }\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo!\"); }\n}\n\npublic class UseAnimals\n{\n    public static void main(String[] args)\n    {\n        Dog myDog = new Dog();\n        Cow myCow = new Cow();\n        myDog.setName(\"Murphy\");\n        myCow.setName(\"Elsie\");\n        System.out.print(myDog.getName() + \" says \");\n        myDog.speak();\n        System.out.print(myCow.getName() + \" says \");\n        myCow.speak();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Murphy says Woof! Elsie says Moo!`",
+       "feedback": "Both objects inherit `setName()` and `getName()` from `Animal`, and each runs its own class's `speak()`.",
+       "correct": true
+      },
+      {
+       "text": "`Murphy says Woof! Elsie says Woof!`",
+       "feedback": "Each subclass implements `speak()` independently; `Cow`'s version doesn't borrow `Dog`'s."
+      },
+      {
+       "text": "`null says Woof! null says Moo!`",
+       "feedback": "`setName()` stores each name in that object's inherited `name` field before `getName()` reads it."
+      },
+      {
+       "text": "`says Woof! says Moo!`",
+       "feedback": "`getName()` is inherited from the abstract class and returns the name each object stored."
+      }
+     ],
+     "hint": "Which methods does each animal inherit from `Animal`, and which does it supply itself?",
+     "explanation": "An abstract class can supply concrete methods, such as `getName()`, that every child inherits, while abstract methods, such as `speak()`, force each child to supply its own behavior. One method name causing different, appropriate actions is polymorphism.",
+     "ref": "Ch. 9.8, Figures 9-29 to 9-34 (pp. 353–355)"
+    }
+   ]
+  },
+  {
+   "id": "9.9",
+   "title": "Using Dynamic Method Binding",
+   "subtitle": "Superclass references to subclass objects, choosing the method at run time, and superclass parameters",
+   "source": "Ch. 9, section 9.9 (pp. 359–361)",
+   "intro": "One method, `talkingAnimal()`, has to work for dogs, cows and every animal class nobody has written yet. Five questions on how Java picks the right `speak()`.",
+   "takeaways": [
+    "A superclass reference can hold any subclass object (every `Dog` is an `Animal`), but a subclass reference can't hold a superclass object.",
+    "For an instance method, the object's actual class picks the version that runs, and it is chosen while the program runs. This is dynamic (late) method binding.",
+    "The compiler, though, checks calls against the variable's *declared* type: through an `Animal` reference you can call only methods `Animal` declares, even when the object is a `Dog`."
+   ],
+   "questions": [
+    {
+     "id": "animal-ref",
+     "concept": "The object, not the variable, picks the method",
+     "level": "apply",
+     "stem": "One `Animal` variable refers first to a `Cow`, then to a `Dog`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\n\n// in main()\nAnimal animalRef;\nanimalRef = new Cow();\nanimalRef.speak();\nanimalRef = new Dog();\nanimalRef.speak();",
+      "verify": {
+       "expect": "output",
+       "program": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\n\npublic class AnimalReference\n{\n    public static void main(String[] args)\n    {\n        Animal animalRef;\n        animalRef = new Cow();\n        animalRef.speak();\n        animalRef = new Dog();\n        animalRef.speak();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Moo! Woof!`",
+       "feedback": "The same statement, `animalRef.speak()`, runs whichever version belongs to the object the variable holds at that moment.",
+       "correct": true
+      },
+      {
+       "text": "It does not compile, because `Animal` is abstract",
+       "feedback": "You can't create an `Animal` object, but you can declare an `Animal` *reference* and store concrete subclass objects in it."
+      },
+      {
+       "text": "`Woof! Woof!`",
+       "feedback": "Each call happens when the variable holds a different object; the first one holds the `Cow`."
+      },
+      {
+       "text": "`Moo! Moo!`",
+       "feedback": "Assigning `new Dog()` replaces what the variable refers to, so the second call reaches `Dog`'s `speak()`."
+      }
+     ],
+     "hint": "At the moment of each `speak()` call, which object does `animalRef` refer to?",
+     "explanation": "A superclass reference can hold any subclass object. When you call an instance method through it, Java runs the version for the object's actual class, so one statement can produce different behavior.",
+     "ref": "Ch. 9.9, Figures 9-36 and 9-37 (p. 359)"
+    },
+    {
+     "id": "assignment-direction",
+     "concept": "Child objects fit parent references, not the reverse",
+     "level": "apply",
+     "stem": "`Employee` is a concrete class and `SalariedEmployee` extends it. Which statement compiles?",
+     "options": [
+      {
+       "text": "`Employee worker = new SalariedEmployee();`",
+       "feedback": "Every `SalariedEmployee` is an `Employee`, so a parent reference can hold a child object. This is upcasting.",
+       "correct": true
+      },
+      {
+       "text": "`SalariedEmployee worker = new Employee();`",
+       "feedback": "A plain `Employee` isn't a `SalariedEmployee`; it lacks whatever the subclass adds, so the compiler refuses."
+      },
+      {
+       "text": "`SalariedEmployee worker = (Employee) new SalariedEmployee();`",
+       "feedback": "The cast makes the right side an `Employee`, and an `Employee` can't be stored in a `SalariedEmployee` variable without a cast the other way."
+      },
+      {
+       "text": "`Employee worker = SalariedEmployee();`",
+       "feedback": "Without `new`, Java reads this as a call to a method named `SalariedEmployee()`, which doesn't exist."
+      }
+     ],
+     "hint": "Complete the sentence for each: \"Every ___ is an ___.\" Which way is always true?",
+     "explanation": "Because every subclass object is a superclass object, you can assign a subclass object to a superclass reference (upcasting). You can't assign a superclass object to a subclass reference.",
+     "ref": "Ch. 9.9, Using Dynamic Method Binding (p. 359); Two Truths & a Lie (p. 361)"
+    },
+    {
+     "id": "declared-type-check",
+     "concept": "The compiler checks the declared type",
+     "level": "analyze",
+     "stem": "Only `Dog` declares `fetch()`. The object really is a `Dog`. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.println(\"Woof!\"); }\n    public void fetch() { System.out.println(\"Fetching!\"); }\n}\n\n// in main()\nAnimal pet = new Dog();\npet.fetch();",
+      "verify": {
+       "expect": "compile_error",
+       "program": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.println(\"Woof!\"); }\n    public void fetch() { System.out.println(\"Fetching!\"); }\n}\n\npublic class FetchDemo\n{\n    public static void main(String[] args)\n    {\n        Animal pet = new Dog();\n        pet.fetch();\n    }\n}\n",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `Animal` has no `fetch()` method",
+       "feedback": "The compiler knows only the variable's type, `Animal`, and checks the call against it. Which object it will hold is a run-time fact.",
+       "correct": true
+      },
+      {
+       "text": "It prints `Fetching!`, because the object is a `Dog`",
+       "feedback": "The object's class matters when Java chooses among *existing* versions of a method. First the call must be legal for `Animal`."
+      },
+      {
+       "text": "It compiles, then throws an exception because `Animal` lacks `fetch()`",
+       "feedback": "The check happens at compile time, so the program never runs."
+      },
+      {
+       "text": "It prints nothing; Java skips methods the reference type can't see",
+       "feedback": "Java never silently skips a call. It reports the problem at compile time."
+      }
+     ],
+     "hint": "When the compiler reads `pet.fetch()`, what does it know about `pet`?",
+     "explanation": "Dynamic binding chooses *which version* of a method runs, based on the object. Whether a call is allowed at all is decided at compile time from the reference's declared type, so a superclass reference reaches only the methods the superclass declares.",
+     "ref": "Ch. 9.9, Using Dynamic Method Binding (pp. 359–360)"
+    },
+    {
+     "id": "binding-time",
+     "concept": "Dynamic binding happens at run time",
+     "level": "understand",
+     "stem": "In `talkingAnimal(Animal animal)`, the statement `animal.speak();` is compiled once. When and how is the `speak()` version chosen?",
+     "options": [
+      {
+       "text": "While the program runs, from the actual class of the object passed in",
+       "feedback": "The compiler can't know which `Animal` subclass will arrive; Java binds the call when it executes. That is dynamic, or late, binding.",
+       "correct": true
+      },
+      {
+       "text": "When it compiles, from the parameter's declared type, `Animal`",
+       "feedback": "That's static binding, which Java uses for static methods. Instance methods are virtual by default."
+      },
+      {
+       "text": "When it compiles, from the argument types in the calls in `main()`",
+       "feedback": "The method is compiled independently of its callers, and later code could pass animal classes that didn't exist yet."
+      },
+      {
+       "text": "While the program runs, always using the first subclass that was loaded",
+       "feedback": "The choice is made fresh for each call, from that call's object, so a `Dog` and then a `Cow` behave differently."
+      }
+     ],
+     "hint": "Could `talkingAnimal()` work with a `Horse` class written next year? How would Java know which `speak()` to run?",
+     "explanation": "Java instance method calls are virtual by default: the method used is determined when the program runs, from the object's type. Dynamic binding makes programs flexible, while static binding (used for class methods) is slightly faster.",
+     "aside": "Java and C++ made opposite choices. In C++ (and C#), a method is bound statically unless it is marked `virtual`. In Java, instance methods are virtual by default, and you opt out with `final`.",
+     "ref": "Ch. 9.9, Using Dynamic Method Binding (p. 360)"
+    },
+    {
+     "id": "superclass-param",
+     "concept": "A superclass parameter accepts any subclass",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public String getName() { return name; }\n    public void setName(String n) { name = n; }\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo!\"); }\n}\n\npublic class TalkingAnimalDemo\n{\n    public static void main(String[] args)\n    {\n        Dog dog = new Dog();\n        Cow cow = new Cow();\n        dog.setName(\"Ginger\");\n        cow.setName(\"Molly\");\n        talkingAnimal(dog);\n        talkingAnimal(cow);\n    }\n    public static void talkingAnimal(Animal animal)\n    {\n        System.out.print(animal.getName() + \": \");\n        animal.speak();\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`Ginger: Woof! Molly: Moo!`",
+       "feedback": "Each call passes a different subclass object into the `Animal` parameter, and `speak()` runs that object's own version.",
+       "correct": true
+      },
+      {
+       "text": "It does not compile: `talkingAnimal()` needs an `Animal`, not a `Dog`",
+       "feedback": "A `Dog` is an `Animal`, so it can be passed wherever an `Animal` is expected. That is the payoff of upcasting."
+      },
+      {
+       "text": "`Ginger: Woof! Molly: Woof!`",
+       "feedback": "The method doesn't remember the first object's class; every call binds `speak()` to the object it receives."
+      },
+      {
+       "text": "It does not compile, because an abstract class can't be a parameter type",
+       "feedback": "Abstract classes can't be instantiated, but they are ideal parameter types; any concrete subclass object can be passed."
+      }
+     ],
+     "hint": "What is every `Dog` and every `Cow`, as far as the parameter type is concerned?",
+     "explanation": "A method whose parameter is a superclass type accepts objects of every subclass. Inside, dynamic binding makes overridden methods behave correctly for each argument, so one method serves every present and future subclass.",
+     "ref": "Ch. 9.9, Using a Superclass as a Method Parameter Type (pp. 360–361)"
+    }
+   ]
+  },
+  {
+   "id": "9.10",
+   "title": "Creating Arrays of Subclass Objects",
+   "subtitle": "Arrays of superclass references, filling them with subclass objects, and looping over them polymorphically",
+   "source": "Ch. 9, section 9.10 (pp. 361–363)",
+   "intro": "A vehicle dealer's inventory mixes sailboats and bicycles, and one loop has to describe them all. Four questions on arrays that hold a whole family of classes.",
+   "takeaways": [
+    "An array of objects is really an array of references. `new Animal[3]` creates three empty (`null`) references and no `Animal` objects, which is why it works even when `Animal` is abstract.",
+    "An array of superclass references can hold any mix of subclass objects; looping over it and calling an overridden method runs each object's own version.",
+    "Every element must be filled before you call a method through it: calling a method on a `null` element throws a `NullPointerException`."
+   ],
+   "questions": [
+    {
+     "id": "array-loop",
+     "concept": "One loop, each object's own method",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\nclass Snake extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Ssss! \"); }\n}\n\n// in main()\nAnimal[] animalRef = new Animal[3];\nanimalRef[0] = new Dog();\nanimalRef[1] = new Cow();\nanimalRef[2] = new Snake();\nfor(int x = 0; x < animalRef.length; ++x)\n    animalRef[x].speak();",
+      "verify": {
+       "expect": "output",
+       "program": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\nclass Snake extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Ssss! \"); }\n}\n\npublic class AnimalArrayDemo\n{\n    public static void main(String[] args)\n    {\n        Animal[] animalRef = new Animal[3];\n        animalRef[0] = new Dog();\n        animalRef[1] = new Cow();\n        animalRef[2] = new Snake();\n        for(int x = 0; x < animalRef.length; ++x)\n            animalRef[x].speak();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Woof! Moo! Ssss!`",
+       "feedback": "The array holds `Animal` references to three different subclass objects, and each `speak()` call is bound to its own object.",
+       "correct": true
+      },
+      {
+       "text": "It does not compile, because the array's type is abstract",
+       "feedback": "`new Animal[3]` creates references, not `Animal` objects, so an abstract element type is fine."
+      },
+      {
+       "text": "`Ssss! Moo! Woof!`",
+       "feedback": "The loop runs from subscript 0 upward, and element 0 holds the `Dog`."
+      },
+      {
+       "text": "`Woof! Woof! Woof!`",
+       "feedback": "Each element refers to a different object; the first element's class doesn't decide the others."
+      }
+     ],
+     "hint": "What kind of object does each element refer to when the loop reaches it?",
+     "explanation": "An array of superclass references can hold references to any subclass objects. Looping over it and calling an overridden method invokes the appropriate version for each element.",
+     "ref": "Ch. 9.10, Figures 9-40 and 9-41 (p. 362)"
+    },
+    {
+     "id": "array-of-references",
+     "concept": "An array of objects is an array of references",
+     "level": "understand",
+     "stem": "`Animal` is abstract. What does `Animal[] animalRef = new Animal[3];` create?",
+     "options": [
+      {
+       "text": "Three `Animal` references, each `null`, and no `Animal` objects",
+       "feedback": "Creating an array of objects reserves room for references only. Objects are created later, one `new` at a time.",
+       "correct": true
+      },
+      {
+       "text": "Three `Animal` objects with default field values",
+       "feedback": "That would require instantiating an abstract class. The array holds references, which start out `null`."
+      },
+      {
+       "text": "Nothing; the statement doesn't compile because `Animal` is abstract",
+       "feedback": "Abstract classes can't be instantiated, but you can declare references, and arrays of references, of their type."
+      },
+      {
+       "text": "One `Animal` object that can be reached through three subscripts",
+       "feedback": "`new Animal[3]` builds one array with three separate slots, and none of them refers to an object yet."
+      }
+     ],
+     "hint": "What sits in each slot of a newly created array of a class type?",
+     "explanation": "When you create an array of a class type, you are not constructing objects; you are creating space for references. This works whether the class is abstract or concrete, and each element is `null` until you assign an object to it.",
+     "ref": "Ch. 9.10, Creating Arrays of Subclass Objects (p. 361)"
+    },
+    {
+     "id": "null-element",
+     "concept": "An unfilled element is null",
+     "level": "analyze",
+     "stem": "The programmer filled only the first element. What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\n\n// in main()\nAnimal[] animalRef = new Animal[3];\nanimalRef[0] = new Dog();\nfor(int x = 0; x < animalRef.length; ++x)\n    animalRef[x].speak();",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\n\npublic class NullDemo\n{\n    public static void main(String[] args)\n    {\n        Animal[] animalRef = new Animal[3];\n        animalRef[0] = new Dog();\n        for(int x = 0; x < animalRef.length; ++x)\n            animalRef[x].speak();\n    }\n}\n",
+       "error_contains": [
+        "NullPointerException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `Woof!` and then throws a `NullPointerException`",
+       "feedback": "Element 0 refers to a `Dog`, so its call works. Element 1 is still `null`, and calling a method through `null` fails.",
+       "correct": true
+      },
+      {
+       "text": "It prints `Woof!` and then stops quietly at the first empty element",
+       "feedback": "A `for` loop doesn't check for `null`. The program reaches `animalRef[1].speak()` and fails there."
+      },
+      {
+       "text": "It prints `Woof!` three times, reusing the only object",
+       "feedback": "Assigning element 0 doesn't fill the others; each slot holds its own reference, and two are still `null`."
+      },
+      {
+       "text": "It does not compile, because some elements were never assigned",
+       "feedback": "The compiler doesn't track which array elements you've filled. The problem appears when the program runs."
+      }
+     ],
+     "hint": "What does `animalRef[1]` hold, and what happens when you call a method through that value?",
+     "explanation": "Each element of a new object array is `null` until you assign an object. Calling a method through a `null` reference throws a `NullPointerException` at run time.",
+     "aside": "Tony Hoare, who added null references to the ALGOL W language in 1965, later called them his \"billion-dollar mistake\" because of the crashes they have caused ever since.",
+     "ref": "Ch. 9.10, Creating Arrays of Subclass Objects (p. 361)"
+    },
+    {
+     "id": "count-instanceof",
+     "concept": "Telling the objects apart inside the array",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\nclass Snake extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Ssss! \"); }\n}\n\n// in main()\nAnimal[] zoo = {new Dog(), new Cow(), new Dog(), new Snake()};\nint dogs = 0, animals = 0;\nfor(Animal a : zoo)\n{\n    if(a instanceof Dog)\n        ++dogs;\n    if(a instanceof Animal)\n        ++animals;\n}\nSystem.out.println(dogs + \" \" + animals);",
+      "verify": {
+       "expect": "output",
+       "program": "abstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass Cow extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Moo! \"); }\n}\nclass Snake extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Ssss! \"); }\n}\n\npublic class CountDogs\n{\n    public static void main(String[] args)\n    {\n        Animal[] zoo = {new Dog(), new Cow(), new Dog(), new Snake()};\n        int dogs = 0, animals = 0;\n        for(Animal a : zoo)\n        {\n            if(a instanceof Dog)\n                ++dogs;\n            if(a instanceof Animal)\n                ++animals;\n        }\n        System.out.println(dogs + \" \" + animals);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`2 4`",
+       "feedback": "Two elements refer to `Dog` objects; all four are `Animal`s, because every subclass object is an instance of its superclass.",
+       "correct": true
+      },
+      {
+       "text": "`2 0`",
+       "feedback": "This treats `instanceof Animal` as false for subclass objects. A `Dog` or `Cow` is also an `Animal`."
+      },
+      {
+       "text": "`2 2`",
+       "feedback": "This counts only the classes that aren't `Dog`. The second test asks about `Animal`, and every element passes it."
+      },
+      {
+       "text": "`1 4`",
+       "feedback": "Both `Dog` objects count, wherever they sit in the array."
+      }
+     ],
+     "hint": "For a `Cow`, what is `instanceof Animal`? For a `Dog`?",
+     "explanation": "An array of superclass references can hold a mix of subclass objects, and `instanceof` tells them apart: it is true for an element's own class and every ancestor of it.",
+     "ref": "Ch. 9.10 (p. 361); Ch. 9.2, the instanceof operator (p. 333)"
+    }
+   ]
+  },
+  {
+   "id": "9.11",
+   "title": "Using the Object Class and Its Methods",
+   "subtitle": "Every class extends Object; toString(); equals() by reference, overloaded and overridden; hashCode()",
+   "source": "Ch. 9, section 9.11 (pp. 364–370)",
+   "intro": "Two bank accounts with the same number and balance, and Java says they're not equal. Six questions on the methods every class gets for free, and when to replace them.",
+   "takeaways": [
+    "Every class that doesn't extend another implicitly extends `Object`, so every object has `toString()`, `equals()` and `hashCode()`. The inherited versions are generic: the class name and a hash code, and equal only to itself.",
+    "To compare objects by their contents, write your own `equals()`. Overriding needs the exact header `public boolean equals(Object obj)`; a version with a narrower parameter type only overloads and is skipped when the argument's declared type is `Object`.",
+    "A robust `equals(Object)` returns true for the same object, false for `null` or a different class, and only then casts and compares fields. Whenever you override `equals()`, override `hashCode()` too, so equal objects have equal hash codes."
+   ],
+   "questions": [
+    {
+     "id": "default-equals",
+     "concept": "Object's equals() compares references",
+     "level": "apply",
+     "stem": "`BankAccount` doesn't define `equals()`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = bal;\n    }\n}\n\n// in main()\nBankAccount acct1 = new BankAccount(1234, 500.00);\nBankAccount acct2 = new BankAccount(1234, 500.00);\nif(acct1.equals(acct2))\n    System.out.println(\"equal\");\nelse\n    System.out.println(\"not equal\");",
+      "verify": {
+       "expect": "output",
+       "program": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = bal;\n    }\n}\n\npublic class CompareAccounts\n{\n    public static void main(String[] args)\n    {\n        BankAccount acct1 = new BankAccount(1234, 500.00);\n        BankAccount acct2 = new BankAccount(1234, 500.00);\n        if(acct1.equals(acct2))\n            System.out.println(\"equal\");\n        else\n            System.out.println(\"not equal\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`not equal`",
+       "feedback": "The inherited `Object` version returns `true` only when both references point to the same object, and these are two separate objects.",
+       "correct": true
+      },
+      {
+       "text": "`equal`",
+       "feedback": "Matching field values don't matter to the inherited method; it never looks at fields."
+      },
+      {
+       "text": "It does not compile, because `BankAccount` has no `equals()` method",
+       "feedback": "Every class inherits `equals()` from `Object`, so the call compiles."
+      },
+      {
+       "text": "It throws an exception, because `equals()` must be overridden first",
+       "feedback": "`Object`'s `equals()` is a normal, working method, not an abstract one; it runs and returns a result."
+      }
+     ],
+     "hint": "Where does `acct1.equals()` come from, and what does that version compare?",
+     "explanation": "Every class extends `Object`, which supplies `equals()`. That version considers two references equal only when they refer to the same object, so two separately created objects with identical data are not equal unless you write your own `equals()`.",
+     "ref": "Ch. 9.11, Using the equals() Method (pp. 366–368)"
+    },
+    {
+     "id": "default-tostring",
+     "concept": "The inherited toString()",
+     "level": "understand",
+     "stem": "Neither `Dog` nor `Animal` defines `toString()`. What does `System.out.println(myDog.toString());` display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    public void speak() { System.out.println(\"Woof!\"); }\n}\n\n// in main()\nDog myDog = new Dog();\nSystem.out.println(myDog.toString());",
+      "verify": {
+       "expect": "runs",
+       "program": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    public void speak() { System.out.println(\"Woof!\"); }\n}\n\npublic class DisplayDog\n{\n    public static void main(String[] args)\n    {\n        Dog myDog = new Dog();\n        System.out.println(myDog.toString());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "The class name, `@`, and a hexadecimal hash code, such as `Dog@5679c6c6`",
+       "feedback": "`Dog` inherits `toString()` from `Object`, whose version reports the class name and the object's hash code.",
+       "correct": true
+      },
+      {
+       "text": "Nothing; the call doesn't compile, because no class here defines `toString()`",
+       "feedback": "`Dog` doesn't need to define it: every class inherits `toString()` from `Object`."
+      },
+      {
+       "text": "The values of the object's fields, such as `name=Murphy`",
+       "feedback": "`Object` can't know which fields matter to your class. For a field listing, you write your own `toString()`."
+      },
+      {
+       "text": "The variable's name, `myDog`, followed by its class name",
+       "feedback": "Objects don't know the names of the variables that refer to them; many variables can refer to one object."
+      }
+     ],
+     "hint": "Which class provides `toString()` to every other class, and what can that class know about your fields?",
+     "explanation": "Every class inherits `toString()` from `Object`. The inherited version returns the class name, an `@` sign and a hexadecimal hash code, which is rarely useful; it's usually better to write your own `toString()` that shows the object's field values.",
+     "ref": "Ch. 9.11, Using the toString() Method (pp. 364–365)"
+    },
+    {
+     "id": "tostring-debug",
+     "concept": "toString() as a debugging tool",
+     "level": "apply",
+     "stem": "This `BankAccount` has a bug. What does the program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = num;\n    }\n    @Override\n    public String toString()\n    {\n        return \"BankAccount \" + acctNum\n            + \" Balance $\" + balance;\n    }\n}\n\n// in main()\nBankAccount myAccount = new BankAccount(123, 4567.89);\nSystem.out.println(myAccount.toString());",
+      "verify": {
+       "expect": "output",
+       "program": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = num;\n    }\n    @Override\n    public String toString()\n    {\n        return \"BankAccount \" + acctNum\n            + \" Balance $\" + balance;\n    }\n}\n\npublic class TestBankAccount\n{\n    public static void main(String[] args)\n    {\n        BankAccount myAccount = new BankAccount(123, 4567.89);\n        System.out.println(myAccount.toString());\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`BankAccount 123 Balance $123.0`",
+       "feedback": "The constructor stores the account number in both fields, and `toString()` makes the mistake visible at a glance.",
+       "correct": true
+      },
+      {
+       "text": "`BankAccount 123 Balance $4567.89`",
+       "feedback": "That's what the programmer meant. Look at what the constructor actually assigns to `balance`."
+      },
+      {
+       "text": "`BankAccount 123 Balance $123`",
+       "feedback": "`balance` is a `double`, so even a whole number prints with a decimal point: `123.0`."
+      },
+      {
+       "text": "`BankAccount 123 Balance $0.0`",
+       "feedback": "The constructor does assign `balance`; it just assigns the wrong parameter."
+      }
+     ],
+     "hint": "Which parameter does the constructor store in `balance`?",
+     "explanation": "Overriding `toString()` to show an object's fields is a quick way to inspect its state while debugging. Because `toString()` comes from `Object`, it is the conventional name programmers look for.",
+     "ref": "Ch. 9.11, Figures 9-45 to 9-47 (pp. 365–366)"
+    },
+    {
+     "id": "overload-trap",
+     "concept": "An overloaded equals() is skipped for Object arguments",
+     "level": "analyze",
+     "stem": "`BankAccount` *overloads* `equals()` with a `BankAccount` parameter. The second call passes the same object through an `Object` variable. What does this print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = bal;\n    }\n    public boolean equals(BankAccount secondAcct)\n    {\n        return acctNum == secondAcct.acctNum\n            && balance == secondAcct.balance;\n    }\n}\n\n// in main()\nBankAccount acct1 = new BankAccount(1234, 500.00);\nBankAccount acct2 = new BankAccount(1234, 500.00);\nObject other = acct2;\nboolean direct = acct1.equals(acct2);\nboolean viaObject = acct1.equals(other);\nSystem.out.println(direct + \" \" + viaObject);",
+      "verify": {
+       "expect": "output",
+       "program": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = bal;\n    }\n    public boolean equals(BankAccount secondAcct)\n    {\n        return acctNum == secondAcct.acctNum\n            && balance == secondAcct.balance;\n    }\n}\n\npublic class OverloadTrap\n{\n    public static void main(String[] args)\n    {\n        BankAccount acct1 = new BankAccount(1234, 500.00);\n        BankAccount acct2 = new BankAccount(1234, 500.00);\n        Object other = acct2;\n        boolean direct = acct1.equals(acct2);\n        boolean viaObject = acct1.equals(other);\n        System.out.println(direct + \" \" + viaObject);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`true false`",
+       "feedback": "The compiler picks an overload from declared types. `other` is declared `Object`, so the second call uses `Object`'s inherited version, which compares references.",
+       "correct": true
+      },
+      {
+       "text": "`true true`",
+       "feedback": "That would happen if the method *overrode* `equals(Object)`. An overload is chosen only when the argument's declared type is `BankAccount`."
+      },
+      {
+       "text": "`false false`",
+       "feedback": "The first call's argument is declared `BankAccount`, so it reaches the new method, which compares fields and finds them equal."
+      },
+      {
+       "text": "It does not compile, because `equals(Object)` and `equals(BankAccount)` clash",
+       "feedback": "Different parameter lists make them legal overloads; the class has access to both."
+      }
+     ],
+     "hint": "The object is the same in both calls. What differs between the two arguments, as the compiler sees them?",
+     "explanation": "A method with the header `equals(BankAccount)` overloads `Object`'s `equals(Object)` rather than overriding it. Overloads are chosen at compile time from declared argument types, so whenever the argument is declared `Object`, the inherited reference comparison runs. Overriding requires the exact `equals(Object)` signature.",
+     "ref": "Ch. 9.11, Overloading equals() and Overriding equals() (pp. 367–369)"
+    },
+    {
+     "id": "equals-null",
+     "concept": "A robust equals() handles null before casting",
+     "level": "evaluate",
+     "stem": "A teammate overrides `equals()` following some of the recommendations. What happens when `acct1.equals(null)` runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = bal;\n    }\n    @Override\n    public boolean equals(Object obj)\n    {\n        boolean result;\n        if(obj == this)\n            result = true;\n        else if(obj == null)\n            result = false;\n        else if(obj.getClass() != this.getClass())\n            result = false;\n        BankAccount secondAcct = (BankAccount)obj;\n        if(acctNum == secondAcct.acctNum\n            && balance == secondAcct.balance)\n            result = true;\n        else\n            result = false;\n        return result;\n    }\n}\n\n// in main()\nBankAccount acct1 = new BankAccount(1234, 500.00);\nSystem.out.println(acct1.equals(null));",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "class BankAccount\n{\n    private int acctNum;\n    private double balance;\n    public BankAccount(int num, double bal)\n    {\n        acctNum = num;\n        balance = bal;\n    }\n    @Override\n    public boolean equals(Object obj)\n    {\n        boolean result;\n        if(obj == this)\n            result = true;\n        else if(obj == null)\n            result = false;\n        else if(obj.getClass() != this.getClass())\n            result = false;\n        BankAccount secondAcct = (BankAccount)obj;\n        if(acctNum == secondAcct.acctNum\n            && balance == secondAcct.balance)\n            result = true;\n        else\n            result = false;\n        return result;\n    }\n}\n\npublic class EqualsNull\n{\n    public static void main(String[] args)\n    {\n        BankAccount acct1 = new BankAccount(1234, 500.00);\n        System.out.println(acct1.equals(null));\n    }\n}\n",
+       "error_contains": [
+        "NullPointerException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It throws a `NullPointerException`",
+       "feedback": "The `null` test sets `result`, but nothing stops the method there. It goes on to cast `null` and read `secondAcct.acctNum`, which fails.",
+       "correct": true
+      },
+      {
+       "text": "It returns `false`, because the `null` test sets `result` to `false`",
+       "feedback": "Setting `result` doesn't end the method. The statements after the `if` chain still run, and the last `if` overwrites `result`."
+      },
+      {
+       "text": "It returns `true`, because the method reaches its last `if` and compares fields",
+       "feedback": "It does reach the last `if`, but reading `secondAcct.acctNum` through `null` fails before any comparison is made."
+      },
+      {
+       "text": "It does not compile, because `null` can't be passed as an `Object`",
+       "feedback": "`null` can be passed for any reference parameter. The trouble is what the method does with it."
+      }
+     ],
+     "hint": "Follow the method for `obj == null`. Does anything stop it from reaching the cast and the field reads?",
+     "explanation": "A robust `equals(Object)` returns `true` for the same object and `false` for `null` or an object of a different class, and only then casts and compares fields. Setting a result variable isn't enough; the method must return before the cast, or put the cast inside an `else`.",
+     "ref": "Ch. 9.11, Overriding equals(): the recommendations (pp. 369–370)"
+    },
+    {
+     "id": "hashcode",
+     "concept": "Override hashCode() with equals()",
+     "level": "understand",
+     "stem": "Java's creators recommend overriding `hashCode()` whenever you override `equals()`. Why?",
+     "options": [
+      {
+       "text": "Equal objects must have equal hash codes, or hash-based code misbehaves",
+       "feedback": "Hash-based collections use the hash code to decide where to look. Two equal accounts with different codes are treated as different.",
+       "correct": true
+      },
+      {
+       "text": "The compiler rejects a class that overrides only one of the two",
+       "feedback": "The compiler accepts it; the problem shows up later, as wrong results in programs that rely on hash codes."
+      },
+      {
+       "text": "`Object`'s `equals()` calls `hashCode()`, so the old one breaks the new `equals()`",
+       "feedback": "`Object`'s `equals()` compares references directly; your override doesn't depend on `hashCode()` at all."
+      },
+      {
+       "text": "`toString()` uses `hashCode()`, so overriding it gives readable output",
+       "feedback": "The default `toString()` does show a hash code, but readable output comes from overriding `toString()` itself."
+      }
+     ],
+     "hint": "If two accounts are `equals()`, what should be true of their hash codes?",
+     "explanation": "The default hash code is tied to the object's identity, so two objects your `equals()` calls equal would usually get different codes. Programs that use hash-based methods then treat equal objects as different, so override `hashCode()` from the same fields `equals()` compares.",
+     "aside": "Since Java 7, `java.util.Objects.hash(acctNum, balance)` builds a reasonable hash code from any list of fields in one line, so you don't have to hand-pick prime multipliers.",
+     "ref": "Ch. 9.11, Overriding equals() (p. 370)"
+    }
+   ]
+  },
+  {
+   "id": "9.12",
+   "title": "Creating and Using Interfaces",
+   "subtitle": "Why Java has no multiple inheritance, implementing interfaces, interface constants, and abstract class or interface?",
+   "source": "Ch. 9, section 9.12 (pp. 371–377)",
+   "intro": "A rental company's `InsuredAutomobile` is both an insured item and an automobile, but a Java class gets only one parent. Five questions on the alternative.",
+   "takeaways": [
+    "Java forbids multiple inheritance: a class `extends` at most one class. It can `implement` any number of interfaces, which list method headers without saying how they work.",
+    "A class that implements an interface must provide every one of its abstract methods, as `public` methods, or be declared abstract. Interface data fields are always `public`, `static` and `final` constants.",
+    "Choose an abstract class when subclasses should inherit shared code or data; choose an interface when unrelated classes must each supply their own version of the same behavior, or when a class needs behavior from more than one source."
+   ],
+   "questions": [
+    {
+     "id": "extends-implements-header",
+     "concept": "One superclass, any number of interfaces",
+     "level": "apply",
+     "stem": "`Dog` is a class and `Worker` is an interface. Which class header compiles?",
+     "options": [
+      {
+       "text": "`public class WorkingDog extends Dog implements Worker`",
+       "feedback": "One superclass after `extends`, then interfaces after `implements`, in that order.",
+       "correct": true
+      },
+      {
+       "text": "`public class WorkingDog extends Dog, Worker`",
+       "feedback": "A class can extend only one class, and an interface is added with `implements`, not `extends`."
+      },
+      {
+       "text": "`public class WorkingDog implements Worker extends Dog`",
+       "feedback": "Both keywords belong in the header, but the `extends` clause must come first."
+      },
+      {
+       "text": "`public class WorkingDog implements Dog, Worker`",
+       "feedback": "`implements` lists interfaces only. `Dog` is a class, so it must follow `extends`."
+      }
+     ],
+     "hint": "Which keyword introduces a class's single parent, and which introduces interfaces?",
+     "explanation": "Java prohibits inheriting directly from two classes. A class names one superclass with `extends` and any number of interfaces with `implements`, and the `implements` clause follows the `extends` clause.",
+     "ref": "Ch. 9.12, Creating and Using Interfaces (pp. 371–372)"
+    },
+    {
+     "id": "weaker-access",
+     "concept": "Implementing methods must be public",
+     "level": "analyze",
+     "stem": "`WorkingDog` implements `work()` but leaves off `public`. What happens when it compiles?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "interface Worker\n{\n    public abstract void work();\n}\n\nabstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass WorkingDog extends Dog implements Worker\n{\n    void work()\n    {\n        speak();\n        System.out.println(\"I am a dog who works\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "weaker access privileges"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `work()` would have weaker access than in `Worker`",
+       "feedback": "Interface methods are implicitly public, and an implementing method can't be less visible. Without `public`, it has package access.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because the interface's `public` carries over automatically",
+       "feedback": "\"Implicitly public\" applies inside the interface, not to the class that implements it. In a class, no specifier means package access."
+      },
+      {
+       "text": "It compiles, but `work()` can be called only from inside `WorkingDog`",
+       "feedback": "That would be `private` access. Either way, the compiler won't accept a narrower method."
+      },
+      {
+       "text": "It compiles, because `WorkingDog` also inherits public methods from `Dog`",
+       "feedback": "What `Dog` provides doesn't change the rule for `work()`, which must match the interface's public access."
+      }
+     ],
+     "hint": "In the interface, `work()` is public. In this class, what access does a method with no specifier have?",
+     "explanation": "All methods in an interface are implicitly `public`. A class that implements one must declare each method `public` as well, because an overriding or implementing method can't reduce access.",
+     "ref": "Ch. 9.12, Creating and Using Interfaces (p. 371); Figure 9-57 (p. 372)"
+    },
+    {
+     "id": "interface-constants",
+     "concept": "Interface fields are constants",
+     "level": "apply",
+     "stem": "`PizzaDemo` implements `PizzaConstants` and tries to raise the tax rate. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "interface PizzaConstants\n{\n    public static final double TAX_RATE = 0.07;\n}\npublic class PizzaDemo implements PizzaConstants\n{\n    public static void main(String[] args)\n    {\n        TAX_RATE = 0.08;\n        System.out.println(TAX_RATE);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "final variable TAX_RATE"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `TAX_RATE` is final and can't be assigned",
+       "feedback": "Interface fields are `public static final` constants. Implementing classes can read them but never change them.",
+       "correct": true
+      },
+      {
+       "text": "It prints `0.08`, because `PizzaDemo` gets its own copy of `TAX_RATE`",
+       "feedback": "An interface field is `static`, so there is one shared constant, and it is `final`, so no class can reassign it."
+      },
+      {
+       "text": "It prints `0.07`, because the assignment is quietly ignored",
+       "feedback": "Java doesn't ignore assignments to constants; the compiler reports them."
+      },
+      {
+       "text": "A compile error: `PizzaDemo` can't use `TAX_RATE` without a prefix",
+       "feedback": "Implementing `PizzaConstants` lets the class use its constants by their simple names. The problem is the assignment."
+      }
+     ],
+     "hint": "What three modifiers does every interface field have, whether or not they are written?",
+     "explanation": "Interfaces can contain data fields, but they must be `public`, `static` and `final`. They are useful for a set of constants many classes share; implementing classes can use the values without redeclaring them, but can't change them.",
+     "ref": "Ch. 9.12, Creating Interfaces to Store Related Constants (pp. 374–375)"
+    },
+    {
+     "id": "abstract-or-interface",
+     "concept": "Choosing an abstract class or an interface",
+     "level": "evaluate",
+     "stem": "In a `CardGame` family, `shuffle()` works identically in every game, while `deal()` and `keepScore()` differ in each one. Which design fits best?",
+     "options": [
+      {
+       "text": "An abstract class with a complete `shuffle()` and abstract `deal()` and `keepScore()`",
+       "feedback": "Every game inherits the one tested `shuffle()`, and each subclass is forced to write its own `deal()` and `keepScore()`.",
+       "correct": true
+      },
+      {
+       "text": "An interface declaring all three methods, so each game writes its own `shuffle()`",
+       "feedback": "It works, but every game would duplicate identical shuffling code. Shared behavior belongs where it can be inherited."
+      },
+      {
+       "text": "A final class with all three methods, so no game can change them",
+       "feedback": "A final class can't be extended at all, so no game could supply its own `deal()` or `keepScore()`."
+      },
+      {
+       "text": "A concrete class with empty `deal()` and `keepScore()` methods to fill in later",
+       "feedback": "Empty concrete methods compile, but nothing forces a subclass to replace them, so a game could silently do nothing."
+      }
+     ],
+     "hint": "Which method should be written once and inherited, and which ones must every game be forced to write?",
+     "explanation": "Create an abstract class when subclasses should inherit some data or working methods while being required to supply others. Create an interface when you know which actions every class needs but each class must define all of the behavior itself, or when a class needs behavior from more than one parent.",
+     "aside": "Since Java 8, an interface can also contain `default` methods with bodies, so interfaces can now share some code too. Abstract classes still offer what interfaces can't: instance fields and constructors.",
+     "ref": "Ch. 9.12, abstract classes versus interfaces (pp. 373–374)"
+    },
+    {
+     "id": "interface-output",
+     "concept": "An implementing class is-a its interface",
+     "level": "apply",
+     "stem": "`WorkingDog`'s `work()` calls the `speak()` it inherits from `Dog`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "interface Worker\n{\n    public abstract void work();\n}\n\nabstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass WorkingDog extends Dog implements Worker\n{\n    private int hoursOfTraining;\n    public void setHoursOfTraining(int hrs)\n    {\n        hoursOfTraining = hrs;\n    }\n    @Override\n    public void work()\n    {\n        speak();\n        System.out.print(\"I work \" + hoursOfTraining + \" hours\");\n    }\n}\n\n// in main()\nWorkingDog aSheepHerder = new WorkingDog();\naSheepHerder.setHoursOfTraining(40);\naSheepHerder.speak();\naSheepHerder.work();",
+      "verify": {
+       "expect": "output",
+       "program": "interface Worker\n{\n    public abstract void work();\n}\n\nabstract class Animal\n{\n    public abstract void speak();\n}\nclass Dog extends Animal\n{\n    @Override\n    public void speak() { System.out.print(\"Woof! \"); }\n}\nclass WorkingDog extends Dog implements Worker\n{\n    private int hoursOfTraining;\n    public void setHoursOfTraining(int hrs)\n    {\n        hoursOfTraining = hrs;\n    }\n    @Override\n    public void work()\n    {\n        speak();\n        System.out.print(\"I work \" + hoursOfTraining + \" hours\");\n    }\n}\n\npublic class DemoWorkingDogs\n{\n    public static void main(String[] args)\n    {\n        WorkingDog aSheepHerder = new WorkingDog();\n        aSheepHerder.setHoursOfTraining(40);\n        aSheepHerder.speak();\n        aSheepHerder.work();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Woof! Woof! I work 40 hours`",
+       "feedback": "`speak()` runs once on its own, then `work()` runs `speak()` again before its own line.",
+       "correct": true
+      },
+      {
+       "text": "`Woof! I work 40 hours`",
+       "feedback": "This skips the separate `speak()` call in `main()`, which runs before `work()`."
+      },
+      {
+       "text": "`I work 40 hours`",
+       "feedback": "`work()` begins by calling `speak()`, which `WorkingDog` inherits from `Dog`."
+      },
+      {
+       "text": "It does not compile: `work()` can't call `speak()`, which `Worker` lacks",
+       "feedback": "`work()` is a method of `WorkingDog`, which inherits `speak()` from `Dog`. The interface only requires that `work()` exist."
+      }
+     ],
+     "hint": "List every call to `speak()`, including the one inside `work()`.",
+     "explanation": "A class that both extends a class and implements an interface can use its inherited methods and must supply the interface's methods. Like inheritance, implementing an interface creates an is-a relationship: a `WorkingDog` is a `Dog`, an `Animal` and a `Worker`.",
+     "ref": "Ch. 9.12, Figures 9-57 to 9-59 (pp. 372–373)"
+    }
+   ]
+  },
+  {
+   "id": "9.13",
+   "title": "Using records, Anonymous Inner Classes, and Lambda Expressions",
+   "subtitle": "What a record generates, one-off classes with no name, effectively final variables, and functional interfaces",
+   "source": "Ch. 9, section 9.13 (pp. 377–381)",
+   "intro": "A class with two fields shouldn't need twenty lines of boilerplate, and a washing machine that works once shouldn't need its own file. Six questions on Java's shortcuts.",
+   "takeaways": [
+    "A `record` declares only its components; Java generates private final fields, a constructor, accessors named after the components (no `get` prefix), and `equals()`, `hashCode()` and `toString()` based on the values.",
+    "An anonymous inner class creates a one-time object that extends a class or implements an interface, without naming the class, and without writing `extends` or `implements`. Local variables it uses must be final or effectively final.",
+    "A lambda expression such as `() -> { ... }` implements a functional interface, one with exactly one abstract method. If an interface has two abstract methods, a lambda can't implement it."
+   ],
+   "questions": [
+    {
+     "id": "record-tostring",
+     "concept": "A record's generated toString()",
+     "level": "apply",
+     "stem": "`Building` is a record. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "record Building(String address, int squareFeet)\n{\n}\n\n// in main()\nBuilding bldg = new Building(\"47 Oak Street\", 600);\nSystem.out.println(bldg);",
+      "verify": {
+       "expect": "output",
+       "program": "record Building(String address, int squareFeet)\n{\n}\n\npublic class TestBuildingRecord\n{\n    public static void main(String[] args)\n    {\n        Building bldg = new Building(\"47 Oak Street\", 600);\n        System.out.println(bldg);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Building[address=47 Oak Street, squareFeet=600]`",
+       "feedback": "A record's generated `toString()` lists the record name and each component's name and value in square brackets.",
+       "correct": true
+      },
+      {
+       "text": "`Building[String address=47 Oak Street, int squareFeet=600]`",
+       "feedback": "The record's header lists each component's type, but the generated `toString()` shows only names and values."
+      },
+      {
+       "text": "`address=47 Oak Street, squareFeet=600`",
+       "feedback": "The generated version also names the record type, `Building`, and wraps the components in square brackets."
+      },
+      {
+       "text": "`Building(address=47 Oak Street, squareFeet=600)`",
+       "feedback": "Close, but a record's `toString()` uses square brackets around the components, not parentheses."
+      }
+     ],
+     "hint": "Which methods does Java write for you when you declare a record?",
+     "explanation": "Every record automatically receives a private final field for each component, a public constructor, a public accessor for each component, and implementations of `equals()`, `hashCode()` and `toString()` that use the components' values.",
+     "ref": "Ch. 9.13, Using records (pp. 377–379)"
+    },
+    {
+     "id": "record-accessor",
+     "concept": "Record accessors have no get prefix",
+     "level": "apply",
+     "stem": "A student uses the getter name they're used to. What happens when this compiles?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "record Building(String address, int squareFeet)\n{\n}\n\n// in main()\nBuilding bldg = new Building(\"47 Oak Street\", 600);\nSystem.out.println(bldg.getAddress());",
+      "verify": {
+       "expect": "compile_error",
+       "program": "record Building(String address, int squareFeet)\n{\n}\n\npublic class RecordGetter\n{\n    public static void main(String[] args)\n    {\n        Building bldg = new Building(\"47 Oak Street\", 600);\n        System.out.println(bldg.getAddress());\n    }\n}\n",
+       "error_contains": [
+        "cannot find symbol"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `Building` has no `getAddress()` method",
+       "feedback": "A record's accessors are named exactly like its components, so the method is `address()`.",
+       "correct": true
+      },
+      {
+       "text": "It prints `47 Oak Street`, because records generate `get` methods",
+       "feedback": "Records do generate accessors, but without the `get` prefix: `bldg.address()`."
+      },
+      {
+       "text": "It prints `null`, because the record has no setter to store the address",
+       "feedback": "The generated constructor stores the address. The problem is only the method's name."
+      },
+      {
+       "text": "A compile error: records can't be printed without a `toString()`",
+       "feedback": "Records generate `toString()`; printing one is fine. The compiler objects to `getAddress()`."
+      }
+     ],
+     "hint": "In `TestBuildingRecord`, how did the book read the address back out?",
+     "explanation": "Each automatically generated record accessor is public and has the same name and type as its component, with no `get` prefix. Records also have no setters, because their fields are final.",
+     "ref": "Ch. 9.13, Using records (pp. 378–379)"
+    },
+    {
+     "id": "record-equals",
+     "concept": "Records compare by value",
+     "level": "analyze",
+     "stem": "Two separately created `Building` objects hold the same values. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "record Building(String address, int squareFeet)\n{\n}\n\n// in main()\nBuilding a = new Building(\"47 Oak Street\", 600);\nBuilding b = new Building(\"47 Oak Street\", 600);\nSystem.out.println((a == b) + \" \" + a.equals(b));",
+      "verify": {
+       "expect": "output",
+       "program": "record Building(String address, int squareFeet)\n{\n}\n\npublic class RecordEquals\n{\n    public static void main(String[] args)\n    {\n        Building a = new Building(\"47 Oak Street\", 600);\n        Building b = new Building(\"47 Oak Street\", 600);\n        System.out.println((a == b) + \" \" + a.equals(b));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`false true`",
+       "feedback": "`==` asks whether they are the same object, and they aren't. The record's generated `equals()` compares component values, which match.",
+       "correct": true
+      },
+      {
+       "text": "`false false`",
+       "feedback": "That's how a plain class without its own `equals()` behaves. A record generates a value-based `equals()`."
+      },
+      {
+       "text": "`true true`",
+       "feedback": "`new` always creates a distinct object, so `==` on two `new` objects is false."
+      },
+      {
+       "text": "`true false`",
+       "feedback": "This reverses the two tests: `==` compares references, while `equals()` here compares values."
+      }
+     ],
+     "hint": "Which of the two tests compares references, and which uses a method the record generated?",
+     "explanation": "Records generate `equals()` and `hashCode()` from their component values, so two records with the same data are equal. The `==` operator still compares references, and two `new` objects are always different references.",
+     "aside": "Records arrived as a preview in Java 14 and became a standard feature in Java 16, in 2021. Java 21 added record patterns, which unpack a record's components right inside an `instanceof` test or a `switch`.",
+     "ref": "Ch. 9.13, Using records (p. 379); Ch. 9.11, Using the equals() Method"
+    },
+    {
+     "id": "anonymous-class",
+     "concept": "An anonymous inner class extends or implements without saying so",
+     "level": "apply",
+     "stem": "The program creates a one-off `Animal` without naming its class. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public String getName() { return name; }\n    public void setName(String n) { name = n; }\n}\n\n// in main()\nAnimal pet = new Animal()\n{\n    @Override\n    public void speak() { System.out.println(\"Tweet!\"); }\n};\npet.setName(\"Kiwi\");\nSystem.out.print(pet.getName() + \" says \");\npet.speak();",
+      "verify": {
+       "expect": "output",
+       "program": "abstract class Animal\n{\n    private String name;\n    public abstract void speak();\n    public String getName() { return name; }\n    public void setName(String n) { name = n; }\n}\n\npublic class DemoAnonymousClass\n{\n    public static void main(String[] args)\n    {\n        Animal pet = new Animal()\n        {\n            @Override\n            public void speak() { System.out.println(\"Tweet!\"); }\n        };\n        pet.setName(\"Kiwi\");\n        System.out.print(pet.getName() + \" says \");\n        pet.speak();\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Kiwi says Tweet!`",
+       "feedback": "`new Animal() { ... }` defines an unnamed subclass of `Animal`, overrides `speak()` and creates one object of it, which inherits `setName()` and `getName()`.",
+       "correct": true
+      },
+      {
+       "text": "It does not compile, because `Animal` is abstract",
+       "feedback": "`new Animal()` alone would fail, but the braces that follow define a concrete, unnamed subclass that implements `speak()`."
+      },
+      {
+       "text": "It does not compile, because the class body needs `extends Animal`",
+       "feedback": "An anonymous class never uses `extends` or `implements`; the type after `new` says what it extends or implements."
+      },
+      {
+       "text": "`null says Tweet!`",
+       "feedback": "The unnamed subclass inherits `setName()`, which stores `\"Kiwi\"` before `getName()` reads it."
+      }
+     ],
+     "hint": "What do the curly braces right after `new Animal()` define?",
+     "explanation": "An anonymous inner class has no name and is defined where it is instantiated, with `new`. It either extends a class or implements an interface, without the keywords `extends` or `implements`, and it must override all inherited abstract methods.",
+     "ref": "Ch. 9.13, Using Anonymous Inner Classes (pp. 379–380)"
+    },
+    {
+     "id": "effectively-final",
+     "concept": "Captured variables must be effectively final",
+     "level": "analyze",
+     "stem": "The anonymous class uses `pounds`, and `pounds` is changed afterward. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "interface Worker\n{\n    public abstract void work();\n}\n\n// in main()\nint pounds = 20;\nWorker washingMachine = new Worker()\n{\n    public void work()\n    {\n        System.out.println(pounds + \" pounds\");\n    }\n};\npounds = 25;\nwashingMachine.work();",
+      "verify": {
+       "expect": "compile_error",
+       "program": "interface Worker\n{\n    public abstract void work();\n}\n\npublic class CaptureDemo\n{\n    public static void main(String[] args)\n    {\n        int pounds = 20;\n        Worker washingMachine = new Worker()\n        {\n            public void work()\n            {\n                System.out.println(pounds + \" pounds\");\n            }\n        };\n        pounds = 25;\n        washingMachine.work();\n    }\n}\n",
+       "error_contains": [
+        "effectively final"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `pounds` must be final or effectively final",
+       "feedback": "`pounds` is assigned twice, so it isn't effectively final, and an inner class may use only local variables that never change.",
+       "correct": true
+      },
+      {
+       "text": "It prints `25 pounds`, the value at the time `work()` is called",
+       "feedback": "Java won't let the inner class see a variable that changes, precisely so this question never comes up at run time."
+      },
+      {
+       "text": "It prints `20 pounds`, the value when the object was created",
+       "feedback": "That's how Java copies the value, but it allows the copy only when the variable can never change afterward."
+      },
+      {
+       "text": "It compiles, because the reassignment comes after the class definition",
+       "feedback": "The rule looks at the whole method: a variable assigned more than once isn't effectively final, wherever the second assignment is."
+      }
+     ],
+     "hint": "How many times is `pounds` assigned in `main()`?",
+     "explanation": "An anonymous inner class can use local variables of its enclosing method only if they are final or effectively final, meaning assigned only once. The same rule applies to lambda expressions.",
+     "ref": "Ch. 9.13, Using Anonymous Inner Classes (p. 380)"
+    },
+    {
+     "id": "functional-interface",
+     "concept": "Lambdas need a functional interface",
+     "level": "analyze",
+     "stem": "`Insured` declares two abstract methods. A student tries to implement it with a lambda. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "interface Insured\n{\n    public abstract void setCoverage();\n    public abstract int getCoverage();\n}\n\n// in main()\nInsured policy = () ->\n{\n    System.out.println(\"Covered\");\n};",
+      "verify": {
+       "expect": "compile_error",
+       "program": "interface Insured\n{\n    public abstract void setCoverage();\n    public abstract int getCoverage();\n}\n\npublic class LambdaDemo\n{\n    public static void main(String[] args)\n    {\n        Insured policy = () ->\n        {\n            System.out.println(\"Covered\");\n        };\n    }\n}\n",
+       "error_contains": [
+        "not a functional interface"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `Insured` is not a functional interface",
+       "feedback": "A lambda supplies exactly one method body, so it can implement only an interface with a single abstract method.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; the lambda implements both methods with the same body",
+       "feedback": "One body can't serve both `void setCoverage()` and `int getCoverage()`. Java needs exactly one abstract method to match."
+      },
+      {
+       "text": "It compiles; the lambda implements `setCoverage()`, the first method",
+       "feedback": "Java never guesses which method you meant. With two abstract methods, the interface can't be the target of a lambda."
+      },
+      {
+       "text": "It compiles, but calling `getCoverage()` throws an exception",
+       "feedback": "The compiler rejects the lambda before anything can be called."
+      }
+     ],
+     "hint": "How many abstract methods may an interface have for a lambda to implement it?",
+     "explanation": "A lambda expression creates an object that implements a functional interface, an interface with exactly one abstract method. Because the interface has only one method, the lambda knows which method its body implements; with two abstract methods, a lambda can't be used, so you write a class or an anonymous class instead.",
+     "aside": "The name comes from lambda calculus, Alonzo Church's 1930s system for describing computation with functions alone, which writes a function with the Greek letter λ. Java added lambda expressions in Java 8, in 2014.",
+     "ref": "Ch. 9.13, Using Lambda Expressions (pp. 380–381)"
+    }
+   ]
+  }
+ ]
+}
