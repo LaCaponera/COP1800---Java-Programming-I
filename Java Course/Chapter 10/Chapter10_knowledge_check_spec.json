@@ -1,0 +1,1672 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 10: Exception Handling",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 10 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "10.1",
+   "title": "Learning About Exceptions",
+   "subtitle": "Error versus Exception, what a crash looks like, and reading a stack trace",
+   "source": "Ch. 10, section 10.1 (pp. 393–397)",
+   "intro": "A student's `Division` program works for `12` and `4`, then dies with a wall of red text when a classmate types `0`. Four questions on what just happened and how to read it.",
+   "takeaways": [
+    "An exception is an object that represents an unexpected condition at run time. `Error` and `Exception` both descend from `Throwable`: an `Error` (such as running out of memory) is one a program can't recover from, while an `Exception` is one it can.",
+    "A stack trace is a map, not noise. Its first line names the exception type and message, and the topmost `at` line that belongs to *your* class shows the line of your code to fix.",
+    "An `if` can prevent one specific error, but it can't recover from errors it didn't anticipate. Exception handling is what makes a program fault tolerant."
+   ],
+   "questions": [
+    {
+     "id": "error-vs-exception",
+     "concept": "Error versus Exception",
+     "level": "understand",
+     "stem": "Java splits `Throwable` into two branches, `Error` and `Exception`. Which situation belongs in the **`Error`** branch?",
+     "options": [
+      {
+       "text": "The Java Virtual Machine runs out of memory while the program is running",
+       "feedback": "An `OutOfMemoryError` is a serious condition the program usually can't fix from inside itself, which is exactly what the `Error` branch represents.",
+       "correct": true
+      },
+      {
+       "text": "The user types `ten` when `nextInt()` expects a whole number",
+       "feedback": "This feels like a serious user mistake, but it's an `InputMismatchException`. The program can recover by asking again, so it's in the `Exception` branch."
+      },
+      {
+       "text": "The program divides an `int` by a variable whose value is 0",
+       "feedback": "This crashes the program if nothing handles it, but crashing isn't the test. An `ArithmeticException` is recoverable, for example by using a different divisor."
+      },
+      {
+       "text": "The program tries to open a data file that isn't on the disk",
+       "feedback": "A missing file is a classic `IOException`. The program can recover by asking for another file name, so it's an `Exception`, not an `Error`."
+      }
+     ],
+     "hint": "The question isn't whether the program stops. Ask: could the program itself do something sensible and keep going?",
+     "explanation": "Both branches descend from `Throwable`. `Error` covers serious problems a program usually can't recover from, such as running out of memory; `Exception` covers unusual conditions a running program can recover from, such as bad input or an invalid subscript.",
+     "ref": "Ch. 10.1, Figure 10-1 and the Error/Exception bullets (pp. 393–394)"
+    },
+    {
+     "id": "int-vs-double-zero",
+     "concept": "Integer versus floating-point division by zero",
+     "level": "apply",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\ndouble ratio = 7.0 / 0;\nSystem.out.println(ratio);\nint quotient = 7 / 0;\nSystem.out.println(quotient);",
+      "verify": {
+       "expect": "runtime_error",
+       "program": "public class ZeroDemo\n{\n    public static void main(String[] args)\n    {\n        double ratio = 7.0 / 0;\n        System.out.println(ratio);\n        int quotient = 7 / 0;\n        System.out.println(quotient);\n    }\n}\n",
+       "error_contains": [
+        "Infinity",
+        "ArithmeticException",
+        "/ by zero"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `Infinity`, then stops with an `ArithmeticException`",
+       "feedback": "Floating-point division by 0 is allowed and produces `Infinity`; integer division by 0 is not, so the second division throws.",
+       "correct": true
+      },
+      {
+       "text": "It stops with an `ArithmeticException` before printing anything",
+       "feedback": "This assumes every division by 0 fails. The first division uses a `double`, and floating-point division by 0 is legal in Java."
+      },
+      {
+       "text": "It prints `Infinity` twice, because both divide 7 by 0",
+       "feedback": "The two divisions look alike, but the second has two `int` operands, and Java does not allow integer division by 0."
+      },
+      {
+       "text": "It does not compile, because the compiler can see the division by 0",
+       "feedback": "The compiler doesn't reject division by a 0 literal. The problem only shows up when the statement executes, as a runtime exception."
+      }
+     ],
+     "hint": "Look at the types of the operands in each division. Do `double` and `int` follow the same rule?",
+     "explanation": "Java does not allow integer division by 0 and throws an `ArithmeticException` at run time. Floating-point division by 0 is allowed and produces `Infinity`, so the type of the operands decides whether an exception occurs.",
+     "aside": "The `Infinity` comes from IEEE 754, the floating-point standard almost every processor follows. It also defines `NaN` (\"not a number\"): try `System.out.println(0.0 / 0);`. A `NaN` is the only value that isn't equal to itself, so `x != x` is true only when `x` is `NaN`.",
+     "ref": "Ch. 10.1, Figures 10-2 and 10-3 (pp. 394–395)"
+    },
+    {
+     "id": "read-stack-trace",
+     "concept": "Reading a stack trace",
+     "level": "analyze",
+     "stem": "The user typed `2.5` at the second prompt of `Division`. Which line should the programmer look at first?",
+     "code": {
+      "language": "text",
+      "label": "Console output",
+      "text": "Exception in thread \"main\" java.util.InputMismatchException\n    at java.base/java.util.Scanner.throwFor(Scanner.java:939)\n    at java.base/java.util.Scanner.next(Scanner.java:1594)\n    at java.base/java.util.Scanner.nextInt(Scanner.java:2258)\n    at java.base/java.util.Scanner.nextInt(Scanner.java:2212)\n    at Division.main(Division.java:11)",
+      "verify": {
+       "expect": "skip",
+       "reason": "Console output to read, not a program"
+      }
+     },
+     "options": [
+      {
+       "text": "Line 11 of `Division.java`, where `main()` calls `nextInt()`",
+       "feedback": "This is the only line in the trace that belongs to the programmer's own code. It shows which statement received input it couldn't convert.",
+       "correct": true
+      },
+      {
+       "text": "Line 939 of `Scanner.java`, because the trace lists it first",
+       "feedback": "That line is where the exception was created, but it's inside Java's `Scanner` class. You don't edit library code to fix a user typing `2.5`."
+      },
+      {
+       "text": "Line 2258 of `Scanner.java`, where `nextInt()` itself failed",
+       "feedback": "`nextInt()` failed because it was handed a non-integer. The fix belongs in your program, not in Java's `Scanner` class."
+      },
+      {
+       "text": "The first line only, because the rest is internal detail",
+       "feedback": "The first line tells you *what* went wrong (`InputMismatchException`) but not *where* in your program. The `Division.main` line gives you that."
+      }
+     ],
+     "hint": "Which lines in the trace name a class that you wrote?",
+     "explanation": "A stack trace lists each method that was running, most recent first. The first line names the exception; the topmost line from your own class tells you which of your statements to examine.",
+     "ref": "Ch. 10.1, Figure 10-4 and the stack trace discussion (pp. 395–396)"
+    },
+    {
+     "id": "if-vs-handling",
+     "concept": "A decision prevents an error; exception handling recovers",
+     "level": "evaluate",
+     "stem": "`Division2` adds `if(denominator == 0)` before dividing and prints `Cannot divide by 0`. A classmate says it is now robust and never needs exception handling. What's the best response?",
+     "options": [
+      {
+       "text": "It still crashes if the user types `abc` for a number",
+       "feedback": "The `if` prevents one anticipated error, division by 0. A noninteger entry makes `nextInt()` throw before the `if` is even reached.",
+       "correct": true
+      },
+      {
+       "text": "It's correct; a decision can prevent every runtime error",
+       "feedback": "A decision only prevents the errors you thought to test for. Input that can't be converted to an `int` fails inside `nextInt()`, before your `if` runs."
+      },
+      {
+       "text": "The `if` doesn't work, because only `try` blocks prevent errors",
+       "feedback": "The `if` works for the case it tests. Programmers avoided errors with decisions long before object-oriented exception handling existed."
+      },
+      {
+       "text": "Java requires a `try` block around every division, so it won't compile",
+       "feedback": "Java doesn't require handling division errors. Many earlier programs in this course divide without any `try` block and compile fine."
+      }
+     ],
+     "hint": "What could the user type at either prompt that isn't 0 but still isn't usable?",
+     "explanation": "Using a decision to avoid an error is the traditional technique, and it works for the conditions you test. Object-oriented exception handling adds the ability to recover from errors such as noninteger input, which is what makes programs fault tolerant and robust.",
+     "ref": "Ch. 10.1, Figure 10-5 and fault tolerance (pp. 396–397)"
+    }
+   ]
+  },
+  {
+   "id": "10.2",
+   "title": "Trying Code and Catching Exceptions",
+   "subtitle": "What runs and what is skipped in a try…catch, getMessage(), variable scope, and the leftover-input trap",
+   "source": "Ch. 10, section 10.2 (pp. 397–404)",
+   "intro": "A data-entry loop catches bad input, yet after one typo the user can't enter anything else. Five questions on exactly what a `try…catch` runs and skips.",
+   "takeaways": [
+    "When a statement in a `try` block throws, the rest of the `try` block is abandoned and control jumps to the matching `catch`. Statements after the whole `try…catch` run either way.",
+    "Catching a `nextInt()` failure doesn't remove the bad input; the same token stays in the buffer. Consume it (for example with `nextLine()`) or every later read fails too.",
+    "A variable declared inside a `try` block goes out of scope when the block ends, and a variable assigned only inside a `try` may not have a value after it. Give it one before the `try` or in the `catch`."
+   ],
+   "questions": [
+    {
+     "id": "try-skips-rest",
+     "concept": "An exception abandons the rest of the try block",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nint numerator = 12, denominator = 0, result;\ntry\n{\n    System.out.print(\"A \");\n    result = numerator / denominator;\n    System.out.print(\"B \");\n}\ncatch(ArithmeticException mistake)\n{\n    System.out.print(\"C \");\n}\nSystem.out.println(\"D\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class TryTrace\n{\n    public static void main(String[] args)\n    {\n        int numerator = 12, denominator = 0, result;\n        try\n        {\n            System.out.print(\"A \");\n            result = numerator / denominator;\n            System.out.print(\"B \");\n        }\n        catch(ArithmeticException mistake)\n        {\n            System.out.print(\"C \");\n        }\n        System.out.println(\"D\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`A C D`",
+       "feedback": "`A` prints before the division throws; `B` is skipped because the rest of the `try` block is abandoned; the `catch` prints `C`; and `D` runs after the `try…catch` either way.",
+       "correct": true
+      },
+      {
+       "text": "`A B C D`",
+       "feedback": "This treats the exception like a warning that lets the `try` block continue. Once the division throws, nothing after it in the `try` block runs."
+      },
+      {
+       "text": "`C D`",
+       "feedback": "This assumes the whole `try` block is undone when an exception occurs. `A` was already printed before the division, and printing can't be taken back."
+      },
+      {
+       "text": "`A C`",
+       "feedback": "The `catch` block handled the exception, so the program continues normally with the statement after the `try…catch`."
+      }
+     ],
+     "hint": "Trace one statement at a time. Which statement throws, and where does control go next?",
+     "explanation": "Statements in a `try` block run in order until one throws. Control then jumps to the matching `catch`, skipping the rest of the `try` block, and after the `catch` finishes the program continues with the statements that follow.",
+     "ref": "Ch. 10.2, Figures 10-6 to 10-8 (pp. 398–399)"
+    },
+    {
+     "id": "get-message",
+     "concept": "getMessage() returns the built-in message",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\ntry\n{\n    int result = 30 / 0;\n    System.out.println(result);\n}\ncatch(ArithmeticException mistake)\n{\n    System.out.println(mistake.getMessage());\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class MessageDemo\n{\n    public static void main(String[] args)\n    {\n        try\n        {\n            int result = 30 / 0;\n            System.out.println(result);\n        }\n        catch(ArithmeticException mistake)\n        {\n            System.out.println(mistake.getMessage());\n        }\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`/ by zero`",
+       "feedback": "`getMessage()`, inherited from `Throwable`, returns only the detail message that came with the exception: the same `/ by zero` you see when a program crashes.",
+       "correct": true
+      },
+      {
+       "text": "`java.lang.ArithmeticException: / by zero`",
+       "feedback": "That's what printing the exception object itself shows (its `toString()`), with the class name in front. `getMessage()` returns just the detail message."
+      },
+      {
+       "text": "`ArithmeticException`",
+       "feedback": "`getMessage()` doesn't return the exception's class name; it returns the description of what went wrong."
+      },
+      {
+       "text": "`mistake`",
+       "feedback": "`mistake` is only the identifier the programmer chose for the caught object. The method returns text stored inside that object."
+      }
+     ],
+     "hint": "When this program crashes without a `catch`, what text appears after the exception's name?",
+     "explanation": "Every exception carries a detail message. `getMessage()` returns that message alone, which is useful when you want to show Java's built-in description of the problem without the class name or stack trace.",
+     "ref": "Ch. 10.2, Figures 10-9 and 10-10 (pp. 399–400)"
+    },
+    {
+     "id": "leftover-token",
+     "concept": "A caught input error leaves the bad token in the buffer",
+     "level": "analyze",
+     "stem": "The user types `4 ab 7`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nint[] numbers = {0, 0, 0};\nScanner input = new Scanner(System.in);\nfor(int x = 0; x < numbers.length; ++x)\n{\n    try\n    {\n        numbers[x] = input.nextInt();\n    }\n    catch(Exception e)\n    {\n        System.out.print(\"Bad \");\n    }\n}\nSystem.out.println(numbers[0] + \" \" + numbers[1]\n    + \" \" + numbers[2]);",
+      "verify": {
+       "expect": "output",
+       "stdin": "4 ab 7\n",
+       "program": "import java.util.Scanner;\n\npublic class EnteringIntegers\n{\n    public static void main(String[] args)\n    {\n        int[] numbers = {0, 0, 0};\n        Scanner input = new Scanner(System.in);\n        for(int x = 0; x < numbers.length; ++x)\n        {\n            try\n            {\n                numbers[x] = input.nextInt();\n            }\n            catch(Exception e)\n            {\n                System.out.print(\"Bad \");\n            }\n        }\n        System.out.println(numbers[0] + \" \" + numbers[1]\n            + \" \" + numbers[2]);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Bad Bad 4 0 0`",
+       "feedback": "`ab` makes `nextInt()` throw but stays in the buffer, so the next `nextInt()` tries `ab` again and fails again. The loop ends before `7` is ever read.",
+       "correct": true
+      },
+      {
+       "text": "`Bad 4 0 7`",
+       "feedback": "This assumes a failed `nextInt()` throws `ab` away. It doesn't: the unusable token stays in the input buffer for the next read."
+      },
+      {
+       "text": "`Bad 4 7 0`",
+       "feedback": "This assumes the bad entry is skipped *and* its array slot is skipped too. Neither happens: `ab` stays in the buffer and blocks every later read."
+      },
+      {
+       "text": "`Bad`, then the program stops with an exception",
+       "feedback": "The `catch` block handles each failure, so the loop keeps going and the final `println()` still runs."
+      }
+     ],
+     "hint": "After `nextInt()` fails on `ab`, what is the next thing waiting in the input?",
+     "explanation": "When `nextInt()` throws, the characters it couldn't convert remain in the input buffer. Unless your `catch` consumes them, for example with `input.nextLine()`, every later numeric read fails on the same characters.",
+     "aside": "The book's fix, an extra `nextLine()` after each read, is a common pattern. Another is to read every entry with `nextLine()` and convert it with `Integer.parseInt()`: a bad entry then throws a `NumberFormatException`, and since the whole line was already read, nothing is left behind in the buffer.",
+     "ref": "Ch. 10.2, Using a try Block to Make Programs \"Foolproof\", Figures 10-12 to 10-14 (pp. 400–401)"
+    },
+    {
+     "id": "uninitialized",
+     "concept": "A variable assigned only in try may have no value",
+     "level": "apply",
+     "stem": "What happens when this program is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import java.util.Scanner;\npublic class UninitializedVariableTest\n{\n    public static void main(String[] args)\n    {\n        int x;\n        Scanner input = new Scanner(System.in);\n        try\n        {\n            x = input.nextInt();\n        }\n        catch(Exception e)\n        {\n            System.out.println(\"Exception occurred\");\n        }\n        System.out.println(\"x is \" + x);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "might not have been initialized"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `x` might not have been initialized",
+       "feedback": "If `nextInt()` throws, the assignment never happens and the `catch` doesn't assign `x` either. The compiler refuses to let you use a variable that might have no value.",
+       "correct": true
+      },
+      {
+       "text": "It compiles; if input fails, it prints `x is 0`",
+       "feedback": "Local variables have no default value in Java. Only fields get an automatic 0, so the compiler can't assume `x` holds 0."
+      },
+      {
+       "text": "It compiles, but bad input causes a run-time exception at the last line",
+       "feedback": "The problem is caught before the program ever runs. The compiler sees a path through the code where `x` is never assigned."
+      },
+      {
+       "text": "It compiles, because the `catch` block handles any failure",
+       "feedback": "The `catch` handles the exception, but it doesn't give `x` a value. Handling an error and initializing a variable are different jobs."
+      }
+     ],
+     "hint": "Follow the path where `nextInt()` throws. Is `x` ever assigned on that path?",
+     "explanation": "The compiler knows a `try` block might not finish. If a variable gets its value only inside the `try`, you must assign it before the `try` begins, assign it in the `catch`, or move the statement that uses it into the `try`.",
+     "ref": "Ch. 10.2, Declaring and Initializing Variables in try…catch Blocks, Figure 10-15 (p. 402)"
+    },
+    {
+     "id": "throw-statement",
+     "concept": "Where a throw statement sends the exception",
+     "level": "understand",
+     "stem": "A `throw` statement sends an `Exception` object out of a block or method. Where does that object go to be handled?",
+     "options": [
+      {
+       "text": "To a `catch` block, either in this method or in a method that called it",
+       "feedback": "A thrown exception travels until a `catch` block whose parameter type matches it handles it. That `catch` can be in the same method or further back.",
+       "correct": true
+      },
+      {
+       "text": "To the `try` block, which runs again with the error corrected",
+       "feedback": "The `try` block is where the exception is thrown *from*, not where it's sent. A `try` block never reruns automatically."
+      },
+      {
+       "text": "Straight to the operating system, which ends the program",
+       "feedback": "That only happens when nothing catches the exception. A matching `catch` block gets the first chance."
+      },
+      {
+       "text": "Back to the statement that caused it, which then tries again",
+       "feedback": "Java has no automatic retry. Control leaves the failing statement and never resumes there; a loop is needed if you want to try again."
+      }
+     ],
+     "hint": "Which kind of block is described as \"catching\" the exception?",
+     "explanation": "A method that detects an error throws an exception, and a block of code that processes the error catches it. The thrown object goes to a matching `catch` block, which may be in the same method or in a calling method.",
+     "ref": "Ch. 10.2, Trying Code and Catching Exceptions (pp. 397–398)"
+    }
+   ]
+  },
+  {
+   "id": "10.3",
+   "title": "Throwing and Catching Multiple Exceptions",
+   "subtitle": "Which catch block runs, ordering catch blocks, catch-all and multi-catch",
+   "source": "Ch. 10, section 10.3 (pp. 404–408)",
+   "intro": "A program reads two numbers and divides them, and three different things can go wrong. Five questions on which `catch` block answers when.",
+   "takeaways": [
+    "A `try` block throws at most one exception per run: the first statement that fails ends the `try` block. Then the `catch` blocks are checked in order, and only the first one that matches runs.",
+    "A `catch` for a superclass also catches every subclass. So order `catch` blocks from most specific to most general; a specific `catch` placed after a general one is unreachable and won't compile.",
+    "To handle several unrelated types the same way, use one multi-catch block, `catch(TypeA | TypeB e)`, instead of duplicating code or catching every `Exception`."
+   ],
+   "questions": [
+    {
+     "id": "first-match-runs",
+     "concept": "Only the first matching catch block executes",
+     "level": "apply",
+     "stem": "The user types `8`, then `0`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nScanner input = new Scanner(System.in);\ntry\n{\n    int numerator = input.nextInt();\n    int denominator = input.nextInt();\n    System.out.println(numerator / denominator);\n}\ncatch(ArithmeticException mistake)\n{\n    System.out.println(mistake.getMessage());\n}\ncatch(InputMismatchException mistake)\n{\n    System.out.println(\"Wrong data type\");\n}\nSystem.out.println(\"End of program\");",
+      "verify": {
+       "expect": "output",
+       "stdin": "8\n0\n",
+       "output": "/ by zero End of program",
+       "program": "import java.util.*;\n\npublic class DivisionMistakeCaught3\n{\n    public static void main(String[] args)\n    {\n        Scanner input = new Scanner(System.in);\n        try\n        {\n            int numerator = input.nextInt();\n            int denominator = input.nextInt();\n            System.out.println(numerator / denominator);\n        }\n        catch(ArithmeticException mistake)\n        {\n            System.out.println(mistake.getMessage());\n        }\n        catch(InputMismatchException mistake)\n        {\n            System.out.println(\"Wrong data type\");\n        }\n        System.out.println(\"End of program\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`/ by zero`, then `End of program`",
+       "feedback": "The division throws an `ArithmeticException`, the first `catch` matches and runs, the second is bypassed, and the program continues after the `catch` blocks.",
+       "correct": true
+      },
+      {
+       "text": "`/ by zero`, `Wrong data type`, then `End of program`",
+       "feedback": "This assumes every `catch` block runs in turn. Once one `catch` matches, all the remaining ones are bypassed."
+      },
+      {
+       "text": "`Wrong data type`, then `End of program`",
+       "feedback": "Both entries are valid integers, so `nextInt()` succeeds both times. The failure happens later, at the division."
+      },
+      {
+       "text": "`/ by zero` only",
+       "feedback": "After a `catch` block handles the exception, the program continues normally, so the last statement still runs."
+      }
+     ],
+     "hint": "Which statement fails, what type of exception does it throw, and which `catch` is checked first?",
+     "explanation": "When a `try` block has several `catch` blocks, they are examined in sequence until one matches the exception's type. That block runs, every remaining `catch` is bypassed, and execution continues after the last `catch`.",
+     "ref": "Ch. 10.3, Figures 10-18 and 10-19 (pp. 404–405)"
+    },
+    {
+     "id": "only-first-throw",
+     "concept": "Only the first failing statement throws",
+     "level": "apply",
+     "stem": "Both statements in this `try` block would fail on their own. What does the code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nint[] values = {10, 20};\ntry\n{\n    System.out.print(values[2] + \" \");\n    System.out.print(values[0] / 0 + \" \");\n}\ncatch(ArithmeticException e)\n{\n    System.out.print(\"math \");\n}\ncatch(ArrayIndexOutOfBoundsException e)\n{\n    System.out.print(\"index \");\n}\nSystem.out.println(\"done\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class TwoFailures\n{\n    public static void main(String[] args)\n    {\n        int[] values = {10, 20};\n        try\n        {\n            System.out.print(values[2] + \" \");\n            System.out.print(values[0] / 0 + \" \");\n        }\n        catch(ArithmeticException e)\n        {\n            System.out.print(\"math \");\n        }\n        catch(ArrayIndexOutOfBoundsException e)\n        {\n            System.out.print(\"index \");\n        }\n        System.out.println(\"done\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`index done`",
+       "feedback": "`values[2]` is out of range, so the first statement throws and the division never runs. Only the matching `catch` executes.",
+       "correct": true
+      },
+      {
+       "text": "`index math done`",
+       "feedback": "This assumes both failures are reported. The first exception ends the `try` block, so the division is never attempted."
+      },
+      {
+       "text": "`math done`",
+       "feedback": "This picks the first `catch` listed rather than the one that matches. The exception thrown is an `ArrayIndexOutOfBoundsException`."
+      },
+      {
+       "text": "`math index done`",
+       "feedback": "Only one exception is ever thrown from this `try` block, and only one `catch` block can run for it."
+      }
+     ],
+     "hint": "Which statement runs first, and does the second one ever get a chance?",
+     "explanation": "If you try more than one statement, only the first error-generating statement throws an exception. The rest of the `try` block is abandoned, so later problems in it are never reached.",
+     "ref": "Ch. 10.3, Throwing and Catching Multiple Exceptions (p. 404)"
+    },
+    {
+     "id": "unreachable-catch",
+     "concept": "A general catch before a specific one makes it unreachable",
+     "level": "analyze",
+     "stem": "What happens when this program is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class CatchOrder\n{\n    public static void main(String[] args)\n    {\n        try\n        {\n            int result = 10 / 0;\n        }\n        catch(Exception e)\n        {\n            System.out.println(\"Something went wrong\");\n        }\n        catch(ArithmeticException e)\n        {\n            System.out.println(\"Math problem\");\n        }\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "has already been caught"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `ArithmeticException` has already been caught",
+       "feedback": "The `Exception` block catches every subclass, including `ArithmeticException`, so the second `catch` could never run. Unreachable code is a compile error.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `Math problem`, the more specific match",
+       "feedback": "Java doesn't search for the best match; it takes the first one that fits. `Exception` fits, so it would always win."
+      },
+      {
+       "text": "It compiles and prints `Something went wrong`",
+       "feedback": "That is what would happen at run time if it compiled, but the compiler rejects the program first because the second `catch` is unreachable."
+      },
+      {
+       "text": "It compiles and prints both messages, general first",
+       "feedback": "At most one `catch` block runs per exception, and this program doesn't get that far: the compiler rejects it."
+      }
+     ],
+     "hint": "Is an `ArithmeticException` also an `Exception`? Could anything ever reach the second block?",
+     "explanation": "Because a superclass `catch` also catches its subclasses, put the \"bigger basket\" below the smaller one. A specific `catch` placed after a more general one can never execute, so the compiler reports that the exception has already been caught.",
+     "ref": "Ch. 10.3, unreachable catch blocks (p. 406)"
+    },
+    {
+     "id": "multi-catch",
+     "concept": "Catching several types in one block",
+     "level": "apply",
+     "stem": "You want one `catch` block to handle `ArithmeticException` and `InputMismatchException` with the same code, while letting every other exception pass through. Which header does that?",
+     "options": [
+      {
+       "text": "`catch(ArithmeticException | InputMismatchException e)`",
+       "feedback": "This is Java's multi-catch syntax: the types are separated by a vertical bar, and the block runs for either one and nothing else.",
+       "correct": true
+      },
+      {
+       "text": "`catch(ArithmeticException, InputMismatchException e)`",
+       "feedback": "Some printings of the textbook show this form, but the compiler rejects the comma. Java's multi-catch separates the types with a vertical bar, `|`."
+      },
+      {
+       "text": "`catch(ArithmeticException e) | catch(InputMismatchException e)`",
+       "feedback": "The vertical bar is the right symbol, but it goes *inside* one pair of parentheses, between the types. Two `catch` headers can't be joined into one."
+      },
+      {
+       "text": "`catch(ArithmeticException e && InputMismatchException e)`",
+       "feedback": "`&&` is a Boolean operator, not part of `catch` syntax. One exception can't be both types at once anyway; you want either one."
+      }
+     ],
+     "hint": "In Java, which symbol already means \"or\" between types in a `catch` header?",
+     "explanation": "A multi-catch block lists several exception types separated by `|` and runs when any one of them is thrown. It avoids duplicated `catch` code without the over-reach of a catch-all `Exception` block.",
+     "aside": "Multi-catch arrived in Java 7 (2011), alongside try-with-resources. In a multi-catch block the parameter is implicitly `final`: the compiler won't let you assign a new value to `e`, because its type is a union of the alternatives.",
+     "ref": "Ch. 10.3, catching multiple exception types (p. 407)"
+    },
+    {
+     "id": "too-many-types",
+     "concept": "Too many caught types signals a design problem",
+     "level": "evaluate",
+     "stem": "A teammate's 80-line method has seven `catch` blocks, each for a different exception type. What does this most likely suggest?",
+     "options": [
+      {
+       "text": "The method may do too many tasks, or its types are too specific",
+       "feedback": "Many developers see more than three or four exception types as a warning: split the method into smaller ones, or catch a more general type.",
+       "correct": true
+      },
+      {
+       "text": "It is ideal, because more specific `catch` blocks are always better",
+       "feedback": "Specific handling is useful only when the handling actually differs. Seven blocks usually mean a method juggling too many diverse tasks."
+      },
+      {
+       "text": "All seven should become one `catch(Throwable t)` block",
+       "feedback": "Catching `Throwable` also swallows serious `Error`s like running out of memory, which a program shouldn't try to handle."
+      },
+      {
+       "text": "The handling code should move into a `finally` block",
+       "feedback": "A `finally` block runs whether or not an exception occurred, so it can't replace type-specific error handling."
+      }
+     ],
+     "hint": "What does the book say it might mean when one method throws and catches many different exception types?",
+     "explanation": "A method that throws and catches more than three or four exception types is often trying to accomplish too many diverse tasks and should be broken into smaller methods. Alternatively, the exception types may be too specific and could be generalized.",
+     "ref": "Ch. 10.3, guidance on the number of exception types (p. 407)"
+    }
+   ]
+  },
+  {
+   "id": "10.4",
+   "title": "Using the finally Block",
+   "subtitle": "When finally runs, why cleanup belongs there, and what happens with uncaught exceptions",
+   "source": "Ch. 10, section 10.4 (pp. 408–410)",
+   "intro": "A program opens a file, but on some runs the file is never closed. Five questions on the one block that runs no matter how the `try` ends.",
+   "takeaways": [
+    "A `finally` block runs whether the `try` ends normally, a `catch` runs, or an uncaught exception abandons the method. It even runs when the `try` executes a `return`.",
+    "Code placed after a `try…catch` is *not* guaranteed to run: an uncaught exception skips it. Put cleanup that must happen, like closing a file, in `finally`.",
+    "Writing the cleanup once in `finally` is clearer and less error-prone than copying it into the `try` and every `catch`."
+   ],
+   "questions": [
+    {
+     "id": "finally-after-catch",
+     "concept": "finally runs after a catch",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\ntry\n{\n    System.out.print(\"open \");\n    int average = 100 / 0;\n    System.out.print(\"read \");\n}\ncatch(ArithmeticException e)\n{\n    System.out.print(\"error \");\n}\nfinally\n{\n    System.out.print(\"close \");\n}\nSystem.out.println(\"after\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class FinallyTrace\n{\n    public static void main(String[] args)\n    {\n        try\n        {\n            System.out.print(\"open \");\n            int average = 100 / 0;\n            System.out.print(\"read \");\n        }\n        catch(ArithmeticException e)\n        {\n            System.out.print(\"error \");\n        }\n        finally\n        {\n            System.out.print(\"close \");\n        }\n        System.out.println(\"after\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`open error close after`",
+       "feedback": "The division throws, so `read` is skipped; the `catch` runs; then `finally` runs; then the program continues after the whole sequence.",
+       "correct": true
+      },
+      {
+       "text": "`open close error after`",
+       "feedback": "This puts `finally` before the `catch`. A `finally` block runs at the end of the `try…catch` sequence, after any `catch` that executes."
+      },
+      {
+       "text": "`open read error close after`",
+       "feedback": "The division throws before `read` can print. Nothing after the failing statement in the `try` block runs."
+      },
+      {
+       "text": "`open error after`",
+       "feedback": "This treats `finally` as an alternative to `catch`. It isn't: `finally` runs whether or not a `catch` block ran."
+      }
+     ],
+     "hint": "Trace it in order: the `try`, then whatever handles the problem, then the block that always runs.",
+     "explanation": "In a `try…catch…finally` sequence, the `finally` block runs last, after the `try` completes or after the `catch` that handled its exception. Then execution continues with the statements that follow.",
+     "ref": "Ch. 10.4, Figure 10-24 (p. 408)"
+    },
+    {
+     "id": "finally-uncaught",
+     "concept": "finally runs even when the exception isn't caught",
+     "level": "analyze",
+     "stem": "`process()` catches the wrong exception type. What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class Cleanup\n{\n    public static void main(String[] args)\n    {\n        try\n        {\n            process();\n        }\n        catch(ArrayIndexOutOfBoundsException e)\n        {\n            System.out.println(\"main caught it\");\n        }\n    }\n    public static void process()\n    {\n        int[] data = new int[2];\n        try\n        {\n            System.out.println(\"try\");\n            data[5] = 1;\n        }\n        catch(ArithmeticException e)\n        {\n            System.out.println(\"catch\");\n        }\n        finally\n        {\n            System.out.println(\"finally\");\n        }\n        System.out.println(\"after\");\n    }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "try finally main caught it"
+      }
+     },
+     "options": [
+      {
+       "text": "`try`, `finally`, `main caught it`",
+       "feedback": "The `catch` in `process()` doesn't match, so the method is abandoned, but its `finally` runs first. `after` is skipped, and `main()` catches the exception.",
+       "correct": true
+      },
+      {
+       "text": "`try`, `finally`, `after`, `main caught it`",
+       "feedback": "This assumes the method continues after `finally`. With the exception still uncaught, `process()` is abandoned right after its `finally` runs."
+      },
+      {
+       "text": "`try`, `main caught it`",
+       "feedback": "This assumes `finally` needs a matching `catch`. It runs no matter how the `try` ends, including when an exception escapes the method."
+      },
+      {
+       "text": "`try`, `catch`, `finally`, `after`",
+       "feedback": "An array index problem is not an `ArithmeticException`, so `process()`'s `catch` block doesn't match and never runs."
+      }
+     ],
+     "hint": "Does the `catch` in `process()` match the exception that `data[5]` throws? If not, what still has to run before the method is left?",
+     "explanation": "The `finally` block executes before the method is abandoned, even when no `catch` handles the exception. Statements after the `try…catch…finally` sequence are skipped, and the exception continues to the calling method.",
+     "ref": "Ch. 10.4, outcomes of the try block (p. 409)"
+    },
+    {
+     "id": "why-finally",
+     "concept": "Why cleanup goes in finally",
+     "level": "understand",
+     "stem": "A method opens a file in a `try` block, catches `IOException`, and then closes the file in the first statement *after* the `catch`. Why is a `finally` block safer for closing it?",
+     "options": [
+      {
+       "text": "An uncaught exception would skip code after the `catch`",
+       "feedback": "If the `try` throws something the `catch` doesn't handle, such as an `ArithmeticException`, the method is abandoned and the close statement never runs.",
+       "correct": true
+      },
+      {
+       "text": "Code after a `catch` block is unreachable and won't compile",
+       "feedback": "Code after a `try…catch` compiles and usually runs. The risk is that it *sometimes* doesn't, when an exception escapes."
+      },
+      {
+       "text": "A `finally` block runs only when an exception occurred",
+       "feedback": "That would make it useless for normal runs. A `finally` block runs whether or not the `try` block throws."
+      },
+      {
+       "text": "Statements in a `finally` block execute faster than other code",
+       "feedback": "There's no speed difference. The benefit of `finally` is the guarantee that it runs, not how fast it runs."
+      }
+     ],
+     "hint": "What kinds of exception could the `try` throw that the `IOException` `catch` doesn't handle?",
+     "explanation": "Statements after a `try…catch` might never run, for example when the `try` throws an exception that no `catch` handles. A `finally` block executes before the method is abandoned, so cleanup that must happen belongs there.",
+     "aside": "There is one thing a `finally` block can't survive: `System.exit()` halts the Java Virtual Machine immediately, so if a `try` block calls it, the `finally` block never runs. Since Java 7, try-with-resources (`try (Scanner in = new Scanner(file)) { ... }`) closes a resource automatically and is now the preferred way to close files.",
+     "ref": "Ch. 10.4, Figure 10-25 and the discussion that follows (pp. 409–410)"
+    },
+    {
+     "id": "finally-return",
+     "concept": "finally runs even when try returns",
+     "level": "analyze",
+     "stem": "The `try` block returns before reaching the end of the method. What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class ReturnDemo\n{\n    public static void main(String[] args)\n    {\n        System.out.println(check());\n    }\n    public static String check()\n    {\n        try\n        {\n            return \"try\";\n        }\n        finally\n        {\n            System.out.print(\"finally \");\n        }\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`finally try`",
+       "feedback": "The method concludes early with `return`, but `finally` still runs before control leaves the method. Only then does `main()` print the returned value.",
+       "correct": true
+      },
+      {
+       "text": "`try`",
+       "feedback": "This assumes `return` exits immediately. The `finally` block runs before the method is abandoned, however it concludes."
+      },
+      {
+       "text": "`try finally`",
+       "feedback": "`main()` can only print the returned string after `check()` has fully finished, and finishing includes running the `finally` block."
+      },
+      {
+       "text": "It does not compile, because `finally` can't follow `return`",
+       "feedback": "A `try` block may contain `return`, and a `try` with only a `finally` (no `catch`) is legal."
+      }
+     ],
+     "hint": "When does `println()` in `main()` get its argument: before or after `check()` has completely finished?",
+     "explanation": "A `finally` block executes before the method is abandoned, even if the method concludes prematurely, and a `return` is one way to conclude early. The returned value reaches the caller only after `finally` has run.",
+     "ref": "Ch. 10.4, Using the finally Block (p. 409)"
+    },
+    {
+     "id": "duplicate-cleanup",
+     "concept": "finally avoids repetitious cleanup code",
+     "level": "evaluate",
+     "stem": "Instead of `finally`, a student copies `if the file is open, close it` into the end of the `try` block and into the `catch` block. What's the main drawback?",
+     "options": [
+      {
+       "text": "The code is repeated, and it misses uncaught exceptions",
+       "feedback": "The cleanup now lives in two places that must stay in sync, and an exception the `catch` doesn't handle still skips both copies.",
+       "correct": true
+      },
+      {
+       "text": "It won't compile, because a statement can't appear in both blocks",
+       "feedback": "The same statement can appear in many blocks. The problem is maintenance and coverage, not syntax."
+      },
+      {
+       "text": "None; it behaves exactly the same as a `finally` block",
+       "feedback": "It doesn't: an uncaught exception skips both copies, while a `finally` block would still run."
+      },
+      {
+       "text": "A `catch` block may contain only error messages, not cleanup",
+       "feedback": "A `catch` block can hold any legal statements, including code that fixes or cleans up after the error."
+      }
+     ],
+     "hint": "Compare two cases: the `catch` handles the exception, and the `catch` doesn't match it.",
+     "explanation": "You can avoid a `finally` block, but only with repetitious code that is easy to get wrong. Writing the cleanup once in `finally` is clearer, and it also covers exceptions that no `catch` handles.",
+     "ref": "Ch. 10.4, avoiding finally with repeated code (p. 410)"
+    }
+   ]
+  },
+  {
+   "id": "10.5",
+   "title": "Understanding the Advantages of Exception Handling",
+   "subtitle": "Clarity of the normal path, and letting each caller decide how to handle an error",
+   "source": "Ch. 10, section 10.5 (pp. 410–412)",
+   "intro": "One `divide()` method is shared by three apps: a report, a calculator and a data checker, and each wants a different reaction to division by 0. Four questions on why exceptions make that easy.",
+   "takeaways": [
+    "With `try…catch`, the normal \"business as usual\" steps sit together where they're easy to follow, and the exceptional cases are grouped and moved out of their way.",
+    "A method can detect an error and throw it without deciding what to do about it. Each caller then handles it in the way that fits its own purpose; that flexibility is what makes the method reusable."
+   ],
+   "questions": [
+    {
+     "id": "clarity",
+     "concept": "Exception handling separates the normal path from error handling",
+     "level": "understand",
+     "stem": "Compare the nested `if` pseudocode (call `methodA()`, `if` it worked call `methodB()`, `if` it worked call `methodC()`, …) with a version where all three calls sit in one `try` block followed by `catch` blocks. What is the main advantage of the `try` version?",
+     "options": [
+      {
+       "text": "The usual steps sit together, with error handling moved aside",
+       "feedback": "In the `try` version, the calls and the final display read top to bottom like the program's real purpose. The nested `if` version buries that purpose in a maze of conditions.",
+       "correct": true
+      },
+      {
+       "text": "The `try` version prevents any of the methods from failing",
+       "feedback": "Exception handling doesn't stop errors from happening; it changes where and how you respond to them."
+      },
+      {
+       "text": "The `try` version no longer has to check for errors at all",
+       "feedback": "Each method still detects its errors and throws; the `catch` blocks still respond. The checking is reorganized, not removed."
+      },
+      {
+       "text": "The `try` version runs much faster than nested `if` statements",
+       "feedback": "The book's argument is about clarity and fewer coding mistakes, not execution speed."
+      }
+     ],
+     "hint": "In which version could a reader quickly see what the program normally does?",
+     "explanation": "Traditional error checking nests the real work inside many `if` statements, which makes it hard to follow and easy to get wrong. With `try…catch`, the usual steps are grouped in one place and the exceptional events are moved out of their way.",
+     "ref": "Ch. 10.5, Figures 10-26 and 10-27 (pp. 410–411)"
+    },
+    {
+     "id": "callers-decide",
+     "concept": "Each caller handles the same exception its own way",
+     "level": "apply",
+     "stem": "Both apps call the same `divide()` method. What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class SharedDivide\n{\n    public static int divide(int a, int b)\n    {\n        return a / b;\n    }\n    public static void reportApp()\n    {\n        try\n        {\n            System.out.print(divide(10, 0) + \" \");\n        }\n        catch(ArithmeticException e)\n        {\n            System.out.print(\"N/A \");\n        }\n    }\n    public static void safeApp()\n    {\n        int r;\n        try\n        {\n            r = divide(10, 0);\n        }\n        catch(ArithmeticException e)\n        {\n            r = divide(10, 1);\n        }\n        System.out.print(r + \" \");\n    }\n    public static void main(String[] args)\n    {\n        reportApp();\n        safeApp();\n        System.out.println();\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`N/A 10`",
+       "feedback": "`divide()` throws the same exception both times. `reportApp()` shows `N/A`; `safeApp()` recovers by dividing by 1 instead.",
+       "correct": true
+      },
+      {
+       "text": "`N/A N/A`",
+       "feedback": "This assumes the handling lives in `divide()`. It doesn't; each caller has its own `catch` with its own response."
+      },
+      {
+       "text": "`0 10`",
+       "feedback": "Division by 0 doesn't quietly produce 0. `divide()` throws, and `reportApp()`'s `catch` prints `N/A` instead of a number."
+      },
+      {
+       "text": "`10 10`",
+       "feedback": "This assumes both callers recover the same way. Only `safeApp()` substitutes a divisor of 1; `reportApp()` just reports the problem."
+      }
+     ],
+     "hint": "`divide()` itself contains no `try`. Follow each caller's `catch` block separately.",
+     "explanation": "The method that detects the error only throws it. Each calling method decides what that error means for its own purpose, so one well-written method can be reused by many applications that respond differently.",
+     "ref": "Ch. 10.5, flexibility of exception handling (p. 411)"
+    },
+    {
+     "id": "where-to-handle",
+     "concept": "A reusable method should throw, not decide",
+     "level": "evaluate",
+     "stem": "A shared `divide()` method is used by an app that must stop on division by 0, one that should ask the user to re-enter data, and one that should divide by 1. Where should the decision about division by 0 be made?",
+     "options": [
+      {
+       "text": "In each calling app, after `divide()` throws the exception",
+       "feedback": "Only the caller knows its purpose. `divide()` detects the problem and throws; each app catches it and responds as it needs.",
+       "correct": true
+      },
+      {
+       "text": "Inside `divide()`, which should always divide by 1 instead",
+       "feedback": "That serves the third app but breaks the first two, which need to stop or re-prompt. Hard-coding one response limits reuse."
+      },
+      {
+       "text": "Inside `divide()`, which should ask the user to re-enter data",
+       "feedback": "A shared method that talks to the user can't be used where there's no user to ask, or where the app must stop instead."
+      },
+      {
+       "text": "Nowhere: let the Java Virtual Machine end every app",
+       "feedback": "That suits the first app only. The other two need to recover, so they have to catch the exception."
+      }
+     ],
+     "hint": "Which piece of code knows what each application is for?",
+     "explanation": "Often you want a method to check for errors without requiring it to handle them. The method that contains the division throws the error, and each calling program takes responsibility for handling it appropriately.",
+     "aside": "Not every language takes this route. Go deliberately has no `try` or `catch`: functions return an error value, and callers check it with `if err != nil` after nearly every call. That is a modern, intentional version of the explicit style in Figure 10-26.",
+     "ref": "Ch. 10.5, reusable methods (p. 411)"
+    },
+    {
+     "id": "consistent-claim",
+     "concept": "The benefit is flexibility, not uniform handling",
+     "level": "evaluate",
+     "stem": "A classmate writes: \"The big advantage of exception handling is that a thrown exception is always handled in the same consistent way, wherever the method is used.\" What's wrong with this claim?",
+     "options": [
+      {
+       "text": "It's backwards: each caller can handle the exception differently",
+       "feedback": "The advantage is flexibility. The same thrown exception can be handled one way by one application and another way by the next.",
+       "correct": true
+      },
+      {
+       "text": "Nothing; consistency is the main benefit the book describes",
+       "feedback": "The book names clarity and flexibility, and flexibility means callers are free to respond differently."
+      },
+      {
+       "text": "Exceptions can only be handled inside the method that throws them",
+       "feedback": "In most object-oriented programs the throwing method does *not* catch its own exception; a calling method does."
+      },
+      {
+       "text": "Only `Error` objects are handled consistently, not `Exception`s",
+       "feedback": "`Error`s are usually not handled at all. The claim fails for a different reason: callers decide how to respond."
+      }
+     ],
+     "hint": "Think back to the three apps sharing one `divide()` method. Did they all respond the same way?",
+     "explanation": "Object-oriented exception handling gives clarity and flexibility. Because each calling application can handle a thrown error differently, depending on its purpose, a single well-written method can serve many programs.",
+     "ref": "Ch. 10.5, Understanding the Advantages of Exception Handling (pp. 411–412)"
+    }
+   ]
+  },
+  {
+   "id": "10.6",
+   "title": "Specifying the Exceptions That a Method Can Throw",
+   "subtitle": "throws clauses, checked versus unchecked exceptions, and the catch-or-specify requirement",
+   "source": "Ch. 10, section 10.6 (pp. 412–415)",
+   "intro": "Your program calls a teammate's `readConfig()` method and suddenly won't compile, even though nothing has gone wrong yet. Five questions on why.",
+   "takeaways": [
+    "Checked exceptions are `Exception` subclasses that are not `RuntimeException`s, such as `IOException`. Code that may throw one must catch it or declare it in a `throws` clause, or it won't compile.",
+    "Unchecked exceptions (`RuntimeException`, `Error` and their subclasses) may be caught or declared, but the compiler doesn't require either.",
+    "A `throws` clause says a method *might* throw, so callers can plan. Name the specific types: `throws Exception` hides information callers need."
+   ],
+   "questions": [
+    {
+     "id": "which-checked",
+     "concept": "Checked versus unchecked exceptions",
+     "level": "understand",
+     "stem": "Which exception type is **checked**, so that code that might throw it must catch it or declare it in a `throws` clause?",
+     "options": [
+      {
+       "text": "`IOException`",
+       "feedback": "`IOException` extends `Exception` but not `RuntimeException`, which makes it checked: the compiler enforces the catch-or-specify requirement.",
+       "correct": true
+      },
+      {
+       "text": "`ArithmeticException`",
+       "feedback": "It's thrown often, but it extends `RuntimeException`, so it's unchecked. You've divided many times without a `throws` clause."
+      },
+      {
+       "text": "`ArrayIndexOutOfBoundsException`",
+       "feedback": "It descends from `RuntimeException` (through `IndexOutOfBoundsException`), so the compiler doesn't require you to handle it."
+      },
+      {
+       "text": "`InputMismatchException`",
+       "feedback": "`Scanner` throws it, but it descends from `RuntimeException`, so it's unchecked like the other input and arithmetic errors."
+      }
+     ],
+     "hint": "Look at Figure 10-1: which of these is *not* under `RuntimeException`?",
+     "explanation": "Unchecked exceptions inherit from `Error` or `RuntimeException`, and handling them is optional. Checked exceptions are the other `Exception` subclasses, and the compiler requires code that might throw them to catch them or specify them.",
+     "aside": "Java is unusual here. C#, Kotlin, Python and JavaScript have no checked exceptions at all: the compiler never forces callers to handle one. Some programmers call checked exceptions \"syntactic salt\", a feature designed to make bad code harder to write.",
+     "ref": "Ch. 10.6, unchecked and checked exceptions (pp. 413–414)"
+    },
+    {
+     "id": "missing-throws",
+     "concept": "A checked exception must be caught or specified",
+     "level": "apply",
+     "stem": "What happens when this class is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import java.io.IOException;\npublic class Loader\n{\n    public static void load(String name)\n    {\n        if(name.isEmpty())\n            throw new IOException(\"No file name\");\n        System.out.println(\"Loading \" + name);\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "unreported exception",
+        "must be caught or declared to be thrown"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: the `IOException` must be caught or declared",
+       "feedback": "`IOException` is checked, and `load()` neither catches it nor lists it in a `throws` clause, so the catch-or-specify rule is broken.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, because exceptions are a run-time matter",
+       "feedback": "Checked exceptions are enforced at compile time. The compiler checks the rule before the program ever runs."
+      },
+      {
+       "text": "It compiles, because `name` might never be empty",
+       "feedback": "The compiler doesn't depend on whether the exception actually happens, only on whether it *could*."
+      },
+      {
+       "text": "It compiles, because `IOException` is an unchecked exception",
+       "feedback": "`IOException` extends `Exception` directly, not `RuntimeException`, so it is checked."
+      }
+     ],
+     "hint": "Is `IOException` a `RuntimeException`? If not, what two options does the method have?",
+     "explanation": "If a method throws a checked exception, it must either catch it or specify it with a `throws` clause in its header. Code that breaks the catch-or-specify rule does not compile.",
+     "ref": "Ch. 10.6, the catch or specify requirement (p. 414)"
+    },
+    {
+     "id": "caller-options",
+     "concept": "What a caller of a throws method must do",
+     "level": "apply",
+     "stem": "A teammate's method is declared `public static String readConfig() throws IOException`. Your `main()` calls it. What must `main()` do for the program to compile?",
+     "options": [
+      {
+       "text": "Catch `IOException`, or declare `throws IOException` itself",
+       "feedback": "Either choice satisfies the catch-or-specify rule. Declaring it passes the exception on to `main()`'s caller.",
+       "correct": true
+      },
+      {
+       "text": "Catch `IOException` in a `catch` block; nothing else will compile",
+       "feedback": "Catching is one option, not the only one. A caller can also declare the exception in its own `throws` clause and rethrow it."
+      },
+      {
+       "text": "Nothing, because `readConfig()` already declared the exception",
+       "feedback": "The `throws` clause is a warning to callers, not a solution. It moves the obligation onto every method that calls `readConfig()`."
+      },
+      {
+       "text": "Nothing, unless the file is actually missing when it runs",
+       "feedback": "The rule is checked at compile time, regardless of whether the exception ever happens at run time."
+      }
+     ],
+     "hint": "The `throws` clause passes responsibility to the caller. What two ways does any method have to meet that responsibility?",
+     "explanation": "When a method has a `throws` clause for a checked exception, any method that uses it must catch and handle the possible exception or declare it in its own `throws` clause. Client programmers are forced to deal with the possibility.",
+     "ref": "Ch. 10.6, obligations of calling methods (p. 414)"
+    },
+    {
+     "id": "unchecked-no-throws",
+     "concept": "Unchecked exceptions need no throws clause",
+     "level": "apply",
+     "stem": "`displayPrice()` has no `throws` clause, and `main()` has no `try`. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class PriceList\n{\n    private static final double[] prices =\n        {15.99, 27.88, 34.56, 45.89};\n    public static void displayPrice(int item)\n    {\n        System.out.println(\"The price is $\" + prices[item]);\n    }\n    public static void main(String[] args)\n    {\n        displayPrice(4);\n    }\n}",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "ArrayIndexOutOfBoundsException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "It compiles, then stops with an `ArrayIndexOutOfBoundsException`",
+       "feedback": "Index exceptions are unchecked, so no `throws` clause or `try` is required. With no `catch` anywhere, the program ends when subscript 4 is used.",
+       "correct": true
+      },
+      {
+       "text": "A compile error: `displayPrice()` needs `throws IndexOutOfBoundsException`",
+       "feedback": "The book's version includes that clause, but it's optional: index exceptions are `RuntimeException`s, and the compiler doesn't require you to specify them."
+      },
+      {
+       "text": "It compiles and prints `The price is $0.0`",
+       "feedback": "Java never quietly returns a default for a subscript out of range. Subscript 4 is past the last element, so an exception is thrown."
+      },
+      {
+       "text": "It compiles and prints `The price is $45.89`",
+       "feedback": "There are four prices with subscripts 0 to 3. Subscript 4 isn't the last element; it's beyond it."
+      }
+     ],
+     "hint": "Is an array index exception checked or unchecked? What happens when no method catches it?",
+     "explanation": "Most exceptions never have to be explicitly caught or declared; only checked exceptions are subject to the catch-or-specify requirement. An uncaught runtime exception still ends the program when it occurs.",
+     "ref": "Ch. 10.6, Figure 10-28 and the discussion of throws clauses (pp. 412–413)"
+    },
+    {
+     "id": "throws-exception",
+     "concept": "Why not just declare throws Exception",
+     "level": "evaluate",
+     "stem": "To save typing, a teammate declares every method `throws Exception`. What's the main argument against it?",
+     "options": [
+      {
+       "text": "It hides which specific exceptions callers need to plan for",
+       "feedback": "A caller can't make good decisions about errors without knowing what might be thrown, and `Exception` tells them almost nothing.",
+       "correct": true
+      },
+      {
+       "text": "It won't compile, because `Exception` is an abstract class",
+       "feedback": "`Exception` is a concrete class you can instantiate and declare. The problem is the lost information, not syntax."
+      },
+      {
+       "text": "It makes the method throw an exception every time it's called",
+       "feedback": "A `throws` clause means the method *might* throw. Everything may still go smoothly."
+      },
+      {
+       "text": "It changes the method's signature, so calls to it stop matching",
+       "feedback": "Most authorities agree that a `throws` clause isn't part of the signature, and calls still match the same way."
+      }
+     ],
+     "hint": "What does a caller learn from `throws Exception` versus `throws IOException, MenuException`?",
+     "explanation": "Specifying a general `Exception` simplifies the clause but disguises information about the specific types that might occur. That information has value, because callers can't make sound decisions about errors they don't know about.",
+     "ref": "Ch. 10.6, specifying general exceptions (p. 415)"
+    }
+   ]
+  },
+  {
+   "id": "10.7",
+   "title": "Tracing Exceptions Through the Call Stack",
+   "subtitle": "How an uncaught exception moves up the call stack, and how to read and print a stack trace",
+   "source": "Ch. 10, section 10.7 (pp. 415–418)",
+   "intro": "An error happens three method calls deep, and you need to know which method finds out and where the bug really is. Four questions on the call stack.",
+   "takeaways": [
+    "An exception a method doesn't catch goes *up* the call stack to the method that called it, then to that method's caller, and finally to the Java Virtual Machine, which ends the program.",
+    "Every method the exception passes through without catching it is abandoned at that point. The first method with a matching `catch` handles it and continues normally.",
+    "In a stack trace, the top `at` line is where the exception happened and the bottom line is where the chain of calls started. `printStackTrace()` helps while developing; take it out of finished programs."
+   ],
+   "questions": [
+    {
+     "id": "up-the-stack",
+     "concept": "An uncaught exception goes to the calling method",
+     "level": "understand",
+     "stem": "`methodA()` calls `methodB()`, and `methodB()` calls `methodC()`. `methodC()` throws an exception and doesn't catch it. Where does Java look for a `catch` block next?",
+     "options": [
+      {
+       "text": "In `methodB()`, the method that called `methodC()`",
+       "feedback": "An uncaught exception goes to the next method *up* the call stack: the one that called the offending method.",
+       "correct": true
+      },
+      {
+       "text": "In whatever method `methodC()` was about to call next",
+       "feedback": "This sends the exception *down* the stack. Exceptions travel back along the path of calls that led to them, never forward."
+      },
+      {
+       "text": "Straight to the Java Virtual Machine, which ends the program",
+       "feedback": "The JVM is the last stop, reached only if `methodB()` and `methodA()` also fail to catch it."
+      },
+      {
+       "text": "In `methodA()`, because it started the chain of calls",
+       "feedback": "`methodA()` gets its turn, but only after `methodB()` doesn't catch the exception."
+      }
+     ],
+     "hint": "When `methodC()` ends, where does control normally return?",
+     "explanation": "The call stack records where each method must return when it ends. When a method throws an exception it doesn't catch, the exception goes to the method that called it, and so on up the stack until a `catch` handles it or the JVM ends the program.",
+     "ref": "Ch. 10.7, Figure 10-32 (pp. 415–416)"
+    },
+    {
+     "id": "trace-abandon",
+     "concept": "Methods between the throw and the catch are abandoned",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class DemoStack\n{\n    public static void main(String[] args)\n    {\n        methodA();\n        System.out.println(\"main ends\");\n    }\n    public static void methodA()\n    {\n        System.out.print(\"A \");\n        try\n        {\n            methodB();\n        }\n        catch(ArrayIndexOutOfBoundsException error)\n        {\n            System.out.print(\"caught \");\n        }\n        System.out.print(\"A-done \");\n    }\n    public static void methodB()\n    {\n        System.out.print(\"B \");\n        methodC();\n        System.out.print(\"B-done \");\n    }\n    public static void methodC()\n    {\n        System.out.print(\"C \");\n        int[] array = {0, 1, 2};\n        System.out.print(array[3]);\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`A B C caught A-done main ends`",
+       "feedback": "The exception passes through `methodB()`, which is abandoned before `B-done`. `methodA()` catches it and then finishes normally, and so does `main()`.",
+       "correct": true
+      },
+      {
+       "text": "`A B C B-done caught A-done main ends`",
+       "feedback": "This assumes `methodB()` finishes before the exception reaches `methodA()`. `methodB()` has no `catch`, so it's abandoned at the call."
+      },
+      {
+       "text": "`A B C caught main ends`",
+       "feedback": "Once `methodA()` catches the exception, it's handled, and `methodA()` continues normally with the statement after its `catch`."
+      },
+      {
+       "text": "`A B C` and then the program stops with an exception",
+       "feedback": "That's what happens with no `catch` anywhere. Here `methodA()` has a `catch` for this exact type."
+      }
+     ],
+     "hint": "Which method has the `try` around the call? What happens to the methods between the throw and that `catch`?",
+     "explanation": "When an exception travels up the stack, every method it passes through without a matching `catch` is abandoned at that point. The method that catches it handles the error and continues normally, so the program can keep running.",
+     "ref": "Ch. 10.7, Figures 10-35 and 10-36 (pp. 417–418)"
+    },
+    {
+     "id": "read-call-stack",
+     "concept": "Reading the order of a stack trace",
+     "level": "analyze",
+     "stem": "Which line of `DemoStackTrace.java` contains the statement that actually caused the exception?",
+     "code": {
+      "language": "text",
+      "label": "Console output",
+      "text": "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException:\n  Index 3 out of bounds for length 3\n    at DemoStackTrace.methodC(DemoStackTrace.java:21)\n    at DemoStackTrace.methodB(DemoStackTrace.java:15)\n    at DemoStackTrace.methodA(DemoStackTrace.java:10)\n    at DemoStackTrace.main(DemoStackTrace.java:5)",
+      "verify": {
+       "expect": "skip",
+       "reason": "Console output to read, not a program"
+      }
+     },
+     "options": [
+      {
+       "text": "Line 21, in `methodC()`, listed first",
+       "feedback": "The trace lists the most recent call first. The top line is where the out-of-range access happened; each line below is the call that led there.",
+       "correct": true
+      },
+      {
+       "text": "Line 5, in `main()`, listed last",
+       "feedback": "Line 5 is where the chain of calls began. `main()` called `methodA()`, but the bad array access happened three calls later."
+      },
+      {
+       "text": "Line 15, in `methodB()`, which called the failing method",
+       "feedback": "Line 15 only made a call. The trace shows it so you can see the path, but the error itself is in the method it called."
+      },
+      {
+       "text": "It can't be told; the trace only lists the methods",
+       "feedback": "Each `at` line includes the file name and line number, which is exactly what makes a stack trace useful for tracking down errors."
+      }
+     ],
+     "hint": "Is the list ordered from the first call to the last, or from the most recent call back to the first?",
+     "explanation": "A stack trace lists the methods on the call stack, most recent first. The top line shows where the exception was thrown; the lines below show which line in each caller made the call that led there.",
+     "aside": "Stack trace messages keep getting more helpful. Since Java 15, a `NullPointerException` message names exactly what was `null`, for example `Cannot invoke \"String.length()\" because \"name\" is null`, instead of leaving you to guess which reference on the line it was.",
+     "ref": "Ch. 10.7, Figures 10-33 and 10-34 (pp. 416–417)"
+    },
+    {
+     "id": "print-stack-trace",
+     "concept": "printStackTrace() is a development tool",
+     "level": "evaluate",
+     "stem": "A student calls `error.printStackTrace()` in every `catch` block of a program that will be given to customers. What's the best advice?",
+     "options": [
+      {
+       "text": "Use it while developing; remove it before the program ships",
+       "feedback": "A stack trace is a valuable diagnostic for a programmer and cryptic noise for a typical user, so it belongs in development, not in the finished product.",
+       "correct": true
+      },
+      {
+       "text": "Keep it, because users need the trace to fix errors themselves",
+       "feedback": "Users can't edit your code, and the typical user has no interest in the trace's cryptic messages."
+      },
+      {
+       "text": "Remove it, because it rethrows the exception and crashes the program",
+       "feedback": "`printStackTrace()` only displays the trace. The `catch` block still handles the exception, and the program continues."
+      },
+      {
+       "text": "Keep it, because calling it is what actually handles the exception",
+       "feedback": "Printing a trace reports the problem but doesn't fix or recover from anything. Real handling is whatever the `catch` does next."
+      }
+     ],
+     "hint": "Who is the stack trace written for?",
+     "explanation": "`printStackTrace()` displays the methods on the call stack so you can find the statement that caused an exception. It is very useful while developing, but you usually don't want it in a finished program.",
+     "ref": "Ch. 10.7, the printStackTrace() method (p. 417)"
+    }
+   ]
+  },
+  {
+   "id": "10.8",
+   "title": "Creating Your Own Exception Classes",
+   "subtitle": "Extending Exception, passing a message to super(), throwing your own exceptions, and when not to",
+   "source": "Ch. 10, section 10.8 (pp. 419–421)",
+   "intro": "A bank's rule says no customer may owe more than $20,000, and Java has no built-in exception for that. Five questions on writing your own.",
+   "takeaways": [
+    "To make a custom exception, extend `Exception` (name it ending in `Exception`). Pass a message to `super()` in its constructor, or `getMessage()` returns `null`.",
+    "A class that extends `Exception` is a checked exception, so every method that throws it, and every caller, must follow the catch-or-specify rule.",
+    "Create a custom exception only when Java's built-in types don't describe the error. Each extra type adds complexity for programmers who use your classes."
+   ],
+   "questions": [
+    {
+     "id": "which-parent",
+     "concept": "Custom exceptions extend Exception",
+     "level": "understand",
+     "stem": "You're writing `HighBalanceException` for a recoverable business-rule error. Which class should it extend?",
+     "options": [
+      {
+       "text": "`Exception`",
+       "feedback": "Recoverable errors belong under `Exception`, and inheriting from it directly is the usual choice for your own exception classes.",
+       "correct": true
+      },
+      {
+       "text": "`Error`",
+       "feedback": "`Error` is for serious problems a program can't recover from, like running out of memory. A high balance is something the program can respond to."
+      },
+      {
+       "text": "`Object`",
+       "feedback": "Only objects whose class descends from `Throwable` can be thrown. A plain `Object` subclass can't be used in a `throw` statement."
+      },
+      {
+       "text": "No parent; a class name ending in `Exception` is enough",
+       "feedback": "Ending the name in `Exception` is only a naming convention. The class must extend a `Throwable` subclass to be throwable."
+      }
+     ],
+     "hint": "Look at the two branches under `Throwable`. Which one is for errors a program can recover from?",
+     "explanation": "To create your own throwable class, you must extend a subclass of `Throwable`. Because custom exceptions represent recoverable errors, they should extend `Exception`, and by convention their names end with `Exception`.",
+     "ref": "Ch. 10.8, Creating Your Own Exception Classes (p. 419)"
+    },
+    {
+     "id": "custom-message",
+     "concept": "super(message) supplies getMessage()",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class HighBalanceException extends Exception\n{\n    public HighBalanceException()\n    {\n        super(\"Customer balance is high\");\n    }\n}\nclass CustomerAccount\n{\n    private double balance;\n    public static final double HIGH_CREDIT_LIMIT = 20000.00;\n    public CustomerAccount(double bal) throws HighBalanceException\n    {\n        balance = bal;\n        if(balance > HIGH_CREDIT_LIMIT)\n            throw new HighBalanceException();\n    }\n}\n\n// in main()\ntry\n{\n    CustomerAccount ca = new CustomerAccount(25000.00);\n    System.out.println(\"Account created\");\n}\ncatch(HighBalanceException hbe)\n{\n    System.out.println(hbe.getMessage());\n}",
+      "verify": {
+       "expect": "output",
+       "program": "class HighBalanceException extends Exception\n{\n    public HighBalanceException()\n    {\n        super(\"Customer balance is high\");\n    }\n}\nclass CustomerAccount\n{\n    private double balance;\n    public static final double HIGH_CREDIT_LIMIT = 20000.00;\n    public CustomerAccount(double bal) throws HighBalanceException\n    {\n        balance = bal;\n        if(balance > HIGH_CREDIT_LIMIT)\n            throw new HighBalanceException();\n    }\n}\n\npublic class UseCustomerAccount\n{\n    public static void main(String[] args)\n    {\n        try\n        {\n            CustomerAccount ca = new CustomerAccount(25000.00);\n            System.out.println(\"Account created\");\n        }\n        catch(HighBalanceException hbe)\n        {\n            System.out.println(hbe.getMessage());\n        }\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Customer balance is high`",
+       "feedback": "25,000 exceeds the limit, so the constructor throws, `Account created` is skipped, and `getMessage()` returns the string passed to `super()`.",
+       "correct": true
+      },
+      {
+       "text": "`Account created`",
+       "feedback": "This assumes the object is created before the check. The constructor throws before it finishes, so the next statement never runs."
+      },
+      {
+       "text": "`null`",
+       "feedback": "`getMessage()` returns `null` only when no message was given. This constructor passes one to the parent `Exception` constructor."
+      },
+      {
+       "text": "`HighBalanceException: Customer balance is high`",
+       "feedback": "That's what printing the exception object itself shows (its `toString()`). `getMessage()` returns only the detail message, without the class name."
+      }
+     ],
+     "hint": "What does the constructor send to `super()`, and which method returns that text?",
+     "explanation": "A custom exception's constructor usually passes a description to the parent `Exception` constructor with `super()`. That string is what `getMessage()` returns when the exception is caught.",
+     "ref": "Ch. 10.8, Figures 10-37 to 10-39 (pp. 419–420)"
+    },
+    {
+     "id": "forgot-super",
+     "concept": "Without super(message), getMessage() returns null",
+     "level": "analyze",
+     "stem": "This version of `MenuException` stores nothing in its constructor. What does the code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class MenuException extends Exception\n{\n    public MenuException(String choice)\n    {\n    }\n}\n\n// in main()\ntry\n{\n    throw new MenuException(\"Rosemary Chicken\");\n}\ncatch(MenuException e)\n{\n    System.out.println(e.getMessage());\n}",
+      "verify": {
+       "expect": "output",
+       "program": "class MenuException extends Exception\n{\n    public MenuException(String choice)\n    {\n    }\n}\n\npublic class PlanMenu\n{\n    public static void main(String[] args)\n    {\n        try\n        {\n            throw new MenuException(\"Rosemary Chicken\");\n        }\n        catch(MenuException e)\n        {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`null`",
+       "feedback": "The constructor ignores `choice` and never calls `super(choice)`, so Java calls the parent's no-argument constructor, which sets a `null` message.",
+       "correct": true
+      },
+      {
+       "text": "`Rosemary Chicken`",
+       "feedback": "The argument is received but thrown away. Only a message passed to the `Exception` constructor through `super()` is returned by `getMessage()`."
+      },
+      {
+       "text": "`MenuException`",
+       "feedback": "`getMessage()` returns the detail message, never the class name, even when the message is missing."
+      },
+      {
+       "text": "It does not compile, because the constructor body is empty",
+       "feedback": "An empty constructor body is legal. Java inserts a call to the parent's no-argument constructor automatically."
+      }
+     ],
+     "hint": "Which `Exception` constructor runs when a subclass constructor doesn't call `super()` explicitly?",
+     "explanation": "If a subclass constructor doesn't call `super(...)`, Java calls the parent's no-argument constructor, which for `Exception` sets a `null` detail message. To make `getMessage()` useful, pass the message to `super()`.",
+     "aside": "`Exception` also has a constructor that takes a cause: `super(message, originalException)`. It lets you wrap a low-level exception, such as an `IOException`, inside your own type without losing it. When printed, the stack trace then shows both, with the original under a line starting `Caused by:`.",
+     "ref": "Ch. 10.8, the four Exception constructors (p. 419) and You Do It: Creating an Exception Class (p. 429)"
+    },
+    {
+     "id": "custom-is-checked",
+     "concept": "A custom Exception is checked for callers too",
+     "level": "apply",
+     "stem": "Using the `CustomerAccount` class from this check, whose constructor is declared `throws HighBalanceException`, what happens when this program is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "class HighBalanceException extends Exception\n{\n    public HighBalanceException()\n    {\n        super(\"Customer balance is high\");\n    }\n}\nclass CustomerAccount\n{\n    private double balance;\n    public static final double HIGH_CREDIT_LIMIT = 20000.00;\n    public CustomerAccount(double bal) throws HighBalanceException\n    {\n        balance = bal;\n        if(balance > HIGH_CREDIT_LIMIT)\n            throw new HighBalanceException();\n    }\n}\n\npublic class OpenAccount\n{\n    public static void main(String[] args)\n    {\n        CustomerAccount ca = new CustomerAccount(500.00);\n        System.out.println(\"Account created\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "unreported exception",
+        "HighBalanceException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: the exception must be caught or declared",
+       "feedback": "`HighBalanceException` extends `Exception`, so it's checked. `main()` calls a constructor that may throw it, without a `try` or a `throws` clause.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints `Account created`, since 500 is below the limit",
+       "feedback": "The compiler doesn't look at the value 500. It only sees that the constructor *might* throw a checked exception."
+      },
+      {
+       "text": "It compiles, then stops with a `HighBalanceException`",
+       "feedback": "With a balance of 500, nothing would be thrown at run time, and this code doesn't get that far: it doesn't compile."
+      },
+      {
+       "text": "It compiles, because custom exceptions are unchecked",
+       "feedback": "A custom class that extends `Exception` (and not `RuntimeException`) is checked, exactly like `IOException`."
+      }
+     ],
+     "hint": "Is `HighBalanceException` checked or unchecked? Does the compiler know the balance is 500?",
+     "explanation": "An exception class you derive from `Exception` is a checked exception. Every method that might throw it, including a method that calls a constructor declared with `throws`, must catch it or declare it.",
+     "ref": "Ch. 10.8, Figures 10-38 and 10-39 (pp. 419–420)"
+    },
+    {
+     "id": "when-not-custom",
+     "concept": "Don't create unnecessary exception types",
+     "level": "evaluate",
+     "stem": "A teammate plans to create `NegativeSubscriptException` and `SubscriptTooLargeException` for a method that reads an array element. What's the best response?",
+     "options": [
+      {
+       "text": "Unnecessary: Java already has `ArrayIndexOutOfBoundsException`",
+       "feedback": "Java's built-in type already describes this error. Extra exception types add complexity for every programmer who uses the class.",
+       "correct": true
+      },
+      {
+       "text": "Good idea: more exception types always make code clearer",
+       "feedback": "Specialized types help only when they describe something Java doesn't. Here they duplicate a built-in type and add work for callers."
+      },
+      {
+       "text": "Necessary, because Java can't detect negative subscripts",
+       "feedback": "Java throws `ArrayIndexOutOfBoundsException` for any subscript outside the valid range, including negative ones."
+      },
+      {
+       "text": "Required, because object-oriented programs need custom exceptions",
+       "feedback": "You're never required to create your own exception classes. That's the false statement in the section's Two Truths & a Lie."
+      }
+     ],
+     "hint": "What does Java already throw when you use a subscript that's too small or too large?",
+     "explanation": "You should not create an excessive number of special exception types, especially if Java already contains one that will catch the error. When appropriate, though, custom exceptions are an elegant way to separate and pass up business-rule errors.",
+     "ref": "Ch. 10.8, guidance on custom exception types (p. 421)"
+    }
+   ]
+  },
+  {
+   "id": "10.9",
+   "title": "Using Assertions",
+   "subtitle": "Logic errors, assert statements, the -ea option, and when to use assertions instead of exceptions",
+   "source": "Ch. 10, section 10.9 (pp. 421–424)",
+   "intro": "An `isEven()` method passes every test you try, until someone enters `-5`. Five questions on catching logic errors that never crash.",
+   "takeaways": [
+    "A logic error can produce wrong results without throwing anything. An `assert` states a condition that must be true if the code is correct; when it's false, Java throws an `AssertionError`.",
+    "Assertions are off by default. Run with `java -ea ClassName` to enable them; without `-ea`, `assert` statements are skipped, which is why they can stay in delivered code.",
+    "Assertions are for checking your own logic during development. Use exception handling for bad input you must recover from, and decisions or loops for range checks."
+   ],
+   "questions": [
+    {
+     "id": "assert-disabled",
+     "concept": "Assertions are disabled by default",
+     "level": "apply",
+     "stem": "This program is run the usual way, `java EvenOdd`, with no options. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public class EvenOdd\n{\n    public static void main(String[] args)\n    {\n        int number = -5;\n        if(isEven(number))\n            System.out.println(number + \" is even\");\n        else\n            System.out.println(number + \" is odd\");\n    }\n    public static boolean isEven(int number)\n    {\n        boolean result;\n        if(number % 2 == 1)\n            result = false;\n        else\n        {\n            result = true;\n            assert number % 2 == 0 :\n                number + \" % 2 is \" + number % 2;\n        }\n        return result;\n    }\n}",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`-5 is even`",
+       "feedback": "`-5 % 2` is `-1`, not `1`, so the method returns `true`. The `assert` would catch this, but assertions are skipped unless the program runs with `-ea`.",
+       "correct": true
+      },
+      {
+       "text": "`-5 is odd`",
+       "feedback": "That's the right answer mathematically, but the code tests `number % 2 == 1`, and `-5 % 2` isn't `1` in Java."
+      },
+      {
+       "text": "An `AssertionError` with the message `-5 % 2 is -1`",
+       "feedback": "That's what happens with `java -ea EvenOdd`. Run without the option, assert statements are ignored."
+      },
+      {
+       "text": "It does not compile, because `assert` needs an `import`",
+       "feedback": "`assert` is a Java keyword, so no import is needed, and this program compiles."
+      }
+     ],
+     "hint": "Work out `-5 % 2` in Java, then ask whether the `assert` statement runs at all without the `-ea` option.",
+     "explanation": "An `assert` statement checks a condition only when assertions are enabled with the `-ea` option. Run normally, the flawed `isEven()` silently returns the wrong answer, which is exactly the kind of logic error assertions are meant to expose during development.",
+     "aside": "`AssertionError` extends `Error`, not `Exception`. So a `catch(Exception e)` block doesn't catch a failed assertion: the program stops and shows it, which is the point, since an assertion failure means your own logic is wrong.",
+     "ref": "Ch. 10.9, Figures 10-41 to 10-44 (pp. 422–423)"
+    },
+    {
+     "id": "negative-remainder",
+     "concept": "The remainder takes the sign of the left operand",
+     "level": "apply",
+     "stem": "The assertion revealed the surprise behind the `EvenOdd` bug. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main()\nSystem.out.println(-5 % 2);\nSystem.out.println(5 % -2);",
+      "verify": {
+       "expect": "output",
+       "output": "-1 1",
+       "program": "public class RemainderDemo\n{\n    public static void main(String[] args)\n    {\n        System.out.println(-5 % 2);\n        System.out.println(5 % -2);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`-1`, then `1`",
+       "feedback": "In Java, a remainder has the same sign as the left operand (the dividend), so `-5 % 2` is `-1` and `5 % -2` is `1`.",
+       "correct": true
+      },
+      {
+       "text": "`1`, then `1`",
+       "feedback": "This assumes remainders are never negative, which is the assumption that broke `isEven()`. A negative left operand gives a negative remainder."
+      },
+      {
+       "text": "`1`, then `-1`",
+       "feedback": "This reverses the rule: the sign follows the left operand, not the right one."
+      },
+      {
+       "text": "`-1`, then `-1`",
+       "feedback": "A negative appears only when the left operand is negative. `5` is positive, so `5 % -2` is `1`."
+      }
+     ],
+     "hint": "Which operand's sign does Java's `%` result follow: the one before or the one after the operator?",
+     "explanation": "The remainder operator produces a negative result when its left operand is negative. That is why `isEven()` should test `number % 2 == 0` (which is true only for even numbers) instead of comparing with `1`.",
+     "ref": "Ch. 10.9, analysis of the EvenOdd output (p. 423)"
+    },
+    {
+     "id": "enable-assertions",
+     "concept": "Enabling assertions with -ea",
+     "level": "remember",
+     "stem": "You've added `assert` statements to `EvenOdd.java` and compiled it. How do you make them actually check their conditions?",
+     "options": [
+      {
+       "text": "Run it with `java -ea EvenOdd`",
+       "feedback": "`-ea` stands for *enable assertions*, and it's given when you execute the program, not when you compile it.",
+       "correct": true
+      },
+      {
+       "text": "Compile it with `javac -ea EvenOdd.java`",
+       "feedback": "`-ea` is an option for running the program. Compiling normally already keeps the `assert` statements in the class file."
+      },
+      {
+       "text": "Nothing; `assert` statements always run once compiled",
+       "feedback": "If they always ran, users would see them too. Assertions are disabled by default, which is why the first run printed the wrong answer silently."
+      },
+      {
+       "text": "Add `import java.lang.assert;` to the top of the file",
+       "feedback": "`assert` is a keyword, not a class, so there's nothing to import. Assertions are switched on at run time."
+      }
+     ],
+     "hint": "The book shows the option on the command line used to execute the program.",
+     "explanation": "Assertions are enabled at run time with the `-ea` option. Without it, `assert` statements have no effect, so they can be left in a finished program without users seeing any evidence of them.",
+     "ref": "Ch. 10.9, enabling assertions (pp. 423–424)"
+    },
+    {
+     "id": "logic-error",
+     "concept": "Logic errors don't throw exceptions",
+     "level": "understand",
+     "stem": "A payroll program should compute gross pay as `hours * rate`, but the programmer typed `hours / rate`. What does Java do when it runs?",
+     "options": [
+      {
+       "text": "Nothing unusual: it runs and silently prints wrong pay",
+       "feedback": "Dividing two valid numbers is legal, so no exception is thrown. That's a logic error, the kind an assertion can help you notice.",
+       "correct": true
+      },
+      {
+       "text": "It throws an `ArithmeticException` because the formula is wrong",
+       "feedback": "Java can't know what formula you intended. An `ArithmeticException` occurs only for problems like integer division by 0."
+      },
+      {
+       "text": "It refuses to compile the program",
+       "feedback": "The statement is valid Java syntax, so it compiles. The compiler checks grammar, not whether your formula matches the business rule."
+      },
+      {
+       "text": "It throws an `AssertionError` automatically",
+       "feedback": "Java only throws an `AssertionError` for an `assert` statement you wrote, and only when assertions are enabled."
+      }
+     ],
+     "hint": "Is anything in `hours / rate` illegal as Java code or impossible to compute?",
+     "explanation": "Some logic errors don't cause a program to terminate; they simply produce incorrect results. No exception is thrown, so assertions, which state conditions that must be true, are a tool for detecting these errors during development.",
+     "ref": "Ch. 10.9, Using Assertions (pp. 421–422)"
+    },
+    {
+     "id": "assert-or-exception",
+     "concept": "When to use an assertion",
+     "level": "evaluate",
+     "stem": "Which check is the best fit for an `assert` statement?",
+     "options": [
+      {
+       "text": "After your own sort runs, element 0 is not larger than element 1",
+       "feedback": "This must be true if *your* code is correct, so a failure means a bug to fix during development, which is what assertions are for.",
+       "correct": true
+      },
+      {
+       "text": "The user typed only digits when the program asked for an age",
+       "feedback": "Users make input mistakes in production, and the program must recover. That calls for exception handling, not an assertion that may be disabled."
+      },
+      {
+       "text": "The age entered by the user falls between 0 and 120",
+       "feedback": "A range check on user data needs a decision or a loop that runs every time, including when assertions are off."
+      },
+      {
+       "text": "The file the user named exists before the program tries to open it",
+       "feedback": "A missing file is a normal run-time problem to recover from, so it calls for exception handling, typically an `IOException` `catch`."
+      }
+     ],
+     "hint": "Which condition can only be false because the programmer made a mistake, rather than the user?",
+     "explanation": "Assertions are meant for the development stage, to verify conditions your logic guarantees. To make sure a user enters numeric data, use exception handling; to make sure data falls within a range, use a decision or a loop.",
+     "ref": "Ch. 10.9, when to use assertions (p. 424)"
+    }
+   ]
+  },
+  {
+   "id": "10.10",
+   "title": "Displaying the Virtual Keyboard",
+   "subtitle": "Calling Runtime.exec(), and why a library method's checked exception becomes your responsibility",
+   "source": "Ch. 10, section 10.10 (pp. 430–433)",
+   "intro": "One line of Java opens the Windows on-screen keyboard, but the program won't compile until you deal with an exception you didn't write. Four questions on using methods that throw.",
+   "takeaways": [
+    "You can write many programs without exception handling, but when you call a method that throws a checked exception, such as `Runtime.exec()` with its `IOException`, you must catch it or declare it.",
+    "`Runtime.getRuntime()` returns the single `Runtime` object every Java application has; its `exec()` method asks the operating system to start another program and doesn't wait for that program to close."
+   ],
+   "questions": [
+    {
+     "id": "exec-compile",
+     "concept": "Runtime.exec() throws a checked IOException",
+     "level": "apply",
+     "stem": "This version leaves out the `try…catch` from Figure 10-48. What happens when it is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "import java.util.Scanner;\npublic class KeyboardDemo\n{\n    public static void main(String[] args)\n    {\n        Scanner input = new Scanner(System.in);\n        Process proc = Runtime.getRuntime().exec\n            (\"cmd /c C:\\\\Windows\\\\System32\\\\osk.exe\");\n        System.out.print(\"Enter name >> \");\n        String name = input.nextLine();\n        System.out.println(\"Hello, \" + name + \"!\");\n    }\n}",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "unreported exception",
+        "IOException"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: unreported exception `IOException`",
+       "feedback": "`exec()` declares that it throws `IOException`, a checked exception, and `main()` neither catches it nor declares it.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and opens the keyboard on any Windows computer",
+       "feedback": "The call itself is fine, but the compiler enforces catch-or-specify for checked exceptions before the program can run anywhere."
+      },
+      {
+       "text": "It compiles, then throws an `IOException` when it runs",
+       "feedback": "An `IOException` would be unlikely here, and this code never runs at all: the problem is found at compile time."
+      },
+      {
+       "text": "It compiles, because `IOException` is a `RuntimeException`",
+       "feedback": "`IOException` extends `Exception` directly. It's checked, unlike `ArithmeticException` and the index exceptions."
+      }
+     ],
+     "hint": "What does `exec()` declare in its header, and what does that require of `main()`?",
+     "explanation": "When you use methods written by others that throw checked exceptions, your code must accommodate them. The `exec()` method throws an `IOException`, so the statement that calls it must be in a `try` with a matching `catch`, or the method must declare `throws IOException`.",
+     "ref": "Ch. 10.10, Displaying the Virtual Keyboard (p. 430)"
+    },
+    {
+     "id": "exec-fix",
+     "concept": "Two ways to satisfy catch-or-specify",
+     "level": "apply",
+     "stem": "Which single change lets the `KeyboardDemo` program from the previous question compile (assuming `java.io.IOException` is imported)?",
+     "options": [
+      {
+       "text": "Change the header to `public static void main(String[] args) throws IOException`",
+       "feedback": "Declaring the exception passes it up to the JVM if it ever happens. That's what the book's `CalculatorDemo` does, and many programmers prefer it here.",
+       "correct": true
+      },
+      {
+       "text": "Put the `exec()` call in a `try` with `catch(ArithmeticException e)`",
+       "feedback": "A `try` would work, but the `catch` must match the checked exception. An `ArithmeticException` catch doesn't handle an `IOException`."
+      },
+      {
+       "text": "Change the header to `public static void main(String[] args) throws RuntimeException`",
+       "feedback": "`IOException` isn't a subclass of `RuntimeException`, so declaring `RuntimeException` doesn't cover it."
+      },
+      {
+       "text": "Declare `Process proc = null;` before calling `exec()`",
+       "feedback": "That solves an uninitialized-variable problem, not this one. The compiler's complaint is about an unhandled checked exception."
+      }
+     ],
+     "hint": "The fix must either catch `IOException` or declare it. Which option names `IOException` correctly?",
+     "explanation": "A checked exception can be handled with a `try` and a matching `catch`, or passed on with a `throws` clause naming that exception or one of its superclasses. When an exception is very unlikely, as here, many programmers simply declare it on `main()`.",
+     "aside": "Since Java 18, `exec(String)` is deprecated, because splitting one command string into arguments is fragile. The recommended replacement is `ProcessBuilder`, for example `new ProcessBuilder(\"osk.exe\").start();`, which still throws an `IOException`.",
+     "ref": "Ch. 10.10, Note after Figure 10-48 (p. 431) and You Do It: Displaying the Windows Calculator (p. 432)"
+    },
+    {
+     "id": "runtime-object",
+     "concept": "What exec() does",
+     "level": "understand",
+     "stem": "In `Runtime.getRuntime().exec(\"cmd /c C:\\\\Windows\\\\System32\\\\osk.exe\")`, what is happening?",
+     "options": [
+      {
+       "text": "The app's single `Runtime` object asks the OS to start `osk.exe`",
+       "feedback": "Every Java application has exactly one `Runtime` instance for talking to its environment; `exec()` runs the operating-system program named in the string.",
+       "correct": true
+      },
+      {
+       "text": "A new `Runtime` object is created to run more Java code",
+       "feedback": "`getRuntime()` returns the one existing `Runtime` object, and `exec()` runs an operating-system program, not Java code."
+      },
+      {
+       "text": "Java draws its own on-screen keyboard inside the console",
+       "feedback": "The keyboard isn't built by Java. `osk.exe` is the Windows on-screen keyboard program, which the operating system launches."
+      },
+      {
+       "text": "The program pauses until the user closes the keyboard window",
+       "feedback": "`exec()` starts the program and returns right away; the prompt appears while the keyboard is still open."
+      }
+     ],
+     "hint": "`osk.exe` is a Windows program file. Who has to start it?",
+     "explanation": "Every Java application has a single instance of the `Runtime` class that lets the program interface with its environment. Its `exec()` method executes an operating-system program; here `osk` stands for on-screen keyboard.",
+     "ref": "Ch. 10.10, Figure 10-48 and its description (pp. 430–431)"
+    },
+    {
+     "id": "virtual-keyboard-run",
+     "concept": "What the user sees when the program runs",
+     "level": "apply",
+     "stem": "Pat runs `VirtualKeyboardDemo` (Figure 10-48) on a Windows laptop with an ordinary display and a mouse. What happens?",
+     "options": [
+      {
+       "text": "The on-screen keyboard opens and `Enter name >>` appears right away",
+       "feedback": "The keyboard appears as soon as the program starts, and Pat can type normally or click its keys with the mouse.",
+       "correct": true
+      },
+      {
+       "text": "An `IOException` is thrown, because there's no touch screen",
+       "feedback": "A virtual keyboard doesn't need a touch screen; it can be operated with a mouse or stylus. That's the false statement in the section's Two Truths & a Lie."
+      },
+      {
+       "text": "The keyboard opens, and the prompt waits until Pat closes it",
+       "feedback": "`exec()` doesn't wait for the program it starts. The prompt appears while the keyboard is open, so either keyboard can be used."
+      },
+      {
+       "text": "The program asks Pat for permission to use the keyboard first",
+       "feedback": "Nothing in the code asks for permission. The `exec()` call launches `osk.exe` directly when the program starts."
+      }
+     ],
+     "hint": "How is an on-screen keyboard operated on a screen you can't touch? And does `exec()` wait for the program it starts?",
+     "explanation": "A virtual keyboard appears on the screen and is operated with a mouse, or with a finger or stylus on a touch screen. Because `exec()` doesn't wait, the program continues to its prompt, and the user can type on either keyboard.",
+     "ref": "Ch. 10.10, Figure 10-49 and its description (p. 431)"
+    }
+   ]
+  }
+ ]
+}
