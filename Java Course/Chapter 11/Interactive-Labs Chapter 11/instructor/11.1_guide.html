@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The visit counter that starts over every morning</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 11.1</div>
+  <h1>The visit counter that starts over every morning</h1>
+<h2>Objectives</h2><ul><li>Tell volatile storage (RAM, variables) apart from nonvolatile storage (files on a disk)</li><li>Keep a value that must survive a restart in a file instead of a field</li><li>Name the everyday file tasks a program performs: check, open, read, write, close, delete</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>VisitCounter</code> keeps no count in a field: the total lives only in the file that <code>store</code> manages.</li><li><strong>R2</strong> <code>recordVisit()</code> starts from the saved total, adds 1, saves the new total with <code>store.save()</code>, and returns it.</li><li><strong>R3</strong> <code>getTotal()</code> returns the saved total, or 0 when no file exists yet; <code>reset()</code> makes the saved total 0 (delete the file, or save 0).</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Which storage holds the starter&#x27;s <code>visits</code> value, and what happens to that value when <code>main()</code> ends?</p><div class="answer"><p>RAM, because it is a field of an object. RAM is volatile, so the value is lost when the program ends; the next run starts a new object with visits at 0.</p></div></li><li><p>With the starter, what does the test program print after “Tuesday: the tablet restarted”? Why doesn&#x27;t the Tuesday object know about Monday&#x27;s 3 visits?</p><div class="answer"><p>“Total so far: 0” and “Visit 1”. Each VisitCounter object has its own visits field, and Monday&#x27;s object (and its field) is not where Tuesday&#x27;s object looks.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">TextStore.java (read-only for students)</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.*</span><span class="t-p">;</span>
+
+<span class="t-c1">// Keeps one line of text in a file on disk: nonvolatile storage.</span>
+<span class="t-c1">// Sections 11.2 to 11.5 explain the code inside these methods.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TextStore</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-n">file</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">TextStore</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">fileName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">file</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-n">fileName</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// true when the file is on the disk</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">exists</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">exists</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the line saved in the file.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">load</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BufferedReader</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedReader</span><span class="t-p">(</span>
+<span class="t-w">            </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">InputStreamReader</span><span class="t-p">(</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newInputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">line</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">readLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">line</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Replaces the file's contents with this text.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">save</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BufferedWriter</span><span class="t-w"> </span><span class="t-n">writer</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedWriter</span><span class="t-p">(</span>
+<span class="t-w">            </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">OutputStreamWriter</span><span class="t-p">(</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newOutputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-n">writer</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">writer</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes the file from the disk (nothing happens if it isn't there).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">delete</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">deleteIfExists</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">VisitCounter.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">VisitCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): this total lives in RAM, inside one VisitCounter object.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">visits</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">TextStore</span><span class="t-w"> </span><span class="t-n">store</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">VisitCounter</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">fileName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">store</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">TextStore</span><span class="t-p">(</span><span class="t-n">fileName</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Records one visit and returns the new total.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">recordVisit</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): start from the saved total, add 1, save the new total.</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">visits</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">visits</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the total without changing it.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getTotal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): return the saved total, or 0 when nothing is saved yet.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">visits</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Starts a new month at 0 visits.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">reset</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): the saved total must go back to 0 too.</span>
+<span class="t-w">        </span><span class="t-n">visits</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">VisitCounter.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">VisitCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">TextStore</span><span class="t-w"> </span><span class="t-n">store</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">VisitCounter</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">fileName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">store</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">TextStore</span><span class="t-p">(</span><span class="t-n">fileName</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Records one visit and returns the new total.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">recordVisit</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">visits</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">getTotal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">store</span><span class="t-p">.</span><span class="t-na">save</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">visits</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">visits</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the total without changing it.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getTotal</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-o">!</span><span class="t-n">store</span><span class="t-p">.</span><span class="t-na">exists</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">store</span><span class="t-p">.</span><span class="t-na">load</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Starts a new month at 0 visits.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">reset</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">store</span><span class="t-p">.</span><span class="t-na">delete</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The <code>visits</code> field is in RAM, which is volatile storage: it disappears when the program ends, and a new object starts with its own new field set to 0 (p. 441). A file is nonvolatile, so the total survives a restart (pp. 441–442). <code>getTotal()</code> is the one place that reads the file; it checks <code>store.exists()</code> first because there is nothing to read on the very first visit (determining whether a file exists is the first task in the list on p. 443). <code>recordVisit()</code> reuses <code>getTotal()</code>, so the read logic is written once. <code>reset()</code> can delete the file, which <code>getTotal()</code> then reads as 0, or save &quot;0&quot;. Note the book&#x27;s point that <em>temporary</em> and <em>permanent</em> describe volatility, not time: the field lasted all day, but it was still temporary (p. 441).</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestVisitCounter.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestVisitCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Start clean: remove any visits.txt left by an earlier run.</span>
+<span class="t-w">        </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">TextStore</span><span class="t-p">(</span><span class="t-s">"visits.txt"</span><span class="t-p">).</span><span class="t-na">delete</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Monday: the program starts"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">VisitCounter</span><span class="t-w"> </span><span class="t-n">monday</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">VisitCounter</span><span class="t-p">(</span><span class="t-s">"visits.txt"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Visit "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">monday</span><span class="t-p">.</span><span class="t-na">recordVisit</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Visit "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">monday</span><span class="t-p">.</span><span class="t-na">recordVisit</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Visit "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">monday</span><span class="t-p">.</span><span class="t-na">recordVisit</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-c1">// A new object is what a restart gives you: main() runs again</span>
+<span class="t-w">        </span><span class="t-c1">// and creates a fresh VisitCounter.</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tuesday: the tablet restarted"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">VisitCounter</span><span class="t-w"> </span><span class="t-n">tuesday</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">VisitCounter</span><span class="t-p">(</span><span class="t-s">"visits.txt"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total so far: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">tuesday</span><span class="t-p">.</span><span class="t-na">getTotal</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Visit "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">tuesday</span><span class="t-p">.</span><span class="t-na">recordVisit</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"First day of the month"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">tuesday</span><span class="t-p">.</span><span class="t-na">reset</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">VisitCounter</span><span class="t-w"> </span><span class="t-n">nextMonth</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">VisitCounter</span><span class="t-p">(</span><span class="t-s">"visits.txt"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total so far: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">nextMonth</span><span class="t-p">.</span><span class="t-na">getTotal</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Visit "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">nextMonth</span><span class="t-p">.</span><span class="t-na">recordVisit</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Monday: the program starts
+Visit 1
+Visit 2
+Visit 3
+Tuesday: the tablet restarted
+Total so far: 3
+Visit 4
+First day of the month
+Total so far: 0
+Visit 1
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>No count kept in a field<div class="small">in <code>VisitCounter</code> of <code>VisitCounter.java</code></div></td><td><div><span class="tag">forbid</span> <code>\b(?:private|public|protected|static)\s+(?:static\s+)?int\s+\w+\s*[;=]</code></div></td></tr><tr><td>C2</td><td>R2</td><td>recordVisit() saves the new total<div class="small">in <code>VisitCounter.recordVisit</code> of <code>VisitCounter.java</code></div></td><td><div><span class="tag">require</span> <code>\bstore\s*\.\s*save\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td>recordVisit() starts from the saved total<div class="small">in <code>VisitCounter.recordVisit</code> of <code>VisitCounter.java</code></div></td><td><div><span class="tag">require</span> <code>\bgetTotal\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\bstore\s*\.\s*load\s*\(</code></div></td></tr><tr><td>C4</td><td>R3</td><td>getTotal() reads the file<div class="small">in <code>VisitCounter.getTotal</code> of <code>VisitCounter.java</code></div></td><td><div><span class="tag">require</span> <code>\bstore\s*\.\s*load\s*\(</code></div></td></tr><tr><td>C5</td><td>R3</td><td>getTotal() handles the first visit<div class="small">in <code>VisitCounter.getTotal</code> of <code>VisitCounter.java</code></div></td><td><div><span class="tag">require</span> <code>\bstore\s*\.\s*exists\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\bcatch\s*\(\s*(?:NoSuchFileException|IOException)\b</code></div></td></tr><tr><td>C6</td><td>R3</td><td>reset() changes the saved total<div class="small">in <code>VisitCounter.reset</code> of <code>VisitCounter.java</code></div></td><td><div><span class="tag">require</span> <code>\bstore\s*\.\s*delete\s*\(</code></div><div><span class="tag">require</span> <code>\bstore\s*\.\s*save\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · No count kept in a field</dt><dd><p>Delete the <code>int</code> field. Anything stored in a field is in RAM and is lost at the next restart; the total must come from the file every time.</p></dd><dt>C2 · recordVisit() saves the new total</dt><dd><p>Call <code>store.save(...)</code> with the new total so it reaches the disk. <code>save()</code> takes a String, so pass something like <code>&quot;&quot; + visits</code>.</p></dd><dt>C3 · recordVisit() starts from the saved total</dt><dd><p>Before adding 1, get the total that is already saved (call <code>getTotal()</code>), or Tuesday&#x27;s first visit becomes visit 1 again.</p></dd><dt>C4 · getTotal() reads the file</dt><dd><p>Read the saved text with <code>store.load()</code> and turn it into an <code>int</code> with <code>Integer.parseInt()</code>.</p></dd><dt>C5 · getTotal() handles the first visit</dt><dd><p>On the very first visit there is no file yet, and <code>load()</code> would fail. Check <code>store.exists()</code> first and return 0 when it is false.</p></dd><dt>C6 · reset() changes the saved total</dt><dd><p>Resetting a variable doesn&#x27;t touch the disk. Delete the file with <code>store.delete()</code> (getTotal() then reads 0) or save &quot;0&quot;.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Which line is the only place the starter keeps the count? Where does that memory go when the program ends?</p></li><li><p>Write <code>getTotal()</code> first: if <code>store.exists()</code> is false nothing has been saved yet, so the total is 0; otherwise convert <code>store.load()</code> with <code>Integer.parseInt()</code>.</p></li><li><p><code>recordVisit()</code> needs three steps: total from <code>getTotal()</code>, plus 1, then <code>store.save()</code> with that number as a String. Return the same number.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The tablet stays on for ten hours a day. Does that make the <code>visits</code> field permanent storage? Use the book&#x27;s meaning of <em>temporary</em> and <em>permanent</em>.</p><div class="answer"><p>No. Temporary and permanent describe volatility, not time. The field is in RAM, so it is lost when power or the program goes, however long it lasted; the file persists because it is on nonvolatile storage.</p></div></li><li><p>Your <code>VisitCounter</code> reads the file on every call to <code>getTotal()</code>. Name one cost of that design and one reason it is still the right choice here.</p><div class="answer"><p>Reading a disk is slower than reading a variable. But a visit happens a few hundred times a day, and reading the file each time guarantees the total is correct after any restart or crash.</p></div></li></ol>
+<h2>Extension</h2><p>Give <code>VisitCounter</code> a second <code>TextStore</code> that keeps the busiest day&#x27;s total, and update it in <code>recordVisit()</code> when today&#x27;s count passes it. Which methods need a second file, and why can&#x27;t one line in <code>visits.txt</code> hold both numbers with <code>TextStore</code> as it is?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; <code>getTotal()</code> is the one place that reads the file; no leftover field.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

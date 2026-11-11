@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The kiosk log that overwrites itself</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 11.4</div>
+  <h1>The kiosk log that overwrites itself</h1>
+<h2>Objectives</h2><ul><li>Choose <code>StandardOpenOption</code> values that append to, or truncate, an existing file</li><li>Write bytes to a file with <code>Files.newOutputStream()</code> and a <code>BufferedOutputStream</code></li><li>Read a file line by line with a <code>BufferedReader</code> until <code>readLine()</code> returns <code>null</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>append()</code> opens the file with <code>CREATE</code> and <code>APPEND</code>, so each event is added after the existing ones.</li><li><strong>R2</strong> <code>printAll()</code> reads and numbers every line in a loop that stops when <code>readLine()</code> returns <code>null</code>, and returns how many lines it read.</li><li><strong>R3</strong> <code>clear()</code> leaves the log empty: open it with <code>TRUNCATE_EXISTING</code> (or with no options) and close it, or delete it.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Using Table 11-4, which options does <code>Files.newOutputStream(file)</code> behave as if it had when you pass none? Which single option does the starter pass?</p><div class="answer"><p>With no options it acts as CREATE and TRUNCATE_EXISTING, so the file is replaced. The starter passes only CREATE, which opens the file without truncating it.</p></div></li><li><p>In <code>printAll()</code>, what does <code>readLine()</code> return once there are no more lines, and how many times does the starter call it?</p><div class="answer"><p>It returns null at the end of the file. The starter calls it once, so it only ever sees the first line.</p></div></li></ol>
+<h2>Solution</h2><div class="file">KioskLog.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.*</span><span class="t-p">;</span>
+<span class="t-kn">import static</span><span class="t-w"> </span><span class="t-nn">java.nio.file.StandardOpenOption.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">KioskLog</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-n">file</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">KioskLog</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">fileName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">file</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-n">fileName</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Adds one event to the end of the log.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">append</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">event</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">event</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">getProperty</span><span class="t-p">(</span><span class="t-s">"line.separator"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">byte</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">data</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">OutputStream</span><span class="t-w"> </span><span class="t-n">output</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedOutputStream</span><span class="t-p">(</span>
+<span class="t-w">            </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newOutputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">CREATE</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">APPEND</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">output</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">data</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">output</span><span class="t-p">.</span><span class="t-na">flush</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">output</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Displays every event, numbered from 1, and returns how many there were.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">printAll</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">InputStream</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newInputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">BufferedReader</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedReader</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">InputStreamReader</span><span class="t-p">(</span><span class="t-n">input</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">readLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">while</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">". "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">readLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Starts a fresh log for the next shift: no events.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">clear</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">OutputStream</span><span class="t-w"> </span><span class="t-n">output</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newOutputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">CREATE</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">TRUNCATE_EXISTING</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">output</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>Files.newOutputStream()</code> takes a Path and <code>StandardOpenOption</code> values (p. 454). With no options it behaves like <code>CREATE</code> plus <code>TRUNCATE_EXISTING</code>, replacing the contents; <code>CREATE</code> on its own opens the file and writes from byte 0 without truncating, which is why fragments of older, longer events survive. <code>APPEND</code> (used with <code>CREATE</code> or <code>WRITE</code>) adds to the end (Table 11-4, p. 454). Reading uses <code>Files.newInputStream()</code> wrapped in a <code>BufferedReader</code> (p. 456), and <code>readLine()</code> returns <code>null</code> at the end of the file, so the loop reads, tests for <code>null</code>, prints, and reads again (p. 455). Note the book&#x27;s one-line loop <code>while(s = reader.readLine() != null)</code> needs extra parentheses, <code>while((s = reader.readLine()) != null)</code>, or it doesn&#x27;t compile. <code>clear()</code> opens with <code>CREATE, TRUNCATE_EXISTING</code> and closes immediately, leaving a 0-byte file.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestKioskLog.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestKioskLog</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Start clean: remove any kiosk.log left by an earlier run.</span>
+<span class="t-w">        </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">deleteIfExists</span><span class="t-p">(</span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-s">"kiosk.log"</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">KioskLog</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">KioskLog</span><span class="t-p">(</span><span class="t-s">"kiosk.log"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">append</span><span class="t-p">(</span><span class="t-s">"07:58 door opened by J. Ruiz"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">append</span><span class="t-p">(</span><span class="t-s">"08:02 alarm off"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">append</span><span class="t-p">(</span><span class="t-s">"08:15 lights on"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Morning shift"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Events: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">printAll</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">clear</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">append</span><span class="t-p">(</span><span class="t-s">"17:30 door locked"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Evening shift, after clear()"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Events: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">printAll</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Morning shift
+1. 07:58 door opened by J. Ruiz
+2. 08:02 alarm off
+3. 08:15 lights on
+Events: 3
+Evening shift, after clear()
+1. 17:30 door locked
+Events: 1
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>append() adds to the end<div class="small">in <code>KioskLog.append</code></div></td><td><div><span class="tag">require</span> <code>\bAPPEND\b</code></div><div><span class="tag">forbid</span> <code>\bTRUNCATE_EXISTING\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>printAll() reads until null<div class="small">in <code>KioskLog.printAll</code></div></td><td><div><span class="tag">require</span> <code>\bwhile\s*\([^;{]*\bnull\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>clear() empties the file<div class="small">in <code>KioskLog.clear</code></div></td><td><div><span class="tag">require</span> <code>\bTRUNCATE_EXISTING\b</code></div><div><span class="tag">require</span> <code>\bnewOutputStream\s*\(\s*file\s*\)</code></div><div><span class="tag">require</span> <code>\bdelete(?:IfExists)?\s*\(\s*file\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · append() adds to the end</dt><dd><p>Open the file with <code>CREATE, APPEND</code> (Table 11-4). <code>CREATE</code> alone starts writing at byte 0 and leaves the rest of the old text behind.</p></dd><dt>C2 · printAll() reads until null</dt><dd><p>Read in a <code>while</code> loop that continues as long as the line is not <code>null</code>; <code>readLine()</code> returns <code>null</code> only at the end of the file.</p></dd><dt>C3 · clear() empties the file</dt><dd><p>Open the file with <code>CREATE, TRUNCATE_EXISTING</code> (or with no options) and close it straight away; truncating cuts it to 0 bytes. Deleting it with <code>Files.deleteIfExists(file)</code> also works.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Open <code>kiosk.log</code> after running the starter and compare it with the three events. Which event&#x27;s text is at the start, and where did the leftover letters come from?</p></li><li><p>Table 11-4 (p. 454) has an option whose description says new data goes to the end of the file. You can pass several options separated by commas.</p></li><li><p>In <code>printAll()</code>, read the first line before the loop, test it for <code>null</code> in the <code>while</code> condition, and read the next line as the last statement of the loop body.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain, byte by byte, why the starter can leave a fragment such as <code>ened by J. Ruiz</code> in the log.</p><div class="answer"><p>CREATE without APPEND or TRUNCATE_EXISTING opens the existing file and starts writing at byte 0. A shorter event overwrites only the first bytes of the longer old one, so the rest of the old line, after the new line separator, stays in the file.</p></div></li><li><p>When would you choose <code>TRUNCATE_EXISTING</code> on purpose, and when <code>CREATE_NEW</code>?</p><div class="answer"><p>TRUNCATE_EXISTING when the file must be replaced, as clear() does or a nightly report that is rebuilt from scratch. CREATE_NEW when an existing file must never be touched, because it throws an exception instead of overwriting.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>int countMatching(String word)</code> that reads the log and returns how many events contain <code>word</code> (use <code>contains()</code> from Chapter 7). Then make <code>append()</code> refuse an empty event by returning without opening the file.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; one read before the loop and one at the end of the loop body; files closed in every method.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

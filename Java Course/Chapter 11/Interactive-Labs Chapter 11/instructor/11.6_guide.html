@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The seat map that books only one seat</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 11.6</div>
+  <h1>The seat map that books only one seat</h1>
+<h2>Objectives</h2><ul><li>Explain the difference between sequential and random access</li><li>Write bytes at chosen positions with a <code>FileChannel</code>, <code>position()</code> and a wrapped <code>ByteBuffer</code></li><li>Reuse a <code>ByteBuffer</code> with <code>rewind()</code>, and read a single byte from any position</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>book()</code> sets the channel&#x27;s position to each seat number before writing, and rewinds the buffer after each write so it can be written again.</li><li><strong>R2</strong> <code>seatAt()</code> opens the file, moves to the seat&#x27;s position, reads one byte into a wrapped <code>byte[1]</code>, closes the channel, and returns that byte as a <code>char</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter&#x27;s <code>book()</code>, what does <code>out.hasRemaining()</code> return after the first seat has been written, and what happens in the <code>while</code> loop for the next seat?</p><div class="answer"><p>It returns false, because the single byte has been written. The while loop&#x27;s body never runs, so nothing is written for the next seats.</p></div></li><li><p>The starter never calls <code>position()</code>. Where does the first X go, and why?</p><div class="answer"><p>At byte 0, seat 0. A newly opened channel&#x27;s position is 0, and it only moves forward as bytes are written.</p></div></li></ol>
+<h2>Solution</h2><div class="file">SeatMap.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.ByteBuffer</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.channels.FileChannel</span><span class="t-p">;</span>
+<span class="t-kn">import static</span><span class="t-w"> </span><span class="t-nn">java.nio.file.StandardOpenOption.*</span><span class="t-p">;</span>
+
+<span class="t-c1">// One row of seats, stored as one character per seat: '.' is free, 'X' is booked.</span>
+<span class="t-c1">// Seat numbers start at 0, so seat n is the byte at position n.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SeatMap</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-n">file</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">SeatMap</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">fileName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">file</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-n">fileName</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Creates a row of free seats.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">create</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seats</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">seats</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-s">"."</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">OutputStream</span><span class="t-w"> </span><span class="t-n">output</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedOutputStream</span><span class="t-p">(</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newOutputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">output</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">output</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the number of seats in the row: one byte per seat.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">long</span><span class="t-w"> </span><span class="t-nf">seatCount</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">FileChannel</span><span class="t-w"> </span><span class="t-n">fc</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">FileChannel</span><span class="t-p">)</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newByteChannel</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">READ</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">long</span><span class="t-w"> </span><span class="t-n">size</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">size</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Marks each seat in the array as booked.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">book</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">seatNumbers</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">byte</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">data</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"X"</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">ByteBuffer</span><span class="t-w"> </span><span class="t-n">out</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ByteBuffer</span><span class="t-p">.</span><span class="t-na">wrap</span><span class="t-p">(</span><span class="t-n">data</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">FileChannel</span><span class="t-w"> </span><span class="t-n">fc</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">FileChannel</span><span class="t-p">)</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newByteChannel</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">READ</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">WRITE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">seatNumbers</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">position</span><span class="t-p">(</span><span class="t-n">seatNumbers</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">while</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">out</span><span class="t-p">.</span><span class="t-na">hasRemaining</span><span class="t-p">())</span>
+<span class="t-w">                </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">out</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">out</span><span class="t-p">.</span><span class="t-na">rewind</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the character stored for one seat: '.' or 'X'.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-nf">seatAt</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seatNumber</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">byte</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">data</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-kt">byte</span><span class="t-o">[</span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">ByteBuffer</span><span class="t-w"> </span><span class="t-n">in</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ByteBuffer</span><span class="t-p">.</span><span class="t-na">wrap</span><span class="t-p">(</span><span class="t-n">data</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">FileChannel</span><span class="t-w"> </span><span class="t-n">fc</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">FileChannel</span><span class="t-p">)</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newByteChannel</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">READ</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">position</span><span class="t-p">(</span><span class="t-n">seatNumber</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">read</span><span class="t-p">(</span><span class="t-n">in</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">fc</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-p">(</span><span class="t-n">data</span><span class="t-p">).</span><span class="t-na">charAt</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the whole row as one String.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">row</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BufferedReader</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedReader</span><span class="t-p">(</span>
+<span class="t-w">            </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">InputStreamReader</span><span class="t-p">(</span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newInputStream</span><span class="t-p">(</span><span class="t-n">file</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">readLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>This is the <code>RandomAccessTest</code> program (p. 462) turned into a class. A <code>FileChannel</code> is seekable: <code>position(n)</code> moves to byte n, and the next <code>read()</code> or <code>write()</code> starts there (Table 11-7, p. 461). <code>ByteBuffer.wrap()</code> puts a byte array inside a buffer, so changes to one show up in the other (p. 462). Writing uses up the buffer; <code>hasRemaining()</code> then returns false, and <code>rewind()</code> makes the same bytes available again (p. 462). For <code>seatAt()</code>, a 1-byte array is wrapped, the channel is positioned at the seat, and after <code>read()</code> the byte is in the array; <code>new String(data).charAt(0)</code> (or a <code>(char)</code> cast) turns it into the seat&#x27;s character. Seats are booked in the order 0, 22, 12 on purpose: random access doesn&#x27;t care about order.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSeatMap.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSeatMap</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">SeatMap</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SeatMap</span><span class="t-p">(</span><span class="t-s">"row_k.txt"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">create</span><span class="t-p">(</span><span class="t-mi">30</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seats in row K: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">seatCount</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Before: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">row</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">firstOrder</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">12</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">book</span><span class="t-p">(</span><span class="t-n">firstOrder</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"After:  "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">row</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat 12 holds "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">seatAt</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat 13 holds "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">seatAt</span><span class="t-p">(</span><span class="t-mi">13</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">secondOrder</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">29</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">book</span><span class="t-p">(</span><span class="t-n">secondOrder</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Later:  "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">row</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat 29 holds "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rowK</span><span class="t-p">.</span><span class="t-na">seatAt</span><span class="t-p">(</span><span class="t-mi">29</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Seats in row K: 30
+Before: ..............................
+After:  X...........X.........X.......
+Seat 12 holds X
+Seat 13 holds .
+Later:  XX..........X.........X......X
+Seat 29 holds X
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>book() moves to each seat<div class="small">in <code>SeatMap.book</code></div></td><td><div><span class="tag">require</span> <code>\.\s*position\s*\(</code></div></td></tr><tr><td>C2</td><td>R1</td><td>book() reuses the buffer<div class="small">in <code>SeatMap.book</code></div></td><td><div><span class="tag">require</span> <code>\.\s*rewind\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\.\s*clear\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\.\s*flip\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>for\s*\([^)]*\)\s*\{[^}]*\bByteBuffer\s*\.\s*wrap\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td>seatAt() goes to the seat<div class="small">in <code>SeatMap.seatAt</code></div></td><td><div><span class="tag">require</span> <code>\.\s*position\s*\(\s*seatNumber\s*\)</code></div></td></tr><tr><td>C4</td><td>R2</td><td>seatAt() reads into a buffer<div class="small">in <code>SeatMap.seatAt</code></div></td><td><div><span class="tag">require</span> <code>\.\s*read\s*\(</code></div></td></tr><tr><td>C5</td><td>R2</td><td>seatAt() closes the channel<div class="small">in <code>SeatMap.seatAt</code></div></td><td><div><span class="tag">require</span> <code>\.\s*close\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · book() moves to each seat</dt><dd><p>Call <code>fc.position(seatNumbers[x])</code> inside the loop, before writing. A channel writes wherever its position is, and the position doesn&#x27;t jump to the next seat by itself.</p></dd><dt>C2 · book() reuses the buffer</dt><dd><p>Call <code>out.rewind()</code> after each write (p. 462). Once the X has been written the buffer is empty, so later writes send nothing.</p></dd><dt>C3 · seatAt() goes to the seat</dt><dd><p>Position the channel at <code>seatNumber</code> before reading; seat n is the byte at position n.</p></dd><dt>C4 · seatAt() reads into a buffer</dt><dd><p>Wrap a <code>byte[1]</code> with <code>ByteBuffer.wrap()</code> and call <code>fc.read(...)</code> with it. The byte read lands in the array.</p></dd><dt>C5 · seatAt() closes the channel</dt><dd><p>Close the channel before returning, as <code>book()</code> does, so the file isn&#x27;t left open.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compare <code>book()</code> with <code>RandomAccessTest</code> on p. 462: which two calls appear between its writes that the starter doesn&#x27;t have?</p></li><li><p>Inside the <code>for</code> loop the order is: move to the seat, write until nothing remains, make the buffer reusable.</p></li><li><p>For <code>seatAt()</code>, open the channel with <code>READ</code>, then the byte array is where you look after <code>read()</code>: <code>data[0]</code> holds the seat.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>A <code>BufferedWriter</code> can&#x27;t book seat 22 before seat 12, but a <code>FileChannel</code> can. What property of a file channel makes the difference?</p><div class="answer"><p>A file channel is seekable: position() can move to any byte and the next read or write starts there. A BufferedWriter writes only forward, from where the last write ended.</p></div></li><li><p>In <code>seatAt()</code> you never read from the <code>ByteBuffer</code> itself, yet <code>data[0]</code> holds the seat. Why?</p><div class="answer"><p>wrap() doesn&#x27;t copy the array: the buffer is a view of it. When read() puts a byte into the buffer, it goes straight into the wrapped array.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>boolean bookIfFree(int seat)</code> that books the seat only when <code>seatAt(seat)</code> is <code>.</code> and returns whether it did. Then make <code>book()</code> skip seats that are already taken and print a message for each one.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; one position and one rewind per seat; every channel closed.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

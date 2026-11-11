@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The volunteer export that came out empty</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 11.3</div>
+  <h1>The volunteer export that came out empty</h1>
+<h2>Objectives</h2><ul><li>Describe the data hierarchy: characters, fields, records and files</li><li>Write records as comma-separated values (CSV) so each field can be found again</li><li>Explain what a buffer does and close an output file so its contents reach the disk</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>addRecord()</code> writes the ID, name and hours separated by commas (a constant such as <code>DELIMITER = &quot;,&quot;</code> is welcome).</li><li><strong>R2</strong> <code>finish()</code> closes the writer, which flushes the buffer to the file first.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the finished file, which part of <code>786,Brown,12.5</code> is a record, which is a field, and which is a character? What is the file?</p><div class="answer"><p>The whole line is a record; 786, Brown and 12.5 are fields; B (or any single symbol) is a character. volunteer_hours.csv, the set of records, is the file.</p></div></li><li><p>The starter runs without an error, but the file is empty. Where are the three records when <code>main()</code> ends?</p><div class="answer"><p>In the BufferedWriter&#x27;s buffer in RAM. They were written to the buffer but never flushed, so they never reached the disk, and the buffer disappears when the program ends.</p></div></li></ol>
+<h2>Solution</h2><div class="file">HoursExport.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">HoursExport</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">DELIMITER</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">","</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">BufferedWriter</span><span class="t-w"> </span><span class="t-n">writer</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">records</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Opens the export file for writing (a new, empty file each time).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">HoursExport</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">fileName</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">OutputStream</span><span class="t-w"> </span><span class="t-n">output</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedOutputStream</span><span class="t-p">(</span>
+<span class="t-w">            </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newOutputStream</span><span class="t-p">(</span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-n">fileName</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-n">writer</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedWriter</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">OutputStreamWriter</span><span class="t-p">(</span><span class="t-n">output</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Writes one record (one line): the volunteer's ID, name and hours.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">addRecord</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DELIMITER</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DELIMITER</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">writer</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">writer</span><span class="t-p">.</span><span class="t-na">newLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">records</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getRecordCount</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">records</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Called once, after the last record.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">finish</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">writer</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A field is a group of characters with a meaning, a record is a collection of fields about one entity, and a file is a group of related records (p. 450). On disk Java sees only a series of bytes (p. 451), so the program must mark where fields end; a comma makes the file a CSV file, which spreadsheets and databases read (p. 451). Each record goes on its own line with <code>newLine()</code>. The empty file is a buffer problem: output waits in a memory block until it is flushed (p. 451), and if an output file is not closed its data might never be written (p. 451). <code>close()</code> flushes first and then releases the file, so it is the right call in <code>finish()</code>; <code>flush()</code> alone would write the data but leave the file open.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestHoursExport.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestHoursExport</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">HoursExport</span><span class="t-w"> </span><span class="t-n">export</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">HoursExport</span><span class="t-p">(</span><span class="t-s">"volunteer_hours.csv"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">export</span><span class="t-p">.</span><span class="t-na">addRecord</span><span class="t-p">(</span><span class="t-mi">786</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Brown"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">12.5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">export</span><span class="t-p">.</span><span class="t-na">addRecord</span><span class="t-p">(</span><span class="t-mi">812</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Okafor"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">4.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">export</span><span class="t-p">.</span><span class="t-na">addRecord</span><span class="t-p">(</span><span class="t-mi">845</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Nguyen"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">7.25</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">export</span><span class="t-p">.</span><span class="t-na">finish</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Records sent: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">export</span><span class="t-p">.</span><span class="t-na">getRecordCount</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-c1">// Read the file back the way a spreadsheet does:</span>
+<span class="t-w">        </span><span class="t-c1">// one record per line, fields separated by commas.</span>
+<span class="t-w">        </span><span class="t-n">BufferedReader</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BufferedReader</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">InputStreamReader</span><span class="t-p">(</span>
+<span class="t-w">            </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">newInputStream</span><span class="t-p">(</span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-s">"volunteer_hours.csv"</span><span class="t-p">))));</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">readLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">while</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">lines</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">fields</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">split</span><span class="t-p">(</span><span class="t-s">","</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Record "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">fields</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" fields -&gt; "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">s</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">readLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">reader</span><span class="t-p">.</span><span class="t-na">close</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Records in the file: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Records sent: 3
+Record 1: 3 fields -&gt; 786,Brown,12.5
+Record 2: 3 fields -&gt; 812,Okafor,4.0
+Record 3: 3 fields -&gt; 845,Nguyen,7.25
+Records in the file: 3
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>A comma delimiter exists<div class="small">in <code>HoursExport</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\&quot;,\&quot;</code></div></td></tr><tr><td>C2</td><td>R1</td><td>Each field is followed by the delimiter<div class="small">in <code>HoursExport.addRecord</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\bid\s*\+\s*(?:\&quot;,\&quot;|\w+)\s*\+\s*name\s*\+\s*(?:\&quot;,\&quot;|\w+)\s*\+\s*hours\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>finish() closes the writer<div class="small">in <code>HoursExport.finish</code></div></td><td><div><span class="tag">require</span> <code>\bwriter\s*\.\s*close\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · A comma delimiter exists</dt><dd><p>Use a comma as the field delimiter, for example <code>private static final String DELIMITER = &quot;,&quot;;</code>. A CSV file separates the values of a record with commas.</p></dd><dt>C2 · Each field is followed by the delimiter</dt><dd><p>Put the delimiter between the fields: <code>id + DELIMITER + name + DELIMITER + hours</code>. Without it the reader sees one long field.</p></dd><dt>C3 · finish() closes the writer</dt><dd><p>Call <code>writer.close()</code>. Closing flushes the buffer to the disk and then releases the file; until then the records sit in RAM.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Open the starter&#x27;s <code>volunteer_hours.csv</code> after a run: how many bytes does it hold? Where did <code>write()</code> put the text instead?</p></li><li><p>Table 11-6 (p. 458) lists two <code>BufferedWriter</code> methods that push buffered text out. Which one also releases the file?</p></li><li><p>For the fields, read <code>addRecord()</code> as a spreadsheet would: where does 786 end and Brown begin?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>If a buffer can lose data like this, why does Java buffer output at all?</p><div class="answer"><p>Input and output are among the slowest operations a computer does. Collecting many small writes in a buffer and sending them to the device in one larger operation makes the program much faster.</p></div></li><li><p>The book says failing to close an input file usually does no harm, but failing to close an output file can. Explain the difference using this lab.</p><div class="answer"><p>Reading leaves the data in the file whether or not you close it. Writing through a buffer keeps the data in memory until a flush, so if the output file is never closed the records may never reach the disk, which is what happened here.</p></div></li></ol>
+<h2>Extension</h2><p>Add a header record, <code>id,name,hours</code>, written once in the constructor, and change the test program so it skips the first line when it counts records. Then try a name such as <code>Brown, Jr.</code>: how many fields does the reader find, and how could the export protect itself?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; the delimiter is a named constant; <code>finish()</code> closes rather than only flushes.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

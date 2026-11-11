@@ -1,0 +1,1105 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 11: File Input and Output",
+ "collection_intro": "Hands-on labs for sections 11.1 to 11.8 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Every test program creates a small data file in the folder your program runs from (usually the project folder); open it in a text editor after a run to see what your code really stored. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "11.1",
+   "title": "The visit counter that starts over every morning",
+   "subtitle": "A value in RAM is volatile; a file on disk persists",
+   "source": "Ch. 11, section 11.1 (pp. 441–443)",
+   "minutes": 20,
+   "objectives": [
+    "Tell volatile storage (RAM, variables) apart from nonvolatile storage (files on a disk)",
+    "Keep a value that must survive a restart in a file instead of a field",
+    "Name the everyday file tasks a program performs: check, open, read, write, close, delete"
+   ],
+   "scenario": "The campus food pantry counts visits on a tablet at the door, and the monthly report to the county uses that count. The count is kept in a field, `visits`, inside a `VisitCounter` object. Every night the tablet restarts for updates, and every morning the count is back at 0, so the report only ever shows the last day.\n\nA field lives in RAM, and RAM is **volatile**: when the program ends, the value is gone. The fix is to keep the total in a file, which is **nonvolatile**. `TextStore.java` is tested and read-only: it saves one line of text in a file and reads it back (sections 11.2 to 11.5 explain how). Use it so that `VisitCounter` keeps no count of its own.\n\nThe test program simulates a restart the only way a program can: it creates a new `VisitCounter`, exactly what happens when `main()` runs again the next morning. With your fix it prints:\n\n```\nMonday: the program starts\nVisit 1\nVisit 2\nVisit 3\nTuesday: the tablet restarted\nTotal so far: 3\nVisit 4\nFirst day of the month\nTotal so far: 0\nVisit 1\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`VisitCounter` keeps no count in a field: the total lives only in the file that `store` manages."
+    },
+    {
+     "id": "R2",
+     "text": "`recordVisit()` starts from the saved total, adds 1, saves the new total with `store.save()`, and returns it."
+    },
+    {
+     "id": "R3",
+     "text": "`getTotal()` returns the saved total, or 0 when no file exists yet; `reset()` makes the saved total 0 (delete the file, or save 0)."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "TextStore.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\n\n// Keeps one line of text in a file on disk: nonvolatile storage.\n// Sections 11.2 to 11.5 explain the code inside these methods.\npublic class TextStore\n{\n    private Path file;\n\n    public TextStore(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // true when the file is on the disk\n    public boolean exists()\n    {\n        return Files.exists(file);\n    }\n\n    // Returns the line saved in the file.\n    public String load() throws IOException\n    {\n        BufferedReader reader = new BufferedReader(\n            new InputStreamReader(Files.newInputStream(file)));\n        String line = reader.readLine();\n        reader.close();\n        return line;\n    }\n\n    // Replaces the file's contents with this text.\n    public void save(String text) throws IOException\n    {\n        BufferedWriter writer = new BufferedWriter(\n            new OutputStreamWriter(Files.newOutputStream(file)));\n        writer.write(text, 0, text.length());\n        writer.close();\n    }\n\n    // Removes the file from the disk (nothing happens if it isn't there).\n    public void delete() throws IOException\n    {\n        Files.deleteIfExists(file);\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "VisitCounter.java",
+     "starter": "import java.io.IOException;\n\npublic class VisitCounter\n{\n    // TODO (R1): this total lives in RAM, inside one VisitCounter object.\n    private int visits;\n    private TextStore store;\n\n    public VisitCounter(String fileName)\n    {\n        store = new TextStore(fileName);\n    }\n\n    // Records one visit and returns the new total.\n    public int recordVisit() throws IOException\n    {\n        // TODO (R2): start from the saved total, add 1, save the new total.\n        ++visits;\n        return visits;\n    }\n\n    // Returns the total without changing it.\n    public int getTotal() throws IOException\n    {\n        // TODO (R3): return the saved total, or 0 when nothing is saved yet.\n        return visits;\n    }\n\n    // Starts a new month at 0 visits.\n    public void reset() throws IOException\n    {\n        // TODO (R3): the saved total must go back to 0 too.\n        visits = 0;\n    }\n}\n",
+     "solution": "import java.io.IOException;\n\npublic class VisitCounter\n{\n    private TextStore store;\n\n    public VisitCounter(String fileName)\n    {\n        store = new TextStore(fileName);\n    }\n\n    // Records one visit and returns the new total.\n    public int recordVisit() throws IOException\n    {\n        int visits = getTotal() + 1;\n        store.save(\"\" + visits);\n        return visits;\n    }\n\n    // Returns the total without changing it.\n    public int getTotal() throws IOException\n    {\n        if (!store.exists())\n            return 0;\n        return Integer.parseInt(store.load());\n    }\n\n    // Starts a new month at 0 visits.\n    public void reset() throws IOException\n    {\n        store.delete();\n    }\n}\n"
+    }
+   ],
+   "main_file": "VisitCounter.java",
+   "solution_notes": "The `visits` field is in RAM, which is volatile storage: it disappears when the program ends, and a new object starts with its own new field set to 0 (p. 441). A file is nonvolatile, so the total survives a restart (pp. 441–442). `getTotal()` is the one place that reads the file; it checks `store.exists()` first because there is nothing to read on the very first visit (determining whether a file exists is the first task in the list on p. 443). `recordVisit()` reuses `getTotal()`, so the read logic is written once. `reset()` can delete the file, which `getTotal()` then reads as 0, or save \"0\". Note the book's point that *temporary* and *permanent* describe volatility, not time: the field lasted all day, but it was still temporary (p. 441).",
+   "warmup": [
+    {
+     "question": "Which storage holds the starter's `visits` value, and what happens to that value when `main()` ends?",
+     "model_answer": "RAM, because it is a field of an object. RAM is volatile, so the value is lost when the program ends; the next run starts a new object with visits at 0."
+    },
+    {
+     "question": "With the starter, what does the test program print after “Tuesday: the tablet restarted”? Why doesn't the Tuesday object know about Monday's 3 visits?",
+     "model_answer": "“Total so far: 0” and “Visit 1”. Each VisitCounter object has its own visits field, and Monday's object (and its field) is not where Tuesday's object looks."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "VisitCounter.java",
+     "title": "No count kept in a field",
+     "within": "VisitCounter",
+     "forbid": "\\b(?:private|public|protected|static)\\s+(?:static\\s+)?int\\s+\\w+\\s*[;=]",
+     "message": "Delete the `int` field. Anything stored in a field is in RAM and is lost at the next restart; the total must come from the file every time."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "VisitCounter.java",
+     "title": "recordVisit() saves the new total",
+     "within": "VisitCounter.recordVisit",
+     "require": "\\bstore\\s*\\.\\s*save\\s*\\(",
+     "message": "Call `store.save(...)` with the new total so it reaches the disk. `save()` takes a String, so pass something like `\"\" + visits`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "VisitCounter.java",
+     "title": "recordVisit() starts from the saved total",
+     "within": "VisitCounter.recordVisit",
+     "require": [
+      "\\bgetTotal\\s*\\(\\s*\\)",
+      "\\bstore\\s*\\.\\s*load\\s*\\("
+     ],
+     "message": "Before adding 1, get the total that is already saved (call `getTotal()`), or Tuesday's first visit becomes visit 1 again."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "file": "VisitCounter.java",
+     "title": "getTotal() reads the file",
+     "within": "VisitCounter.getTotal",
+     "require": "\\bstore\\s*\\.\\s*load\\s*\\(",
+     "message": "Read the saved text with `store.load()` and turn it into an `int` with `Integer.parseInt()`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "file": "VisitCounter.java",
+     "title": "getTotal() handles the first visit",
+     "within": "VisitCounter.getTotal",
+     "require": [
+      "\\bstore\\s*\\.\\s*exists\\s*\\(\\s*\\)",
+      "\\bcatch\\s*\\(\\s*(?:NoSuchFileException|IOException)\\b"
+     ],
+     "message": "On the very first visit there is no file yet, and `load()` would fail. Check `store.exists()` first and return 0 when it is false."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "file": "VisitCounter.java",
+     "title": "reset() changes the saved total",
+     "within": "VisitCounter.reset",
+     "require": [
+      "\\bstore\\s*\\.\\s*delete\\s*\\(",
+      "\\bstore\\s*\\.\\s*save\\s*\\("
+     ],
+     "message": "Resetting a variable doesn't touch the disk. Delete the file with `store.delete()` (getTotal() then reads 0) or save \"0\"."
+    }
+   ],
+   "hints": [
+    "Which line is the only place the starter keeps the count? Where does that memory go when the program ends?",
+    "Write `getTotal()` first: if `store.exists()` is false nothing has been saved yet, so the total is 0; otherwise convert `store.load()` with `Integer.parseInt()`.",
+    "`recordVisit()` needs three steps: total from `getTotal()`, plus 1, then `store.save()` with that number as a String. Return the same number."
+   ],
+   "test_program": {
+    "file_name": "TestVisitCounter.java",
+    "code": "import java.io.IOException;\n\npublic class TestVisitCounter\n{\n    public static void main(String[] args) throws IOException\n    {\n        // Start clean: remove any visits.txt left by an earlier run.\n        new TextStore(\"visits.txt\").delete();\n\n        System.out.println(\"Monday: the program starts\");\n        VisitCounter monday = new VisitCounter(\"visits.txt\");\n        System.out.println(\"Visit \" + monday.recordVisit());\n        System.out.println(\"Visit \" + monday.recordVisit());\n        System.out.println(\"Visit \" + monday.recordVisit());\n\n        // A new object is what a restart gives you: main() runs again\n        // and creates a fresh VisitCounter.\n        System.out.println(\"Tuesday: the tablet restarted\");\n        VisitCounter tuesday = new VisitCounter(\"visits.txt\");\n        System.out.println(\"Total so far: \" + tuesday.getTotal());\n        System.out.println(\"Visit \" + tuesday.recordVisit());\n\n        System.out.println(\"First day of the month\");\n        tuesday.reset();\n        VisitCounter nextMonth = new VisitCounter(\"visits.txt\");\n        System.out.println(\"Total so far: \" + nextMonth.getTotal());\n        System.out.println(\"Visit \" + nextMonth.recordVisit());\n    }\n}\n",
+    "expected_output": "Monday: the program starts\nVisit 1\nVisit 2\nVisit 3\nTuesday: the tablet restarted\nTotal so far: 3\nVisit 4\nFirst day of the month\nTotal so far: 0\nVisit 1\n",
+    "predict": "Before you change anything, predict the starter's output after “Tuesday: the tablet restarted”. Then predict which line will change first once the total is in the file.",
+    "how_to_run": "Put `TextStore.java` and `VisitCounter.java` and `TestVisitCounter.java` in the same folder, then run `javac *.java` and `java TestVisitCounter`. In an IDE, add all of them to one project and run `TestVisitCounter.java`. You don't type anything: the test program supplies the data. It creates `visits.txt` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "The tablet stays on for ten hours a day. Does that make the `visits` field permanent storage? Use the book's meaning of *temporary* and *permanent*.",
+     "model_answer": "No. Temporary and permanent describe volatility, not time. The field is in RAM, so it is lost when power or the program goes, however long it lasted; the file persists because it is on nonvolatile storage."
+    },
+    {
+     "question": "Your `VisitCounter` reads the file on every call to `getTotal()`. Name one cost of that design and one reason it is still the right choice here.",
+     "model_answer": "Reading a disk is slower than reading a variable. But a visit happens a few hundred times a day, and reading the file each time guarantees the total is correct after any restart or crash."
+    }
+   ],
+   "extension": "Give `VisitCounter` a second `TextStore` that keeps the busiest day's total, and update it in `recordVisit()` when today's count passes it. Which methods need a second file, and why can't one line in `visits.txt` hold both numbers with `TextStore` as it is?",
+   "worth_knowing": "RAM is volatile in a very literal way. Each bit of DRAM is a tiny electric charge in a capacitor that leaks, so the memory controller rewrites every row about every 64 milliseconds. Cut the power and nothing refreshes it: the charges drain and the data fades.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; `getTotal()` is the one place that reads the file; no leftover field."
+    }
+   ]
+  },
+  {
+   "id": "11.2",
+   "title": "The cleanup tool that only says “IO exception”",
+   "subtitle": "Build Paths that work on any system, and report why a delete failed",
+   "source": "Ch. 11, section 11.2 (pp. 443–450)",
+   "minutes": 25,
+   "objectives": [
+    "Create a Path without hard-coding one operating system's delimiter",
+    "Use `getNameCount()`, `getName()` and `getFileName()` to take a Path apart",
+    "Delete with `Files.delete()` and catch `NoSuchFileException` and `DirectoryNotEmptyException` separately"
+   ],
+   "scenario": "At the end of each term the computer lab runs a cleanup tool that deletes old logs and cache folders. Two complaints came in. On the lab's Macs nothing is ever deleted. On the Windows PCs it works, but when something can't be deleted the report says only `scratch\\cache: IO exception`, so nobody can tell whether the item was already gone or whether a folder still had files in it.\n\nThe backslash is the path delimiter on Windows only; on UNIX systems such as macOS it is an ordinary character, so `scratch\\old.log` is a single, oddly named file there. Build the Path with the default file system's separator (or pass the folder and the name as separate arguments to `Paths.get()`), put only the file name at the start of each report line, and replace the single `catch` with specific ones. The report lines must be exactly:\n\n- `old.log: deleted`\n- `old.log: not found, nothing to delete`\n- `cache: folder is not empty, kept`\n- `<name>: could not delete` for any other `IOException`\n\nThe test program builds a small `scratch` folder in your project folder and then prints:\n\n```\nElements in the path: 2\nElement 0 is scratch\nFile name is old.log\nold.log: deleted\nold.log: not found, nothing to delete\ncache: folder is not empty, kept\npage1.tmp: deleted\ncache: deleted\nold.log still on disk? false\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`pathFor()` builds the Path without typing a delimiter: use `getSeparator()`, or give the folder and the name to `Paths.get()` as two arguments."
+    },
+    {
+     "id": "R2",
+     "text": "Each report line starts with the item's file name only (`getFileName()`), not the whole path."
+    },
+    {
+     "id": "R3",
+     "text": "`remove()` catches `NoSuchFileException` and `DirectoryNotEmptyException` before `IOException` and returns the exact messages above."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Cleaner.java",
+     "starter": "import java.nio.file.*;\nimport java.io.IOException;\n\npublic class Cleaner\n{\n    private String folder;\n\n    public Cleaner(String folderName)\n    {\n        folder = folderName;\n    }\n\n    // Builds the Path of one item inside the folder.\n    public Path pathFor(String name)\n    {\n        // TODO (R1): \"\\\\\" is the path delimiter on Windows only.\n        return Paths.get(folder + \"\\\\\" + name);\n    }\n\n    // Tries to delete one item and returns one line for the cleanup report.\n    public String remove(String name)\n    {\n        Path item = pathFor(name);\n        // TODO (R2): start each report line with the item's name only.\n        try\n        {\n            Files.delete(item);\n            return item + \": deleted\";\n        }\n        // TODO (R3): say WHY a delete failed.\n        catch (IOException e)\n        {\n            return item + \": IO exception\";\n        }\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.IOException;\n\npublic class Cleaner\n{\n    private String folder;\n\n    public Cleaner(String folderName)\n    {\n        folder = folderName;\n    }\n\n    // Builds the Path of one item inside the folder.\n    public Path pathFor(String name)\n    {\n        FileSystem fs = FileSystems.getDefault();\n        return fs.getPath(folder + fs.getSeparator() + name);\n    }\n\n    // Tries to delete one item and returns one line for the cleanup report.\n    public String remove(String name)\n    {\n        Path item = pathFor(name);\n        String label = item.getFileName().toString();\n        try\n        {\n            Files.delete(item);\n            return label + \": deleted\";\n        }\n        catch (NoSuchFileException e)\n        {\n            return label + \": not found, nothing to delete\";\n        }\n        catch (DirectoryNotEmptyException e)\n        {\n            return label + \": folder is not empty, kept\";\n        }\n        catch (IOException e)\n        {\n            return label + \": could not delete\";\n        }\n    }\n}\n"
+    }
+   ],
+   "main_file": "Cleaner.java",
+   "solution_notes": "Windows uses `\\` as the path delimiter and UNIX uses `/` (p. 442), so a hard-coded `\"\\\\\"` makes a one-element Path on a Mac. `FileSystem.getSeparator()` returns the right delimiter for the system the program runs on (p. 444); `Paths.get(folder, name)` does the same job by joining its arguments with that separator. Either way `getNameCount()` is 2 and `getName(0)` is the folder (pp. 444–445). `getFileName()` returns the last element, which keeps the report the same on every system. `Files.delete()` throws `NoSuchFileException` for a missing item and `DirectoryNotEmptyException` for a folder with files in it (p. 447); both are subclasses of `IOException`, so their `catch` blocks must come first or the compiler reports them as already caught. Calling `delete()` and catching the exception, instead of checking `Files.exists()` first, also avoids the TOCTTOU bug on p. 447.",
+   "warmup": [
+    {
+     "question": "On a Mac, what do `getNameCount()` and `getFileName()` return for the starter's `Paths.get(\"scratch\" + \"\\\\\" + \"old.log\")`? Why?",
+     "model_answer": "1 and scratch\\old.log. On UNIX the backslash isn't a delimiter, so the whole string is one name in the current folder."
+    },
+    {
+     "question": "According to p. 447, which exception does `Files.delete()` throw for a file that doesn't exist, and which for a folder that still has files in it?",
+     "model_answer": "NoSuchFileException for the missing file, DirectoryNotEmptyException for the folder that isn't empty."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "pathFor() uses the system's separator",
+     "within": "Cleaner.pathFor",
+     "require": [
+      "\\bgetSeparator\\s*\\(\\s*\\)",
+      "\\bPaths\\s*\\.\\s*get\\s*\\(\\s*\\w+\\s*,",
+      "\\bgetPath\\s*\\(\\s*\\w+\\s*,"
+     ],
+     "message": "Build the Path with `FileSystems.getDefault().getSeparator()` between the folder and the name, or call `Paths.get(folder, name)`. Both use the right delimiter on Windows and on a Mac."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "No Windows-only backslash",
+     "within": "Cleaner.pathFor",
+     "strings": true,
+     "forbid": "\\\"\\\\\\\\\\\"",
+     "message": "Remove the `\"\\\\\"` delimiter. A backslash separates folders only on Windows; on macOS and Linux it becomes part of the file name."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Report lines use the file name",
+     "within": "Cleaner.remove",
+     "require": "\\bgetFileName\\s*\\(\\s*\\)",
+     "message": "Start each line with `item.getFileName()` instead of `item`. The full path prints differently on every system; the name is what the reader needs."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "Missing items get their own catch",
+     "within": "Cleaner.remove",
+     "require": "\\bcatch\\s*\\(\\s*NoSuchFileException\\b",
+     "message": "Add `catch (NoSuchFileException e)` before `catch (IOException e)` and return `<name>: not found, nothing to delete`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "Non-empty folders get their own catch",
+     "within": "Cleaner.remove",
+     "require": "\\bcatch\\s*\\(\\s*DirectoryNotEmptyException\\b",
+     "message": "Add `catch (DirectoryNotEmptyException e)` before `catch (IOException e)` and return `<name>: folder is not empty, kept`."
+    }
+   ],
+   "hints": [
+    "On p. 444 the book builds a Path with `fs.getSeparator()` between the pieces. What does that method return on Windows, and on a Mac?",
+    "Compute the label once at the top of `remove()`: `getFileName()` returns a Path, so call `toString()` on it (or let `+` do it).",
+    "Order the catch blocks from most specific to most general: the two subclasses first, `IOException` last."
+   ],
+   "test_program": {
+    "file_name": "TestCleaner.java",
+    "code": "import java.nio.file.*;\nimport java.io.IOException;\n\npublic class TestCleaner\n{\n    public static void main(String[] args) throws IOException\n    {\n        // Build a practice folder inside your project folder:\n        //   scratch/old.log   and   scratch/cache/page1.tmp\n        Path cache = Paths.get(\"scratch\", \"cache\");\n        Files.createDirectories(cache);\n        Files.write(Paths.get(\"scratch\", \"old.log\"), \"last term\".getBytes());\n        Files.write(Paths.get(\"scratch\", \"cache\", \"page1.tmp\"), \"page\".getBytes());\n\n        Cleaner cleaner = new Cleaner(\"scratch\");\n        Path log = cleaner.pathFor(\"old.log\");\n        System.out.println(\"Elements in the path: \" + log.getNameCount());\n        System.out.println(\"Element 0 is \" + log.getName(0));\n        System.out.println(\"File name is \" + log.getFileName());\n\n        System.out.println(cleaner.remove(\"old.log\"));\n        System.out.println(cleaner.remove(\"old.log\"));\n        System.out.println(cleaner.remove(\"cache\"));\n\n        Cleaner cacheCleaner = new Cleaner(cache.toString());\n        System.out.println(cacheCleaner.remove(\"page1.tmp\"));\n        System.out.println(cleaner.remove(\"cache\"));\n        System.out.println(\"old.log still on disk? \" + Files.exists(log));\n    }\n}\n",
+    "expected_output": "Elements in the path: 2\nElement 0 is scratch\nFile name is old.log\nold.log: deleted\nold.log: not found, nothing to delete\ncache: folder is not empty, kept\npage1.tmp: deleted\ncache: deleted\nold.log still on disk? false\n",
+    "predict": "Before you change anything, predict the first three lines on your own computer. Do they differ between Windows and a Mac? Then predict which report line a missing file will produce with the starter.",
+    "how_to_run": "Put `Cleaner.java` and `TestCleaner.java` in the same folder, then run `javac *.java` and `java TestCleaner`. In an IDE, add both to one project and run `TestCleaner.java`. You don't type anything: the test program builds a `scratch` folder (with `old.log` and `cache/page1.tmp`) in the folder the program runs from, usually the project folder, and your code then deletes what's in it. You can run it as often as you like; it rebuilds the folder each time."
+   },
+   "reflection": [
+    {
+     "question": "Why does the compiler reject `catch (IOException e)` placed before `catch (NoSuchFileException e)`?",
+     "model_answer": "NoSuchFileException is a subclass of IOException, so the first catch would already handle it and the second could never run. Java reports that unreachable catch as an error; specific exceptions must come first."
+    },
+    {
+     "question": "A teammate suggests checking `Files.exists(item)` before calling `Files.delete(item)` so the exception never happens. What problem from p. 447 does that leave open?",
+     "model_answer": "A TOCTTOU bug: the file can disappear (or appear) between the time of check and the time of use, so delete() can still fail. Calling delete() and catching NoSuchFileException handles that case."
+    }
+   ],
+   "extension": "Add a method `String describe(String name)` that uses `Files.readAttributes(item, BasicFileAttributes.class)` to return the item's size in bytes and whether it is a directory (`isDirectory()`), and returns `<name>: not found` if reading the attributes fails.",
+   "worth_knowing": "Windows accepts forward slashes as well as backslashes in most paths, which is why `Paths.get(\"scratch/old.log\")` works there too. macOS and Linux don't return the favor: a backslash is a legal character in a file name, so a Mac can hold a file literally named scratch\\old.log.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; the label is computed once; catch blocks ordered from specific to general."
+    }
+   ]
+  },
+  {
+   "id": "11.3",
+   "title": "The volunteer export that came out empty",
+   "subtitle": "Fields, records and files; why a buffer must be flushed",
+   "source": "Ch. 11, section 11.3 (pp. 450–452)",
+   "minutes": 20,
+   "objectives": [
+    "Describe the data hierarchy: characters, fields, records and files",
+    "Write records as comma-separated values (CSV) so each field can be found again",
+    "Explain what a buffer does and close an output file so its contents reach the disk"
+   ],
+   "scenario": "The food bank's coordinator exports volunteer hours to `volunteer_hours.csv` and opens it in a spreadsheet to send thank-you letters. The export program finishes without an error, yet the file is empty (0 bytes). A teammate's quick try at a fix filled the file, but every record landed in a single spreadsheet column as `786Brown12.5`, so the spreadsheet couldn't tell the ID from the name from the hours.\n\nTwo things are missing. A spreadsheet finds the **fields** of a **record** by looking for a delimiter, and a CSV file uses a comma. And `BufferedWriter` collects output in a **buffer** in RAM; nothing is sent to the disk until the buffer fills up, is flushed, or the writer is closed. Separate the fields with commas and close the writer in `finish()`. The test program reads the file back the way a spreadsheet does and prints:\n\n```\nRecords sent: 3\nRecord 1: 3 fields -> 786,Brown,12.5\nRecord 2: 3 fields -> 812,Okafor,4.0\nRecord 3: 3 fields -> 845,Nguyen,7.25\nRecords in the file: 3\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`addRecord()` writes the ID, name and hours separated by commas (a constant such as `DELIMITER = \",\"` is welcome)."
+    },
+    {
+     "id": "R2",
+     "text": "`finish()` closes the writer, which flushes the buffer to the file first."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "HoursExport.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\n\npublic class HoursExport\n{\n    private BufferedWriter writer;\n    private int records;\n\n    // Opens the export file for writing (a new, empty file each time).\n    public HoursExport(String fileName) throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(\n            Files.newOutputStream(Paths.get(fileName)));\n        writer = new BufferedWriter(new OutputStreamWriter(output));\n    }\n\n    // Writes one record (one line): the volunteer's ID, name and hours.\n    public void addRecord(int id, String name, double hours) throws IOException\n    {\n        // TODO (R1): a spreadsheet can't tell where one field ends and the next begins.\n        String s = id + name + hours;\n        writer.write(s, 0, s.length());\n        writer.newLine();\n        ++records;\n    }\n\n    public int getRecordCount()\n    {\n        return records;\n    }\n\n    // Called once, after the last record.\n    public void finish() throws IOException\n    {\n        // TODO (R2): the records are still waiting in a buffer in RAM.\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.*;\n\npublic class HoursExport\n{\n    private static final String DELIMITER = \",\";\n    private BufferedWriter writer;\n    private int records;\n\n    // Opens the export file for writing (a new, empty file each time).\n    public HoursExport(String fileName) throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(\n            Files.newOutputStream(Paths.get(fileName)));\n        writer = new BufferedWriter(new OutputStreamWriter(output));\n    }\n\n    // Writes one record (one line): the volunteer's ID, name and hours.\n    public void addRecord(int id, String name, double hours) throws IOException\n    {\n        String s = id + DELIMITER + name + DELIMITER + hours;\n        writer.write(s, 0, s.length());\n        writer.newLine();\n        ++records;\n    }\n\n    public int getRecordCount()\n    {\n        return records;\n    }\n\n    // Called once, after the last record.\n    public void finish() throws IOException\n    {\n        writer.close();\n    }\n}\n"
+    }
+   ],
+   "main_file": "HoursExport.java",
+   "solution_notes": "A field is a group of characters with a meaning, a record is a collection of fields about one entity, and a file is a group of related records (p. 450). On disk Java sees only a series of bytes (p. 451), so the program must mark where fields end; a comma makes the file a CSV file, which spreadsheets and databases read (p. 451). Each record goes on its own line with `newLine()`. The empty file is a buffer problem: output waits in a memory block until it is flushed (p. 451), and if an output file is not closed its data might never be written (p. 451). `close()` flushes first and then releases the file, so it is the right call in `finish()`; `flush()` alone would write the data but leave the file open.",
+   "warmup": [
+    {
+     "question": "In the finished file, which part of `786,Brown,12.5` is a record, which is a field, and which is a character? What is the file?",
+     "model_answer": "The whole line is a record; 786, Brown and 12.5 are fields; B (or any single symbol) is a character. volunteer_hours.csv, the set of records, is the file."
+    },
+    {
+     "question": "The starter runs without an error, but the file is empty. Where are the three records when `main()` ends?",
+     "model_answer": "In the BufferedWriter's buffer in RAM. They were written to the buffer but never flushed, so they never reached the disk, and the buffer disappears when the program ends."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A comma delimiter exists",
+     "within": "HoursExport",
+     "strings": true,
+     "require": "\\\",\\\"",
+     "message": "Use a comma as the field delimiter, for example `private static final String DELIMITER = \",\";`. A CSV file separates the values of a record with commas."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "Each field is followed by the delimiter",
+     "within": "HoursExport.addRecord",
+     "strings": true,
+     "require": "\\bid\\s*\\+\\s*(?:\\\",\\\"|\\w+)\\s*\\+\\s*name\\s*\\+\\s*(?:\\\",\\\"|\\w+)\\s*\\+\\s*hours\\b",
+     "message": "Put the delimiter between the fields: `id + DELIMITER + name + DELIMITER + hours`. Without it the reader sees one long field."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "finish() closes the writer",
+     "within": "HoursExport.finish",
+     "require": "\\bwriter\\s*\\.\\s*close\\s*\\(\\s*\\)",
+     "message": "Call `writer.close()`. Closing flushes the buffer to the disk and then releases the file; until then the records sit in RAM."
+    }
+   ],
+   "hints": [
+    "Open the starter's `volunteer_hours.csv` after a run: how many bytes does it hold? Where did `write()` put the text instead?",
+    "Table 11-6 (p. 458) lists two `BufferedWriter` methods that push buffered text out. Which one also releases the file?",
+    "For the fields, read `addRecord()` as a spreadsheet would: where does 786 end and Brown begin?"
+   ],
+   "test_program": {
+    "file_name": "TestHoursExport.java",
+    "code": "import java.nio.file.*;\nimport java.io.*;\n\npublic class TestHoursExport\n{\n    public static void main(String[] args) throws IOException\n    {\n        HoursExport export = new HoursExport(\"volunteer_hours.csv\");\n        export.addRecord(786, \"Brown\", 12.5);\n        export.addRecord(812, \"Okafor\", 4.0);\n        export.addRecord(845, \"Nguyen\", 7.25);\n        export.finish();\n        System.out.println(\"Records sent: \" + export.getRecordCount());\n\n        // Read the file back the way a spreadsheet does:\n        // one record per line, fields separated by commas.\n        BufferedReader reader = new BufferedReader(new InputStreamReader(\n            Files.newInputStream(Paths.get(\"volunteer_hours.csv\"))));\n        int lines = 0;\n        String s = reader.readLine();\n        while (s != null)\n        {\n            ++lines;\n            String[] fields = s.split(\",\");\n            System.out.println(\"Record \" + lines + \": \" + fields.length + \" fields -> \" + s);\n            s = reader.readLine();\n        }\n        reader.close();\n        System.out.println(\"Records in the file: \" + lines);\n    }\n}\n",
+    "expected_output": "Records sent: 3\nRecord 1: 3 fields -> 786,Brown,12.5\nRecord 2: 3 fields -> 812,Okafor,4.0\nRecord 3: 3 fields -> 845,Nguyen,7.25\nRecords in the file: 3\n",
+    "predict": "Before you change anything, predict the last line of the output. Then predict how many fields `split(\",\")` finds in `786Brown12.5`.",
+    "how_to_run": "Put `HoursExport.java` and `TestHoursExport.java` in the same folder, then run `javac *.java` and `java TestHoursExport`. In an IDE, add all of them to one project and run `TestHoursExport.java`. You don't type anything: the test program supplies the data. It creates `volunteer_hours.csv` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "If a buffer can lose data like this, why does Java buffer output at all?",
+     "model_answer": "Input and output are among the slowest operations a computer does. Collecting many small writes in a buffer and sending them to the device in one larger operation makes the program much faster."
+    },
+    {
+     "question": "The book says failing to close an input file usually does no harm, but failing to close an output file can. Explain the difference using this lab.",
+     "model_answer": "Reading leaves the data in the file whether or not you close it. Writing through a buffer keeps the data in memory until a flush, so if the output file is never closed the records may never reach the disk, which is what happened here."
+    }
+   ],
+   "extension": "Add a header record, `id,name,hours`, written once in the constructor, and change the test program so it skips the first line when it counts records. Then try a name such as `Brown, Jr.`: how many fields does the reader find, and how could the export protect itself?",
+   "worth_knowing": "Even after `close()`, the operating system may keep your bytes in its own cache for a few seconds before they reach the drive. Programs that must survive a power cut, such as databases, call `FileChannel.force(true)` (or the system call fsync behind it) to wait until the data is really on the disk.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; the delimiter is a named constant; `finish()` closes rather than only flushes."
+    }
+   ]
+  },
+  {
+   "id": "11.4",
+   "title": "The kiosk log that overwrites itself",
+   "subtitle": "StandardOpenOption choices and a readLine() loop that reads to the end",
+   "source": "Ch. 11, section 11.4 (pp. 452–456)",
+   "minutes": 25,
+   "objectives": [
+    "Choose `StandardOpenOption` values that append to, or truncate, an existing file",
+    "Write bytes to a file with `Files.newOutputStream()` and a `BufferedOutputStream`",
+    "Read a file line by line with a `BufferedReader` until `readLine()` returns `null`"
+   ],
+   "scenario": "The community center's front-desk kiosk logs events to `kiosk.log`, and the manager reads the log at the end of each shift. It shows only one event, and sometimes a strange second line such as `ened by J. Ruiz` that nobody typed.\n\nThe `append()` method opens the file with `CREATE` only. That creates the file if needed, but it neither truncates an existing file nor moves to its end, so each event is written over the start of the old contents, and the tail of a longer old line is left behind. `printAll()` has a second problem: it reads one line and stops.\n\nLook at Table 11-4 and fix both methods, then write `clear()`, which empties the log for the next shift. The test program prints:\n\n```\nMorning shift\n1. 07:58 door opened by J. Ruiz\n2. 08:02 alarm off\n3. 08:15 lights on\nEvents: 3\nEvening shift, after clear()\n1. 17:30 door locked\nEvents: 1\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`append()` opens the file with `CREATE` and `APPEND`, so each event is added after the existing ones."
+    },
+    {
+     "id": "R2",
+     "text": "`printAll()` reads and numbers every line in a loop that stops when `readLine()` returns `null`, and returns how many lines it read."
+    },
+    {
+     "id": "R3",
+     "text": "`clear()` leaves the log empty: open it with `TRUNCATE_EXISTING` (or with no options) and close it, or delete it."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "KioskLog.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class KioskLog\n{\n    private Path file;\n\n    public KioskLog(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Adds one event to the end of the log.\n    public void append(String event) throws IOException\n    {\n        String s = event + System.getProperty(\"line.separator\");\n        byte[] data = s.getBytes();\n        // TODO (R1): with CREATE alone, writing starts at byte 0 of an existing file.\n        OutputStream output = new BufferedOutputStream(\n            Files.newOutputStream(file, CREATE));\n        output.write(data);\n        output.flush();\n        output.close();\n    }\n\n    // Displays every event, numbered from 1, and returns how many there were.\n    public int printAll() throws IOException\n    {\n        InputStream input = Files.newInputStream(file);\n        BufferedReader reader = new BufferedReader(new InputStreamReader(input));\n        int count = 0;\n        // TODO (R2): this reads and shows only the first line.\n        String s = reader.readLine();\n        ++count;\n        System.out.println(count + \". \" + s);\n        reader.close();\n        return count;\n    }\n\n    // Starts a fresh log for the next shift: no events.\n    public void clear() throws IOException\n    {\n        // TODO (R3): empty the file.\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.*;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class KioskLog\n{\n    private Path file;\n\n    public KioskLog(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Adds one event to the end of the log.\n    public void append(String event) throws IOException\n    {\n        String s = event + System.getProperty(\"line.separator\");\n        byte[] data = s.getBytes();\n        OutputStream output = new BufferedOutputStream(\n            Files.newOutputStream(file, CREATE, APPEND));\n        output.write(data);\n        output.flush();\n        output.close();\n    }\n\n    // Displays every event, numbered from 1, and returns how many there were.\n    public int printAll() throws IOException\n    {\n        InputStream input = Files.newInputStream(file);\n        BufferedReader reader = new BufferedReader(new InputStreamReader(input));\n        int count = 0;\n        String s = reader.readLine();\n        while (s != null)\n        {\n            ++count;\n            System.out.println(count + \". \" + s);\n            s = reader.readLine();\n        }\n        reader.close();\n        return count;\n    }\n\n    // Starts a fresh log for the next shift: no events.\n    public void clear() throws IOException\n    {\n        OutputStream output = Files.newOutputStream(file, CREATE, TRUNCATE_EXISTING);\n        output.close();\n    }\n}\n"
+    }
+   ],
+   "main_file": "KioskLog.java",
+   "solution_notes": "`Files.newOutputStream()` takes a Path and `StandardOpenOption` values (p. 454). With no options it behaves like `CREATE` plus `TRUNCATE_EXISTING`, replacing the contents; `CREATE` on its own opens the file and writes from byte 0 without truncating, which is why fragments of older, longer events survive. `APPEND` (used with `CREATE` or `WRITE`) adds to the end (Table 11-4, p. 454). Reading uses `Files.newInputStream()` wrapped in a `BufferedReader` (p. 456), and `readLine()` returns `null` at the end of the file, so the loop reads, tests for `null`, prints, and reads again (p. 455). Note the book's one-line loop `while(s = reader.readLine() != null)` needs extra parentheses, `while((s = reader.readLine()) != null)`, or it doesn't compile. `clear()` opens with `CREATE, TRUNCATE_EXISTING` and closes immediately, leaving a 0-byte file.",
+   "warmup": [
+    {
+     "question": "Using Table 11-4, which options does `Files.newOutputStream(file)` behave as if it had when you pass none? Which single option does the starter pass?",
+     "model_answer": "With no options it acts as CREATE and TRUNCATE_EXISTING, so the file is replaced. The starter passes only CREATE, which opens the file without truncating it."
+    },
+    {
+     "question": "In `printAll()`, what does `readLine()` return once there are no more lines, and how many times does the starter call it?",
+     "model_answer": "It returns null at the end of the file. The starter calls it once, so it only ever sees the first line."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "append() adds to the end",
+     "within": "KioskLog.append",
+     "require": "\\bAPPEND\\b",
+     "forbid": "\\bTRUNCATE_EXISTING\\b",
+     "message": "Open the file with `CREATE, APPEND` (Table 11-4). `CREATE` alone starts writing at byte 0 and leaves the rest of the old text behind."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "printAll() reads until null",
+     "within": "KioskLog.printAll",
+     "require": "\\bwhile\\s*\\([^;{]*\\bnull\\b",
+     "message": "Read in a `while` loop that continues as long as the line is not `null`; `readLine()` returns `null` only at the end of the file."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "clear() empties the file",
+     "within": "KioskLog.clear",
+     "require": [
+      "\\bTRUNCATE_EXISTING\\b",
+      "\\bnewOutputStream\\s*\\(\\s*file\\s*\\)",
+      "\\bdelete(?:IfExists)?\\s*\\(\\s*file\\s*\\)"
+     ],
+     "message": "Open the file with `CREATE, TRUNCATE_EXISTING` (or with no options) and close it straight away; truncating cuts it to 0 bytes. Deleting it with `Files.deleteIfExists(file)` also works."
+    }
+   ],
+   "hints": [
+    "Open `kiosk.log` after running the starter and compare it with the three events. Which event's text is at the start, and where did the leftover letters come from?",
+    "Table 11-4 (p. 454) has an option whose description says new data goes to the end of the file. You can pass several options separated by commas.",
+    "In `printAll()`, read the first line before the loop, test it for `null` in the `while` condition, and read the next line as the last statement of the loop body."
+   ],
+   "test_program": {
+    "file_name": "TestKioskLog.java",
+    "code": "import java.nio.file.*;\nimport java.io.IOException;\n\npublic class TestKioskLog\n{\n    public static void main(String[] args) throws IOException\n    {\n        // Start clean: remove any kiosk.log left by an earlier run.\n        Files.deleteIfExists(Paths.get(\"kiosk.log\"));\n\n        KioskLog log = new KioskLog(\"kiosk.log\");\n        log.append(\"07:58 door opened by J. Ruiz\");\n        log.append(\"08:02 alarm off\");\n        log.append(\"08:15 lights on\");\n        System.out.println(\"Morning shift\");\n        System.out.println(\"Events: \" + log.printAll());\n\n        log.clear();\n        log.append(\"17:30 door locked\");\n        System.out.println(\"Evening shift, after clear()\");\n        System.out.println(\"Events: \" + log.printAll());\n    }\n}\n",
+    "expected_output": "Morning shift\n1. 07:58 door opened by J. Ruiz\n2. 08:02 alarm off\n3. 08:15 lights on\nEvents: 3\nEvening shift, after clear()\n1. 17:30 door locked\nEvents: 1\n",
+    "predict": "Before you change anything, predict what `kiosk.log` contains after the three morning events with the starter's `CREATE`. Which event's text will be at the start of the file?",
+    "how_to_run": "Put `KioskLog.java` and `TestKioskLog.java` in the same folder, then run `javac *.java` and `java TestKioskLog`. In an IDE, add all of them to one project and run `TestKioskLog.java`. You don't type anything: the test program supplies the data. It creates `kiosk.log` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "Explain, byte by byte, why the starter can leave a fragment such as `ened by J. Ruiz` in the log.",
+     "model_answer": "CREATE without APPEND or TRUNCATE_EXISTING opens the existing file and starts writing at byte 0. A shorter event overwrites only the first bytes of the longer old one, so the rest of the old line, after the new line separator, stays in the file."
+    },
+    {
+     "question": "When would you choose `TRUNCATE_EXISTING` on purpose, and when `CREATE_NEW`?",
+     "model_answer": "TRUNCATE_EXISTING when the file must be replaced, as clear() does or a nightly report that is rebuilt from scratch. CREATE_NEW when an existing file must never be touched, because it throws an exception instead of overwriting."
+    }
+   ],
+   "extension": "Add `int countMatching(String word)` that reads the log and returns how many events contain `word` (use `contains()` from Chapter 7). Then make `append()` refuse an empty event by returning without opening the file.",
+   "worth_knowing": "APPEND is also what keeps shared logs safe on Linux and macOS. In append mode the system moves to the current end of the file and writes as one step, so two programs appending at the same moment can't overwrite each other's lines.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; one read before the loop and one at the end of the loop body; files closed in every method."
+    }
+   ]
+  },
+  {
+   "id": "11.5",
+   "title": "The club roster that splits Mary Ann in two",
+   "subtitle": "Write a sequential CSV file, then split and convert its fields",
+   "source": "Ch. 11, section 11.5 (pp. 457–461)",
+   "minutes": 25,
+   "objectives": [
+    "Choose a field delimiter that can't appear inside the data",
+    "Read a sequential file from first record to last with a `BufferedReader` loop",
+    "Split each record with `split()` and convert fields with `parseInt()` and `parseDouble()`"
+   ],
+   "scenario": "The hiking club keeps its roster in `roster.txt`: one record per member with an ID, a name and the dues paid this season. The treasurer needs two things from it: the total of all dues, and a quick way to find a member's name from an ID.\n\n`save()` already writes the file, but its fields are separated by spaces, and so are the words in names such as *Mary Ann Lee* and *Jo Van Der Berg*. Once the file is written, nothing can tell a space between fields from a space inside a name. Pick a delimiter that never appears in the data, then write `totalDues()` and `findName()`. Both read the file **sequentially**, one record after another in the order they were stored. The test program prints:\n\n```\nSaved 4 members to roster.txt\nTotal dues: $108.25\n#104 is Mary Ann Lee\n#131 is Jo Van Der Berg\n#200 is no member #200\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Records use a comma between fields: `DELIMITER` is `\",\"`."
+    },
+    {
+     "id": "R2",
+     "text": "`totalDues()` reads every record until `readLine()` returns `null`, splits it into fields and adds its dues with `Double.parseDouble()`."
+    },
+    {
+     "id": "R3",
+     "text": "`findName()` reads records in order until one has the requested ID, closes the file, and returns that name or `no member #<id>`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "RosterFile.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\n\npublic class RosterFile\n{\n    // TODO (R1): the delimiter also appears inside names such as \"Mary Ann Lee\".\n    private static final String DELIMITER = \" \";\n    private Path file;\n\n    public RosterFile(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Writes one record per member: ID, name and dues paid.\n    public void save(int[] ids, String[] names, double[] dues) throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));\n        for (int x = 0; x < ids.length; ++x)\n        {\n            String s = ids[x] + DELIMITER + names[x] + DELIMITER + dues[x];\n            writer.write(s, 0, s.length());\n            writer.newLine();\n        }\n        writer.close();\n    }\n\n    // Reads every record, first to last, and adds up the dues.\n    public double totalDues() throws IOException\n    {\n        double total = 0;\n        // TODO (R2): read each record, split it into fields, add its dues.\n        return total;\n    }\n\n    // Returns the name of the member with this ID, or \"no member #\" + id.\n    public String findName(int id) throws IOException\n    {\n        // TODO (R3): read records in order until one has this ID.\n        return \"no member #\" + id;\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.*;\n\npublic class RosterFile\n{\n    private static final String DELIMITER = \",\";\n    private Path file;\n\n    public RosterFile(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Writes one record per member: ID, name and dues paid.\n    public void save(int[] ids, String[] names, double[] dues) throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));\n        for (int x = 0; x < ids.length; ++x)\n        {\n            String s = ids[x] + DELIMITER + names[x] + DELIMITER + dues[x];\n            writer.write(s, 0, s.length());\n            writer.newLine();\n        }\n        writer.close();\n    }\n\n    // Reads every record, first to last, and adds up the dues.\n    public double totalDues() throws IOException\n    {\n        double total = 0;\n        InputStream input = new BufferedInputStream(Files.newInputStream(file));\n        BufferedReader reader = new BufferedReader(new InputStreamReader(input));\n        String s = reader.readLine();\n        while (s != null)\n        {\n            String[] fields = s.split(DELIMITER);\n            total += Double.parseDouble(fields[2]);\n            s = reader.readLine();\n        }\n        reader.close();\n        return total;\n    }\n\n    // Returns the name of the member with this ID, or \"no member #\" + id.\n    public String findName(int id) throws IOException\n    {\n        String result = \"no member #\" + id;\n        InputStream input = new BufferedInputStream(Files.newInputStream(file));\n        BufferedReader reader = new BufferedReader(new InputStreamReader(input));\n        String s = reader.readLine();\n        boolean found = false;\n        while (s != null && !found)\n        {\n            String[] fields = s.split(DELIMITER);\n            if (Integer.parseInt(fields[0]) == id)\n            {\n                result = fields[1];\n                found = true;\n            }\n            s = reader.readLine();\n        }\n        reader.close();\n        return result;\n    }\n}\n"
+    }
+   ],
+   "main_file": "RosterFile.java",
+   "solution_notes": "This follows `WriteEmployeeFile` and `ReadEmployeeFile2` (pp. 457–460). A delimiter works only if it can't appear inside a field; names contain spaces but not commas, so the comma-separated layout keeps each name in one field (CSV, p. 451). `split(DELIMITER)` returns an array with one element per field, and `parseInt()` and `parseDouble()` turn the text back into numbers (p. 460). `totalDues()` uses the read-test-process-read loop of `ReadEmployeeFile2`. `findName()` is a sequential search: it must read the records before the match, and it closes the reader in every case, which is why the solution stores the result and returns once at the end. Using the constant `DELIMITER` for both writing and reading means the two can never disagree.",
+   "warmup": [
+    {
+     "question": "With the starter's space delimiter, the first record is `104 Mary Ann Lee 40.0`. What does `split(\" \")` return, and what is in element 2?",
+     "model_answer": "An array of five Strings: 104, Mary, Ann, Lee and 40.0. Element 2 is Ann, so parseDouble() of it throws a NumberFormatException."
+    },
+    {
+     "question": "Why must `findName(131)` read the records for 104, 117 and 123 before it reaches Jo's?",
+     "model_answer": "The file is used sequentially: records can only be read one after another in the order they were stored, and 131 was stored fourth."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Comma delimiter",
+     "within": "RosterFile",
+     "strings": true,
+     "require": "\\bDELIMITER\\s*=\\s*\\\",\\\"",
+     "message": "Set `DELIMITER` to `\",\"`. Names contain spaces, so a space can't mark where a field ends; a comma never appears in these fields."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "totalDues() reads to the end",
+     "within": "RosterFile.totalDues",
+     "require": "\\bwhile\\s*\\([^;{]*\\bnull\\b",
+     "message": "Read with a loop that continues while the line is not `null`, as `ReadEmployeeFile2` does on p. 460."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "totalDues() splits each record",
+     "within": "RosterFile.totalDues",
+     "require": "\\.\\s*split\\s*\\(",
+     "message": "Split each line with `s.split(DELIMITER)` so the dues are in their own array element."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "totalDues() converts the dues",
+     "within": "RosterFile.totalDues",
+     "require": "\\bDouble\\s*\\.\\s*parseDouble\\s*\\(",
+     "message": "Convert the dues field with `Double.parseDouble()` before adding it; the file holds text, not numbers."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "findName() compares IDs",
+     "within": "RosterFile.findName",
+     "require": [
+      "\\bInteger\\s*\\.\\s*parseInt\\s*\\(",
+      "\\.\\s*equals\\s*\\("
+     ],
+     "message": "Compare each record's ID field with `id`: convert it with `Integer.parseInt()` (or compare text with `equals()`)."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "findName() closes the file",
+     "within": "RosterFile.findName",
+     "require": "\\.\\s*close\\s*\\(\\s*\\)",
+     "message": "Close the reader before returning, also when the member is found early. Keep the answer in a variable and return it after `close()`."
+    }
+   ],
+   "hints": [
+    "Open `roster.txt` after `save()` runs. Could you, or a program, tell where Mary Ann Lee's name ends?",
+    "`totalDues()` has the same shape as `ReadEmployeeFile2` on p. 460: read a line, loop while it isn't `null`, split, convert, add, read the next line.",
+    "In `findName()`, a boolean such as `found` in the loop condition lets you stop early and still reach the single `reader.close()` after the loop."
+   ],
+   "test_program": {
+    "file_name": "TestRosterFile.java",
+    "code": "import java.io.IOException;\n\npublic class TestRosterFile\n{\n    public static void main(String[] args) throws IOException\n    {\n        int[] ids = {104, 117, 123, 131};\n        String[] names = {\"Mary Ann Lee\", \"Tomas Okafor\", \"Ana Ruiz\", \"Jo Van Der Berg\"};\n        double[] dues = {40.0, 25.5, 12.75, 30.0};\n\n        RosterFile roster = new RosterFile(\"roster.txt\");\n        roster.save(ids, names, dues);\n        System.out.println(\"Saved \" + ids.length + \" members to roster.txt\");\n\n        System.out.println(\"Total dues: $\" + roster.totalDues());\n        System.out.println(\"#104 is \" + roster.findName(104));\n        System.out.println(\"#131 is \" + roster.findName(131));\n        System.out.println(\"#200 is \" + roster.findName(200));\n    }\n}\n",
+    "expected_output": "Saved 4 members to roster.txt\nTotal dues: $108.25\n#104 is Mary Ann Lee\n#131 is Jo Van Der Berg\n#200 is no member #200\n",
+    "predict": "Before you change anything, predict the starter's output. Then, before fixing the delimiter, predict what happens if `totalDues()` splits on the space.",
+    "how_to_run": "Put `RosterFile.java` and `TestRosterFile.java` in the same folder, then run `javac *.java` and `java TestRosterFile`. In an IDE, add all of them to one project and run `TestRosterFile.java`. You don't type anything: the test program supplies the data. It creates `roster.txt` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "Why is a comma a better delimiter than a space for this file, and what would break if a member's name were entered as `Lee, Mary Ann`?",
+     "model_answer": "Names contain spaces but not commas, so each name stays one field. A name with a comma would split into two fields, shifting the dues to element 3 and making element 2 a name fragment."
+    },
+    {
+     "question": "The file stores `40.0` as text. What does `Double.parseDouble()` do with it, and why can't `total += fields[2]` work?",
+     "model_answer": "It converts the characters 4, 0, . and 0 into the double value 40.0. fields[2] is a String, and += with a double total would not compile; text must be converted before arithmetic."
+    }
+   ],
+   "extension": "Add `int countPaidAtLeast(double amount)` that returns how many members paid at least `amount`. Then add a fourth field, the member's year joined, to `save()`, and check which of your methods still work without changes.",
+   "worth_knowing": "CSV has a written standard, RFC 4180 (2005). A field that contains a comma, a double quote or a line break goes inside double quotes, and a quote inside it is doubled: `\"Lee, \"\"Mary\"\" Ann\"`. Spreadsheets follow those rules; a plain `split(\",\")` doesn't, which is why real projects use a CSV library.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; the DELIMITER constant used for writing and reading; every reader closed."
+    }
+   ]
+  },
+  {
+   "id": "11.6",
+   "title": "The seat map that books only one seat",
+   "subtitle": "FileChannel positions, ByteBuffer wrap and rewind",
+   "source": "Ch. 11, section 11.6 (pp. 461–463)",
+   "minutes": 25,
+   "objectives": [
+    "Explain the difference between sequential and random access",
+    "Write bytes at chosen positions with a `FileChannel`, `position()` and a wrapped `ByteBuffer`",
+    "Reuse a `ByteBuffer` with `rewind()`, and read a single byte from any position"
+   ],
+   "scenario": "The campus theater stores each row of seats as a tiny file: one character per seat, `.` for free and `X` for booked, with seat 0 first. Box-office staff book seats in whatever order buyers ask for them, so the program must jump straight to a seat's byte; reading or rewriting the whole row each time is exactly what random access avoids.\n\nAn order for seats 0, 22 and 12 books only seat 0. `book()` never moves the channel's position, and after the first `write()` the `ByteBuffer` has nothing left (`hasRemaining()` is false), so the later writes send nothing. Fix `book()` and write `seatAt()`, which reads one seat's byte. `create()`, `seatCount()` and `row()` are done. The test program prints:\n\n```\nSeats in row K: 30\nBefore: ..............................\nAfter:  X...........X.........X.......\nSeat 12 holds X\nSeat 13 holds .\nLater:  XX..........X.........X......X\nSeat 29 holds X\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`book()` sets the channel's position to each seat number before writing, and rewinds the buffer after each write so it can be written again."
+    },
+    {
+     "id": "R2",
+     "text": "`seatAt()` opens the file, moves to the seat's position, reads one byte into a wrapped `byte[1]`, closes the channel, and returns that byte as a `char`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "SeatMap.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\n// One row of seats, stored as one character per seat: '.' is free, 'X' is booked.\n// Seat numbers start at 0, so seat n is the byte at position n.\npublic class SeatMap\n{\n    private Path file;\n\n    public SeatMap(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Creates a row of free seats.\n    public void create(int seats) throws IOException\n    {\n        String s = \"\";\n        for (int x = 0; x < seats; ++x)\n            s += \".\";\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        output.write(s.getBytes());\n        output.close();\n    }\n\n    // Returns the number of seats in the row: one byte per seat.\n    public long seatCount() throws IOException\n    {\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ);\n        long size = fc.size();\n        fc.close();\n        return size;\n    }\n\n    // Marks each seat in the array as booked.\n    public void book(int[] seatNumbers) throws IOException\n    {\n        byte[] data = \"X\".getBytes();\n        ByteBuffer out = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        for (int x = 0; x < seatNumbers.length; ++x)\n        {\n            // TODO (R1): go to this seat's byte before writing.\n            while (out.hasRemaining())\n                fc.write(out);\n            // TODO (R1): after one write the buffer has nothing left to give.\n        }\n        fc.close();\n    }\n\n    // Returns the character stored for one seat: '.' or 'X'.\n    public char seatAt(int seatNumber) throws IOException\n    {\n        // TODO (R2): read the single byte at this seat's position.\n        return '?';\n    }\n\n    // Returns the whole row as one String.\n    public String row() throws IOException\n    {\n        BufferedReader reader = new BufferedReader(\n            new InputStreamReader(Files.newInputStream(file)));\n        String s = reader.readLine();\n        reader.close();\n        return s;\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\n// One row of seats, stored as one character per seat: '.' is free, 'X' is booked.\n// Seat numbers start at 0, so seat n is the byte at position n.\npublic class SeatMap\n{\n    private Path file;\n\n    public SeatMap(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Creates a row of free seats.\n    public void create(int seats) throws IOException\n    {\n        String s = \"\";\n        for (int x = 0; x < seats; ++x)\n            s += \".\";\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        output.write(s.getBytes());\n        output.close();\n    }\n\n    // Returns the number of seats in the row: one byte per seat.\n    public long seatCount() throws IOException\n    {\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ);\n        long size = fc.size();\n        fc.close();\n        return size;\n    }\n\n    // Marks each seat in the array as booked.\n    public void book(int[] seatNumbers) throws IOException\n    {\n        byte[] data = \"X\".getBytes();\n        ByteBuffer out = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        for (int x = 0; x < seatNumbers.length; ++x)\n        {\n            fc.position(seatNumbers[x]);\n            while (out.hasRemaining())\n                fc.write(out);\n            out.rewind();\n        }\n        fc.close();\n    }\n\n    // Returns the character stored for one seat: '.' or 'X'.\n    public char seatAt(int seatNumber) throws IOException\n    {\n        byte[] data = new byte[1];\n        ByteBuffer in = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ);\n        fc.position(seatNumber);\n        fc.read(in);\n        fc.close();\n        return new String(data).charAt(0);\n    }\n\n    // Returns the whole row as one String.\n    public String row() throws IOException\n    {\n        BufferedReader reader = new BufferedReader(\n            new InputStreamReader(Files.newInputStream(file)));\n        String s = reader.readLine();\n        reader.close();\n        return s;\n    }\n}\n"
+    }
+   ],
+   "main_file": "SeatMap.java",
+   "solution_notes": "This is the `RandomAccessTest` program (p. 462) turned into a class. A `FileChannel` is seekable: `position(n)` moves to byte n, and the next `read()` or `write()` starts there (Table 11-7, p. 461). `ByteBuffer.wrap()` puts a byte array inside a buffer, so changes to one show up in the other (p. 462). Writing uses up the buffer; `hasRemaining()` then returns false, and `rewind()` makes the same bytes available again (p. 462). For `seatAt()`, a 1-byte array is wrapped, the channel is positioned at the seat, and after `read()` the byte is in the array; `new String(data).charAt(0)` (or a `(char)` cast) turns it into the seat's character. Seats are booked in the order 0, 22, 12 on purpose: random access doesn't care about order.",
+   "warmup": [
+    {
+     "question": "In the starter's `book()`, what does `out.hasRemaining()` return after the first seat has been written, and what happens in the `while` loop for the next seat?",
+     "model_answer": "It returns false, because the single byte has been written. The while loop's body never runs, so nothing is written for the next seats."
+    },
+    {
+     "question": "The starter never calls `position()`. Where does the first X go, and why?",
+     "model_answer": "At byte 0, seat 0. A newly opened channel's position is 0, and it only moves forward as bytes are written."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "book() moves to each seat",
+     "within": "SeatMap.book",
+     "require": "\\.\\s*position\\s*\\(",
+     "message": "Call `fc.position(seatNumbers[x])` inside the loop, before writing. A channel writes wherever its position is, and the position doesn't jump to the next seat by itself."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "book() reuses the buffer",
+     "within": "SeatMap.book",
+     "require": [
+      "\\.\\s*rewind\\s*\\(\\s*\\)",
+      "\\.\\s*clear\\s*\\(\\s*\\)",
+      "\\.\\s*flip\\s*\\(\\s*\\)",
+      "for\\s*\\([^)]*\\)\\s*\\{[^}]*\\bByteBuffer\\s*\\.\\s*wrap\\s*\\("
+     ],
+     "message": "Call `out.rewind()` after each write (p. 462). Once the X has been written the buffer is empty, so later writes send nothing."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "seatAt() goes to the seat",
+     "within": "SeatMap.seatAt",
+     "require": "\\.\\s*position\\s*\\(\\s*seatNumber\\s*\\)",
+     "message": "Position the channel at `seatNumber` before reading; seat n is the byte at position n."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "seatAt() reads into a buffer",
+     "within": "SeatMap.seatAt",
+     "require": "\\.\\s*read\\s*\\(",
+     "message": "Wrap a `byte[1]` with `ByteBuffer.wrap()` and call `fc.read(...)` with it. The byte read lands in the array."
+    },
+    {
+     "id": "C5",
+     "requirement": "R2",
+     "title": "seatAt() closes the channel",
+     "within": "SeatMap.seatAt",
+     "require": "\\.\\s*close\\s*\\(\\s*\\)",
+     "message": "Close the channel before returning, as `book()` does, so the file isn't left open."
+    }
+   ],
+   "hints": [
+    "Compare `book()` with `RandomAccessTest` on p. 462: which two calls appear between its writes that the starter doesn't have?",
+    "Inside the `for` loop the order is: move to the seat, write until nothing remains, make the buffer reusable.",
+    "For `seatAt()`, open the channel with `READ`, then the byte array is where you look after `read()`: `data[0]` holds the seat."
+   ],
+   "test_program": {
+    "file_name": "TestSeatMap.java",
+    "code": "import java.io.IOException;\n\npublic class TestSeatMap\n{\n    public static void main(String[] args) throws IOException\n    {\n        SeatMap rowK = new SeatMap(\"row_k.txt\");\n        rowK.create(30);\n        System.out.println(\"Seats in row K: \" + rowK.seatCount());\n        System.out.println(\"Before: \" + rowK.row());\n\n        int[] firstOrder = {0, 22, 12};\n        rowK.book(firstOrder);\n        System.out.println(\"After:  \" + rowK.row());\n\n        System.out.println(\"Seat 12 holds \" + rowK.seatAt(12));\n        System.out.println(\"Seat 13 holds \" + rowK.seatAt(13));\n\n        int[] secondOrder = {29, 1};\n        rowK.book(secondOrder);\n        System.out.println(\"Later:  \" + rowK.row());\n        System.out.println(\"Seat 29 holds \" + rowK.seatAt(29));\n    }\n}\n",
+    "expected_output": "Seats in row K: 30\nBefore: ..............................\nAfter:  X...........X.........X.......\nSeat 12 holds X\nSeat 13 holds .\nLater:  XX..........X.........X......X\nSeat 29 holds X\n",
+    "predict": "Before you change anything, predict the starter's `After:` and `Later:` lines. Then predict: with `position()` added but no `rewind()`, which seats get an X?",
+    "how_to_run": "Put `SeatMap.java` and `TestSeatMap.java` in the same folder, then run `javac *.java` and `java TestSeatMap`. In an IDE, add all of them to one project and run `TestSeatMap.java`. You don't type anything: the test program supplies the data. It creates `row_k.txt` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "A `BufferedWriter` can't book seat 22 before seat 12, but a `FileChannel` can. What property of a file channel makes the difference?",
+     "model_answer": "A file channel is seekable: position() can move to any byte and the next read or write starts there. A BufferedWriter writes only forward, from where the last write ended."
+    },
+    {
+     "question": "In `seatAt()` you never read from the `ByteBuffer` itself, yet `data[0]` holds the seat. Why?",
+     "model_answer": "wrap() doesn't copy the array: the buffer is a view of it. When read() puts a byte into the buffer, it goes straight into the wrapped array."
+    }
+   ],
+   "extension": "Add `boolean bookIfFree(int seat)` that books the seat only when `seatAt(seat)` is `.` and returns whether it did. Then make `book()` skip seats that are already taken and print a message for each one.",
+   "worth_knowing": "A FileChannel may write past the end of a file: `position(1_000_000)` followed by `write()` makes the file a megabyte long. On common file systems the gap reads back as zero bytes and takes no disk space until something is written there; such a file is called a sparse file.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; one position and one rewind per seat; every channel closed."
+    }
+   ]
+  },
+  {
+   "id": "11.7",
+   "title": "The locker records that run into each other",
+   "subtitle": "Fixed-size records placed by their key field",
+   "source": "Ch. 11, section 11.7 (pp. 463–468), with the name padding from p. 474",
+   "minutes": 30,
+   "objectives": [
+    "Compute a record's size from the default record instead of counting it by hand",
+    "Make every record the same size by padding or cutting a field to a fixed length",
+    "Place a record in a random access file at its key field times the record size"
+   ],
+   "scenario": "The rec center assigns 20 lockers, numbered 0 to 19, and stores them in `lockers.txt`. `createEmpty()` fills the file with 20 default records, and `assign()` should replace locker *n*'s record with a real one. Every record has the same layout: a 3-digit locker number, a 10-character name and a plan letter. Below, the first line is a default record and the second is locker 7 after `assign(7, \"Li\", \"F\")`:\n\n```\n000,          ,-\n007,Li        ,F\n```\n\nThe locker number is the **key field**: it alone decides where the record goes.\n\nThe file looked fine on the developer's Mac and is scrambled on the front-desk Windows PC. There are three reasons. `RECSIZE` was counted by hand (17), but the line separator is one byte on a Mac and two on Windows. Names are written at whatever length they have, so a short name leaves bytes of the old record behind and a long one runs into the next record. And `assign()` positions the channel at the locker number, a byte position, instead of at the start of that locker's record.\n\nFix all three. The test program reads the file line by line, shows every line that isn't a default record, and prints:\n\n```\nLine 3: 003,Okafor    ,S\nLine 5: 005,Bartholome,S\nLine 7: 007,Li        ,F\nLines in the file: 20\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`RECSIZE` is computed as `DEFAULT_RECORD.length()`, never typed as a number."
+    },
+    {
+     "id": "R2",
+     "text": "`assign()` makes every name exactly `NAME_LENGTH` characters: shorter names are padded with spaces, longer ones are cut."
+    },
+    {
+     "id": "R3",
+     "text": "`assign()` positions the channel at `locker * RECSIZE` before writing."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "LockerFile.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\n// A random access file of gym lockers. Locker n's record is record n.\n// Record layout: locker number (3 digits), name (10 characters), plan (S or F).\npublic class LockerFile\n{\n    public static final int NUMRECS = 20;\n    public static final int NAME_LENGTH = 10;\n    public static final String DEFAULT_RECORD =\n        \"000,          ,-\" + System.getProperty(\"line.separator\");\n    // TODO (R1): counted by hand on the developer's Mac.\n    public static final int RECSIZE = 17;\n    private Path file;\n\n    public LockerFile(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Fills the file with NUMRECS default records.\n    public void createEmpty() throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));\n        for (int count = 0; count < NUMRECS; ++count)\n            writer.write(DEFAULT_RECORD, 0, DEFAULT_RECORD.length());\n        writer.close();\n    }\n\n    // Writes one locker's record in the place its number (the key field) decides.\n    public void assign(int locker, String name, String plan) throws IOException\n    {\n        // TODO (R2): every name must fill exactly NAME_LENGTH characters.\n        String s = idText(locker) + \",\" + name + \",\" + plan +\n            System.getProperty(\"line.separator\");\n        byte[] data = s.getBytes();\n        ByteBuffer buffer = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        // TODO (R3): position the channel at the start of this locker's record.\n        fc.position(locker);\n        fc.write(buffer);\n        fc.close();\n    }\n\n    // 7 becomes \"007\", 15 becomes \"015\".\n    private String idText(int locker)\n    {\n        String id = \"00\" + locker;\n        return id.substring(id.length() - 3);\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\n// A random access file of gym lockers. Locker n's record is record n.\n// Record layout: locker number (3 digits), name (10 characters), plan (S or F).\npublic class LockerFile\n{\n    public static final int NUMRECS = 20;\n    public static final int NAME_LENGTH = 10;\n    public static final String DEFAULT_RECORD =\n        \"000,          ,-\" + System.getProperty(\"line.separator\");\n    public static final int RECSIZE = DEFAULT_RECORD.length();\n    private Path file;\n\n    public LockerFile(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Fills the file with NUMRECS default records.\n    public void createEmpty() throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));\n        for (int count = 0; count < NUMRECS; ++count)\n            writer.write(DEFAULT_RECORD, 0, DEFAULT_RECORD.length());\n        writer.close();\n    }\n\n    // Writes one locker's record in the place its number (the key field) decides.\n    public void assign(int locker, String name, String plan) throws IOException\n    {\n        StringBuilder sb = new StringBuilder(name);\n        while (sb.length() < NAME_LENGTH)\n            sb.append(' ');\n        sb.setLength(NAME_LENGTH);\n        String s = idText(locker) + \",\" + sb.toString() + \",\" + plan +\n            System.getProperty(\"line.separator\");\n        byte[] data = s.getBytes();\n        ByteBuffer buffer = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        fc.position(locker * RECSIZE);\n        fc.write(buffer);\n        fc.close();\n    }\n\n    // 7 becomes \"007\", 15 becomes \"015\".\n    private String idText(int locker)\n    {\n        String id = \"00\" + locker;\n        return id.substring(id.length() - 3);\n    }\n}\n"
+    }
+   ],
+   "main_file": "LockerFile.java",
+   "solution_notes": "Random access by record works only when every record has the same size, because record n starts at n × record size (p. 463). The book builds a default record and takes `RECSIZE` from its length, and notes that the line separator from `System.getProperty(\"line.separator\")` is two bytes on Windows (p. 465), so 17 is right on a Mac and wrong on Windows. The key field, the locker number, decides the position: `locker * RECSIZE` (pp. 463 and 467). The book assumes every name has seven characters (p. 466) and later pads names with `StringBuilder.setLength()` (p. 474). Careful: `setLength()` cuts a long name correctly, but it pads a short one with the character `'\\u0000'`, not spaces, so the solution appends spaces first and then calls `setLength()` to cut. The test reads the file sequentially and finds each assigned locker on the line with its own number.",
+   "warmup": [
+    {
+     "question": "`DEFAULT_RECORD` shows 16 visible characters. How many characters long is it on Windows, and on a Mac? Why do they differ?",
+     "model_answer": "18 on Windows and 17 on a Mac. It ends with the system's line separator, which is two characters (\\r\\n) on Windows and one (\\n) on macOS."
+    },
+    {
+     "question": "With the correct `RECSIZE` on Windows, at which byte should locker 7's record start? At which byte does the starter write it?",
+     "model_answer": "At 7 × 18 = 126. The starter writes it at byte 7, inside locker 0's record."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "RECSIZE comes from the default record",
+     "within": "LockerFile",
+     "require": "\\bRECSIZE\\s*=\\s*DEFAULT_RECORD\\s*\\.\\s*length\\s*\\(\\s*\\)",
+     "forbid": "\\bRECSIZE\\s*=\\s*\\d",
+     "message": "Set `RECSIZE = DEFAULT_RECORD.length();`. Java then counts the line separator for the system it runs on; a typed number is right on only one kind of computer."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Names get a fixed length",
+     "within": "LockerFile.assign",
+     "require": [
+      "\\bsetLength\\s*\\(",
+      "\\.\\s*repeat\\s*\\(",
+      "\\bString\\s*\\.\\s*format\\s*\\(",
+      "\\bsubstring\\s*\\("
+     ],
+     "message": "Make the name exactly `NAME_LENGTH` characters before building the record: add spaces to a short name and cut a long one (a `StringBuilder` with `append(' ')` and `setLength()` does both)."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The key field decides the position",
+     "within": "LockerFile.assign",
+     "require": [
+      "\\.\\s*position\\s*\\(\\s*\\w+\\s*\\*\\s*RECSIZE\\s*\\)",
+      "\\.\\s*position\\s*\\(\\s*RECSIZE\\s*\\*\\s*\\w+\\s*\\)"
+     ],
+     "message": "Position the channel at `locker * RECSIZE`. `position()` counts bytes, and locker n's record starts n whole records into the file."
+    }
+   ],
+   "hints": [
+    "Run the starter and open `lockers.txt` in a text editor. Which record did locker 3, written at byte 3, land inside?",
+    "Records are numbered from 0, so locker n's record is preceded by n complete records. How many bytes is that?",
+    "`setLength(NAME_LENGTH)` cuts a long name, but it fills a short one with `'\\u0000'` characters, not spaces. Append spaces in a loop while the length is too short, then cut."
+   ],
+   "test_program": {
+    "file_name": "TestLockerFile.java",
+    "code": "import java.nio.file.*;\nimport java.io.*;\n\npublic class TestLockerFile\n{\n    public static void main(String[] args) throws IOException\n    {\n        LockerFile lockers = new LockerFile(\"lockers.txt\");\n        lockers.createEmpty();\n        lockers.assign(3, \"Okafor\", \"S\");\n        lockers.assign(7, \"Li\", \"F\");\n        lockers.assign(5, \"Bartholomew-Smith\", \"S\");\n\n        // Read the file sequentially, the way Notepad shows it,\n        // and display only the lines that are not default records.\n        BufferedReader reader = new BufferedReader(\n            new InputStreamReader(Files.newInputStream(Paths.get(\"lockers.txt\"))));\n        int line = 0;\n        String s = reader.readLine();\n        while (s != null)\n        {\n            if (!s.startsWith(\"000\"))\n                System.out.println(\"Line \" + line + \": \" + s);\n            ++line;\n            s = reader.readLine();\n        }\n        reader.close();\n        System.out.println(\"Lines in the file: \" + line);\n    }\n}\n",
+    "expected_output": "Line 3: 003,Okafor    ,S\nLine 5: 005,Bartholome,S\nLine 7: 007,Li        ,F\nLines in the file: 20\n",
+    "predict": "Before you change anything, predict how many lines the test finds that don't start with `000`. Then predict what `Bartholomew-Smith` becomes in a 10-character field.",
+    "how_to_run": "Put `LockerFile.java` and `TestLockerFile.java` in the same folder, then run `javac *.java` and `java TestLockerFile`. In an IDE, add all of them to one project and run `TestLockerFile.java`. You don't type anything: the test program supplies the data. It creates `lockers.txt` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "Why does random access by record number require every record to have exactly the same size?",
+     "model_answer": "The program finds record n by arithmetic, n times the record size. If one record were longer or shorter, every record after it would start at a different byte than the arithmetic says."
+    },
+    {
+     "question": "The book assumes users never enter a duplicate ID (p. 466). What does your `assign()` do if locker 3 is assigned twice, and how could it prevent that?",
+     "model_answer": "It silently overwrites the first record with the second. It could first read the record at 3 × RECSIZE and refuse to write unless it still starts with 000."
+    }
+   ],
+   "extension": "Add `String recordFor(int locker)` that reads one record with a `FileChannel` (the technique of section 11.8) and returns it without its line separator. Then make `assign()` reject a locker number outside 0 to 19 instead of writing past the last record.",
+   "worth_knowing": "Fixed-length records found by arithmetic powered early desktop databases. dBASE, the best-selling database program of the 1980s, stored each table as a short header followed by records of equal length, and found a record by multiplying its number by the record length.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; RECSIZE computed once from DEFAULT_RECORD; names padded with spaces, not '\\u0000'."
+    }
+   ]
+  },
+  {
+   "id": "11.8",
+   "title": "The help-desk lookup that shows the same account twice",
+   "subtitle": "Read records randomly with a fresh buffer, or sequentially in key order",
+   "source": "Ch. 11, section 11.8 (pp. 468–471)",
+   "minutes": 30,
+   "objectives": [
+    "Read one record directly from a random access file with `position()` and `read()`",
+    "Prepare the `ByteBuffer` for every read, and recognize a default record",
+    "Process the same random access file sequentially, skipping default records"
+   ],
+   "scenario": "The utility company's help desk answers calls about accounts stored in `accounts.txt`, a random access file of 1,000 fixed-size records built by `AccountWriter` (read-only; it is the section 11.7 technique). Account *n* is record *n*, so `find()` can jump straight to it while the caller waits.\n\nCaller 1 gets the right account. Callers 2 and 3 get caller 1's account again. The `ByteBuffer` is created once, as a field; after the first `read()` fills it there is no room left, so later reads copy nothing and `data` still holds the first record. Also, asking for an account nobody opened shows a default record (`000,...`) instead of saying so. Finally, the supervisor wants an end-of-day listing of every real account and the total owed; that job reads the same file **sequentially**. The test program prints:\n\n```\nCaller 1 asks for #315: 315,Abdullah  ,0300.00\nCaller 2 asks for #42:  042,Rivera    ,0120.50\nCaller 3 asks for #500: no account #500\nActive accounts, in file order:\n#007 Chen $75.25\n#042 Rivera $120.5\n#315 Abdullah $300.0\nTotal owed: $495.75\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`find()` prepares the buffer for every lookup: wrap `data` in a new `ByteBuffer` inside the method (or `clear()` the field first)."
+    },
+    {
+     "id": "R2",
+     "text": "`find()` returns `no account #<id>` when the record read is a default record (its account number is 000)."
+    },
+    {
+     "id": "R3",
+     "text": "`listActive()` reads the file sequentially with a `BufferedReader`, skips records whose account number is 0, prints each other record as `#042 Rivera $120.5` (name trimmed, balance from `parseDouble()`), and returns the total of their balances."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "AccountWriter.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\n// Builds the random access account file (the technique from section 11.7).\n// Record layout: account number (3 digits), name (10 characters), balance (0000.00).\npublic class AccountWriter\n{\n    public static final int NUMRECS = 1000;\n    public static final int NAME_LENGTH = 10;\n    public static final String DEFAULT_RECORD =\n        \"000,          ,0000.00\" + System.getProperty(\"line.separator\");\n    public static final int RECSIZE = DEFAULT_RECORD.length();\n    private Path file;\n\n    public AccountWriter(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Fills the file with NUMRECS default records.\n    public void createEmpty() throws IOException\n    {\n        OutputStream output = new BufferedOutputStream(Files.newOutputStream(file));\n        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));\n        for (int count = 0; count < NUMRECS; ++count)\n            writer.write(DEFAULT_RECORD, 0, DEFAULT_RECORD.length());\n        writer.close();\n    }\n\n    // Writes one account at the position its number decides.\n    // balance must already have the 0000.00 format, for example \"0120.50\".\n    public void add(int id, String name, String balance) throws IOException\n    {\n        StringBuilder sb = new StringBuilder(name);\n        while (sb.length() < NAME_LENGTH)\n            sb.append(' ');\n        sb.setLength(NAME_LENGTH);\n        String idText = \"00\" + id;\n        idText = idText.substring(idText.length() - 3);\n        String s = idText + \",\" + sb.toString() + \",\" + balance +\n            System.getProperty(\"line.separator\");\n        ByteBuffer buffer = ByteBuffer.wrap(s.getBytes());\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        fc.position(id * RECSIZE);\n        fc.write(buffer);\n        fc.close();\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "AccountReader.java",
+     "starter": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class AccountReader\n{\n    private static final int RECSIZE = AccountWriter.RECSIZE;\n    private Path file;\n    private byte[] data = new byte[RECSIZE];\n    // TODO (R1): one buffer shared by every lookup.\n    private ByteBuffer buffer = ByteBuffer.wrap(data);\n\n    public AccountReader(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Random access: jumps straight to one account's record and returns it\n    // without its line separator, or \"no account #\" + id for a default record.\n    public String find(int id) throws IOException\n    {\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ);\n        fc.position(id * RECSIZE);\n        fc.read(buffer);\n        fc.close();\n        String s = new String(data).trim();\n        // TODO (R2): a default record means the account doesn't exist.\n        return s;\n    }\n\n    // Sequential access: displays every real account, in file order,\n    // as \"#042 Rivera $120.5\", and returns the total of their balances.\n    public double listActive() throws IOException\n    {\n        double total = 0;\n        // TODO (R3): read every record; skip default records (account 000).\n        return total;\n    }\n}\n",
+     "solution": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class AccountReader\n{\n    private static final int RECSIZE = AccountWriter.RECSIZE;\n    private Path file;\n    private byte[] data = new byte[RECSIZE];\n\n    public AccountReader(String fileName)\n    {\n        file = Paths.get(fileName);\n    }\n\n    // Random access: jumps straight to one account's record and returns it\n    // without its line separator, or \"no account #\" + id for a default record.\n    public String find(int id) throws IOException\n    {\n        ByteBuffer buffer = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ);\n        fc.position(id * RECSIZE);\n        fc.read(buffer);\n        fc.close();\n        String s = new String(data).trim();\n        if (s.startsWith(\"000\"))\n            return \"no account #\" + id;\n        return s;\n    }\n\n    // Sequential access: displays every real account, in file order,\n    // as \"#042 Rivera $120.5\", and returns the total of their balances.\n    public double listActive() throws IOException\n    {\n        double total = 0;\n        InputStream input = new BufferedInputStream(Files.newInputStream(file));\n        BufferedReader reader = new BufferedReader(new InputStreamReader(input));\n        String s = reader.readLine();\n        while (s != null)\n        {\n            String[] fields = s.split(\",\");\n            if (Integer.parseInt(fields[0]) != 0)\n            {\n                double balance = Double.parseDouble(fields[2]);\n                System.out.println(\"#\" + fields[0] + \" \" + fields[1].trim() + \" $\" + balance);\n                total += balance;\n            }\n            s = reader.readLine();\n        }\n        reader.close();\n        return total;\n    }\n}\n"
+    }
+   ],
+   "main_file": "AccountReader.java",
+   "solution_notes": "Random access means retrieving one record directly, without reading the records before it (p. 470): the position is the key times the record size, exactly as it was when writing. `ReadEmployeesRandomly` wraps the byte array again inside its loop, `buffer = ByteBuffer.wrap(data);` (p. 470). That line matters: a buffer that has been filled has no remaining space, and `read()` into it copies nothing. Default records start with 000, the same test `ReadEmployeesSequentially` uses (`id != 0`, pp. 468–469). A random access file can also be processed sequentially (p. 468): reading it line by line lists the accounts in account-number order, because each record's place in the file was set by its key. `new String(data).trim()` drops the line separator from a record read by the channel; `fields[1].trim()` drops the name's padding.",
+   "warmup": [
+    {
+     "question": "After the first `fc.read(buffer)` fills all of the buffer's bytes, what can the next `fc.read(buffer)` with the same buffer copy into it? What does `data` still hold?",
+     "model_answer": "Nothing: the buffer has no remaining space, so read() copies 0 bytes. data still holds the first record that was read, account 315."
+    },
+    {
+     "question": "Account 500 was never added. What does its record contain, and which field shows that it is empty?",
+     "model_answer": "The default record, 000, ten spaces and 0000.00. The account number field is 000 instead of 500."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A fresh buffer for every lookup",
+     "within": "AccountReader.find",
+     "require": [
+      "\\bByteBuffer\\s*\\.\\s*wrap\\s*\\(",
+      "\\.\\s*clear\\s*\\(\\s*\\)",
+      "\\.\\s*rewind\\s*\\(\\s*\\)"
+     ],
+     "message": "Wrap `data` in a new buffer at the start of `find()`, as `ReadEmployeesRandomly` does inside its loop (p. 470). A buffer that has been filled has no room for the next record."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "find() recognizes a default record",
+     "within": "AccountReader.find",
+     "require": [
+      "\\bstartsWith\\s*\\(",
+      "\\bInteger\\s*\\.\\s*parseInt\\s*\\(",
+      "\\.\\s*equals\\s*\\("
+     ],
+     "message": "Check the record's account number: if it is 000 (for example `s.startsWith(\"000\")`), return `\"no account #\" + id`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "listActive() reads line by line",
+     "within": "AccountReader.listActive",
+     "require": "\\breadLine\\s*\\(\\s*\\)",
+     "message": "Read the file sequentially with a `BufferedReader` and `readLine()` until it returns `null`, as `ReadEmployeesSequentially` does (p. 469)."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "listActive() splits each record",
+     "within": "AccountReader.listActive",
+     "require": "\\.\\s*split\\s*\\(",
+     "message": "Split each record on the comma to get the account number, name and balance fields."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "listActive() totals the balances",
+     "within": "AccountReader.listActive",
+     "require": "\\bDouble\\s*\\.\\s*parseDouble\\s*\\(",
+     "message": "Convert the balance field with `Double.parseDouble()` before printing and adding it to the total."
+    }
+   ],
+   "hints": [
+    "Compare `find()` with `ReadEmployeesRandomly` on p. 470. Which line runs inside its loop, before every read, that the starter runs only once?",
+    "After the read, the record is in `data`. Its first three characters are the account number; a record nobody has written still has 000 there.",
+    "`listActive()` is `ReadEmployeesSequentially` (p. 469) with a different print: split, skip when `Integer.parseInt(fields[0])` is 0, trim the name, parse the balance, add it."
+   ],
+   "test_program": {
+    "file_name": "TestAccountReader.java",
+    "code": "import java.io.IOException;\n\npublic class TestAccountReader\n{\n    public static void main(String[] args) throws IOException\n    {\n        AccountWriter writer = new AccountWriter(\"accounts.txt\");\n        writer.createEmpty();\n        writer.add(42, \"Rivera\", \"0120.50\");\n        writer.add(7, \"Chen\", \"0075.25\");\n        writer.add(315, \"Abdullah\", \"0300.00\");\n\n        AccountReader desk = new AccountReader(\"accounts.txt\");\n        System.out.println(\"Caller 1 asks for #315: \" + desk.find(315));\n        System.out.println(\"Caller 2 asks for #42:  \" + desk.find(42));\n        System.out.println(\"Caller 3 asks for #500: \" + desk.find(500));\n\n        System.out.println(\"Active accounts, in file order:\");\n        double total = desk.listActive();\n        System.out.println(\"Total owed: $\" + total);\n    }\n}\n",
+    "expected_output": "Caller 1 asks for #315: 315,Abdullah  ,0300.00\nCaller 2 asks for #42:  042,Rivera    ,0120.50\nCaller 3 asks for #500: no account #500\nActive accounts, in file order:\n#007 Chen $75.25\n#042 Rivera $120.5\n#315 Abdullah $300.0\nTotal owed: $495.75\n",
+    "predict": "Before you change anything, predict what the three callers see with the starter. Then predict the order of the active accounts: the order they were added (42, 7, 315) or another order?",
+    "how_to_run": "Put `AccountWriter.java` and `AccountReader.java` and `TestAccountReader.java` in the same folder, then run `javac *.java` and `java TestAccountReader`. In an IDE, add all of them to one project and run `TestAccountReader.java`. You don't type anything: the test program supplies the data. It creates `accounts.txt` in the folder the program runs from (in most IDEs, the project folder); open it in a text editor after the run to see what your code stored."
+   },
+   "reflection": [
+    {
+     "question": "The help desk uses `find()` and the supervisor uses `listActive()` on the same file. Which is real-time processing and which is batch processing, and why does each fit its access method?",
+     "model_answer": "find() is real-time: a caller is waiting, so the program must jump straight to one record. listActive() is batch: it processes every record once, one after another, so reading sequentially is natural."
+    },
+    {
+     "question": "The accounts were added as 42, 7, 315 but are listed as 7, 42, 315. Why, and why does the book say you don't need a random access file just to get sorted output?",
+     "model_answer": "Each record's position was set by its account number, so reading front to back gives account order. If sorted output were the only goal, sorting the records would do it without reserving space for 1,000 records."
+    }
+   ],
+   "extension": "Add `boolean updateBalance(int id, String newBalance)` that reads account `id`, returns false for a default record, and otherwise writes the record back at the same position with the new balance (open the channel with `READ, WRITE`). Then call it from the test program and run `listActive()` again.",
+   "worth_knowing": "Random access is cheap on an SSD, which has no moving parts. On a spinning hard disk every jump moves the read head and waits for the platter to turn, roughly 5 to 10 milliseconds, enough time for a modern processor to run millions of instructions. That is why older databases worked hard to keep related records next to each other.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; one buffer per lookup; the sequential reader closed; output format exactly as required."
+    }
+   ]
+  }
+ ]
+}

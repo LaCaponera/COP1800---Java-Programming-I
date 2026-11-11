@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The cleanup tool that only says “IO exception”</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 11.2</div>
+  <h1>The cleanup tool that only says “IO exception”</h1>
+<h2>Objectives</h2><ul><li>Create a Path without hard-coding one operating system&#x27;s delimiter</li><li>Use <code>getNameCount()</code>, <code>getName()</code> and <code>getFileName()</code> to take a Path apart</li><li>Delete with <code>Files.delete()</code> and catch <code>NoSuchFileException</code> and <code>DirectoryNotEmptyException</code> separately</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>pathFor()</code> builds the Path without typing a delimiter: use <code>getSeparator()</code>, or give the folder and the name to <code>Paths.get()</code> as two arguments.</li><li><strong>R2</strong> Each report line starts with the item&#x27;s file name only (<code>getFileName()</code>), not the whole path.</li><li><strong>R3</strong> <code>remove()</code> catches <code>NoSuchFileException</code> and <code>DirectoryNotEmptyException</code> before <code>IOException</code> and returns the exact messages above.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>On a Mac, what do <code>getNameCount()</code> and <code>getFileName()</code> return for the starter&#x27;s <code>Paths.get(&quot;scratch&quot; + &quot;\\&quot; + &quot;old.log&quot;)</code>? Why?</p><div class="answer"><p>1 and scratch\old.log. On UNIX the backslash isn&#x27;t a delimiter, so the whole string is one name in the current folder.</p></div></li><li><p>According to p. 447, which exception does <code>Files.delete()</code> throw for a file that doesn&#x27;t exist, and which for a folder that still has files in it?</p><div class="answer"><p>NoSuchFileException for the missing file, DirectoryNotEmptyException for the folder that isn&#x27;t empty.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Cleaner.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Cleaner</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">folder</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Cleaner</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">folderName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">folder</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">folderName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Builds the Path of one item inside the folder.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-nf">pathFor</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">FileSystem</span><span class="t-w"> </span><span class="t-n">fs</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">FileSystems</span><span class="t-p">.</span><span class="t-na">getDefault</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">fs</span><span class="t-p">.</span><span class="t-na">getPath</span><span class="t-p">(</span><span class="t-n">folder</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">fs</span><span class="t-p">.</span><span class="t-na">getSeparator</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Tries to delete one item and returns one line for the cleanup report.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">remove</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">pathFor</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">label</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">.</span><span class="t-na">getFileName</span><span class="t-p">().</span><span class="t-na">toString</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">delete</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">label</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": deleted"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">NoSuchFileException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">label</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": not found, nothing to delete"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">DirectoryNotEmptyException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">label</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": folder is not empty, kept"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">IOException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">label</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": could not delete"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Windows uses <code>\</code> as the path delimiter and UNIX uses <code>/</code> (p. 442), so a hard-coded <code>&quot;\\&quot;</code> makes a one-element Path on a Mac. <code>FileSystem.getSeparator()</code> returns the right delimiter for the system the program runs on (p. 444); <code>Paths.get(folder, name)</code> does the same job by joining its arguments with that separator. Either way <code>getNameCount()</code> is 2 and <code>getName(0)</code> is the folder (pp. 444–445). <code>getFileName()</code> returns the last element, which keeps the report the same on every system. <code>Files.delete()</code> throws <code>NoSuchFileException</code> for a missing item and <code>DirectoryNotEmptyException</code> for a folder with files in it (p. 447); both are subclasses of <code>IOException</code>, so their <code>catch</code> blocks must come first or the compiler reports them as already caught. Calling <code>delete()</code> and catching the exception, instead of checking <code>Files.exists()</code> first, also avoids the TOCTTOU bug on p. 447.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestCleaner.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.nio.file.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestCleaner</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Build a practice folder inside your project folder:</span>
+<span class="t-w">        </span><span class="t-c1">//   scratch/old.log   and   scratch/cache/page1.tmp</span>
+<span class="t-w">        </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-n">cache</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-s">"scratch"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"cache"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">createDirectories</span><span class="t-p">(</span><span class="t-n">cache</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-s">"scratch"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"old.log"</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-s">"last term"</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">write</span><span class="t-p">(</span><span class="t-n">Paths</span><span class="t-p">.</span><span class="t-na">get</span><span class="t-p">(</span><span class="t-s">"scratch"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"cache"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"page1.tmp"</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-s">"page"</span><span class="t-p">.</span><span class="t-na">getBytes</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">Cleaner</span><span class="t-w"> </span><span class="t-n">cleaner</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Cleaner</span><span class="t-p">(</span><span class="t-s">"scratch"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Path</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">cleaner</span><span class="t-p">.</span><span class="t-na">pathFor</span><span class="t-p">(</span><span class="t-s">"old.log"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Elements in the path: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">getNameCount</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Element 0 is "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"File name is "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">getFileName</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">cleaner</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-s">"old.log"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">cleaner</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-s">"old.log"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">cleaner</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-s">"cache"</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">Cleaner</span><span class="t-w"> </span><span class="t-n">cacheCleaner</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Cleaner</span><span class="t-p">(</span><span class="t-n">cache</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">cacheCleaner</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-s">"page1.tmp"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">cleaner</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-s">"cache"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"old.log still on disk? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Files</span><span class="t-p">.</span><span class="t-na">exists</span><span class="t-p">(</span><span class="t-n">log</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Elements in the path: 2
+Element 0 is scratch
+File name is old.log
+old.log: deleted
+old.log: not found, nothing to delete
+cache: folder is not empty, kept
+page1.tmp: deleted
+cache: deleted
+old.log still on disk? false
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>pathFor() uses the system&#x27;s separator<div class="small">in <code>Cleaner.pathFor</code></div></td><td><div><span class="tag">require</span> <code>\bgetSeparator\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\bPaths\s*\.\s*get\s*\(\s*\w+\s*,</code></div><div><span class="tag">require</span> <code>\bgetPath\s*\(\s*\w+\s*,</code></div></td></tr><tr><td>C2</td><td>R1</td><td>No Windows-only backslash<div class="small">in <code>Cleaner.pathFor</code>, strings included</div></td><td><div><span class="tag">forbid</span> <code>\&quot;\\\\\&quot;</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Report lines use the file name<div class="small">in <code>Cleaner.remove</code></div></td><td><div><span class="tag">require</span> <code>\bgetFileName\s*\(\s*\)</code></div></td></tr><tr><td>C4</td><td>R3</td><td>Missing items get their own catch<div class="small">in <code>Cleaner.remove</code></div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\(\s*NoSuchFileException\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>Non-empty folders get their own catch<div class="small">in <code>Cleaner.remove</code></div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\(\s*DirectoryNotEmptyException\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · pathFor() uses the system&#x27;s separator</dt><dd><p>Build the Path with <code>FileSystems.getDefault().getSeparator()</code> between the folder and the name, or call <code>Paths.get(folder, name)</code>. Both use the right delimiter on Windows and on a Mac.</p></dd><dt>C2 · No Windows-only backslash</dt><dd><p>Remove the <code>&quot;\\&quot;</code> delimiter. A backslash separates folders only on Windows; on macOS and Linux it becomes part of the file name.</p></dd><dt>C3 · Report lines use the file name</dt><dd><p>Start each line with <code>item.getFileName()</code> instead of <code>item</code>. The full path prints differently on every system; the name is what the reader needs.</p></dd><dt>C4 · Missing items get their own catch</dt><dd><p>Add <code>catch (NoSuchFileException e)</code> before <code>catch (IOException e)</code> and return <code>&lt;name&gt;: not found, nothing to delete</code>.</p></dd><dt>C5 · Non-empty folders get their own catch</dt><dd><p>Add <code>catch (DirectoryNotEmptyException e)</code> before <code>catch (IOException e)</code> and return <code>&lt;name&gt;: folder is not empty, kept</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>On p. 444 the book builds a Path with <code>fs.getSeparator()</code> between the pieces. What does that method return on Windows, and on a Mac?</p></li><li><p>Compute the label once at the top of <code>remove()</code>: <code>getFileName()</code> returns a Path, so call <code>toString()</code> on it (or let <code>+</code> do it).</p></li><li><p>Order the catch blocks from most specific to most general: the two subclasses first, <code>IOException</code> last.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why does the compiler reject <code>catch (IOException e)</code> placed before <code>catch (NoSuchFileException e)</code>?</p><div class="answer"><p>NoSuchFileException is a subclass of IOException, so the first catch would already handle it and the second could never run. Java reports that unreachable catch as an error; specific exceptions must come first.</p></div></li><li><p>A teammate suggests checking <code>Files.exists(item)</code> before calling <code>Files.delete(item)</code> so the exception never happens. What problem from p. 447 does that leave open?</p><div class="answer"><p>A TOCTTOU bug: the file can disappear (or appear) between the time of check and the time of use, so delete() can still fail. Calling delete() and catching NoSuchFileException handles that case.</p></div></li></ol>
+<h2>Extension</h2><p>Add a method <code>String describe(String name)</code> that uses <code>Files.readAttributes(item, BasicFileAttributes.class)</code> to return the item&#x27;s size in bytes and whether it is a directory (<code>isDirectory()</code>), and returns <code>&lt;name&gt;: not found</code> if reading the attributes fails.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; the label is computed once; catch blocks ordered from specific to general.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
