@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The clinic texts that never reach (305) 555-0199</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 12.3</div>
+  <h1>The clinic texts that never reach (305) 555-0199</h1>
+<h2>Objectives</h2><ul><li>Trace a recursive method that splits a string with <code>indexOf()</code> and <code>substring()</code></li><li>Write a recursive string method that shrinks its argument by one character each call</li><li>Return a built-up result instead of printing pieces, so the caller can store it</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>digitsOnly()</code> returns the cleaned string and prints nothing, so the caller can store it.</li><li><strong>R2</strong> Base case: an empty string has no digits, so <code>digitsOnly(&quot;&quot;)</code> returns <code>&quot;&quot;</code>.</li><li><strong>R3</strong> Recursive case: look at one character (the first, or the last), keep it only if <code>Character.isDigit()</code> says it is a digit, and join it with what <code>digitsOnly()</code> returns for the rest of the string, one character shorter.</li><li><strong>R4</strong> No loops and no <code>replace</code>, <code>replaceAll</code> or <code>split</code>: the recursion does the work. Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the book&#x27;s <code>removeDashes(&quot;305-555&quot;)</code>. List the calls in order with their arguments, and say which calls print.</p><div class="answer"><p>removeDashes(&quot;305-555&quot;) finds the dash at 3 and calls removeDashes(&quot;305&quot;), which prints 305, then removeDashes(&quot;555&quot;), which prints 555. The first call prints nothing itself; only the base cases print.</p></div></li><li><p>What does <code>removeDashes(&quot;(305) 555-0199&quot;)</code> print, and why can&#x27;t the clinic save that result in a variable?</p><div class="answer"><p>(305) 5550199: only the dash is removed. And the method is void; it prints the pieces as it goes, so there is no value to assign to a variable.</p></div></li></ol>
+<h2>Solution</h2><div class="file">PhoneCleaner.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">PhoneCleaner</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// The book's version (pp. 497-498): it prints the pieces between dashes.</span>
+<span class="t-w">    </span><span class="t-c1">// It returns nothing, so the clinic can't store the cleaned number.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">removeDashes</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">dashLoc</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">indexOf</span><span class="t-p">(</span><span class="t-sc">'-'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">dashLoc</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">removeDashes</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">substring</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">dashLoc</span><span class="t-p">));</span>
+<span class="t-w">            </span><span class="t-n">removeDashes</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">substring</span><span class="t-p">(</span><span class="t-n">dashLoc</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns only the digits of s, in order: "(305) 555-0199" -&gt; "3055550199".</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">digitsOnly</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">char</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">charAt</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">rest</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">digitsOnly</span><span class="t-p">(</span><span class="t-n">s</span><span class="t-p">.</span><span class="t-na">substring</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Character</span><span class="t-p">.</span><span class="t-na">isDigit</span><span class="t-p">(</span><span class="t-n">first</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">first</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rest</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">rest</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>removeDashes()</code> splits around the first dash with <code>indexOf()</code> and handles both halves recursively, like <code>breakIntoWords()</code> (Figure 12-14). It can only display, and only dashes. <code>digitsOnly()</code> uses the other technique from section 12.3: shrink the string by one character per call, as <code>reverseString()</code> does (Figure 12-16). The base case is the empty string, which every chain reaches because each call removes one character. The recursive case decides about one character and joins it to the <em>returned</em> result for the rest: <code>first + rest</code> keeps the digit in front, so the order is preserved. <code>first + rest</code> is a <code>char</code> plus a <code>String</code>, which is string concatenation. Returning instead of printing lets the caller store, compare or count the result (the test prints <code>stored.length()</code>). Working from the last character (<code>s.substring(0, s.length() - 1)</code>, with the digit added after the result) is equally correct.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestPhoneCleaner.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestPhoneCleaner</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-w"> </span><span class="t-s">"305-555-0199"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"(305) 555-0199"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"305.555.0199"</span><span class="t-p">,</span>
+<span class="t-w">                           </span><span class="t-s">"3055550199"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"ext. 42"</span><span class="t-w"> </span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">phone</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">stored</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">PhoneCleaner</span><span class="t-p">.</span><span class="t-na">digitsOnly</span><span class="t-p">(</span><span class="t-n">phone</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"["</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">phone</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"] -&gt; ["</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">stored</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"] "</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">stored</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" digits"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"The book's removeDashes prints: "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">PhoneCleaner</span><span class="t-p">.</span><span class="t-na">removeDashes</span><span class="t-p">(</span><span class="t-s">"(305) 555-0199"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">[305-555-0199] -&gt; [3055550199] 10 digits
+[(305) 555-0199] -&gt; [3055550199] 10 digits
+[305.555.0199] -&gt; [3055550199] 10 digits
+[3055550199] -&gt; [3055550199] 10 digits
+[] -&gt; [] 0 digits
+[ext. 42] -&gt; [42] 2 digits
+The book&#x27;s removeDashes prints: (305) 5550199
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Returns the result, prints nothing<div class="small">in <code>PhoneCleaner.digitsOnly</code></div></td><td><div><span class="tag">forbid</span> <code>\bSystem\s*\.\s*out\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>An empty string is the base case<div class="small">in <code>PhoneCleaner.digitsOnly</code></div></td><td><div><span class="tag">require</span> <code>\bs\s*\.\s*length\s*\(\s*\)\s*(?:==\s*[01]|&lt;\s*[12]|&lt;=\s*[01])</code></div><div><span class="tag">require</span> <code>\bs\s*\.\s*isEmpty\s*\(\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Keeps only digits<div class="small">in <code>PhoneCleaner.digitsOnly</code></div></td><td><div><span class="tag">require</span> <code>\bCharacter\s*\.\s*isDigit\s*\(</code></div></td></tr><tr><td>C4</td><td>R3</td><td>The recursive call gets a string one character shorter<div class="small">in <code>PhoneCleaner.digitsOnly</code></div></td><td><div><span class="tag">require</span> <code>\bdigitsOnly\s*\(\s*s\s*\.\s*substring\s*\(\s*1\s*(?:,\s*s\s*\.\s*length\s*\(\s*\)\s*)?\)\s*\)</code></div><div><span class="tag">require</span> <code>\bdigitsOnly\s*\(\s*s\s*\.\s*substring\s*\(\s*0\s*,\s*s\s*\.\s*length\s*\(\s*\)\s*-\s*1\s*\)\s*\)</code></div></td></tr><tr><td>C5</td><td>R4</td><td>Recursion does the work<div class="small">in <code>PhoneCleaner.digitsOnly</code></div></td><td><div><span class="tag">forbid</span> <code>\b(?:while|for)\s*\(|\.\s*(?:replace|replaceAll|split|chars)\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Returns the result, prints nothing</dt><dd><p>Don&#x27;t print inside <code>digitsOnly()</code>: return the string, so the clinic can store it and the caller decides whether to display it.</p></dd><dt>C2 · An empty string is the base case</dt><dd><p>Every call shortens the string by one character, so the chain always ends at the empty string. Test for it first (<code>s.length() == 0</code> or <code>s.isEmpty()</code>) and return an empty string.</p></dd><dt>C3 · Keeps only digits</dt><dd><p>Decide about one character with <code>Character.isDigit(...)</code>: keep it if it is a digit, drop it otherwise. That handles dashes, spaces, dots and parentheses in one rule.</p></dd><dt>C4 · The recursive call gets a string one character shorter</dt><dd><p>Call <code>digitsOnly()</code> on the rest of the string, one character shorter: <code>s.substring(1)</code> (everything after the first character), as <code>reverseString()</code> shortens its string in Figure 12-16.</p></dd><dt>C5 · Recursion does the work</dt><dd><p>This lab practises recursion: remove the loop or library shortcut and let each call handle one character.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Think of the string as one character plus the rest. You only decide about one character; the recursive call cleans the rest.</p></li><li><p><code>s.charAt(0)</code> is the first character and <code>s.substring(1)</code> is everything after it. When is there no first character to look at? That is the base case.</p></li><li><p>Build the answer from the returned value: if the first character is a digit, put it in front of what the call on the rest returns; otherwise return that result unchanged.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your recursive call always gets a string one character shorter. Explain why that guarantees the base case is reached, and how many calls <code>digitsOnly(&quot;305-555&quot;)</code> makes.</p><div class="answer"><p>Each call removes one character, so the length goes 7, 6, 5, ... down to 0, and length 0 is the base case. That is 8 calls: one per character plus the call with the empty string.</p></div></li><li><p>Why is returning a <code>String</code> a better design for the clinic than the book&#x27;s version that prints?</p><div class="answer"><p>A returned value lets the caller decide what to do with it: store it in the records, compare it, check it has 10 digits, or print it. A method that prints can only display; its result can&#x27;t be saved or tested.</p></div></li></ol>
+<h2>Extension</h2><p>Numbers typed with a country code, like <code>+1 (305) 555-0199</code>, clean to 11 digits. Write <code>forTexting(String s)</code> that calls <code>digitsOnly()</code> and drops a leading 1 when the result has 11 digits. Should that rule live inside the recursion? Why not?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; base case first; the returned value of the recursive call is used, not printed.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

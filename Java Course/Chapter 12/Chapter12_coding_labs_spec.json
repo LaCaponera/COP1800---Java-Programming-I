@@ -1,0 +1,678 @@
+{
+  "course": "COP1800 · Java Programming I",
+  "collection_title": "Chapter 12: Recursion",
+  "collection_intro": "Hands-on labs for sections 12.1 to 12.5 of *Java Programming*, 10th edition. Each lab takes 20 to 25 minutes: read the code and predict what it does, write or fix a recursive method, check its structure, run the test program in your IDE and compare the output, then explain your choices. In every lab, find the base case first: it is where each chain of calls stops. Submit the lab report to Blackboard.",
+  "theme": "harbor",
+  "background": "pattern",
+  "language": "java",
+  "labs": [
+    {
+      "id": "12.1",
+      "title": "The reminder bot that never stops texting",
+      "subtitle": "A useful recursive method needs a base case and a step toward it",
+      "source": "Ch. 12, section 12.1 (pp. 487–489)",
+      "minutes": 20,
+      "objectives": [
+        "Explain what makes a method recursive and why a useful one must be able to stop",
+        "Write a base case that every chain of calls is guaranteed to reach",
+        "Make each recursive call work on a smaller problem, and count the depth of the recursion"
+      ],
+      "scenario": "The campus library texts students before a book is due. `ReminderBot.sendReminders(\"Clean Code\", 3)` should send one reminder for each day left, 3, 2, then 1, and stop.\n\nLast night the bot was switched on for the first time. It sent *Clean Code is due in 3 day(s)* to one student over and over until the program crashed with a `StackOverflowError`. The method calls itself, so it is **recursive**, but like the book's `DemoInfiniteRecursion` (Figure 12-1) nothing ever stops it, and every call is the same size as the last.\n\nThe field `calls` counts every call, so the test program can show the **depth of the recursion**. The bot must also cope with a book that is due today (0 days left) and one that is already overdue (a negative number of days). With your fix the test program prints:\n\n```\nBook due in 3 days:\nReminder: Clean Code is due in 3 day(s)\nReminder: Clean Code is due in 2 day(s)\nReminder: Clean Code is due in 1 day(s)\nCalls made: 4\nBook due today:\nCalls made: 1\nBook already 2 days overdue:\nCalls made: 1\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Base case: when `daysLeft` is 0 **or less**, `sendReminders()` sends nothing and does not call itself (an overdue book must not start an endless chain)."
+        },
+        {
+          "id": "R2",
+          "text": "Recursive case: when `daysLeft` is greater than 0, it sends one reminder and then calls itself with one day fewer."
+        },
+        {
+          "id": "R3",
+          "text": "It stays recursive: no `while` or `for` loop, and `calls++` stays the first statement so `calls` shows how many times the method ran."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "ReminderBot.java",
+      "starter_code": "public class ReminderBot\n{\n    // Counts every call to sendReminders(): the depth of the recursion.\n    public static int calls = 0;\n\n    // Sends one reminder for each day left: daysLeft, daysLeft - 1, ..., 1.\n    // When no days are left (or the book is overdue) it sends nothing.\n    public static void sendReminders(String title, int daysLeft)\n    {\n        calls++;\n        // TODO (R1): stop here when no days are left (0, or less if the book is overdue).\n        System.out.println(\"Reminder: \" + title + \" is due in \"\n            + daysLeft + \" day(s)\");\n        // TODO (R2): each call must work on a smaller problem than the call before it.\n        sendReminders(title, daysLeft);\n    }\n}\n",
+      "solution": "public class ReminderBot\n{\n    // Counts every call to sendReminders(): the depth of the recursion.\n    public static int calls = 0;\n\n    // Sends one reminder for each day left: daysLeft, daysLeft - 1, ..., 1.\n    // When no days are left (or the book is overdue) it sends nothing.\n    public static void sendReminders(String title, int daysLeft)\n    {\n        calls++;\n        if (daysLeft > 0)\n        {\n            System.out.println(\"Reminder: \" + title + \" is due in \"\n                + daysLeft + \" day(s)\");\n            sendReminders(title, daysLeft - 1);\n        }\n    }\n}\n",
+      "solution_notes": "This is the book's `DemoRecursion` pattern (Figure 12-3): an `if` decides whether to do the work and recurse, and each call passes a smaller value. Two things were missing in the starter: a **base case**, the case that makes no recursive call (p. 491), and progress toward it. The decisive choice is the condition. `daysLeft != 0` or `== 0` works for 3, but with -2 the chain runs -2, -3, -4, ... and never reaches 0; every unfinished call waits on the call stack until Java throws `StackOverflowError`. `daysLeft > 0` (or `if (daysLeft <= 0) return;`) catches every non-positive value. With 3 days the method runs four times (3, 2, 1, 0), the same way `messageMethod(4)` runs five times on p. 488. A `while` loop (Figure 12-5) would also work, but this lab practises the recursive form.",
+      "warmup": [
+        {
+          "question": "Trace the starter with `sendReminders(\"Clean Code\", 3)`. What is the second line it prints, and why does a line about 2 days never appear?",
+          "model_answer": "“Reminder: Clean Code is due in 3 day(s)” again. Each call passes the same daysLeft, 3, so the problem never gets smaller and nothing tells it to stop; it repeats until the call stack runs out (StackOverflowError)."
+        },
+        {
+          "question": "In the book's `DemoRecursion` (Figure 12-3), `messageMethod(4)` prints four lines. How many times does the method run, and what does the last call do?",
+          "model_answer": "Five times, with 4, 3, 2, 1 and 0. The call with 0 is the base case: the if is false, so it prints nothing and does not call itself again."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "A base case that catches 0 and overdue days",
+          "within": "ReminderBot.sendReminders",
+          "require": "\\bif\\s*\\(\\s*(?:daysLeft\\s*(?:>\\s*0|>=\\s*1|<=\\s*0|<\\s*1)|(?:0\\s*<|1\\s*<=|0\\s*>=|1\\s*>)\\s*daysLeft)\\s*\\)",
+          "message": "Add an `if` that decides whether this call does any work: send the reminder and recurse only while `daysLeft > 0` (or return at once when `daysLeft <= 0`). Without it, nothing ever stops the chain."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "The base case can't be skipped",
+          "within": "ReminderBot.sendReminders",
+          "forbid": "\\bdaysLeft\\s*(?:==|!=)\\s*0\\b|\\b0\\s*(?:==|!=)\\s*daysLeft\\b",
+          "message": "A test for exactly 0 misses overdue books: with -2 the calls go -2, -3, -4, ... and never equal 0, so the stack overflows. Test `daysLeft > 0` or `daysLeft <= 0` instead.",
+          "starter_passes": true
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "Each call has one day fewer",
+          "within": "ReminderBot.sendReminders",
+          "require": [
+            "\\bsendReminders\\s*\\(\\s*\\w+\\s*,\\s*(?:daysLeft\\s*-\\s*1|--\\s*daysLeft)\\s*\\)",
+            "(?:\\bdaysLeft\\s*(?:--|-=\\s*1)|--\\s*daysLeft)\\s*;[\\s\\S]*\\bsendReminders\\s*\\(\\s*\\w+\\s*,\\s*daysLeft\\s*\\)"
+          ],
+          "message": "The recursive call still passes the same `daysLeft`, so the problem never gets smaller. Pass `daysLeft - 1`, the way `messageMethod(reps - 1)` does in Figure 12-3."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "No post-decrement in the argument",
+          "within": "ReminderBot.sendReminders",
+          "forbid": "\\bsendReminders\\s*\\(\\s*\\w+\\s*,\\s*daysLeft\\s*--",
+          "message": "`daysLeft--` inside the call passes the *old* value and subtracts afterwards, so every call still gets the same number. Write `daysLeft - 1`.",
+          "starter_passes": true
+        },
+        {
+          "id": "C5",
+          "requirement": "R3",
+          "title": "Repeats by calling itself, not with a loop",
+          "within": "ReminderBot.sendReminders",
+          "forbid": "\\b(?:while|for)\\s*\\(",
+          "message": "This lab practises recursion: remove the loop and let `sendReminders()` call itself with a smaller `daysLeft`. (Figure 12-5 shows the loop version for comparison.)",
+          "starter_passes": true
+        }
+      ],
+      "hints": [
+        "Ask two questions of every call: when should I stop without calling again? And is the problem I hand on smaller than mine?",
+        "Look at `messageMethod()` in Figure 12-3: an `if` wraps both the output and the recursive call, and the call passes `reps - 1`.",
+        "The decisive detail is the condition. A test for exactly 0 works for 3 days but not for -2, which skips past 0 forever. Test whether days are left at all (greater than 0), and hand on one day fewer."
+      ],
+      "test_program": {
+        "file_name": "TestReminderBot.java",
+        "code": "public class TestReminderBot\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Book due in 3 days:\");\n        ReminderBot.calls = 0;\n        ReminderBot.sendReminders(\"Clean Code\", 3);\n        System.out.println(\"Calls made: \" + ReminderBot.calls);\n\n        System.out.println(\"Book due today:\");\n        ReminderBot.calls = 0;\n        ReminderBot.sendReminders(\"Java Basics\", 0);\n        System.out.println(\"Calls made: \" + ReminderBot.calls);\n\n        System.out.println(\"Book already 2 days overdue:\");\n        ReminderBot.calls = 0;\n        ReminderBot.sendReminders(\"Data Structures\", -2);\n        System.out.println(\"Calls made: \" + ReminderBot.calls);\n    }\n}\n",
+        "expected_output": "Book due in 3 days:\nReminder: Clean Code is due in 3 day(s)\nReminder: Clean Code is due in 2 day(s)\nReminder: Clean Code is due in 1 day(s)\nCalls made: 4\nBook due today:\nCalls made: 1\nBook already 2 days overdue:\nCalls made: 1\n",
+        "predict": "Predict the “Calls made” number for 3 days before you run it: is it 3 or 4, and which call sends nothing? Then predict what the starter would do with the overdue book if you only added `if (daysLeft == 0) return;`.",
+        "how_to_run": "Put `ReminderBot.java` and `TestReminderBot.java` in the same folder, then run `javac *.java` and `java TestReminderBot`. In an IDE, add them to one project and run `TestReminderBot.java`. You don't type anything: the test program supplies the data. If you run the starter first, it prints the same reminder thousands of times and ends with a `StackOverflowError`: that is the bug you are fixing."
+      },
+      "reflection": [
+        {
+          "question": "Your condition tests whether `daysLeft` is greater than 0 (or at most 0) rather than equal to 0. Use the overdue book to explain what `== 0` would do, and name the error Java reports.",
+          "model_answer": "With -2 the test == 0 is never true: the calls go -2, -3, -4 and never reach the base case. Each unfinished call waits on the call stack, so Java eventually throws StackOverflowError."
+        },
+        {
+          "question": "Figure 12-5 sends the same messages with a `while` loop. Give one reason a team might keep the recursive version and one reason to switch to the loop.",
+          "model_answer": "Recursive: it reads as “send one reminder, then handle the smaller problem”, which programmers used to recursion develop quickly. Loop: iteration usually runs faster because there is no overhead of remembering where each call must return."
+        }
+      ],
+      "extension": "Make the base case useful: when `daysLeft` is exactly 0 print `Due today: <title>`, and when it is below 0 print `Overdue: <title>`, still without recursing. Which call in the chain prints it, and does `calls` change for 3 days?",
+      "worth_knowing": "Java gives each thread a fixed-size call stack, typically about 1 MB on 64-bit systems (the `-Xss` option changes it). A few thousand simple calls fit; an endless chain fills it and ends in `StackOverflowError`, the failure the programmers' Q&A site Stack Overflow is named after.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Allman braces and indentation kept; one `if` guards both the reminder and the recursive call; no loop."
+        }
+      ]
+    },
+    {
+      "id": "12.2",
+      "title": "The playlist tool that crashes on an empty set",
+      "subtitle": "Recursive math: the right base case, and a return type big enough for the answer",
+      "source": "Ch. 12, section 12.2 (pp. 489–495)",
+      "minutes": 25,
+      "objectives": [
+        "Choose a base case that is the smallest input a recursive method accepts (0! = 1)",
+        "Follow how waiting calls on the call stack finish in reverse order and combine their results",
+        "Write a recursive method with two parameters that returns a value"
+      ],
+      "scenario": "The student radio station's scheduling tool tells DJs how many different orders a set of songs can be played in. For `n` songs that is `n!` (the book's note on permutations, p. 492): 3 songs can be played in 3! = 6 orders.\n\nTwo bug reports came in this week:\n\n- Opening an **empty** set (0 songs) crashes the tool with a `StackOverflowError`.\n- A 13-song set shows **1932053504** orders. The real number is 6,227,020,800.\n\nThe DJs also want a second number: how many ways to fill the first `slots` positions of the show from `songs` songs, where order matters. Picking and ordering 3 openers from 10 songs is 10 × 9 × 8 = 720: the first slot has 10 choices, and the rest is the same problem with one song and one slot fewer.\n\nWith your fixes the test program prints:\n\n```\nOrders for a whole set:\n0 songs: 1\n1 songs: 1\n3 songs: 6\n5 songs: 120\n13 songs: 6227020800\n20 songs: 2432902008176640000\nOrdered openers:\n3 of 10 songs: 720\n0 of 10 songs: 1\n4 of 4 songs: 24\n3 of 2 songs: 0\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`factorial()` has a base case that 0 reaches: `0!` is 1 (p. 492). The recursive case still returns `n * factorial(n - 1)`, with no loop."
+        },
+        {
+          "id": "R2",
+          "text": "`factorial()` returns a `long`, so 13 songs (6,227,020,800 orders) is right; an `int` stops at about 2.1 billion."
+        },
+        {
+          "id": "R3",
+          "text": "`arrangements(songs, slots)` is recursive and returns a `long`: with no slots left there is exactly 1 way; otherwise `songs` times the arrangements of one song fewer into one slot fewer. It does not use `factorial()` or a loop."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "PlaylistMath.java",
+      "starter_code": "public class PlaylistMath\n{\n    // Returns n!, the number of different orders n songs can be played in.\n    // TODO (R2): 13! no longer fits in an int.\n    public static int factorial(int n)\n    {\n        // TODO (R1): the base case must be the smallest set the tool accepts.\n        if (n == 1)\n            return 1;\n        else\n            return n * factorial(n - 1);\n    }\n\n    // Returns the number of ways to fill `slots` positions in order,\n    // choosing from `songs` different songs: songs * (songs - 1) * ... (slots factors).\n    public static long arrangements(int songs, int slots)\n    {\n        // TODO (R3): a base case, then a recursive case with one song and one slot fewer.\n        return 0;\n    }\n}\n",
+      "solution": "public class PlaylistMath\n{\n    // Returns n!, the number of different orders n songs can be played in.\n    public static long factorial(int n)\n    {\n        if (n == 0)\n            return 1;\n        else\n            return n * factorial(n - 1);\n    }\n\n    // Returns the number of ways to fill `slots` positions in order,\n    // choosing from `songs` different songs: songs * (songs - 1) * ... (slots factors).\n    public static long arrangements(int songs, int slots)\n    {\n        if (slots == 0)\n            return 1;\n        else\n            return songs * arrangements(songs - 1, slots - 1);\n    }\n}\n",
+      "solution_notes": "The starter's base case was `n == 1`. That gives the right 4! = 24, but `factorial(0)` counts down 0, -1, -2, ... and never meets 1, so the waiting calls pile up on the call stack until it overflows. The base case should be the smallest input the method accepts, and the book defines 0! = 1 (p. 492). The second bug is size: an `int` holds at most 2,147,483,647, so 13! silently wraps to 1932053504. In `long`, `n * factorial(n - 1)` multiplies in `long` because the call returns a `long`; 20! is the largest factorial that fits. `arrangements()` has the same shape with two counters: 0 slots is the base case (one way: do nothing), and each recursive case multiplies the choices for the first slot by the arrangements of the rest. When there are more slots than songs, the chain reaches `songs == 0` and multiplies by 0, so 3 of 2 is correctly 0. Dividing two factorials (`factorial(songs) / factorial(songs - slots)`) would give the same answers here but overflows as soon as `songs` passes 20.",
+      "warmup": [
+        {
+          "question": "Trace the starter's `factorial(0)`. Which values does `n` take in the first four calls, and why is the base case never reached?",
+          "model_answer": "0, -1, -2, -3. The base case tests n == 1, and counting down from 0 moves away from 1, so the calls never stop until the call stack overflows."
+        },
+        {
+          "question": "In the book's `factorial(4)` (Figure 12-12), which call finishes first, and in what order do the waiting calls finish?",
+          "model_answer": "The fifth call, factorial(0), finishes first by returning 1. The waiting calls then finish in reverse order of how they started: factorial(1) returns 1, factorial(2) returns 2, factorial(3) returns 6 and factorial(4) returns 24."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "0 reaches the base case",
+          "within": "PlaylistMath.factorial",
+          "require": "\\bif\\s*\\(\\s*(?:n\\s*(?:==\\s*0|<=\\s*[01]|<\\s*[12])|(?:0|1)\\s*(?:==|>=)\\s*n|[12]\\s*>\\s*n)",
+          "message": "`factorial(0)` counts down 0, -1, -2, ... and never meets `n == 1`. Make the base case `n == 0` returning 1: the book defines 0! as 1, and it is the smallest set the tool accepts."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "Still recursive: n times the smaller factorial",
+          "within": "PlaylistMath.factorial",
+          "require": [
+            "\\bn\\s*\\*\\s*factorial\\s*\\(\\s*n\\s*-\\s*1\\s*\\)",
+            "\\bfactorial\\s*\\(\\s*n\\s*-\\s*1\\s*\\)\\s*\\*\\s*n\\b"
+          ],
+          "message": "Keep the recursive case as `n * factorial(n - 1)`: each call solves a factorial one smaller.",
+          "starter_passes": true
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "factorial() returns a long",
+          "within": "PlaylistMath",
+          "require": "\\bstatic\\s+long\\s+factorial\\s*\\(",
+          "message": "Change the return type to `long`. An `int` holds at most 2,147,483,647, so 13! (6,227,020,800) wraps around to a wrong number without any error."
+        },
+        {
+          "id": "C4",
+          "requirement": "R1",
+          "title": "No loop in factorial()",
+          "within": "PlaylistMath.factorial",
+          "forbid": "\\b(?:while|for)\\s*\\(",
+          "message": "Keep `factorial()` recursive: the base case and `n * factorial(n - 1)` do the repeating.",
+          "starter_passes": true
+        },
+        {
+          "id": "C5",
+          "requirement": "R3",
+          "title": "arrangements() has a base case",
+          "within": "PlaylistMath.arrangements",
+          "require": "\\bif\\s*\\(\\s*(?:slots\\s*(?:==\\s*0|<=\\s*0|<\\s*1)|0\\s*(?:==|>=)\\s*slots|1\\s*>\\s*slots)\\s*\\)",
+          "message": "Start with the case that needs no recursion: when `slots` is 0 there is exactly one way to fill no positions, so return 1."
+        },
+        {
+          "id": "C6",
+          "requirement": "R3",
+          "title": "One song and one slot fewer each call",
+          "within": "PlaylistMath.arrangements",
+          "require": "^(?=[\\s\\S]*\\barrangements\\s*\\(\\s*songs\\s*-\\s*1\\s*,\\s*slots\\s*-\\s*1\\s*\\))(?=[\\s\\S]*(?:\\bsongs\\s*\\*|\\*\\s*songs\\b))",
+          "message": "The first slot has `songs` choices; the rest is the same problem with one song and one slot fewer. Return `songs * arrangements(songs - 1, slots - 1)`."
+        },
+        {
+          "id": "C7",
+          "requirement": "R3",
+          "title": "No factorials or loops in arrangements()",
+          "within": "PlaylistMath.arrangements",
+          "forbid": "\\bfactorial\\s*\\(|\\b(?:while|for)\\s*\\(",
+          "message": "Solve it with its own recursion. `factorial(songs) / factorial(songs - slots)` overflows `long` once `songs` passes 20, even when the answer is small.",
+          "starter_passes": true
+        }
+      ],
+      "hints": [
+        "There are two separate problems in `factorial()`: one is where the countdown stops, the other is how big the answer gets. Fix one, run, then fix the other.",
+        "What is 0! by definition (p. 492)? Make that the base case. For the size problem: the largest `int` is about 2.1 billion; which integer type holds 6,227,020,800?",
+        "`arrangements()` has the shape of `factorial()` with two counters: no slots left means exactly one way; otherwise multiply the choices for the first slot by the arrangements of the remaining songs into the remaining slots."
+      ],
+      "test_program": {
+        "file_name": "TestPlaylistMath.java",
+        "code": "public class TestPlaylistMath\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Orders for a whole set:\");\n        int[] sets = { 0, 1, 3, 5, 13, 20 };\n        for (int songs : sets)\n            System.out.println(songs + \" songs: \" + PlaylistMath.factorial(songs));\n\n        System.out.println(\"Ordered openers:\");\n        int[][] picks = { { 10, 3 }, { 10, 0 }, { 4, 4 }, { 2, 3 } };\n        for (int[] p : picks)\n            System.out.println(p[1] + \" of \" + p[0] + \" songs: \"\n                + PlaylistMath.arrangements(p[0], p[1]));\n    }\n}\n",
+        "expected_output": "Orders for a whole set:\n0 songs: 1\n1 songs: 1\n3 songs: 6\n5 songs: 120\n13 songs: 6227020800\n20 songs: 2432902008176640000\nOrdered openers:\n3 of 10 songs: 720\n0 of 10 songs: 1\n4 of 4 songs: 24\n3 of 2 songs: 0\n",
+        "predict": "Before running, predict how many calls `factorial(5)` makes with your base case, and what `arrangements(2, 3)` returns. Which call in that chain makes the answer 0?",
+        "how_to_run": "Put `PlaylistMath.java` and `TestPlaylistMath.java` in the same folder, then run `javac *.java` and `java TestPlaylistMath`. In an IDE, add them to one project and run `TestPlaylistMath.java`. You don't type anything: the test program supplies the data."
+      },
+      "reflection": [
+        {
+          "question": "Both `n == 1` and `n == 0` give 4! = 24. Why is `n == 0` the better base case for this tool?",
+          "model_answer": "0! is defined as 1 and 0 is a real input: an empty set has exactly one order. With n == 1, factorial(0) counts down past 1 and never stops. A base case should be the smallest input the method accepts."
+        },
+        {
+          "question": "Even with `long`, `factorial(21)` returns -4249290049419214848. What is happening, and why doesn't Java report an error?",
+          "model_answer": "21! is larger than the biggest long (about 9.2 × 10^18), so the multiplication overflows and wraps around. Java's integer arithmetic doesn't check for overflow; it silently keeps the low bits, so the result is wrong but no error appears."
+        }
+      ],
+      "extension": "Return `Math.multiplyExact(n, factorial(n - 1))` instead of `n * factorial(n - 1)`. It throws an `ArithmeticException` when the result overflows instead of returning a wrong number. What is the largest `n` that still works, and which songs count makes it throw?",
+      "worth_knowing": "Factorials outgrow everything. 52!, the number of ways to order a deck of cards, is about 8 × 10^67, so large that a well-shuffled deck is almost certainly in an order no deck has ever been in before.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Allman braces and indentation kept; both methods have a clear base case before the recursive case; no loops or factorial division in `arrangements()`."
+        }
+      ]
+    },
+    {
+      "id": "12.3",
+      "title": "The clinic texts that never reach (305) 555-0199",
+      "subtitle": "Recursion on a string: decide about one character, let the call handle the rest",
+      "source": "Ch. 12, section 12.3 (pp. 495–499)",
+      "minutes": 25,
+      "objectives": [
+        "Trace a recursive method that splits a string with `indexOf()` and `substring()`",
+        "Write a recursive string method that shrinks its argument by one character each call",
+        "Return a built-up result instead of printing pieces, so the caller can store it"
+      ],
+      "scenario": "The student health clinic texts appointment reminders through a service that accepts **digits only**, like `3055550199`. The sign-up form lets students type their number any way they like: `305-555-0199`, `(305) 555-0199`, `305.555.0199`.\n\nThe clinic's current cleaner is the book's `removeDashes()` from the *You Do It* on pp. 497–498. It has two problems:\n\n- It **prints** the pieces between dashes and returns nothing, so the clinic can't store the cleaned number in its records.\n- It only removes dashes. `(305) 555-0199` comes out as `(305) 5550199`, and the texting service rejects it.\n\nWrite `digitsOnly(String s)`, which **returns** a new string holding only the digits of `s`, in order. Use the technique from `ReverseStringDemo` (Figure 12-16): each call deals with one character and hands a string one character shorter to the next call. Keep `removeDashes()` as it is; the test program prints it for comparison.\n\nWith your method the test program prints:\n\n```\n[305-555-0199] -> [3055550199] 10 digits\n[(305) 555-0199] -> [3055550199] 10 digits\n[305.555.0199] -> [3055550199] 10 digits\n[3055550199] -> [3055550199] 10 digits\n[] -> [] 0 digits\n[ext. 42] -> [42] 2 digits\nThe book's removeDashes prints: (305) 5550199\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`digitsOnly()` returns the cleaned string and prints nothing, so the caller can store it."
+        },
+        {
+          "id": "R2",
+          "text": "Base case: an empty string has no digits, so `digitsOnly(\"\")` returns `\"\"`."
+        },
+        {
+          "id": "R3",
+          "text": "Recursive case: look at one character (the first, or the last), keep it only if `Character.isDigit()` says it is a digit, and join it with what `digitsOnly()` returns for the rest of the string, one character shorter."
+        },
+        {
+          "id": "R4",
+          "text": "No loops and no `replace`, `replaceAll` or `split`: the recursion does the work. Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "PhoneCleaner.java",
+      "starter_code": "public class PhoneCleaner\n{\n    // The book's version (pp. 497-498): it prints the pieces between dashes.\n    // It returns nothing, so the clinic can't store the cleaned number.\n    public static void removeDashes(String s)\n    {\n        int dashLoc = s.indexOf('-');\n        if (dashLoc == -1)\n        {\n            System.out.print(s);\n        }\n        else\n        {\n            removeDashes(s.substring(0, dashLoc));\n            removeDashes(s.substring(dashLoc + 1));\n        }\n    }\n\n    // Returns only the digits of s, in order: \"(305) 555-0199\" -> \"3055550199\".\n    public static String digitsOnly(String s)\n    {\n        // TODO (R2): base case: an empty string has no digits.\n        // TODO (R3): keep the first character only if it is a digit,\n        //            then add the digits of the rest of the string.\n        return s;\n    }\n}\n",
+      "solution": "public class PhoneCleaner\n{\n    // The book's version (pp. 497-498): it prints the pieces between dashes.\n    // It returns nothing, so the clinic can't store the cleaned number.\n    public static void removeDashes(String s)\n    {\n        int dashLoc = s.indexOf('-');\n        if (dashLoc == -1)\n        {\n            System.out.print(s);\n        }\n        else\n        {\n            removeDashes(s.substring(0, dashLoc));\n            removeDashes(s.substring(dashLoc + 1));\n        }\n    }\n\n    // Returns only the digits of s, in order: \"(305) 555-0199\" -> \"3055550199\".\n    public static String digitsOnly(String s)\n    {\n        if (s.length() == 0)\n            return \"\";\n        char first = s.charAt(0);\n        String rest = digitsOnly(s.substring(1));\n        if (Character.isDigit(first))\n            return first + rest;\n        else\n            return rest;\n    }\n}\n",
+      "solution_notes": "`removeDashes()` splits around the first dash with `indexOf()` and handles both halves recursively, like `breakIntoWords()` (Figure 12-14). It can only display, and only dashes. `digitsOnly()` uses the other technique from section 12.3: shrink the string by one character per call, as `reverseString()` does (Figure 12-16). The base case is the empty string, which every chain reaches because each call removes one character. The recursive case decides about one character and joins it to the *returned* result for the rest: `first + rest` keeps the digit in front, so the order is preserved. `first + rest` is a `char` plus a `String`, which is string concatenation. Returning instead of printing lets the caller store, compare or count the result (the test prints `stored.length()`). Working from the last character (`s.substring(0, s.length() - 1)`, with the digit added after the result) is equally correct.",
+      "warmup": [
+        {
+          "question": "Trace the book's `removeDashes(\"305-555\")`. List the calls in order with their arguments, and say which calls print.",
+          "model_answer": "removeDashes(\"305-555\") finds the dash at 3 and calls removeDashes(\"305\"), which prints 305, then removeDashes(\"555\"), which prints 555. The first call prints nothing itself; only the base cases print."
+        },
+        {
+          "question": "What does `removeDashes(\"(305) 555-0199\")` print, and why can't the clinic save that result in a variable?",
+          "model_answer": "(305) 5550199: only the dash is removed. And the method is void; it prints the pieces as it goes, so there is no value to assign to a variable."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "Returns the result, prints nothing",
+          "within": "PhoneCleaner.digitsOnly",
+          "forbid": "\\bSystem\\s*\\.\\s*out\\b",
+          "message": "Don't print inside `digitsOnly()`: return the string, so the clinic can store it and the caller decides whether to display it.",
+          "starter_passes": true
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "An empty string is the base case",
+          "within": "PhoneCleaner.digitsOnly",
+          "require": [
+            "\\bs\\s*\\.\\s*length\\s*\\(\\s*\\)\\s*(?:==\\s*[01]|<\\s*[12]|<=\\s*[01])",
+            "\\bs\\s*\\.\\s*isEmpty\\s*\\(\\s*\\)"
+          ],
+          "message": "Every call shortens the string by one character, so the chain always ends at the empty string. Test for it first (`s.length() == 0` or `s.isEmpty()`) and return an empty string."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "Keeps only digits",
+          "within": "PhoneCleaner.digitsOnly",
+          "require": "\\bCharacter\\s*\\.\\s*isDigit\\s*\\(",
+          "message": "Decide about one character with `Character.isDigit(...)`: keep it if it is a digit, drop it otherwise. That handles dashes, spaces, dots and parentheses in one rule."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "The recursive call gets a string one character shorter",
+          "within": "PhoneCleaner.digitsOnly",
+          "require": [
+            "\\bdigitsOnly\\s*\\(\\s*s\\s*\\.\\s*substring\\s*\\(\\s*1\\s*(?:,\\s*s\\s*\\.\\s*length\\s*\\(\\s*\\)\\s*)?\\)\\s*\\)",
+            "\\bdigitsOnly\\s*\\(\\s*s\\s*\\.\\s*substring\\s*\\(\\s*0\\s*,\\s*s\\s*\\.\\s*length\\s*\\(\\s*\\)\\s*-\\s*1\\s*\\)\\s*\\)"
+          ],
+          "message": "Call `digitsOnly()` on the rest of the string, one character shorter: `s.substring(1)` (everything after the first character), as `reverseString()` shortens its string in Figure 12-16."
+        },
+        {
+          "id": "C5",
+          "requirement": "R4",
+          "title": "Recursion does the work",
+          "within": "PhoneCleaner.digitsOnly",
+          "forbid": "\\b(?:while|for)\\s*\\(|\\.\\s*(?:replace|replaceAll|split|chars)\\s*\\(",
+          "message": "This lab practises recursion: remove the loop or library shortcut and let each call handle one character.",
+          "starter_passes": true
+        }
+      ],
+      "hints": [
+        "Think of the string as one character plus the rest. You only decide about one character; the recursive call cleans the rest.",
+        "`s.charAt(0)` is the first character and `s.substring(1)` is everything after it. When is there no first character to look at? That is the base case.",
+        "Build the answer from the returned value: if the first character is a digit, put it in front of what the call on the rest returns; otherwise return that result unchanged."
+      ],
+      "test_program": {
+        "file_name": "TestPhoneCleaner.java",
+        "code": "public class TestPhoneCleaner\n{\n    public static void main(String[] args)\n    {\n        String[] typed = { \"305-555-0199\", \"(305) 555-0199\", \"305.555.0199\",\n                           \"3055550199\", \"\", \"ext. 42\" };\n        for (String phone : typed)\n        {\n            String stored = PhoneCleaner.digitsOnly(phone);\n            System.out.println(\"[\" + phone + \"] -> [\" + stored + \"] \"\n                + stored.length() + \" digits\");\n        }\n\n        System.out.print(\"The book's removeDashes prints: \");\n        PhoneCleaner.removeDashes(\"(305) 555-0199\");\n        System.out.println();\n    }\n}\n",
+        "expected_output": "[305-555-0199] -> [3055550199] 10 digits\n[(305) 555-0199] -> [3055550199] 10 digits\n[305.555.0199] -> [3055550199] 10 digits\n[3055550199] -> [3055550199] 10 digits\n[] -> [] 0 digits\n[ext. 42] -> [42] 2 digits\nThe book's removeDashes prints: (305) 5550199\n",
+        "predict": "Predict how many times `digitsOnly()` runs for `\"ext. 42\"` (7 characters), and which call is the first to return.",
+        "how_to_run": "Put `PhoneCleaner.java` and `TestPhoneCleaner.java` in the same folder, then run `javac *.java` and `java TestPhoneCleaner`. In an IDE, add them to one project and run `TestPhoneCleaner.java`. You don't type anything: the test program supplies the data."
+      },
+      "reflection": [
+        {
+          "question": "Your recursive call always gets a string one character shorter. Explain why that guarantees the base case is reached, and how many calls `digitsOnly(\"305-555\")` makes.",
+          "model_answer": "Each call removes one character, so the length goes 7, 6, 5, ... down to 0, and length 0 is the base case. That is 8 calls: one per character plus the call with the empty string."
+        },
+        {
+          "question": "Why is returning a `String` a better design for the clinic than the book's version that prints?",
+          "model_answer": "A returned value lets the caller decide what to do with it: store it in the records, compare it, check it has 10 digits, or print it. A method that prints can only display; its result can't be saved or tested."
+        }
+      ],
+      "extension": "Numbers typed with a country code, like `+1 (305) 555-0199`, clean to 11 digits. Write `forTexting(String s)` that calls `digitsOnly()` and drops a leading 1 when the result has 11 digits. Should that rule live inside the recursion? Why not?",
+      "worth_knowing": "Phone numbers have an international standard, ITU-T E.164: a country code followed by the number, at most 15 digits, no spaces or punctuation. Texting and calling services store numbers in that form (written with a leading +), which is why cleaning what people type is such a common job.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Allman braces and indentation kept; base case first; the returned value of the recursive call is used, not printed."
+        }
+      ]
+    },
+    {
+      "id": "12.4",
+      "title": "The bouncing ball that never bounces back",
+      "subtitle": "Recursive patterns: code after the call runs on the way back",
+      "source": "Ch. 12, section 12.4 (pp. 499–500)",
+      "minutes": 25,
+      "objectives": [
+        "Pass what one line needs to the next call, as `display(spaces, lines)` does in Figure 12-19",
+        "Use statements after a recursive call, which run in reverse order as the calls finish",
+        "Choose base cases that draw a symmetric pattern with its middle row exactly once"
+      ],
+      "scenario": "The Game Zone club is building a console arcade, and its start screen shows a ball that bounces off the right wall. `Bounce.bounce(0, 3)` should draw the ball moving right one column per row, turning at the wall, and coming back:\n\n```\nO\n O\n  O\n O\nO\n```\n\nThe current `bounce()` is built like the book's `DiagonalOs` (Figure 12-19): each call draws one row and calls itself with one more space and one line fewer. So the ball falls to the right and stops; it never comes back.\n\nYou don't need a second loop or a second method. Each call already knows its own `spaces`, and each call gets control back when the call it made has finished. `drawRow()` is finished: it draws one row with the given number of spaces before the ball. The test program draws three bounces:\n\n```\nBounce of 3:\nO\n O\n  O\n O\nO\nBounce of 1, starting 4 spaces in:\n    O\nBounce of 0:\nDone\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "With 0 lines `bounce()` draws nothing; with 1 line it draws only the turning point, once, and does not call itself."
+        },
+        {
+          "id": "R2",
+          "text": "With more lines it draws its row, calls itself with one more space and one line fewer, and **after that call** draws its own row again: the way back."
+        },
+        {
+          "id": "R3",
+          "text": "`bounce()` repeats only by calling itself: no loop and no printing of its own; every row is drawn by `drawRow()`."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints exactly what it expects.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "Bounce.java",
+      "starter_code": "public class Bounce\n{\n    // Draws a ball moving right to the wall and bouncing back.\n    // lines: rows down to the wall, counting the turning point.\n    // spaces: how far from the left the first row starts.\n    public static void bounce(int spaces, int lines)\n    {\n        if (lines <= 0)\n            return;\n        // TODO (R1): the turning point (one line left) is drawn once.\n        drawRow(spaces);\n        bounce(spaces + 1, lines - 1);\n        // TODO (R2): draw the way back.\n    }\n\n    // Draws one row: `spaces` spaces, then the ball.\n    public static void drawRow(int spaces)\n    {\n        for (int x = 0; x < spaces; ++x)\n            System.out.print(\" \");\n        System.out.println(\"O\");\n    }\n}\n",
+      "solution": "public class Bounce\n{\n    // Draws a ball moving right to the wall and bouncing back.\n    // lines: rows down to the wall, counting the turning point.\n    // spaces: how far from the left the first row starts.\n    public static void bounce(int spaces, int lines)\n    {\n        if (lines <= 0)\n            return;\n        if (lines == 1)\n        {\n            drawRow(spaces);\n            return;\n        }\n        drawRow(spaces);\n        bounce(spaces + 1, lines - 1);\n        drawRow(spaces);\n    }\n\n    // Draws one row: `spaces` spaces, then the ball.\n    public static void drawRow(int spaces)\n    {\n        for (int x = 0; x < spaces; ++x)\n            System.out.print(\" \");\n        System.out.println(\"O\");\n    }\n}\n",
+      "solution_notes": "Like `display()` in Figure 12-19, each call passes what the next row needs (one more space, one line fewer), so each line uses knowledge from the previous one (p. 499). The new idea is *where* the second `drawRow(spaces)` goes: after the recursive call. A call doesn't finish until the call it made has finished (the reminders on the call stack, p. 490), so the statements after the call run deepest-first, in reverse: 1 space, then 0. That draws the way back. The turning point is a second base case: with one line left, a call draws its row once and stops. Without it, that call would draw its row, make a call that draws nothing, and draw the same row again, so the wall row would appear twice. `if (lines == 1) ... else if` or an `else` block instead of `return` are equally correct.",
+      "warmup": [
+        {
+          "question": "The starter draws only the way down. For `bounce(0, 3)`, list the calls with their `spaces` and `lines`, and say which call draws nothing.",
+          "model_answer": "bounce(0,3), bounce(1,2), bounce(2,1) and bounce(3,0). The first three draw rows with 0, 1 and 2 spaces; bounce(3,0) is the base case and draws nothing."
+        },
+        {
+          "question": "When `bounce(2, 1)` finishes, where does the program continue? What could a statement written after the recursive call do?",
+          "model_answer": "It continues in bounce(1,2), right after its recursive call, and when that finishes, in bounce(0,3). A statement there runs as each call finishes, deepest first, so it could draw the rows with 1 and then 0 spaces: the way back."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The turning point is its own base case",
+          "within": "Bounce.bounce",
+          "require": "\\bif\\s*\\(\\s*(?:lines\\s*(?:==\\s*1|<=\\s*1|<\\s*2|>\\s*1|>=\\s*2)|1\\s*(?:==|>=|<)\\s*lines|2\\s*(?:>|<=)\\s*lines)\\s*\\)",
+          "message": "Give the turning point its own case: when `lines` is 1, draw the row once and don't call `bounce()` again (or recurse and draw the way back only while `lines > 1`). Otherwise the row at the wall is drawn twice."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "The row is drawn again after the call returns",
+          "within": "Bounce.bounce",
+          "require": "\\bbounce\\s*\\([^;]*\\)\\s*;\\s*\\}?\\s*drawRow\\s*\\(\\s*spaces\\s*\\)",
+          "message": "Put a second `drawRow(spaces)` right after the recursive call. It runs when the deeper calls have finished, in reverse order, which draws the way back."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "Each call moves right and down",
+          "within": "Bounce.bounce",
+          "require": "\\bbounce\\s*\\(\\s*spaces\\s*\\+\\s*1\\s*,\\s*lines\\s*-\\s*1\\s*\\)",
+          "message": "Keep the recursive call as `bounce(spaces + 1, lines - 1)`: one more space and one line fewer, like `display(spaces, lines - 1)` after `spaces++` in Figure 12-19.",
+          "starter_passes": true
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "No loop or printing in bounce()",
+          "within": "Bounce.bounce",
+          "forbid": "\\b(?:while|for)\\s*\\(|\\bSystem\\s*\\.\\s*out\\b",
+          "message": "Let `bounce()` repeat by calling itself and draw every row with `drawRow()`. A loop here would hide the idea the lab is about: the way back comes from the calls finishing.",
+          "starter_passes": true
+        }
+      ],
+      "hints": [
+        "Each call already knows its own `spaces`. When does each call get control back, and what is still left for it to do then?",
+        "Code placed after the recursive call runs on the way back, deepest call first, just as the waiting `sumNumbers()` calls finish in reverse order (pp. 490–491).",
+        "The call with one line left is the wall: it draws its row once and doesn't call itself. Every other call draws its row, makes the recursive call, then draws the same row again."
+      ],
+      "test_program": {
+        "file_name": "TestBounce.java",
+        "code": "public class TestBounce\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Bounce of 3:\");\n        Bounce.bounce(0, 3);\n\n        System.out.println(\"Bounce of 1, starting 4 spaces in:\");\n        Bounce.bounce(4, 1);\n\n        System.out.println(\"Bounce of 0:\");\n        Bounce.bounce(0, 0);\n        System.out.println(\"Done\");\n    }\n}\n",
+        "expected_output": "Bounce of 3:\nO\n O\n  O\n O\nO\nBounce of 1, starting 4 spaces in:\n    O\nBounce of 0:\nDone\n",
+        "predict": "Predict how many rows `bounce(0, 5)` draws, and which call draws the very last row on the screen.",
+        "how_to_run": "Put `Bounce.java` and `TestBounce.java` in the same folder, then run `javac *.java` and `java TestBounce`. In an IDE, add them to one project and run `TestBounce.java`. You don't type anything: the test program supplies the data. Compare the leading spaces carefully: they are the picture."
+      },
+      "reflection": [
+        {
+          "question": "Explain why the rows drawn after the recursive call come out in the reverse order of the rows drawn before it.",
+          "model_answer": "Each call waits on the call stack until the call it made returns. The deepest call returns first, so the statements after the call run deepest-first: 1 space, then 0, the mirror of the way down."
+        },
+        {
+          "question": "What would your method draw if you removed the special case for one line, and why?",
+          "model_answer": "The wall row would appear twice. With one line left the call would draw its row, call bounce with 0 lines (which draws nothing), and then draw the same row again on the way back."
+        }
+      ],
+      "extension": "Add a `char ball` parameter to `drawRow()` and `bounce()` so the way down uses `O` and the way back uses `o`. Then make the ball step 2 columns per row. Which single argument changes, and does the turning point still need its own case?",
+      "worth_knowing": "The book's note on fractals (p. 500) is this idea taken further. A Sierpinski triangle can be drawn by a method that draws three half-size copies of itself, with a base case when the triangle is too small to see. Each level of recursion triples the number of triangles.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Allman braces and indentation kept; base cases come before the recursive case; every row is drawn through `drawRow()`."
+        }
+      ]
+    },
+    {
+      "id": "12.5",
+      "title": "The savings calculator the IT team wants as a loop",
+      "subtitle": "Recursive and iterative versions of the same method give the same answers",
+      "source": "Ch. 12, section 12.5 (pp. 500–503)",
+      "minutes": 25,
+      "objectives": [
+        "Map the parts of a recursive method (base case, recursive step, smaller argument) onto a loop",
+        "Write an iterative method that gives exactly the same results as a recursive one",
+        "Weigh recursion against iteration: overhead, call-stack depth and clarity"
+      ],
+      "scenario": "The campus credit union's website has a savings calculator built on the book's recursive `computeSavings()` (Figure 12-21): you deposit `amt` at the end of every year, the balance earns `rate` interest each year, and you may start with a `total` already saved.\n\nThe IT team's style guide asks for loops in code that runs on every page view, because iterative programs usually run faster: there is no overhead of remembering where each call returns (p. 489). Write `computeSavingsLoop()` with the same parameters and **exactly** the same results, and leave the recursive version as it is.\n\nThe test program runs both versions on five plans and compares the results with `==`, so they must agree to the last digit:\n\n```\n$2000 a year, 1 years at 5%, start $0\n  recursive 2000.0\n  loop      2000.0  same: true\n$2000 a year, 2 years at 5%, start $0\n  recursive 4100.0\n  loop      4100.0  same: true\n$2000 a year, 30 years at 5%, start $0\n  recursive 132877.69500602645\n  loop      132877.69500602645  same: true\n$500 a year, 10 years at 3%, start $1000\n  recursive 7075.856035079487\n  loop      7075.856035079487  same: true\n$750 a year, 0 years at 4%, start $1200\n  recursive 1200.0\n  loop      1200.0  same: true\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`computeSavingsLoop()` uses a `while` or `for` loop that runs once per year, and does not call itself or `computeSavings()`."
+        },
+        {
+          "id": "R2",
+          "text": "Each year it applies the same calculation as the recursive version, written the same way: `total = total + (total * rate) + amt;`."
+        },
+        {
+          "id": "R3",
+          "text": "With 0 years it returns the starting `total` unchanged, as the recursive base case does."
+        },
+        {
+          "id": "R4",
+          "text": "Running the test program prints `same: true` for every plan, exactly as expected.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "SavingsPlan.java",
+      "starter_code": "public class SavingsPlan\n{\n    // Recursive version (Figure 12-21). Leave it as it is.\n    public static double computeSavings(double amt, int years,\n        double rate, double total)\n    {\n        if (years == 0)\n            return total;\n        else\n        {\n            total = total + (total * rate) + amt;\n            return computeSavings(amt, years - 1, rate, total);\n        }\n    }\n\n    // Iterative version: same parameters, same result, no recursion.\n    public static double computeSavingsLoop(double amt, int years,\n        double rate, double total)\n    {\n        // TODO (R1): repeat once per year with a loop.\n        // TODO (R2): apply the same calculation as computeSavings() each year.\n        // TODO (R3): with 0 years, the starting total comes back unchanged.\n        return 0;\n    }\n}\n",
+      "solution": "public class SavingsPlan\n{\n    // Recursive version (Figure 12-21). Leave it as it is.\n    public static double computeSavings(double amt, int years,\n        double rate, double total)\n    {\n        if (years == 0)\n            return total;\n        else\n        {\n            total = total + (total * rate) + amt;\n            return computeSavings(amt, years - 1, rate, total);\n        }\n    }\n\n    // Iterative version: same parameters, same result, no recursion.\n    public static double computeSavingsLoop(double amt, int years,\n        double rate, double total)\n    {\n        while (years != 0)\n        {\n            total = total + (total * rate) + amt;\n            --years;\n        }\n        return total;\n    }\n}\n",
+      "solution_notes": "This is Figure 12-24. Each part of the recursive method has a partner in the loop: the base-case test `years == 0` becomes the loop condition `years != 0`, the work in the `else` becomes the loop body, and the smaller argument `years - 1` becomes `--years` (p. 502 lists the five similarities). Changing the parameters inside the method is safe because Java passes copies of primitive values. With 0 years the loop body never runs and the starting `total` is returned, which is what the recursive base case does; note that it returns `total`, not 0 as the text on p. 500 says. The exact form of the calculation matters with `double`: `total += total * rate + amt` adds `total * rate` and `amt` first, and `total * (1 + rate) + amt` multiplies differently. Both are equal in algebra, but floating-point rounding makes the 30-year result differ in the last digit, and the test's `==` catches it. A `for (int y = 0; y < years; y++)` loop is equally correct.",
+      "warmup": [
+        {
+          "question": "The text on p. 500 says the base case of `computeSavings()` returns 0. Read the code: what does `computeSavings(750, 0, 0.04, 1200)` return, and why?",
+          "model_answer": "1200. The base case returns total, which is the starting balance when no years are left. It is 0 only when the saver starts with nothing, as in the book's example."
+        },
+        {
+          "question": "Trace `computeSavings(2000, 2, 0.05, 0)`. What does `total` become in each call?",
+          "model_answer": "Call 1 (years 2): 0 + 0 + 2000 = 2000. Call 2 (years 1): 2000 + 100 + 2000 = 4100. Call 3 (years 0) is the base case and returns 4100, which is passed back up unchanged."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "Uses a loop",
+          "within": "SavingsPlan.computeSavingsLoop",
+          "require": "\\b(?:while|for)\\s*\\(",
+          "message": "Repeat the yearly calculation with a `while` or `for` loop that runs once per year, as in Figure 12-24."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "No recursion in the loop version",
+          "within": "SavingsPlan.computeSavingsLoop",
+          "forbid": "\\bcomputeSavings(?:Loop)?\\s*\\(\\s*(?!double\\b)",
+          "message": "The iterative version must not call itself or the recursive version; the loop does all the repeating.",
+          "starter_passes": true
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "The same calculation, written the same way",
+          "within": "SavingsPlan.computeSavingsLoop",
+          "require": "\\btotal\\s*=\\s*total\\s*\\+\\s*(?:\\(\\s*total\\s*\\*\\s*rate\\s*\\)|total\\s*\\*\\s*rate)\\s*\\+\\s*amt\\s*;",
+          "message": "Write each year's step exactly as the recursive version does: `total = total + (total * rate) + amt;`. Regrouped forms such as `total += total * rate + amt` or `total * (1 + rate) + amt` round differently with `double` and can change the last digit."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "Returns the total, not a constant",
+          "within": "SavingsPlan.computeSavingsLoop",
+          "require": "\\breturn\\s+total\\s*;",
+          "message": "Return `total` after the loop. With 0 years the loop doesn't run, and the starting balance comes back unchanged, just like the recursive base case."
+        }
+      ],
+      "hints": [
+        "Line up the parts of the recursive method with the parts of a loop: the base-case test becomes the loop condition, the work in the `else` becomes the loop body, and `years - 1` becomes the update.",
+        "Figure 12-24 shares five things with the recursive version (p. 502): the same arguments, stop when years reaches 0, the same calculation, years goes down each cycle, and `total` is returned.",
+        "If the 30-year plan prints `same: false` with matching first digits, the calculation was regrouped. Copy it character for character from the recursive version."
+      ],
+      "test_program": {
+        "file_name": "TestSavingsPlan.java",
+        "code": "public class TestSavingsPlan\n{\n    public static void main(String[] args)\n    {\n        // amount per year, years, rate, starting total\n        double[][] plans = {\n            { 2000, 1, 0.05, 0 },\n            { 2000, 2, 0.05, 0 },\n            { 2000, 30, 0.05, 0 },\n            { 500, 10, 0.03, 1000 },\n            { 750, 0, 0.04, 1200 }\n        };\n        for (double[] p : plans)\n        {\n            int years = (int) p[1];\n            double recursive = SavingsPlan.computeSavings(p[0], years, p[2], p[3]);\n            double loop = SavingsPlan.computeSavingsLoop(p[0], years, p[2], p[3]);\n            System.out.println(\"$\" + (int) p[0] + \" a year, \" + years + \" years at \"\n                + Math.round(p[2] * 100) + \"%, start $\" + (int) p[3]);\n            System.out.println(\"  recursive \" + recursive);\n            System.out.println(\"  loop      \" + loop + \"  same: \" + (recursive == loop));\n        }\n    }\n}\n",
+        "expected_output": "$2000 a year, 1 years at 5%, start $0\n  recursive 2000.0\n  loop      2000.0  same: true\n$2000 a year, 2 years at 5%, start $0\n  recursive 4100.0\n  loop      4100.0  same: true\n$2000 a year, 30 years at 5%, start $0\n  recursive 132877.69500602645\n  loop      132877.69500602645  same: true\n$500 a year, 10 years at 3%, start $1000\n  recursive 7075.856035079487\n  loop      7075.856035079487  same: true\n$750 a year, 0 years at 4%, start $1200\n  recursive 1200.0\n  loop      1200.0  same: true\n",
+        "predict": "With the starter, which plans print `same: true`, if any? Then predict how many times your loop body runs for the 0-year plan.",
+        "how_to_run": "Put `SavingsPlan.java` and `TestSavingsPlan.java` in the same folder, then run `javac *.java` and `java TestSavingsPlan`. In an IDE, add them to one project and run `TestSavingsPlan.java`. You don't type anything: the test program supplies the data."
+      },
+      "reflection": [
+        {
+          "question": "Both versions give identical results. Describe one situation where you would choose the loop and one where you would keep the recursive version.",
+          "model_answer": "Loop: code that runs very often or with many periods; daily interest over 40 years is 14,600 calls, which adds overhead and could overflow the call stack. Recursive: a team that finds “this year, then the rest” clearer, with a small depth such as 30 yearly periods."
+        },
+        {
+          "question": "The test compares the results with `==` rather than checking that they are close. What does a match prove, and what would a mismatch in the last digit tell you?",
+          "model_answer": "Identical steps in the same order give bit-identical doubles, so a match proves the loop does exactly the same arithmetic. A last-digit mismatch means the calculation was regrouped, which is equal in algebra but rounds differently in floating point."
+        }
+      ],
+      "extension": "Make the plan monthly: deposit `amt / 12` each month at `rate / 12` for `years * 12` months, in both versions. Then try daily compounding (365 periods a year) for 40 years. Which version still works, and what happens to the other one?",
+      "worth_knowing": "Some languages turn this kind of recursion into a loop for you. When the recursive call is the last thing a method does, as in `return computeSavings(...)`, the language Scheme is required to reuse the same stack frame (a tail call). Java's compiler doesn't, which is one reason Java programmers convert deep recursion into loops themselves.",
+      "rubric": [
+        {
+          "criterion": "Requirements met",
+          "points": 5,
+          "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+        },
+        {
+          "criterion": "Reasoning",
+          "points": 3,
+          "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+        },
+        {
+          "criterion": "Style",
+          "points": 2,
+          "evidence": "Allman braces and indentation kept; the loop mirrors the recursive method part for part; the recursive version is unchanged."
+        }
+      ]
+    }
+  ]
+}

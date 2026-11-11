@@ -1,0 +1,36 @@
+POSTING CHECKLIST
+=================
+
+  Lab 12.1: The reminder bot that never stops texting
+    students : 12.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/12.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/12.1_guide.html
+
+  Lab 12.2: The playlist tool that crashes on an empty set
+    students : 12.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/12.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/12.2_guide.html
+
+  Lab 12.3: The clinic texts that never reach (305) 555-0199
+    students : 12.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/12.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/12.3_guide.html
+
+  Lab 12.4: The bouncing ball that never bounces back
+    students : 12.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/12.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/12.4_guide.html
+
+  Lab 12.5: The savings calculator the IT team wants as a loop
+    students : 12.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/12.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/12.5_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

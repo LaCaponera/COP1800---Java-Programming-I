@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The reminder bot that never stops texting</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 12.1</div>
+  <h1>The reminder bot that never stops texting</h1>
+<h2>Objectives</h2><ul><li>Explain what makes a method recursive and why a useful one must be able to stop</li><li>Write a base case that every chain of calls is guaranteed to reach</li><li>Make each recursive call work on a smaller problem, and count the depth of the recursion</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Base case: when <code>daysLeft</code> is 0 <strong>or less</strong>, <code>sendReminders()</code> sends nothing and does not call itself (an overdue book must not start an endless chain).</li><li><strong>R2</strong> Recursive case: when <code>daysLeft</code> is greater than 0, it sends one reminder and then calls itself with one day fewer.</li><li><strong>R3</strong> It stays recursive: no <code>while</code> or <code>for</code> loop, and <code>calls++</code> stays the first statement so <code>calls</code> shows how many times the method ran.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter with <code>sendReminders(&quot;Clean Code&quot;, 3)</code>. What is the second line it prints, and why does a line about 2 days never appear?</p><div class="answer"><p>“Reminder: Clean Code is due in 3 day(s)” again. Each call passes the same daysLeft, 3, so the problem never gets smaller and nothing tells it to stop; it repeats until the call stack runs out (StackOverflowError).</p></div></li><li><p>In the book&#x27;s <code>DemoRecursion</code> (Figure 12-3), <code>messageMethod(4)</code> prints four lines. How many times does the method run, and what does the last call do?</p><div class="answer"><p>Five times, with 4, 3, 2, 1 and 0. The call with 0 is the base case: the if is false, so it prints nothing and does not call itself again.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ReminderBot.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ReminderBot</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Counts every call to sendReminders(): the depth of the recursion.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">calls</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Sends one reminder for each day left: daysLeft, daysLeft - 1, ..., 1.</span>
+<span class="t-w">    </span><span class="t-c1">// When no days are left (or the book is overdue) it sends nothing.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">sendReminders</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">daysLeft</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">calls</span><span class="t-o">++</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">daysLeft</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Reminder: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is due in "</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">daysLeft</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" day(s)"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">sendReminders</span><span class="t-p">(</span><span class="t-n">title</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">daysLeft</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>This is the book&#x27;s <code>DemoRecursion</code> pattern (Figure 12-3): an <code>if</code> decides whether to do the work and recurse, and each call passes a smaller value. Two things were missing in the starter: a <strong>base case</strong>, the case that makes no recursive call (p. 491), and progress toward it. The decisive choice is the condition. <code>daysLeft != 0</code> or <code>== 0</code> works for 3, but with -2 the chain runs -2, -3, -4, ... and never reaches 0; every unfinished call waits on the call stack until Java throws <code>StackOverflowError</code>. <code>daysLeft &gt; 0</code> (or <code>if (daysLeft &lt;= 0) return;</code>) catches every non-positive value. With 3 days the method runs four times (3, 2, 1, 0), the same way <code>messageMethod(4)</code> runs five times on p. 488. A <code>while</code> loop (Figure 12-5) would also work, but this lab practises the recursive form.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestReminderBot.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestReminderBot</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Book due in 3 days:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">calls</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">sendReminders</span><span class="t-p">(</span><span class="t-s">"Clean Code"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Calls made: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">calls</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Book due today:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">calls</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">sendReminders</span><span class="t-p">(</span><span class="t-s">"Java Basics"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Calls made: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">calls</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Book already 2 days overdue:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">calls</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">sendReminders</span><span class="t-p">(</span><span class="t-s">"Data Structures"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Calls made: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ReminderBot</span><span class="t-p">.</span><span class="t-na">calls</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Book due in 3 days:
+Reminder: Clean Code is due in 3 day(s)
+Reminder: Clean Code is due in 2 day(s)
+Reminder: Clean Code is due in 1 day(s)
+Calls made: 4
+Book due today:
+Calls made: 1
+Book already 2 days overdue:
+Calls made: 1
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>A base case that catches 0 and overdue days<div class="small">in <code>ReminderBot.sendReminders</code></div></td><td><div><span class="tag">require</span> <code>\bif\s*\(\s*(?:daysLeft\s*(?:&gt;\s*0|&gt;=\s*1|&lt;=\s*0|&lt;\s*1)|(?:0\s*&lt;|1\s*&lt;=|0\s*&gt;=|1\s*&gt;)\s*daysLeft)\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The base case can&#x27;t be skipped<div class="small">in <code>ReminderBot.sendReminders</code></div></td><td><div><span class="tag">forbid</span> <code>\bdaysLeft\s*(?:==|!=)\s*0\b|\b0\s*(?:==|!=)\s*daysLeft\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Each call has one day fewer<div class="small">in <code>ReminderBot.sendReminders</code></div></td><td><div><span class="tag">require</span> <code>\bsendReminders\s*\(\s*\w+\s*,\s*(?:daysLeft\s*-\s*1|--\s*daysLeft)\s*\)</code></div><div><span class="tag">require</span> <code>(?:\bdaysLeft\s*(?:--|-=\s*1)|--\s*daysLeft)\s*;[\s\S]*\bsendReminders\s*\(\s*\w+\s*,\s*daysLeft\s*\)</code></div></td></tr><tr><td>C4</td><td>R2</td><td>No post-decrement in the argument<div class="small">in <code>ReminderBot.sendReminders</code></div></td><td><div><span class="tag">forbid</span> <code>\bsendReminders\s*\(\s*\w+\s*,\s*daysLeft\s*--</code></div></td></tr><tr><td>C5</td><td>R3</td><td>Repeats by calling itself, not with a loop<div class="small">in <code>ReminderBot.sendReminders</code></div></td><td><div><span class="tag">forbid</span> <code>\b(?:while|for)\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · A base case that catches 0 and overdue days</dt><dd><p>Add an <code>if</code> that decides whether this call does any work: send the reminder and recurse only while <code>daysLeft &gt; 0</code> (or return at once when <code>daysLeft &lt;= 0</code>). Without it, nothing ever stops the chain.</p></dd><dt>C2 · The base case can&#x27;t be skipped</dt><dd><p>A test for exactly 0 misses overdue books: with -2 the calls go -2, -3, -4, ... and never equal 0, so the stack overflows. Test <code>daysLeft &gt; 0</code> or <code>daysLeft &lt;= 0</code> instead.</p></dd><dt>C3 · Each call has one day fewer</dt><dd><p>The recursive call still passes the same <code>daysLeft</code>, so the problem never gets smaller. Pass <code>daysLeft - 1</code>, the way <code>messageMethod(reps - 1)</code> does in Figure 12-3.</p></dd><dt>C4 · No post-decrement in the argument</dt><dd><p><code>daysLeft--</code> inside the call passes the <em>old</em> value and subtracts afterwards, so every call still gets the same number. Write <code>daysLeft - 1</code>.</p></dd><dt>C5 · Repeats by calling itself, not with a loop</dt><dd><p>This lab practises recursion: remove the loop and let <code>sendReminders()</code> call itself with a smaller <code>daysLeft</code>. (Figure 12-5 shows the loop version for comparison.)</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Ask two questions of every call: when should I stop without calling again? And is the problem I hand on smaller than mine?</p></li><li><p>Look at <code>messageMethod()</code> in Figure 12-3: an <code>if</code> wraps both the output and the recursive call, and the call passes <code>reps - 1</code>.</p></li><li><p>The decisive detail is the condition. A test for exactly 0 works for 3 days but not for -2, which skips past 0 forever. Test whether days are left at all (greater than 0), and hand on one day fewer.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your condition tests whether <code>daysLeft</code> is greater than 0 (or at most 0) rather than equal to 0. Use the overdue book to explain what <code>== 0</code> would do, and name the error Java reports.</p><div class="answer"><p>With -2 the test == 0 is never true: the calls go -2, -3, -4 and never reach the base case. Each unfinished call waits on the call stack, so Java eventually throws StackOverflowError.</p></div></li><li><p>Figure 12-5 sends the same messages with a <code>while</code> loop. Give one reason a team might keep the recursive version and one reason to switch to the loop.</p><div class="answer"><p>Recursive: it reads as “send one reminder, then handle the smaller problem”, which programmers used to recursion develop quickly. Loop: iteration usually runs faster because there is no overhead of remembering where each call must return.</p></div></li></ol>
+<h2>Extension</h2><p>Make the base case useful: when <code>daysLeft</code> is exactly 0 print <code>Due today: &lt;title&gt;</code>, and when it is below 0 print <code>Overdue: &lt;title&gt;</code>, still without recursing. Which call in the chain prints it, and does <code>calls</code> change for 3 days?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; one <code>if</code> guards both the reminder and the recursive call; no loop.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

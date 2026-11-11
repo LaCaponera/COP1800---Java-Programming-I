@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bouncing ball that never bounces back</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 12.4</div>
+  <h1>The bouncing ball that never bounces back</h1>
+<h2>Objectives</h2><ul><li>Pass what one line needs to the next call, as <code>display(spaces, lines)</code> does in Figure 12-19</li><li>Use statements after a recursive call, which run in reverse order as the calls finish</li><li>Choose base cases that draw a symmetric pattern with its middle row exactly once</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> With 0 lines <code>bounce()</code> draws nothing; with 1 line it draws only the turning point, once, and does not call itself.</li><li><strong>R2</strong> With more lines it draws its row, calls itself with one more space and one line fewer, and <strong>after that call</strong> draws its own row again: the way back.</li><li><strong>R3</strong> <code>bounce()</code> repeats only by calling itself: no loop and no printing of its own; every row is drawn by <code>drawRow()</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter draws only the way down. For <code>bounce(0, 3)</code>, list the calls with their <code>spaces</code> and <code>lines</code>, and say which call draws nothing.</p><div class="answer"><p>bounce(0,3), bounce(1,2), bounce(2,1) and bounce(3,0). The first three draw rows with 0, 1 and 2 spaces; bounce(3,0) is the base case and draws nothing.</p></div></li><li><p>When <code>bounce(2, 1)</code> finishes, where does the program continue? What could a statement written after the recursive call do?</p><div class="answer"><p>It continues in bounce(1,2), right after its recursive call, and when that finishes, in bounce(0,3). A statement there runs as each call finishes, deepest first, so it could draw the rows with 1 and then 0 spaces: the way back.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Bounce.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Bounce</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Draws a ball moving right to the wall and bouncing back.</span>
+<span class="t-w">    </span><span class="t-c1">// lines: rows down to the wall, counting the turning point.</span>
+<span class="t-w">    </span><span class="t-c1">// spaces: how far from the left the first row starts.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">bounce</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">spaces</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">lines</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">lines</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">drawRow</span><span class="t-p">(</span><span class="t-n">spaces</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">drawRow</span><span class="t-p">(</span><span class="t-n">spaces</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">bounce</span><span class="t-p">(</span><span class="t-n">spaces</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">drawRow</span><span class="t-p">(</span><span class="t-n">spaces</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Draws one row: `spaces` spaces, then the ball.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">drawRow</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">spaces</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">spaces</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">" "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"O"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Like <code>display()</code> in Figure 12-19, each call passes what the next row needs (one more space, one line fewer), so each line uses knowledge from the previous one (p. 499). The new idea is <em>where</em> the second <code>drawRow(spaces)</code> goes: after the recursive call. A call doesn&#x27;t finish until the call it made has finished (the reminders on the call stack, p. 490), so the statements after the call run deepest-first, in reverse: 1 space, then 0. That draws the way back. The turning point is a second base case: with one line left, a call draws its row once and stops. Without it, that call would draw its row, make a call that draws nothing, and draw the same row again, so the wall row would appear twice. <code>if (lines == 1) ... else if</code> or an <code>else</code> block instead of <code>return</code> are equally correct.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBounce.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBounce</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Bounce of 3:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Bounce</span><span class="t-p">.</span><span class="t-na">bounce</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Bounce of 1, starting 4 spaces in:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Bounce</span><span class="t-p">.</span><span class="t-na">bounce</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Bounce of 0:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Bounce</span><span class="t-p">.</span><span class="t-na">bounce</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Done"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Bounce of 3:
+O
+ O
+  O
+ O
+O
+Bounce of 1, starting 4 spaces in:
+    O
+Bounce of 0:
+Done
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The turning point is its own base case<div class="small">in <code>Bounce.bounce</code></div></td><td><div><span class="tag">require</span> <code>\bif\s*\(\s*(?:lines\s*(?:==\s*1|&lt;=\s*1|&lt;\s*2|&gt;\s*1|&gt;=\s*2)|1\s*(?:==|&gt;=|&lt;)\s*lines|2\s*(?:&gt;|&lt;=)\s*lines)\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The row is drawn again after the call returns<div class="small">in <code>Bounce.bounce</code></div></td><td><div><span class="tag">require</span> <code>\bbounce\s*\([^;]*\)\s*;\s*\}?\s*drawRow\s*\(\s*spaces\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Each call moves right and down<div class="small">in <code>Bounce.bounce</code></div></td><td><div><span class="tag">require</span> <code>\bbounce\s*\(\s*spaces\s*\+\s*1\s*,\s*lines\s*-\s*1\s*\)</code></div></td></tr><tr><td>C4</td><td>R3</td><td>No loop or printing in bounce()<div class="small">in <code>Bounce.bounce</code></div></td><td><div><span class="tag">forbid</span> <code>\b(?:while|for)\s*\(|\bSystem\s*\.\s*out\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The turning point is its own base case</dt><dd><p>Give the turning point its own case: when <code>lines</code> is 1, draw the row once and don&#x27;t call <code>bounce()</code> again (or recurse and draw the way back only while <code>lines &gt; 1</code>). Otherwise the row at the wall is drawn twice.</p></dd><dt>C2 · The row is drawn again after the call returns</dt><dd><p>Put a second <code>drawRow(spaces)</code> right after the recursive call. It runs when the deeper calls have finished, in reverse order, which draws the way back.</p></dd><dt>C3 · Each call moves right and down</dt><dd><p>Keep the recursive call as <code>bounce(spaces + 1, lines - 1)</code>: one more space and one line fewer, like <code>display(spaces, lines - 1)</code> after <code>spaces++</code> in Figure 12-19.</p></dd><dt>C4 · No loop or printing in bounce()</dt><dd><p>Let <code>bounce()</code> repeat by calling itself and draw every row with <code>drawRow()</code>. A loop here would hide the idea the lab is about: the way back comes from the calls finishing.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Each call already knows its own <code>spaces</code>. When does each call get control back, and what is still left for it to do then?</p></li><li><p>Code placed after the recursive call runs on the way back, deepest call first, just as the waiting <code>sumNumbers()</code> calls finish in reverse order (pp. 490–491).</p></li><li><p>The call with one line left is the wall: it draws its row once and doesn&#x27;t call itself. Every other call draws its row, makes the recursive call, then draws the same row again.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain why the rows drawn after the recursive call come out in the reverse order of the rows drawn before it.</p><div class="answer"><p>Each call waits on the call stack until the call it made returns. The deepest call returns first, so the statements after the call run deepest-first: 1 space, then 0, the mirror of the way down.</p></div></li><li><p>What would your method draw if you removed the special case for one line, and why?</p><div class="answer"><p>The wall row would appear twice. With one line left the call would draw its row, call bounce with 0 lines (which draws nothing), and then draw the same row again on the way back.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>char ball</code> parameter to <code>drawRow()</code> and <code>bounce()</code> so the way down uses <code>O</code> and the way back uses <code>o</code>. Then make the ball step 2 columns per row. Which single argument changes, and does the turning point still need its own case?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; base cases come before the recursive case; every row is drawn through <code>drawRow()</code>.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
