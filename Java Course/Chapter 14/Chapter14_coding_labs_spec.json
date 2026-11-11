@@ -1,0 +1,1197 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 14: Introduction to Swing Components",
+ "collection_intro": "Hands-on labs for sections 14.1 to 14.9 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. You will build real windows with `JFrame`, fill them with labels, text fields, buttons, check boxes and combo boxes, arrange them with a layout manager, and make them respond to users through event listeners. The test programs click your buttons, press Enter and tick your boxes the way a user would, then print what your window did, so you can compare. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "14.1",
+   "title": "The audit that thinks a Jukebox is a control",
+   "subtitle": "Tell Swing controls, containers and windows apart by their type, not their name",
+   "source": "Ch. 14, section 14.1 (pp. 545–546)",
+   "minutes": 20,
+   "objectives": [
+    "Describe how `JComponent`, `Container`, `Component`, `Window`, `Frame` and `JFrame` are related",
+    "Explain why every Swing control is also a container, and why a `JFrame` is not a `JComponent`",
+    "Use `instanceof` to classify GUI objects by type instead of guessing from a class name"
+   ],
+   "scenario": "The campus app team is cleaning up the code of the information kiosk in the student union. Before they change anything, they want a report of every object the kiosk creates: is it a Swing control (a label, a button), can it hold other components, is it a window? A teammate wrote `ComponentAudit` in ten minutes, and it guesses from class names: anything whose name starts with **J** counts as a Swing control. The report now says that `Jukebox` (the class that plays music in the lobby) is a control, and that a `JFrame` is a control too.\n\nSection 14.1 gives you better facts than a naming habit. Every Swing control descends from `JComponent`, which inherits from `java.awt.Container`. A container holds other components. A frame is a window with a title bar and border: `JFrame` descends from `Frame`, `Window`, `Container` and `Component`, but **not** from `JComponent`. The `ancestry()` method is already written; it prints each class's chain of parents so you can see these relationships. Rewrite the other four methods so they answer by type, with `instanceof`.\n\nThe test program audits a `JLabel`, a `JButton`, a `JFrame`, an old AWT `Button`, a `ButtonGroup` and the kiosk's `Jukebox`. For each one it prints the ancestry line and the answers of your four methods. When your code works, `kind()` gives these verdicts:\n\n```\nJLabel        Swing control\nJButton       Swing control\nJFrame        window\nButton        AWT component\nButtonGroup   not a component\nJukebox       not a component\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`isSwingControl()` returns `true` exactly for objects that descend from `JComponent`. It must not look at the class name."
+    },
+    {
+     "id": "R2",
+     "text": "`isContainer()` returns `true` for anything that can hold other components, that is, any `Container` (not only frames)."
+    },
+    {
+     "id": "R3",
+     "text": "`isWindow()` returns `true` for top-level windows: objects that descend from `Window`."
+    },
+    {
+     "id": "R4",
+     "text": "`kind()` returns `\"window\"`, `\"Swing control\"`, `\"AWT component\"` (a `Component` that is neither a window nor a Swing control) or `\"not a component\"`."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ComponentAudit.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\n\npublic class ComponentAudit\n{\n    // Returns the object's class and every ancestor class, for example\n    // \"JLabel < JComponent < Container < Component < Object\".\n    public static String ancestry(Object item)\n    {\n        String chain = item.getClass().getSimpleName();\n        Class<?> parent = item.getClass().getSuperclass();\n        while (parent != null)\n        {\n            chain += \" < \" + parent.getSimpleName();\n            parent = parent.getSuperclass();\n        }\n        return chain;\n    }\n\n    // True for the Swing controls you place in a window: labels, buttons, text fields...\n    public static boolean isSwingControl(Object item)\n    {\n        // TODO (R1): a class name is a habit, not a type.\n        return item.getClass().getSimpleName().startsWith(\"J\");\n    }\n\n    // True for anything that can hold other components.\n    public static boolean isContainer(Object item)\n    {\n        // TODO (R2)\n        return item instanceof JFrame;\n    }\n\n    // True for a top-level window such as a JFrame.\n    public static boolean isWindow(Object item)\n    {\n        // TODO (R3)\n        return false;\n    }\n\n    // \"window\", \"Swing control\", \"AWT component\" or \"not a component\"\n    public static String kind(Object item)\n    {\n        // TODO (R4)\n        if (isSwingControl(item))\n            return \"Swing control\";\n        return \"not a component\";\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\n\npublic class ComponentAudit\n{\n    // Returns the object's class and every ancestor class, for example\n    // \"JLabel < JComponent < Container < Component < Object\".\n    public static String ancestry(Object item)\n    {\n        String chain = item.getClass().getSimpleName();\n        Class<?> parent = item.getClass().getSuperclass();\n        while (parent != null)\n        {\n            chain += \" < \" + parent.getSimpleName();\n            parent = parent.getSuperclass();\n        }\n        return chain;\n    }\n\n    // True for the Swing controls you place in a window: labels, buttons, text fields...\n    public static boolean isSwingControl(Object item)\n    {\n        return item instanceof JComponent;\n    }\n\n    // True for anything that can hold other components.\n    public static boolean isContainer(Object item)\n    {\n        return item instanceof Container;\n    }\n\n    // True for a top-level window such as a JFrame.\n    public static boolean isWindow(Object item)\n    {\n        return item instanceof Window;\n    }\n\n    // \"window\", \"Swing control\", \"AWT component\" or \"not a component\"\n    public static String kind(Object item)\n    {\n        if (isWindow(item))\n            return \"window\";\n        if (isSwingControl(item))\n            return \"Swing control\";\n        if (item instanceof Component)\n            return \"AWT component\";\n        return \"not a component\";\n    }\n}\n"
+    }
+   ],
+   "main_file": "ComponentAudit.java",
+   "solution_notes": "Section 14.1 (p. 546) says each Swing component descends from `JComponent`, which inherits from `java.awt.Container`, so `instanceof JComponent` identifies the controls and `instanceof Container` identifies anything that can hold components. That is why a `JButton` reports `container: true`: through `JComponent` it *is a* `Container`. Figure 14-1 (p. 547) shows `JFrame` descending from `Frame`, `Window`, `Container` and `Component`; `JComponent` is not on that chain, so a frame is a window but not a Swing control. In `kind()` the order matters only for the last test: a `JButton` is also a `Component`, so `instanceof Component` must come after the more specific questions. `ButtonGroup` is in `javax.swing` yet descends directly from `Object` (p. 574), and `Jukebox` merely starts with J; neither is a component. Names starting with J are a reading aid for people (p. 546), not something a program should rely on.",
+   "warmup": [
+    {
+     "question": "Trace `ancestry()` for `new JButton(\"Print map\")`. What does it return, and what does that chain tell you about whether a `JButton` is a `Container`?",
+     "model_answer": "JButton < AbstractButton < JComponent < Container < Component < Object. Container is an ancestor, so every JButton is a Container."
+    },
+    {
+     "question": "The starter says `Jukebox` and `JFrame` are both Swing controls. Which sentence in section 14.1 gives a test that doesn't depend on names?",
+     "model_answer": "Each Swing component is a descendant of JComponent, so the test is whether the object is a JComponent (instanceof JComponent). JFrame and Jukebox are not."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Controls are found by type, not by name",
+     "within": "ComponentAudit.isSwingControl",
+     "require": "\\binstanceof\\s+(javax\\.swing\\.)?JComponent\\b",
+     "forbid": "\\b(getSimpleName|getName|startsWith)\\b",
+     "message": "Return `item instanceof JComponent;`. Every Swing control descends from `JComponent`, whatever its name; a class called `Jukebox` is not one."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Any Container can hold components",
+     "within": "ComponentAudit.isContainer",
+     "require": "\\binstanceof\\s+(java\\.awt\\.)?Container\\b",
+     "message": "Return `item instanceof Container;`. Frames are containers, but so is every `JComponent`, because `JComponent` inherits from `java.awt.Container`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Windows are found with instanceof Window",
+     "within": "ComponentAudit.isWindow",
+     "require": "\\binstanceof\\s+(java\\.awt\\.)?Window\\b",
+     "message": "Return `item instanceof Window;`. Figure 14-1 shows `JFrame` descending from `Frame`, which descends from `Window`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "kind() recognises plain AWT components",
+     "within": "ComponentAudit.kind",
+     "require": "\\binstanceof\\s+(java\\.awt\\.)?Component\\b",
+     "message": "After the window and Swing-control questions, return `\"AWT component\"` when `item instanceof Component`. An AWT `Button` is a `Component` but not a `JComponent`."
+    }
+   ],
+   "hints": [
+    "`instanceof` asks whether an object *is a* member of a class or of any class that descends from it. Pick the class for each question from the ancestry lines the program prints.",
+    "Look at the ancestry of `JFrame`: `JComponent` isn't on it, but `Container` and `Window` are.",
+    "In `kind()`, ask the specific questions first. Every Swing control is also a `Component`, so the `Component` test must come last."
+   ],
+   "test_program": {
+    "file_name": "TestComponentAudit.java",
+    "code": "import javax.swing.*;\nimport java.awt.*;\n\npublic class TestComponentAudit\n{\n    // The kiosk's music player. It is not part of the GUI.\n    static class Jukebox\n    {\n    }\n\n    public static void main(String[] args)\n    {\n        Object[] items = { new JLabel(\"Welcome\"), new JButton(\"Print map\"),\n            new JFrame(\"Kiosk\"), new Button(\"Old print button\"),\n            new ButtonGroup(), new Jukebox() };\n        for (Object item : items)\n        {\n            System.out.println(ComponentAudit.ancestry(item));\n            System.out.println(\"  control: \" + ComponentAudit.isSwingControl(item)\n                + \", container: \" + ComponentAudit.isContainer(item)\n                + \", window: \" + ComponentAudit.isWindow(item)\n                + \" -> \" + ComponentAudit.kind(item));\n        }\n        System.exit(0);   // close the window objects this test created\n    }\n}\n",
+    "expected_output": "JLabel < JComponent < Container < Component < Object\n  control: true, container: true, window: false -> Swing control\nJButton < AbstractButton < JComponent < Container < Component < Object\n  control: true, container: true, window: false -> Swing control\nJFrame < Frame < Window < Container < Component < Object\n  control: false, container: true, window: true -> window\nButton < Component < Object\n  control: false, container: false, window: false -> AWT component\nButtonGroup < Object\n  control: false, container: false, window: false -> not a component\nJukebox < Object\n  control: false, container: false, window: false -> not a component\n",
+    "predict": "Before you change anything, predict the `control:` value the starter prints for `JFrame` and for `Jukebox`. Then predict, using only the ancestry lines, which of the six objects should print `container: true`.",
+    "how_to_run": "Put `ComponentAudit.java` and `TestComponentAudit.java` in the same folder, then run `javac *.java` and `java TestComponentAudit`. In an IDE, add both files to one project and run `TestComponentAudit.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Your audit says a `JButton` is a container. Use its ancestry line to explain why that is true, and why it still doesn't make a button the place to put other components.",
+     "model_answer": "JButton descends from JComponent, which descends from Container, so every button is a Container and inherits add(). Being able to doesn't mean it's designed for it: a button is a control the user clicks, and frames are the containers meant to hold controls."
+    },
+    {
+     "question": "Why is checking whether a class name starts with J a fragile way for a program to decide what an object is? Use two objects from this lab as examples.",
+     "model_answer": "Names are conventions people choose. Jukebox starts with J but isn't a GUI component, and JFrame starts with J but isn't a JComponent. instanceof asks the type system, which a name can't fool."
+    }
+   ],
+   "extension": "Add `new JTextField(10)`, `new JPanel()` and `new JDialog()` to the test's array. Predict each pair of lines first, then run it. Which of the three is a window, and which section 14.1 note lists it as a heavyweight component?",
+   "worth_knowing": "Swing's lightweight controls are drawn by Java code itself, pixel by pixel, inside the one native window their frame owns. That is why the same `JButton` can look like Windows, like macOS or like Java's own Metal style: changing the look and feel just swaps the code that paints it.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; `ancestry()` left unchanged; one `instanceof` test per question."
+    }
+   ]
+  },
+  {
+   "id": "14.2",
+   "title": "The bus-times window nobody can read",
+   "subtitle": "Create JFrames with a title and size, and decide what the Close button does",
+   "source": "Ch. 14, section 14.2 (pp. 547–551)",
+   "minutes": 25,
+   "objectives": [
+    "Construct a `JFrame` with a title and set its size with named constants",
+    "Use `setResizable()` and `setVisible()` deliberately",
+    "Choose between `EXIT_ON_CLOSE` and `DISPOSE_ON_CLOSE` for each window of a program"
+   ],
+   "scenario": "The transit office runs a kiosk at the Library bus stop. Its program opens a main window with the next bus times and, when there is a detour, a second **Service alerts** window. Testers sent this list:\n\n- The main window appears as a title bar with no title and nothing below it.\n- Commuters can drag the main window smaller until the times are cut off.\n- Closing the main window leaves the program running in the background.\n- Both windows pop up before the bus data has loaded.\n\nFix `createMainWindow()` and `createAlertsWindow()` with the `JFrame` methods in Table 14-1 and the four close operations in section 14.2. Closing the main window must end the program. Closing the alerts window must get rid of that window only, because the bus times have to stay on screen. The methods must **build** the windows without showing them: `main()` shows them once the data is ready (section 14.2 explains why a frame starts invisible).\n\nThe test program builds both windows and prints:\n\n```\nMain window\n  title: Next buses: Library Stop\n  size: 480 x 300\n  resizable: false\n  visible: false\n  on close: EXIT_ON_CLOSE\nAlerts window\n  title: Service alerts\n  size: 360 x 200\n  resizable: true\n  visible: false\n  on close: DISPOSE_ON_CLOSE\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`createMainWindow(stopName)` returns a `JFrame` titled `Next buses: ` followed by the stop name, sized with the named constants `MAIN_WIDTH` (480) and `MAIN_HEIGHT` (300)."
+    },
+    {
+     "id": "R2",
+     "text": "The main window can't be resized, and closing it ends the program."
+    },
+    {
+     "id": "R3",
+     "text": "`createAlertsWindow()` returns a resizable `JFrame` titled `Service alerts`, sized with named constants (360 × 200); closing it disposes of that window and keeps the program running."
+    },
+    {
+     "id": "R4",
+     "text": "Neither method makes its window visible; the caller decides when to show it."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "KioskWindows.java",
+     "starter": "import javax.swing.*;\n\npublic class KioskWindows\n{\n    // TODO (R1, R3): named constants for both window sizes\n\n    public static JFrame createMainWindow(String stopName)\n    {\n        // TODO (R1, R2, R4)\n        JFrame frame = new JFrame();\n        frame.setVisible(true);\n        return frame;\n    }\n\n    public static JFrame createAlertsWindow()\n    {\n        // TODO (R3, R4)\n        JFrame frame = new JFrame(\"Service alerts\");\n        frame.setSize(360, 200);\n        frame.setVisible(true);\n        return frame;\n    }\n\n    // The kiosk program: build both windows, load the bus data, then show them.\n    public static void main(String[] args)\n    {\n        JFrame times = createMainWindow(\"Library Stop\");\n        JFrame alerts = createAlertsWindow();\n        // ... the bus data is loaded here ...\n        alerts.setLocation(500, 0);\n        times.setVisible(true);\n        alerts.setVisible(true);\n    }\n}\n",
+     "solution": "import javax.swing.*;\n\npublic class KioskWindows\n{\n    static final int MAIN_WIDTH = 480;\n    static final int MAIN_HEIGHT = 300;\n    static final int ALERTS_WIDTH = 360;\n    static final int ALERTS_HEIGHT = 200;\n\n    public static JFrame createMainWindow(String stopName)\n    {\n        JFrame frame = new JFrame(\"Next buses: \" + stopName);\n        frame.setSize(MAIN_WIDTH, MAIN_HEIGHT);\n        frame.setResizable(false);\n        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        return frame;\n    }\n\n    public static JFrame createAlertsWindow()\n    {\n        JFrame frame = new JFrame(\"Service alerts\");\n        frame.setSize(ALERTS_WIDTH, ALERTS_HEIGHT);\n        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);\n        return frame;\n    }\n\n    // The kiosk program: build both windows, load the bus data, then show them.\n    public static void main(String[] args)\n    {\n        JFrame times = createMainWindow(\"Library Stop\");\n        JFrame alerts = createAlertsWindow();\n        // ... the bus data is loaded here ...\n        alerts.setLocation(500, 0);\n        times.setVisible(true);\n        alerts.setVisible(true);\n    }\n}\n"
+    }
+   ],
+   "main_file": "KioskWindows.java",
+   "solution_notes": "The `JFrame(String title)` constructor sets the title (p. 547); `setTitle()` also works. A frame is 0 × 0 by default, which is why the starter showed only a title bar (p. 548); `setSize()` with named constants fixes that and documents the numbers. `setResizable(false)` stops commuters from shrinking the times (Table 14-1). The default close operation, `HIDE_ON_CLOSE`, hides the frame and keeps the program running (p. 549): wrong for the main window, which needs `JFrame.EXIT_ON_CLOSE`, and not quite right for the alerts window, which needs `WindowConstants.DISPOSE_ON_CLOSE` so the frame is released while the program (and the bus times) keep running. Neither method calls `setVisible(true)`: section 14.2 points out that a frame can be built in the background and shown when appropriate, and here `main()` shows both once the data is loaded. `JFrame.DISPOSE_ON_CLOSE` is the same constant and also passes.",
+   "warmup": [
+    {
+     "question": "The starter's main window calls `setVisible(true)` but never `setSize()`. According to section 14.2, what does a commuter see, and why?",
+     "model_answer": "Only the title bar, because a JFrame's size is 0 x 0 by default."
+    },
+    {
+     "question": "The alerts window keeps the default close operation. What does that default do when a commuter clicks Close, and which of the four values fits the alerts window better?",
+     "model_answer": "HIDE_ON_CLOSE hides the window and keeps the program running, but the frame object stays around. DISPOSE_ON_CLOSE closes and disposes of it while the program keeps running."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The main window's title includes the stop name",
+     "within": "KioskWindows.createMainWindow",
+     "require": "(new\\s+JFrame|\\.\\s*setTitle)\\s*\\([^;]*\\bstopName\\b",
+     "message": "Pass the title to the constructor: `new JFrame(\"Next buses: \" + stopName)` (or call `setTitle()` with that text). A frame built with `new JFrame()` has no title."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The main window is sized with named constants",
+     "within": "KioskWindows.createMainWindow",
+     "require": "\\.\\s*setSize\\s*\\(\\s*MAIN_WIDTH\\s*,\\s*MAIN_HEIGHT\\s*\\)",
+     "message": "Declare `static final int MAIN_WIDTH = 480;` and `MAIN_HEIGHT = 300;` in the class, then call `frame.setSize(MAIN_WIDTH, MAIN_HEIGHT);`. Without a size a frame is 0 × 0."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Main window: fixed size, Close ends the program",
+     "within": "KioskWindows.createMainWindow",
+     "require": "^(?=[\\s\\S]*\\.\\s*setResizable\\s*\\(\\s*false\\s*\\))(?=[\\s\\S]*\\.\\s*setDefaultCloseOperation\\s*\\(\\s*(JFrame|WindowConstants)\\s*\\.\\s*EXIT_ON_CLOSE\\s*\\))",
+     "message": "Call `frame.setResizable(false);` and `frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);`. The default only hides the frame, so the program would keep running."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "Alerts window: Close disposes of it only",
+     "within": "KioskWindows.createAlertsWindow",
+     "require": "\\.\\s*setDefaultCloseOperation\\s*\\(\\s*(JFrame|WindowConstants)\\s*\\.\\s*DISPOSE_ON_CLOSE\\s*\\)",
+     "forbid": "\\bEXIT_ON_CLOSE\\b",
+     "message": "Use `frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);`. Closing alerts must not end the program, or the bus times would disappear with it."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "The alerts size uses named constants",
+     "within": "KioskWindows.createAlertsWindow",
+     "require": "\\.\\s*setSize\\s*\\(\\s*[A-Z][A-Z0-9_]*\\s*,\\s*[A-Z][A-Z0-9_]*\\s*\\)",
+     "message": "Replace `360` and `200` with named constants such as `ALERTS_WIDTH` and `ALERTS_HEIGHT`, declared next to the main window's constants."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "createMainWindow() doesn't show the window",
+     "within": "KioskWindows.createMainWindow",
+     "forbid": "\\.\\s*setVisible\\s*\\(\\s*true\\s*\\)",
+     "message": "Remove `setVisible(true)` from `createMainWindow()`. The method builds the window; `main()` shows it once the bus data is loaded."
+    },
+    {
+     "id": "C7",
+     "requirement": "R4",
+     "title": "createAlertsWindow() doesn't show the window",
+     "within": "KioskWindows.createAlertsWindow",
+     "forbid": "\\.\\s*setVisible\\s*\\(\\s*true\\s*\\)",
+     "message": "Remove `setVisible(true)` from `createAlertsWindow()`; `main()` already shows the window at the right moment."
+    }
+   ],
+   "hints": [
+    "Table 14-1 lists a method for each tester complaint: size, resizing and visibility. The close behaviour comes from the list of four constants on p. 549.",
+    "The main window and the alerts window need *different* close operations: one ends the program, the other disposes of only itself.",
+    "A frame you never call `setVisible(true)` on still exists: you can set its title, size and close operation, and the test program can read them back."
+   ],
+   "test_program": {
+    "file_name": "TestKioskWindows.java",
+    "code": "import javax.swing.*;\n\npublic class TestKioskWindows\n{\n    public static void main(String[] args)\n    {\n        report(\"Main window\", KioskWindows.createMainWindow(\"Library Stop\"));\n        report(\"Alerts window\", KioskWindows.createAlertsWindow());\n        System.exit(0);   // close any window the test opened\n    }\n\n    static void report(String name, JFrame frame)\n    {\n        System.out.println(name);\n        System.out.println(\"  title: \" + frame.getTitle());\n        System.out.println(\"  size: \" + frame.getWidth() + \" x \" + frame.getHeight());\n        System.out.println(\"  resizable: \" + frame.isResizable());\n        System.out.println(\"  visible: \" + frame.isVisible());\n        int operation = frame.getDefaultCloseOperation();\n        System.out.println(\"  on close: \" + closeName(operation));\n    }\n\n    static String closeName(int operation)\n    {\n        if (operation == JFrame.EXIT_ON_CLOSE)\n            return \"EXIT_ON_CLOSE\";\n        if (operation == WindowConstants.DISPOSE_ON_CLOSE)\n            return \"DISPOSE_ON_CLOSE\";\n        if (operation == WindowConstants.DO_NOTHING_ON_CLOSE)\n            return \"DO_NOTHING_ON_CLOSE\";\n        return \"HIDE_ON_CLOSE\";\n    }\n}\n",
+    "expected_output": "Main window\n  title: Next buses: Library Stop\n  size: 480 x 300\n  resizable: false\n  visible: false\n  on close: EXIT_ON_CLOSE\nAlerts window\n  title: Service alerts\n  size: 360 x 200\n  resizable: true\n  visible: false\n  on close: DISPOSE_ON_CLOSE\n",
+    "predict": "Before you change anything, predict the `title`, `visible` and `on close` lines the starter prints for the main window. Then decide which close operation each window needs, and why they differ.",
+    "how_to_run": "Put `KioskWindows.java` and `TestKioskWindows.java` in the same folder, then run `javac *.java` and `java TestKioskWindows`. In an IDE, add both files to one project and run `TestKioskWindows.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why might the kiosk program want its windows built invisible and shown later, instead of appearing the moment they are created?",
+     "model_answer": "The program can load the bus data and fill in the window first, so commuters never see an empty or half-built window; it shows the frame only when it is ready."
+    },
+    {
+     "question": "A classmate sets both windows to `EXIT_ON_CLOSE`. Describe exactly what a commuter sees after closing the alerts window.",
+     "model_answer": "The whole program ends, so the bus-times window disappears too and the kiosk screen is left empty until someone restarts the program."
+    }
+   ],
+   "extension": "At the start of `main()`, call the static method `setDefaultLookAndFeelDecorated(true)` on `JFrame`, then run it: the title bars switch to Java's Metal look (Figure 14-5). Then replace `alerts.setLocation(500, 0)` with a `setBounds()` call that places the alerts window to the right of the main window at the same height.",
+   "worth_knowing": "The size you give a `JFrame` includes its title bar and borders, so the space left for your components is smaller, by a few dozen pixels on most systems. When the *inside* must be an exact size, programmers give the content a preferred size and call `pack()`, which sizes the frame around it.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; sizes in named constants; each method only builds its window."
+    }
+   ]
+  },
+  {
+   "id": "14.3",
+   "title": "The pickup board that never shows the order",
+   "subtitle": "Change a JLabel's text and font, and remove it from a window correctly",
+   "source": "Ch. 14, section 14.3 (pp. 552–554)",
+   "minutes": 25,
+   "objectives": [
+    "Change the text of an existing `JLabel` with `setText()` instead of creating a new label",
+    "Build `Font` objects and derive one font from another with `deriveFont()`",
+    "Remove a component from a container and refresh it with `invalidate()`, `validate()` and `repaint()`"
+   ],
+   "scenario": "The campus café shows a pickup board on a TV above the counter: one big label that says which order is ready. Baristas call `announce()` when a drink is done, yet the board keeps saying **Welcome!** The café also wants a small line under the big one in the same typeface; marketing is about to switch the headline to Serif, and the small line must follow automatically. At closing time `retire()` should take the label off the board, but the label stays in the window with empty text.\n\nFix the four methods in `OrderBoard` using section 14.3:\n\n- A label's text changes with `setText()`; its font changes with `setFont()`.\n- A `Font` needs a typeface, a style and a point size, and `deriveFont()` makes a new font based on an existing one.\n- A component added to or removed from a window that is already showing needs `invalidate()`, `validate()` and `repaint()`.\n\nThe test program puts a headline on a board, announces orders 42 and 43, asks for footer fonts based on an Arial and a Serif headline, then retires the label. When your code works it prints:\n\n```\nHeadline: Welcome! in Arial, bold, 36 pt\nAfter announce: Order 42 is ready\nAfter announce: Order 43 is ready\nFooter (Arial headline): Arial, plain, 14 pt\nFooter (Serif headline): Serif, plain, 14 pt\nLabels on board: 1\nLabels on board after retire: 0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`makeHeadline(text)` returns a `JLabel` showing the text in `HEADLINE_FONT` (Arial, bold, 36 points)."
+    },
+    {
+     "id": "R2",
+     "text": "`footerFont(headline)` returns a font derived from `headline` with `deriveFont()`: same typeface, plain, 14 points."
+    },
+    {
+     "id": "R3",
+     "text": "`announce(label, orderNumber)` changes the text of the label it receives to `Order 42 is ready` (for order 42). It must not create a new `JLabel`."
+    },
+    {
+     "id": "R4",
+     "text": "`retire(board, label)` removes the label from the board, then calls `invalidate()`, `validate()` and `repaint()` on the board so a showing window updates."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "OrderBoard.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\n\npublic class OrderBoard\n{\n    // The font for the big line on the TV above the counter.\n    public static final Font HEADLINE_FONT = new Font(\"Arial\", Font.BOLD, 36);\n\n    // Returns a label that shows text in the headline font.\n    public static JLabel makeHeadline(String text)\n    {\n        // TODO (R1)\n        JLabel label = new JLabel(text);\n        return label;\n    }\n\n    // Returns the font for the small line under the headline:\n    // the headline's typeface, plain, 14 points.\n    public static Font footerFont(Font headline)\n    {\n        // TODO (R2): marketing is switching the headline to Serif.\n        return new Font(\"Arial\", Font.PLAIN, 14);\n    }\n\n    // Shows \"Order 42 is ready\" on the label that is already on the board.\n    public static void announce(JLabel label, int orderNumber)\n    {\n        // TODO (R3)\n        label = new JLabel(\"Order \" + orderNumber + \" is ready\");\n    }\n\n    // Takes a label off a board that is already showing.\n    public static void retire(JFrame board, JLabel label)\n    {\n        // TODO (R4)\n        label.setText(\"\");\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\n\npublic class OrderBoard\n{\n    // The font for the big line on the TV above the counter.\n    public static final Font HEADLINE_FONT = new Font(\"Arial\", Font.BOLD, 36);\n\n    // Returns a label that shows text in the headline font.\n    public static JLabel makeHeadline(String text)\n    {\n        JLabel label = new JLabel(text);\n        label.setFont(HEADLINE_FONT);\n        return label;\n    }\n\n    // Returns the font for the small line under the headline:\n    // the headline's typeface, plain, 14 points.\n    public static Font footerFont(Font headline)\n    {\n        return headline.deriveFont(Font.PLAIN, 14);\n    }\n\n    // Shows \"Order 42 is ready\" on the label that is already on the board.\n    public static void announce(JLabel label, int orderNumber)\n    {\n        label.setText(\"Order \" + orderNumber + \" is ready\");\n    }\n\n    // Takes a label off a board that is already showing.\n    public static void retire(JFrame board, JLabel label)\n    {\n        board.remove(label);\n        board.invalidate();\n        board.validate();\n        board.repaint();\n    }\n}\n"
+    }
+   ],
+   "main_file": "OrderBoard.java",
+   "solution_notes": "`setFont()` takes a `Font` object (p. 553), so `makeHeadline()` applies the shared `HEADLINE_FONT` constant. `deriveFont(Font.PLAIN, 14)` builds a new font from the headline (p. 554): it keeps the typeface, so a Serif headline gives a Serif footer, which is exactly what basing one font on another is for. In `announce()`, the parameter holds a reference to the label already on the board; `setText()` (p. 553) changes that object. Assigning `new JLabel(...)` to the parameter only makes the local variable point to a new label that is never added anywhere, so the board doesn't change. `retire()` uses `remove()`, the counterpart of `add()`, and then `invalidate()`, `validate()` and `repaint()`, which section 14.3 says are needed when a component is added or removed after the window is visible. `revalidate()` instead of `invalidate()` and `validate()` also passes.",
+   "warmup": [
+    {
+     "question": "The starter's `announce()` builds a brand-new `JLabel` with the order number. Why does the board still say `Welcome!`?",
+     "model_answer": "The new label is assigned only to the parameter, a local copy of the reference. The label on the board is a different object that never changes, and the new label is never added to the board."
+    },
+    {
+     "question": "Name the three arguments of the `Font` constructor and say what each controls in `new Font(\"Arial\", Font.BOLD, 36)`.",
+     "model_answer": "Typeface (\"Arial\", the font's name), style (Font.BOLD) and point size (36, about 1/72 of an inch per point)."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The headline label uses HEADLINE_FONT",
+     "within": "OrderBoard.makeHeadline",
+     "require": "\\.\\s*setFont\\s*\\(\\s*(OrderBoard\\s*\\.\\s*)?HEADLINE_FONT\\s*\\)",
+     "message": "Call `label.setFont(HEADLINE_FONT);` before returning the label. A new `JLabel` uses the look and feel's small default font."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The footer font is derived from the headline",
+     "within": "OrderBoard.footerFont",
+     "require": "\\b\\w+\\s*\\.\\s*deriveFont\\s*\\(\\s*Font\\s*\\.\\s*PLAIN\\s*,\\s*14(\\.0)?[fF]?\\s*\\)",
+     "forbid": "\\bnew\\s+Font\\b",
+     "message": "Return `headline.deriveFont(Font.PLAIN, 14);`. A derived font keeps the headline's typeface, so a Serif headline gives a Serif footer; `new Font(\"Arial\", ...)` would stay Arial forever."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "announce() changes the existing label",
+     "within": "OrderBoard.announce",
+     "require": "\\.\\s*setText\\s*\\(",
+     "forbid": "\\bnew\\s+JLabel\\b",
+     "message": "Call `label.setText(\"Order \" + orderNumber + \" is ready\");`. Creating a new `JLabel` changes only your local variable; the label on the board stays the same object."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "retire() removes the label and refreshes the board",
+     "within": "OrderBoard.retire",
+     "require": "^(?=[\\s\\S]*\\.\\s*remove\\s*\\(\\s*\\w+\\s*\\))(?=[\\s\\S]*\\b(re)?validate\\s*\\(\\s*\\))(?=[\\s\\S]*\\brepaint\\s*\\(\\s*\\))",
+     "message": "Call `board.remove(label);`, then `invalidate()`, `validate()` and `repaint()` on the board. Emptying the text leaves the label in the window, and without the three calls a showing window keeps its old layout."
+    }
+   ],
+   "hints": [
+    "A parameter holds a *reference* to the label on the board. Calling a method through that reference changes the board's label; assigning a new object to the parameter only changes where your local variable points.",
+    "Section 14.3 uses `setText()` for a label's text, `setFont()` for its font and `deriveFont(style, size)` for a font based on another one.",
+    "After the label is removed from the board, the window keeps its old layout until you call the three methods from the section's last paragraph before *Changing a JLabel's Font*."
+   ],
+   "test_program": {
+    "file_name": "TestOrderBoard.java",
+    "code": "import javax.swing.*;\nimport java.awt.*;\n\npublic class TestOrderBoard\n{\n    public static void main(String[] args)\n    {\n        JFrame board = new JFrame(\"Pickup\");\n        board.setSize(400, 150);\n        JLabel headline = OrderBoard.makeHeadline(\"Welcome!\");\n        board.add(headline);\n        System.out.println(\"Headline: \" + headline.getText()\n            + \" in \" + describe(headline.getFont()));\n\n        OrderBoard.announce(headline, 42);\n        System.out.println(\"After announce: \" + headline.getText());\n        OrderBoard.announce(headline, 43);\n        System.out.println(\"After announce: \" + headline.getText());\n\n        Font footer = OrderBoard.footerFont(OrderBoard.HEADLINE_FONT);\n        System.out.println(\"Footer (Arial headline): \" + describe(footer));\n        Font rebrand = new Font(\"Serif\", Font.BOLD, 40);\n        footer = OrderBoard.footerFont(rebrand);\n        System.out.println(\"Footer (Serif headline): \" + describe(footer));\n\n        Container content = board.getContentPane();\n        System.out.println(\"Labels on board: \" + content.getComponentCount());\n        OrderBoard.retire(board, headline);\n        int left = content.getComponentCount();\n        System.out.println(\"Labels on board after retire: \" + left);\n        System.exit(0);   // close the board window\n    }\n\n    static String describe(Font font)\n    {\n        String style = \"plain\";\n        if (font.isBold() && font.isItalic())\n            style = \"bold italic\";\n        else if (font.isBold())\n            style = \"bold\";\n        else if (font.isItalic())\n            style = \"italic\";\n        return font.getName() + \", \" + style + \", \" + font.getSize() + \" pt\";\n    }\n}\n",
+    "expected_output": "Headline: Welcome! in Arial, bold, 36 pt\nAfter announce: Order 42 is ready\nAfter announce: Order 43 is ready\nFooter (Arial headline): Arial, plain, 14 pt\nFooter (Serif headline): Serif, plain, 14 pt\nLabels on board: 1\nLabels on board after retire: 0\n",
+    "predict": "Before you change anything, predict the two `After announce:` lines and the `Labels on board after retire:` line the starter prints. Then predict what `Footer (Serif headline):` should print once `footerFont()` derives its font.",
+    "how_to_run": "Put `OrderBoard.java` and `TestOrderBoard.java` in the same folder, then run `javac *.java` and `java TestOrderBoard`. In an IDE, add both files to one project and run `TestOrderBoard.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why does the footer derive its font from the headline instead of creating `new Font(\"Arial\", Font.PLAIN, 14)`? Use the Serif line of the output in your answer.",
+     "model_answer": "A derived font keeps the headline's typeface. When marketing switches the headline to Serif, the footer becomes Serif too (the output shows Serif, plain, 14), while a hard-coded Arial footer would no longer match."
+    },
+    {
+     "question": "Section 14.3 calls the typeface argument \"only a request\". What happens on a computer that has no Arial, and why is that acceptable for this board?",
+     "model_answer": "Java substitutes a default font, so the board still works and shows the order number; it just looks a little different. Showing the right text matters more than the exact typeface."
+    }
+   ],
+   "extension": "Add `highlight(JLabel label)` that makes a label bold and italic with `deriveFont(Font.BOLD + Font.ITALIC)` for orders waiting more than five minutes. Then write a `main()` that shows the board with `setVisible(true)` and calls `retire()` after a key press in the console, and confirm the label disappears on screen.",
+   "worth_knowing": "Java guarantees five *logical* font names on every computer: Serif, SansSerif, Monospaced, Dialog and DialogInput. Each one maps to a real font the system has, so `new Font(\"SansSerif\", Font.BOLD, 36)` never falls back to a surprise substitute the way a missing \"Arial\" can.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the shared `HEADLINE_FONT` constant reused; no unused labels or fonts left behind."
+    }
+   ]
+  },
+  {
+   "id": "14.4",
+   "title": "The pay station that shows only the price",
+   "subtitle": "Install a FlowLayout so every component in a JFrame is visible",
+   "source": "Ch. 14, section 14.4 (pp. 555–556)",
+   "minutes": 20,
+   "objectives": [
+    "Explain why components added to a `JFrame` with its default `BorderLayout` hide each other",
+    "Install a layout manager with `setLayout()`",
+    "Choose a `FlowLayout` alignment with `FlowLayout.LEFT`, `RIGHT` or `CENTER`"
+   ],
+   "scenario": "The parking garage on Elm Street has a pay-station screen that should show three lines: the level, the number of free spaces, and the hourly rate. Drivers see only **Rate: $2 per hour**. The developer even created a `FlowLayout`, but nothing changed.\n\nSection 14.4 explains what happened. A `JFrame` uses a **border layout manager** unless you choose another one, and every component added without a region lands in the same region, on top of the ones before it. A layout manager you create but never install does nothing at all. Make `build()` install a flow layout whose rows start at the **left** edge, so the three lines read like a list.\n\nThe test program lays the screen out without showing it and reports which labels got room on screen. When your code works it prints:\n\n```\nLayout: FlowLayout, aligned LEFT\nLabels added: 3\n  showing: Level 2\n  showing: Spaces free: 37\n  showing: Rate: $2 per hour\nLabels with room on screen: 3\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`build()` installs a `FlowLayout` on the screen with `setLayout()`, so all three labels are visible."
+    },
+    {
+     "id": "R2",
+     "text": "The flow layout places components starting at the left edge of each row (`FlowLayout.LEFT`)."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "PayStationScreen.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\n\npublic class PayStationScreen\n{\n    static final int SCREEN_WIDTH = 420;\n    static final int SCREEN_HEIGHT = 160;\n\n    public static JFrame build(int level, int freeSpaces)\n    {\n        JFrame screen = new JFrame(\"Garage pay station\");\n        screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);\n        screen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n\n        // TODO (R1, R2): this layout manager is never used.\n        FlowLayout flow = new FlowLayout();\n\n        screen.add(new JLabel(\"Level \" + level));\n        screen.add(new JLabel(\"Spaces free: \" + freeSpaces));\n        screen.add(new JLabel(\"Rate: $2 per hour\"));\n        return screen;\n    }\n\n    public static void main(String[] args)\n    {\n        JFrame screen = build(2, 37);\n        screen.setVisible(true);\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\n\npublic class PayStationScreen\n{\n    static final int SCREEN_WIDTH = 420;\n    static final int SCREEN_HEIGHT = 160;\n\n    public static JFrame build(int level, int freeSpaces)\n    {\n        JFrame screen = new JFrame(\"Garage pay station\");\n        screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);\n        screen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n\n        FlowLayout flow = new FlowLayout(FlowLayout.LEFT);\n        screen.setLayout(flow);\n\n        screen.add(new JLabel(\"Level \" + level));\n        screen.add(new JLabel(\"Spaces free: \" + freeSpaces));\n        screen.add(new JLabel(\"Rate: $2 per hour\"));\n        return screen;\n    }\n\n    public static void main(String[] args)\n    {\n        JFrame screen = build(2, 37);\n        screen.setVisible(true);\n    }\n}\n"
+    }
+   ],
+   "main_file": "PayStationScreen.java",
+   "solution_notes": "With the default `BorderLayout` and no region given, every label goes into the same region and the last one added covers the others (p. 555); the test shows that only one label gets any room. Creating `new FlowLayout()` builds a layout manager object, but the frame keeps using its border layout until `screen.setLayout(flow)` installs it. `new FlowLayout(FlowLayout.LEFT)` starts each row at the left edge instead of the default center (p. 555), so the lines line up like a list. The compact form `screen.setLayout(new FlowLayout(FlowLayout.LEFT));` from p. 556 also passes, as does `FlowLayout.LEADING`, which means left in left-to-right languages.",
+   "warmup": [
+    {
+     "question": "The starter creates a `FlowLayout` named `flow`. Why do the labels still pile up on top of each other?",
+     "model_answer": "flow is never passed to setLayout(), so the frame still uses its default BorderLayout and every label goes into the same region."
+    },
+    {
+     "question": "With the starter's `BorderLayout`, which of the three labels can a driver read, and why that one?",
+     "model_answer": "Rate: $2 per hour, the last one added. Each label added without a region is placed in the same region, on top of the earlier ones."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The screen installs a layout manager",
+     "within": "PayStationScreen.build",
+     "require": "\\.\\s*setLayout\\s*\\(\\s*(new\\s+FlowLayout\\b|\\w+\\s*\\))",
+     "message": "Call `screen.setLayout(flow);`. Creating a layout manager doesn't attach it to the frame; until you install it, the frame keeps its `BorderLayout`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Rows start at the left edge",
+     "within": "PayStationScreen.build",
+     "require": "new\\s+FlowLayout\\s*\\(\\s*FlowLayout\\s*\\.\\s*(LEFT|LEADING)\\s*\\)",
+     "message": "Create the layout with `new FlowLayout(FlowLayout.LEFT)`. Without an argument, `FlowLayout` centers each row."
+    }
+   ],
+   "hints": [
+    "Creating a layout manager does nothing by itself: the frame has to be told to use it.",
+    "`FlowLayout` has a constructor that takes one of three constants defined in the `FlowLayout` class.",
+    "Section 14.4 installs a layout with `aFrame.setLayout(flow);`. Your frame is called `screen`."
+   ],
+   "test_program": {
+    "file_name": "TestPayStationScreen.java",
+    "code": "import javax.swing.*;\nimport java.awt.*;\n\npublic class TestPayStationScreen\n{\n    public static void main(String[] args)\n    {\n        JFrame screen = PayStationScreen.build(2, 37);\n        screen.addNotify();   // lay the window out without showing it\n        screen.validate();\n\n        Container content = screen.getContentPane();\n        LayoutManager layout = content.getLayout();\n        if (layout instanceof FlowLayout)\n            System.out.println(\"Layout: FlowLayout, aligned \"\n                + alignment((FlowLayout) layout));\n        else if (layout instanceof BorderLayout)\n            System.out.println(\"Layout: BorderLayout\");\n        else\n            System.out.println(\"Layout: \" + layout.getClass().getSimpleName());\n\n        System.out.println(\"Labels added: \" + content.getComponentCount());\n        int shown = 0;\n        for (Component part : content.getComponents())\n        {\n            if (part.getWidth() > 0)\n            {\n                System.out.println(\"  showing: \" + ((JLabel) part).getText());\n                ++shown;\n            }\n        }\n        System.out.println(\"Labels with room on screen: \" + shown);\n        System.exit(0);   // close the window\n    }\n\n    static String alignment(FlowLayout flow)\n    {\n        int value = flow.getAlignment();\n        if (value == FlowLayout.LEFT)\n            return \"LEFT\";\n        if (value == FlowLayout.RIGHT)\n            return \"RIGHT\";\n        if (value == FlowLayout.CENTER)\n            return \"CENTER\";\n        if (value == FlowLayout.LEADING)\n            return \"LEFT\";\n        return \"TRAILING\";\n    }\n}\n",
+    "expected_output": "Layout: FlowLayout, aligned LEFT\nLabels added: 3\n  showing: Level 2\n  showing: Spaces free: 37\n  showing: Rate: $2 per hour\nLabels with room on screen: 3\n",
+    "predict": "Before you change anything, predict the first line, every `showing:` line and the last number the starter prints. Which label is the one that gets room, and why?",
+    "how_to_run": "Put `PayStationScreen.java` and `TestPayStationScreen.java` in the same folder, then run `javac *.java` and `java TestPayStationScreen`. In an IDE, add both files to one project and run `TestPayStationScreen.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "What is the difference between *creating* a layout manager and *installing* it? Point to the line of your code that does each.",
+     "model_answer": "new FlowLayout(FlowLayout.LEFT) creates the object; screen.setLayout(flow) installs it on the frame. Only after installing does the frame use it to place components."
+    },
+    {
+     "question": "Suppose the garage's screen were only 150 pixels wide. What would `FlowLayout` do with the three labels, and would a driver lose any of them?",
+     "model_answer": "When a row is full, the next components spill into a new row, so the labels would stack on separate rows. None would be hidden as long as the window is tall enough."
+    }
+   ],
+   "extension": "Add a fourth label, `Pay by card or cash`, and shrink `SCREEN_WIDTH` until the labels wrap onto two rows. Then try `FlowLayout.RIGHT` and `FlowLayout.CENTER` and decide which one reads best on a pay station, and why.",
+   "worth_knowing": "A `JFrame` doesn't hold your labels directly. `add()` puts them in the frame's *content pane*, a panel inside the window, and `setLayout()` is passed along to it as well. That's why the test asks `screen.getContentPane()` for the layout. Before Java 5, programmers had to write `getContentPane().add(...)` themselves.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the layout created once and installed with `setLayout()`; no unused variables."
+    }
+   ]
+  },
+  {
+   "id": "14.5",
+   "title": "Three desk windows, and a constructor that builds a stranger",
+   "subtitle": "Extend JFrame and configure this frame in its own constructor",
+   "source": "Ch. 14, section 14.5 (pp. 557–558)",
+   "minutes": 25,
+   "objectives": [
+    "Create a child class of `JFrame` whose constructor sets the frame's title, size, position and close operation",
+    "Call the parent constructor with `super()` and use methods with an implied `this`",
+    "Use `setBounds()` and close operations so several frames of one class can share a screen"
+   ],
+   "scenario": "The student health clinic runs three check-in desks, and each desk has its own window on the waiting-room monitor: **Check-in: Desk 1**, **Desk 2** and **Desk 3**. A student wrote `DeskFrame extends JFrame` so every desk window gets the same setup, but the windows come up untitled, tiny and stacked on top of each other. Look closely at the constructor: it configures a frame, just not the one being constructed.\n\nFix the constructor using section 14.5. A `DeskFrame` *is a* `JFrame`, so its constructor can pass the title to the parent constructor with `super()` and then call `setBounds()` and `setDefaultCloseOperation()` on itself. Two more decisions from the section:\n\n- The three windows must sit side by side instead of hiding each other: Desk *n* goes at x = (*n* − 1) × `DESK_WIDTH`, y = 0.\n- Desk 1 is the supervisor's window: closing it ends the program. Closing Desk 2 or Desk 3 disposes of that window only, so the others keep working.\n\nThe test program constructs desks 1 to 3 and prints:\n\n```\nCheck-in: Desk 1\n  at (0, 0), 300 x 200\n  on close: EXIT_ON_CLOSE\nCheck-in: Desk 2\n  at (300, 0), 300 x 200\n  on close: DISPOSE_ON_CLOSE\nCheck-in: Desk 3\n  at (600, 0), 300 x 200\n  on close: DISPOSE_ON_CLOSE\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor passes the title `Check-in: Desk n` to the `JFrame` constructor with `super(...)` and configures *this* frame; it creates no other `JFrame`."
+    },
+    {
+     "id": "R2",
+     "text": "Each desk window is `DESK_WIDTH` × `DESK_HEIGHT` pixels and placed with `setBounds()` at x = (n − 1) × `DESK_WIDTH`, y = 0."
+    },
+    {
+     "id": "R3",
+     "text": "Closing Desk 1 ends the program; closing any other desk disposes of that window and keeps the program running."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "DeskFrame.java",
+     "starter": "import javax.swing.*;\n\npublic class DeskFrame extends JFrame\n{\n    final int DESK_WIDTH = 300;\n    final int DESK_HEIGHT = 200;\n    private int deskNumber;\n\n    // Builds the window for one check-in desk, for example \"Check-in: Desk 2\".\n    public DeskFrame(int deskNumber)\n    {\n        // TODO (R1): which frame do these lines configure?\n        JFrame frame = new JFrame(\"Check-in: Desk \" + deskNumber);\n        frame.setSize(DESK_WIDTH, DESK_HEIGHT);\n        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        this.deskNumber = deskNumber;\n        // TODO (R2): place each desk beside the previous one\n        // TODO (R3): only Desk 1 ends the program\n    }\n\n    public int getDeskNumber()\n    {\n        return deskNumber;\n    }\n\n    public static void main(String[] args)\n    {\n        for (int desk = 1; desk <= 3; ++desk)\n        {\n            DeskFrame window = new DeskFrame(desk);\n            window.setVisible(true);\n        }\n    }\n}\n",
+     "solution": "import javax.swing.*;\n\npublic class DeskFrame extends JFrame\n{\n    final int DESK_WIDTH = 300;\n    final int DESK_HEIGHT = 200;\n    private int deskNumber;\n\n    // Builds the window for one check-in desk, for example \"Check-in: Desk 2\".\n    public DeskFrame(int deskNumber)\n    {\n        super(\"Check-in: Desk \" + deskNumber);\n        this.deskNumber = deskNumber;\n        setBounds((deskNumber - 1) * DESK_WIDTH, 0, DESK_WIDTH, DESK_HEIGHT);\n        if (deskNumber == 1)\n            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        else\n            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);\n    }\n\n    public int getDeskNumber()\n    {\n        return deskNumber;\n    }\n\n    public static void main(String[] args)\n    {\n        for (int desk = 1; desk <= 3; ++desk)\n        {\n            DeskFrame window = new DeskFrame(desk);\n            window.setVisible(true);\n        }\n    }\n}\n"
+    }
+   ],
+   "main_file": "DeskFrame.java",
+   "solution_notes": "The starter's constructor builds a second, separate `JFrame` and configures it, so the `DeskFrame` being constructed keeps an empty title and a 0 × 0 size; the stray frame is never shown. Because `DeskFrame` extends `JFrame`, the constructor can call `super(title)` as its first statement (p. 557) and then call the inherited methods with an implied `this`: `setBounds(...)` and `this.setBounds(...)` mean the same thing. `setBounds()` sets position and size in one call (Table 14-1), so the windows sit side by side instead of the second one covering the first (the note on p. 558). Section 14.5 also points out that every frame built by one constructor gets the same close operation; the `if` gives Desk 1 `EXIT_ON_CLOSE` and the other desks `DISPOSE_ON_CLOSE` (p. 558). `setSize()` plus `setLocation()` instead of `setBounds()` doesn't pass the check but behaves the same.",
+   "warmup": [
+    {
+     "question": "The starter's constructor runs, yet the test program prints an empty title for every desk. Which object receives the title, and which object does the test ask?",
+     "model_answer": "The title goes to the new JFrame stored in the local variable frame. The test asks the DeskFrame object being constructed (this), which never got a title or size."
+    },
+    {
+     "question": "Inside the constructor, what is the difference between `setBounds(0, 0, DESK_WIDTH, DESK_HEIGHT);` and `this.setBounds(0, 0, DESK_WIDTH, DESK_HEIGHT);`?",
+     "model_answer": "None. Both call setBounds() on the current DeskFrame being constructed; this is just written out in the second."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The constructor calls super() and builds no other frame",
+     "within": "DeskFrame.DeskFrame",
+     "require": "\\bsuper\\s*\\(",
+     "forbid": "\\bnew\\s+JFrame\\b",
+     "message": "Start the constructor with `super(\"Check-in: Desk \" + deskNumber);` and delete the local `JFrame`. A `DeskFrame` is already a frame; configure it, not a new one."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Each desk is placed and sized with setBounds()",
+     "within": "DeskFrame.DeskFrame",
+     "require": "\\bsetBounds\\s*\\([^;]*\\bDESK_WIDTH\\b[^;]*\\bDESK_HEIGHT\\b",
+     "message": "Call `setBounds((deskNumber - 1) * DESK_WIDTH, 0, DESK_WIDTH, DESK_HEIGHT);`. The first two arguments position the window; the last two size it."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Desk 1 exits; the other desks dispose",
+     "within": "DeskFrame.DeskFrame",
+     "require": "^(?=[\\s\\S]*\\bEXIT_ON_CLOSE\\b)(?=[\\s\\S]*\\bDISPOSE_ON_CLOSE\\b)",
+     "message": "Use an `if` on `deskNumber`: Desk 1 gets `JFrame.EXIT_ON_CLOSE`, every other desk gets `WindowConstants.DISPOSE_ON_CLOSE`, so closing one desk doesn't shut the others down."
+    }
+   ],
+   "hints": [
+    "A `DeskFrame` *is a* `JFrame`. Inside its constructor, call the frame methods with no object in front of them (or with `this.`).",
+    "`super(...)` must be the very first statement in the constructor; it hands the title to the `JFrame` constructor.",
+    "Desk 1 is at x = 0, Desk 2 at x = 300, Desk 3 at x = 600: the x position grows by one window width per desk."
+   ],
+   "test_program": {
+    "file_name": "TestDeskFrame.java",
+    "code": "import javax.swing.*;\n\npublic class TestDeskFrame\n{\n    public static void main(String[] args)\n    {\n        for (int desk = 1; desk <= 3; ++desk)\n        {\n            DeskFrame window = new DeskFrame(desk);\n            System.out.println(window.getTitle());\n            System.out.println(\"  at (\" + window.getX() + \", \" + window.getY()\n                + \"), \" + window.getWidth() + \" x \" + window.getHeight());\n            int operation = window.getDefaultCloseOperation();\n            System.out.println(\"  on close: \" + closeName(operation));\n        }\n        System.exit(0);   // close any window the test opened\n    }\n\n    static String closeName(int operation)\n    {\n        if (operation == JFrame.EXIT_ON_CLOSE)\n            return \"EXIT_ON_CLOSE\";\n        if (operation == WindowConstants.DISPOSE_ON_CLOSE)\n            return \"DISPOSE_ON_CLOSE\";\n        if (operation == WindowConstants.DO_NOTHING_ON_CLOSE)\n            return \"DO_NOTHING_ON_CLOSE\";\n        return \"HIDE_ON_CLOSE\";\n    }\n}\n",
+    "expected_output": "Check-in: Desk 1\n  at (0, 0), 300 x 200\n  on close: EXIT_ON_CLOSE\nCheck-in: Desk 2\n  at (300, 0), 300 x 200\n  on close: DISPOSE_ON_CLOSE\nCheck-in: Desk 3\n  at (600, 0), 300 x 200\n  on close: DISPOSE_ON_CLOSE\n",
+    "predict": "Before you change anything, predict the first three lines the starter prints for Desk 1. Then predict the `at (...)` line for Desk 3 once your constructor works.",
+    "how_to_run": "Put `DeskFrame.java` and `TestDeskFrame.java` in the same folder, then run `javac *.java` and `java TestDeskFrame`. In an IDE, add both files to one project and run `TestDeskFrame.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why is a `DeskFrame` class better than repeating the title, size, position and close settings for each desk in `main()`?",
+     "model_answer": "The setup is written once in the constructor, so every desk window automatically gets it; adding a fourth desk is one line, and a change (a new size) happens in one place instead of three."
+    },
+    {
+     "question": "Your constructor doesn't call `setVisible(true)`; `main()` does. What does that choice allow that a constructor that shows itself would not?",
+     "model_answer": "Code can create and set up a DeskFrame without it popping up, for example to finish filling it first or, as the test program does, to check its settings without showing a window."
+    }
+   ],
+   "extension": "Add a second constructor, `DeskFrame(int deskNumber, String service)`, that produces titles such as `Lab results: Desk 4`, and make the original constructor call it with `this(deskNumber, \"Check-in\")`.",
+   "worth_knowing": "A `JFrame` already inherits two constants named `WIDTH` and `HEIGHT` (from the `ImageObserver` interface), with the values 1 and 2. The book's `JMyFrame` hides them by declaring its own. Forget your declarations, and `setSize(WIDTH, HEIGHT)` still compiles: it just builds a window 1 pixel wide and 2 pixels tall.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; no leftover local `JFrame`; constants used for every size and position."
+    }
+   ]
+  },
+  {
+   "id": "14.6",
+   "title": "The renewal form with a field too small for a barcode",
+   "subtitle": "Add a JTextField and a JButton, then read, clear and lock the field",
+   "source": "Ch. 14, section 14.6 (pp. 559–563)",
+   "minutes": 30,
+   "objectives": [
+    "Add `JLabel`, `JTextField` and `JButton` components to a `JFrame` in the order users read them",
+    "Size a `JTextField` for the data it will hold",
+    "Use `getText()`, `setText()` and `setEditable()` on text fields and buttons"
+   ],
+   "scenario": "The library's self-service kiosk lets patrons renew a book by scanning or typing its barcode. Library barcodes have 14 digits, but the form's text field is 5 columns wide, so patrons can't see what they typed. The **Renew** button sits before the field, the status line is never added to the window, and the form can't read, clear or lock its field yet.\n\nFinish `RenewalFrame` with section 14.6:\n\n- `FlowLayout` places components left to right in the order you add them, so add the prompt, the field, the button and the status line in reading order.\n- The section advises making a text field a little larger than the longest expected entry.\n- `getText()` reads what the patron typed; scanners sometimes add spaces at either end.\n- After `LIMIT` failed attempts the field is locked with `setEditable(false)`, and the button's text tells the patron to see the desk.\n\nThe test program builds the form, types a barcode the way a scanner sends it, clears the form and records four failed attempts. When your code works it prints:\n\n```\nTitle: Renew a book\nLeft to right:\n  JLabel Barcode:\n  JTextField\n  JButton Renew\n  JLabel Scan or type the barcode.\nField has room for a barcode: true\nBarcode read: \"31234005678901\"\nAfter clearForm:\n  field: \"\"\n  status: Scan or type the barcode.\nFailed attempt 1: field editable\n  button: Renew\n  status: Barcode not found. Tries left: 2\nFailed attempt 2: field editable\n  button: Renew\n  status: Barcode not found. Tries left: 1\nFailed attempt 3: field locked\n  button: See the desk\n  status: Too many tries. Please see the desk.\nFailed attempt 4: field locked\n  button: See the desk\n  status: Too many tries. Please see the desk.\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor adds `prompt`, `barcodeField`, `renewButton` and `status` to the frame, in that order."
+    },
+    {
+     "id": "R2",
+     "text": "`barcodeField` is created with room for at least 16 characters: a 14-digit barcode plus a little extra."
+    },
+    {
+     "id": "R3",
+     "text": "`getBarcode()` returns the field's text with spaces removed at both ends. `clearForm()` empties the field and sets the status back to `READY`."
+    },
+    {
+     "id": "R4",
+     "text": "`recordFailedAttempt()` shows `Barcode not found. Tries left: n` until `attempts` reaches `LIMIT`; from then on the field is not editable, the button reads `See the desk` and the status reads `Too many tries. Please see the desk.`"
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "RenewalFrame.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\n\npublic class RenewalFrame extends JFrame\n{\n    final int FRAME_WIDTH = 460;\n    final int FRAME_HEIGHT = 140;\n    final int LIMIT = 3;\n    final String READY = \"Scan or type the barcode.\";\n    JLabel prompt = new JLabel(\"Barcode:\");\n    // TODO (R2): a library barcode has 14 digits.\n    JTextField barcodeField = new JTextField(5);\n    JButton renewButton = new JButton(\"Renew\");\n    JLabel status = new JLabel(READY);\n    int attempts = 0;\n\n    public RenewalFrame()\n    {\n        super(\"Renew a book\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout());\n        // TODO (R1): patrons read left to right, and every component must appear.\n        add(prompt);\n        add(renewButton);\n        add(barcodeField);\n    }\n\n    // Returns what the patron typed, without spaces at either end.\n    public String getBarcode()\n    {\n        // TODO (R3)\n        return \"\";\n    }\n\n    // Gets the form ready for the next patron.\n    public void clearForm()\n    {\n        // TODO (R3)\n    }\n\n    // Called each time a barcode is not found.\n    public void recordFailedAttempt()\n    {\n        ++attempts;\n        // TODO (R4)\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\n\npublic class RenewalFrame extends JFrame\n{\n    final int FRAME_WIDTH = 460;\n    final int FRAME_HEIGHT = 140;\n    final int LIMIT = 3;\n    final String READY = \"Scan or type the barcode.\";\n    JLabel prompt = new JLabel(\"Barcode:\");\n    JTextField barcodeField = new JTextField(16);\n    JButton renewButton = new JButton(\"Renew\");\n    JLabel status = new JLabel(READY);\n    int attempts = 0;\n\n    public RenewalFrame()\n    {\n        super(\"Renew a book\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout());\n        add(prompt);\n        add(barcodeField);\n        add(renewButton);\n        add(status);\n    }\n\n    // Returns what the patron typed, without spaces at either end.\n    public String getBarcode()\n    {\n        return barcodeField.getText().trim();\n    }\n\n    // Gets the form ready for the next patron.\n    public void clearForm()\n    {\n        barcodeField.setText(\"\");\n        status.setText(READY);\n    }\n\n    // Called each time a barcode is not found.\n    public void recordFailedAttempt()\n    {\n        ++attempts;\n        if (attempts >= LIMIT)\n        {\n            barcodeField.setEditable(false);\n            renewButton.setText(\"See the desk\");\n            status.setText(\"Too many tries. Please see the desk.\");\n        }\n        else\n        {\n            status.setText(\"Barcode not found. Tries left: \" + (LIMIT - attempts));\n        }\n    }\n}\n"
+    }
+   ],
+   "main_file": "RenewalFrame.java",
+   "solution_notes": "With `FlowLayout`, components appear left to right in the order they are added (p. 561), so the order of the `add()` calls, not the order of the field declarations, decides what the patron sees; the starter also never added `status`. `new JTextField(16)` leaves room for a 14-digit barcode; the section advises overestimating, because extra characters scroll out of view in a field that is too small (p. 559). `getText()` returns a `String` (p. 560), so `trim()` can remove the spaces a scanner adds. `setText(\"\")` clears the field. `setEditable(false)` stops the patron from changing the field once `attempts` reaches `LIMIT`, the same idea as the book's `if(attempts > LIMIT)` example (p. 560); here the lock comes on at the third failure, so the comparison is `>=`. A `JButton`'s text changes with `setText()` (p. 560). Any column count of 16 or more passes the checks.",
+   "warmup": [
+    {
+     "question": "In what order do the starter's components appear in the window? Why does that order come from the constructor, not from the order of the field declarations?",
+     "model_answer": "Barcode:, the Renew button, then the text field; the status label is missing. FlowLayout places components in the order add() is called, and the constructor adds the button before the field and never adds status."
+    },
+    {
+     "question": "A `JTextField(5)` still accepts 14 digits. What goes wrong for the patron, according to section 14.6?",
+     "model_answer": "Only about five characters show; the rest scroll out of view, so the patron can't check the barcode they typed."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Components are added in reading order",
+     "within": "RenewalFrame.RenewalFrame",
+     "require": "add\\s*\\(\\s*prompt\\s*\\)[\\s\\S]*add\\s*\\(\\s*barcodeField\\s*\\)[\\s\\S]*add\\s*\\(\\s*renewButton\\s*\\)[\\s\\S]*add\\s*\\(\\s*status\\s*\\)",
+     "message": "Add the components in reading order: `add(prompt);`, `add(barcodeField);`, `add(renewButton);`, `add(status);`. `FlowLayout` places them left to right in the order you add them."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The field has room for a whole barcode",
+     "within": "RenewalFrame",
+     "require": "new\\s+JTextField\\s*\\(\\s*(1[6-9]|[2-9]\\d)\\s*\\)",
+     "message": "Create the field with at least 16 columns, for example `new JTextField(16)`. A barcode has 14 digits, and section 14.6 advises overestimating a field's size."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "getBarcode() trims the field's text",
+     "within": "RenewalFrame.getBarcode",
+     "require": "\\.\\s*getText\\s*\\(\\s*\\)\\s*\\.\\s*trim\\s*\\(\\s*\\)",
+     "message": "Return `barcodeField.getText().trim();`. `getText()` reads the field, and `trim()` removes the spaces a scanner can add at either end."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "clearForm() resets the field and the status",
+     "within": "RenewalFrame.clearForm",
+     "require": "^(?=[\\s\\S]*barcodeField\\s*\\.\\s*setText\\s*\\()(?=[\\s\\S]*status\\s*\\.\\s*setText\\s*\\()",
+     "message": "In `clearForm()`, call `barcodeField.setText(\"\")` and `status.setText(READY)` so the next patron starts with an empty field and the instructions."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The field locks after LIMIT failed attempts",
+     "within": "RenewalFrame.recordFailedAttempt",
+     "require": "^(?=[\\s\\S]*\\bLIMIT\\b)(?=[\\s\\S]*barcodeField\\s*\\.\\s*setEditable\\s*\\(\\s*false\\s*\\))(?=[\\s\\S]*renewButton\\s*\\.\\s*setText\\s*\\()",
+     "message": "Compare `attempts` with `LIMIT`; once it is reached, call `barcodeField.setEditable(false)` and change the button with `renewButton.setText(\"See the desk\")`."
+    }
+   ],
+   "hints": [
+    "`FlowLayout` places components left to right in the order you call `add()`.",
+    "`getText()` returns a `String`, so you can call any `String` method on the result.",
+    "In `recordFailedAttempt()`, decide with one `if` on `attempts` and `LIMIT`: lock the form, or report the tries left (`LIMIT - attempts`)."
+   ],
+   "test_program": {
+    "file_name": "TestRenewalFrame.java",
+    "code": "import javax.swing.*;\nimport java.awt.*;\n\npublic class TestRenewalFrame\n{\n    public static void main(String[] args)\n    {\n        RenewalFrame form = new RenewalFrame();\n        System.out.println(\"Title: \" + form.getTitle());\n        System.out.println(\"Left to right:\");\n        for (Component part : form.getContentPane().getComponents())\n            System.out.println(\"  \" + describe(part));\n        boolean roomy = form.barcodeField.getColumns() >= 16;\n        System.out.println(\"Field has room for a barcode: \" + roomy);\n\n        form.barcodeField.setText(\"  31234005678901 \");   // what the scanner sends\n        System.out.println(\"Barcode read: \\\"\" + form.getBarcode() + \"\\\"\");\n        form.status.setText(\"Renewed until Dec 2.\");\n        form.clearForm();\n        System.out.println(\"After clearForm:\");\n        System.out.println(\"  field: \\\"\" + form.barcodeField.getText() + \"\\\"\");\n        System.out.println(\"  status: \" + form.status.getText());\n\n        for (int attempt = 1; attempt <= 4; ++attempt)\n        {\n            form.recordFailedAttempt();\n            String field = form.barcodeField.isEditable() ? \"editable\" : \"locked\";\n            System.out.println(\"Failed attempt \" + attempt + \": field \" + field);\n            System.out.println(\"  button: \" + form.renewButton.getText());\n            System.out.println(\"  status: \" + form.status.getText());\n        }\n        System.exit(0);   // close the window\n    }\n\n    static String describe(Component part)\n    {\n        if (part instanceof JLabel)\n            return \"JLabel \" + ((JLabel) part).getText();\n        if (part instanceof JButton)\n            return \"JButton \" + ((JButton) part).getText();\n        if (part instanceof JTextField)\n            return \"JTextField\";\n        return part.getClass().getSimpleName();\n    }\n}\n",
+    "expected_output": "Title: Renew a book\nLeft to right:\n  JLabel Barcode:\n  JTextField\n  JButton Renew\n  JLabel Scan or type the barcode.\nField has room for a barcode: true\nBarcode read: \"31234005678901\"\nAfter clearForm:\n  field: \"\"\n  status: Scan or type the barcode.\nFailed attempt 1: field editable\n  button: Renew\n  status: Barcode not found. Tries left: 2\nFailed attempt 2: field editable\n  button: Renew\n  status: Barcode not found. Tries left: 1\nFailed attempt 3: field locked\n  button: See the desk\n  status: Too many tries. Please see the desk.\nFailed attempt 4: field locked\n  button: See the desk\n  status: Too many tries. Please see the desk.\n",
+    "predict": "Before you change anything, predict the `Left to right:` list and the `Barcode read:` line the starter prints. Then predict on which failed attempt the field should stop being editable.",
+    "how_to_run": "Put `RenewalFrame.java` and `TestRenewalFrame.java` in the same folder, then run `javac *.java` and `java TestRenewalFrame`. In an IDE, add both files to one project and run `TestRenewalFrame.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why lock the field with `setEditable(false)` instead of removing it from the window?",
+     "model_answer": "The patron and the staff can still see the barcode that was typed, and the layout doesn't jump around; the field just stops accepting changes."
+    },
+    {
+     "question": "The test types the barcode with spaces around it, the way some scanners send it. What would go wrong in the library's lookup if `getBarcode()` didn't trim?",
+     "model_answer": "\"  31234005678901 \" is not equal to the stored \"31234005678901\", so a correct barcode would be reported as not found and count as a failed attempt."
+    }
+   ],
+   "extension": "Add a `JPasswordField` for the patron's four-digit PIN between the barcode and the button, and a method `pinLooksValid()` that returns `true` only when exactly four characters were typed. Look up `getPassword()` in the Java documentation first: why does it return a `char[]` instead of a `String`?",
+   "worth_knowing": "A `JTextField`'s column count is not a character limit. Swing multiplies it by the width of the letter **m** in the field's font to get the field's preferred width, which is why a 10-column field fits about 24 narrow i's but only 8 wide w's. Limiting what users can type takes a separate document filter.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; named constants (`LIMIT`, `READY`) used instead of repeated literals; components added in reading order."
+    }
+   ]
+  },
+  {
+   "id": "14.7",
+   "title": "The loyalty card whose buttons do nothing",
+   "subtitle": "Register a JFrame as a listener, tell event sources apart and disable buttons",
+   "source": "Ch. 14, section 14.7 (pp. 563–569)",
+   "minutes": 30,
+   "objectives": [
+    "Name the source and the listener of an event in an event-driven program",
+    "Register a frame as the listener for several components with `addActionListener(this)`",
+    "Use `getSource()` in `actionPerformed()` to respond differently to each source, and `setEnabled()` to switch buttons on and off"
+   ],
+   "scenario": "The coffee cart outside the engineering building keeps a digital stamp card: five stamps earn a free coffee. The barista types the customer's name and presses Enter to greet them, clicks **Add stamp** for each coffee, and clicks **Redeem free coffee** when the card is full. Right now nothing happens when anyone clicks or presses Enter, even though the class says `implements ActionListener`. And once it does react, every event adds a stamp, whether it came from a button or the name field.\n\nSection 14.7 lists three jobs for a class that responds to events. The starter has done the first (it implements the interface). Do the other two, then make the card behave:\n\n- Register the frame as the listener for **all three** sources: both buttons and the name field.\n- In `actionPerformed()`, use `e.getSource()` to decide what happened.\n- Use `setEnabled()` so the barista can only do what makes sense: **Redeem** stays off until the card is full; at five stamps **Add stamp** turns off and **Redeem** turns on; after redeeming, it's the other way round.\n\nThe test program presses Enter and clicks the buttons the way the barista would, then reports the status line and which buttons are on. When your code works it prints:\n\n```\nStart: Stamps: 0/5\n  Add stamp on, Redeem off\nEnter in name: Hello, Ana! Stamps: 0/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 1/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 2/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 3/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 4/5\n  Add stamp on, Redeem off\nAdd stamp: Card full! Stamps: 5/5\n  Add stamp off, Redeem on\nAdd stamp: Card full! Stamps: 5/5\n  Add stamp off, Redeem on\nRedeem: Enjoy your free coffee! Stamps: 0/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 1/5\n  Add stamp on, Redeem off\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The constructor registers the frame (`this`) as the action listener of `stampButton`, `redeemButton` and `nameField`."
+    },
+    {
+     "id": "R2",
+     "text": "`actionPerformed()` uses `getSource()`: **Add stamp** adds one stamp; **Redeem** sets the stamps back to 0 and shows `Enjoy your free coffee! `; Enter in the name field shows `Hello, ` + name + `! ` and changes no stamps. Every status ends with `Stamps: n/5`, and the fifth stamp shows `Card full! ` first."
+    },
+    {
+     "id": "R3",
+     "text": "With `setEnabled()`: **Redeem** is off until the card has 5 stamps; at 5 stamps **Add stamp** is off and **Redeem** is on; after redeeming, **Add stamp** is on and **Redeem** is off."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "StampCardFrame.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\n\npublic class StampCardFrame extends JFrame implements ActionListener\n{\n    final int STAMPS_FOR_FREE = 5;\n    final int FRAME_WIDTH = 340;\n    final int FRAME_HEIGHT = 150;\n    JTextField nameField = new JTextField(12);\n    JButton stampButton = new JButton(\"Add stamp\");\n    JButton redeemButton = new JButton(\"Redeem free coffee\");\n    JLabel status = new JLabel(\"Stamps: 0/5\");\n    int stamps = 0;\n\n    public StampCardFrame()\n    {\n        super(\"Coffee card\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout());\n        add(new JLabel(\"Customer:\"));\n        add(nameField);\n        add(stampButton);\n        add(redeemButton);\n        add(status);\n        // TODO (R1): nothing tells this frame when a button is clicked\n        //            or Enter is pressed in the name field.\n        // TODO (R3): the card is empty, so there is nothing to redeem yet.\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        // TODO (R2, R3): every event adds a stamp, whatever fired it.\n        ++stamps;\n        status.setText(\"Stamps: \" + stamps + \"/\" + STAMPS_FOR_FREE);\n    }\n\n    public static void main(String[] args)\n    {\n        StampCardFrame card = new StampCardFrame();\n        card.setVisible(true);\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\n\npublic class StampCardFrame extends JFrame implements ActionListener\n{\n    final int STAMPS_FOR_FREE = 5;\n    final int FRAME_WIDTH = 340;\n    final int FRAME_HEIGHT = 150;\n    JTextField nameField = new JTextField(12);\n    JButton stampButton = new JButton(\"Add stamp\");\n    JButton redeemButton = new JButton(\"Redeem free coffee\");\n    JLabel status = new JLabel(\"Stamps: 0/5\");\n    int stamps = 0;\n\n    public StampCardFrame()\n    {\n        super(\"Coffee card\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout());\n        add(new JLabel(\"Customer:\"));\n        add(nameField);\n        add(stampButton);\n        add(redeemButton);\n        add(status);\n        stampButton.addActionListener(this);\n        redeemButton.addActionListener(this);\n        nameField.addActionListener(this);\n        updateButtons();\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        Object source = e.getSource();\n        if (source == stampButton)\n        {\n            ++stamps;\n            if (stamps == STAMPS_FOR_FREE)\n                status.setText(\"Card full! \" + count());\n            else\n                status.setText(count());\n        }\n        else if (source == redeemButton)\n        {\n            stamps = 0;\n            status.setText(\"Enjoy your free coffee! \" + count());\n        }\n        else\n        {\n            status.setText(\"Hello, \" + nameField.getText() + \"! \" + count());\n        }\n        updateButtons();\n    }\n\n    // \"Stamps: 3/5\"\n    private String count()\n    {\n        return \"Stamps: \" + stamps + \"/\" + STAMPS_FOR_FREE;\n    }\n\n    // Only one of the two buttons makes sense at a time.\n    private void updateButtons()\n    {\n        stampButton.setEnabled(stamps < STAMPS_FOR_FREE);\n        redeemButton.setEnabled(stamps == STAMPS_FOR_FREE);\n    }\n\n    public static void main(String[] args)\n    {\n        StampCardFrame card = new StampCardFrame();\n        card.setVisible(true);\n    }\n}\n"
+    }
+   ],
+   "main_file": "StampCardFrame.java",
+   "solution_notes": "Implementing `ActionListener` only prepares the class (p. 564). Until a source registers it with `addActionListener(this)`, the buttons have no listeners to notify, so nothing happens, just as in the section 14.6 frames. Registering both buttons and the text field makes the frame the listener for three sources (p. 566), and Enter in a `JTextField` fires an `ActionEvent` too. Because all three call the same `actionPerformed()`, the method compares `e.getSource()` with each component (Figure 14-28) to decide what to do. `setEnabled(false)` makes a button unusable (p. 567): a disabled button fires no event, so the sixth click is ignored without any extra test, and the barista sees which action is available. The helper `updateButtons()` passes `boolean` expressions to `setEnabled()`; writing `setEnabled(true)` and `setEnabled(false)` inside `if` statements works just as well.",
+   "warmup": [
+    {
+     "question": "The starter already says `implements ActionListener` and has an `actionPerformed()` method. Why does clicking **Add stamp** do nothing?",
+     "model_answer": "The frame was never registered as a listener, so the button has no one to notify. stampButton.addActionListener(this) is missing."
+    },
+    {
+     "question": "In this program, which components are event *sources*, and which object is the *listener*?",
+     "model_answer": "The sources are stampButton, redeemButton and nameField. The listener is the StampCardFrame itself (this), whose actionPerformed() handles their events."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The frame listens to both buttons and the name field",
+     "within": "StampCardFrame.StampCardFrame",
+     "require": "^(?=[\\s\\S]*stampButton\\s*\\.\\s*addActionListener\\s*\\(\\s*this\\s*\\))(?=[\\s\\S]*redeemButton\\s*\\.\\s*addActionListener\\s*\\(\\s*this\\s*\\))(?=[\\s\\S]*nameField\\s*\\.\\s*addActionListener\\s*\\(\\s*this\\s*\\))",
+     "message": "In the constructor, register the frame with each source: `stampButton.addActionListener(this);`, `redeemButton.addActionListener(this);` and `nameField.addActionListener(this);`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "actionPerformed() asks which component fired",
+     "within": "StampCardFrame.actionPerformed",
+     "require": "\\.\\s*getSource\\s*\\(\\s*\\)",
+     "message": "Start `actionPerformed()` with `Object source = e.getSource();`. All three sources call this one method, so it has to find out which one fired."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The source is compared with the components",
+     "within": "StampCardFrame.actionPerformed",
+     "require": "(==\\s*(stampButton|redeemButton|nameField)\\b|\\b(stampButton|redeemButton|nameField)\\s*==)",
+     "message": "Compare the source with each component, for example `if (source == stampButton)`, and handle the redeem button and the name field in their own branches."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "The buttons are switched on and off",
+     "within": "StampCardFrame",
+     "require": "^(?=[\\s\\S]*stampButton\\s*\\.\\s*setEnabled\\s*\\()(?=[\\s\\S]*redeemButton\\s*\\.\\s*setEnabled\\s*\\()",
+     "message": "Use `setEnabled()` on both buttons: `redeemButton` off until the card is full, `stampButton` off at five stamps, and the reverse after redeeming."
+    }
+   ],
+   "hints": [
+    "Section 14.7 lists three jobs: prepare the class (done), register it as a listener on each source, and write the response in `actionPerformed()`.",
+    "`e.getSource()` returns the component that fired the event. Compare it with `==` to each button; whatever is left is the name field.",
+    "A disabled button ignores clicks, so the sixth click needs no special code once **Add stamp** is turned off at five stamps. Set the buttons once in the constructor and again after every event."
+   ],
+   "test_program": {
+    "file_name": "TestStampCardFrame.java",
+    "code": "public class TestStampCardFrame\n{\n    public static void main(String[] args)\n    {\n        StampCardFrame card = new StampCardFrame();\n        show(\"Start\", card);\n        card.nameField.setText(\"Ana\");\n        card.nameField.postActionEvent();      // the barista presses Enter\n        show(\"Enter in name\", card);\n        for (int click = 1; click <= 6; ++click)\n        {\n            card.stampButton.doClick();        // the barista clicks Add stamp\n            show(\"Add stamp\", card);\n        }\n        card.redeemButton.doClick();\n        show(\"Redeem\", card);\n        card.stampButton.doClick();\n        show(\"Add stamp\", card);\n        System.exit(0);   // close the window\n    }\n\n    static void show(String action, StampCardFrame card)\n    {\n        String stamp = card.stampButton.isEnabled() ? \"on\" : \"off\";\n        String redeem = card.redeemButton.isEnabled() ? \"on\" : \"off\";\n        System.out.println(action + \": \" + card.status.getText());\n        System.out.println(\"  Add stamp \" + stamp + \", Redeem \" + redeem);\n    }\n}\n",
+    "expected_output": "Start: Stamps: 0/5\n  Add stamp on, Redeem off\nEnter in name: Hello, Ana! Stamps: 0/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 1/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 2/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 3/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 4/5\n  Add stamp on, Redeem off\nAdd stamp: Card full! Stamps: 5/5\n  Add stamp off, Redeem on\nAdd stamp: Card full! Stamps: 5/5\n  Add stamp off, Redeem on\nRedeem: Enjoy your free coffee! Stamps: 0/5\n  Add stamp on, Redeem off\nAdd stamp: Stamps: 1/5\n  Add stamp on, Redeem off\n",
+    "predict": "Before you change anything, predict every line the starter prints. Then predict the two lines after the *sixth* click on **Add stamp** once your code works, and explain why it doesn't say 6/5.",
+    "how_to_run": "Put `StampCardFrame.java` and `TestStampCardFrame.java` in the same folder, then run `javac *.java` and `java TestStampCardFrame`. In an IDE, add both files to one project and run `TestStampCardFrame.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The test clicks **Add stamp** six times, but the card stops at 5/5. Which part of your code stopped the sixth stamp, and why is that better for the barista than only checking the count inside `actionPerformed()`?",
+     "model_answer": "Disabling stampButton at five stamps: a disabled button fires no event, so actionPerformed() never runs. The barista also sees the greyed-out button and knows the next step is Redeem."
+    },
+    {
+     "question": "Pressing Enter in the name field and clicking a button run the same `actionPerformed()`. What would happen without the `getSource()` test?",
+     "model_answer": "Every event would be treated the same, so greeting a customer with Enter would add a stamp (and redeeming might add one too), giving free stamps."
+    }
+   ],
+   "extension": "Replace `source == nameField` with `source instanceof JTextField` (Figure 14-29) and add a second text field for the customer's phone number. Pressing Enter in either field should greet the customer. Which version of the test is easier to extend, and why?",
+   "worth_knowing": "`doClick()`, which the test program uses, is a real `JButton` method: it presses the button in code, shows it pressed for 68 milliseconds by default, and fires the same `ActionEvent` a mouse click would. Automated GUI tests use it exactly this way, and it does nothing on a disabled button, just like a real click.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; one `actionPerformed()` with a clear branch per source; button states set in one place."
+    }
+   ]
+  },
+  {
+   "id": "14.8",
+   "title": "The 5K sign-up form that ignores half of what runners do",
+   "subtitle": "Implement several listener interfaces and register each one on the right source",
+   "source": "Ch. 14, section 14.8 (pp. 569–571)",
+   "minutes": 30,
+   "objectives": [
+    "Implement more than one listener interface in a single class",
+    "Match each component to its listener-registering method (Table 14-3)",
+    "Write event handlers with the exact names Java calls (Table 14-4), including every method an interface declares"
+   ],
+   "scenario": "The recreation center's sign-up form for the Campus 5K has three things to react to:\n\n- When the runner presses **Enter** in the name field, confirm the registration.\n- When the **Race T-shirt (+$8)** box is ticked or unticked, update the total ($25 entry, $33 with a shirt).\n- When the runner **leaves** the email field, warn if the address has no `@`; when they come **back** to fix it, clear the warning.\n\nOnly the first works. The developer registered the check box with `addActionListener()`, so ticking it runs the name confirmation instead of updating the price. The two methods that should handle the shirt and the email, `shirtChanged()` and `checkEmail()`, are never called: Java only calls handlers whose names come from a listener interface.\n\nUse Tables 14-2, 14-3 and 14-4. One class can implement as many listener interfaces as it needs, as long as it writes every method each interface declares and registers itself on each source with the matching `addXXXListener()` method.\n\nThe test program checks which listeners are registered, then ticks the box, tabs out of and back into the email field and presses Enter. When your code works it prints:\n\n```\nForm hears Enter in name field: true\nForm hears T-shirt box changes: true\nForm hears email field focus: true\nTick T-shirt\n  Total: $33, hint: \"\"\n  message: \"\"\nUntick T-shirt\n  Total: $25, hint: \"\"\n  message: \"\"\nLeave email\n  Total: $25, hint: \"Check the email address.\"\n  message: \"\"\nBack in email\n  Total: $25, hint: \"\"\n  message: \"\"\nLeave email\n  Total: $25, hint: \"\"\n  message: \"\"\nEnter in name\n  Total: $25, hint: \"\"\n  message: \"Thanks, Ana! You're registered.\"\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`RaceSignupFrame` implements `ActionListener`, `ItemListener` and `FocusListener`."
+    },
+    {
+     "id": "R2",
+     "text": "The constructor registers the frame on each source with the matching method: `addActionListener()` on the name field, `addItemListener()` on the check box and `addFocusListener()` on the email field. The check box no longer reports to `actionPerformed()`."
+    },
+    {
+     "id": "R3",
+     "text": "The handlers have the names Java calls: `itemStateChanged(ItemEvent)` updates the total; `focusLost(FocusEvent)` shows `Check the email address.` when the email has no `@` (and clears the hint otherwise); `focusGained(FocusEvent)` clears the hint."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "RaceSignupFrame.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\n\n// TODO (R1): this class should also hear item and focus events.\npublic class RaceSignupFrame extends JFrame implements ActionListener\n{\n    final int ENTRY_FEE = 25;\n    final int SHIRT_FEE = 8;\n    final int FRAME_WIDTH = 360;\n    final int FRAME_HEIGHT = 220;\n    JTextField nameField = new JTextField(14);\n    JTextField emailField = new JTextField(18);\n    JCheckBox shirtBox = new JCheckBox(\"Race T-shirt (+$8)\", false);\n    JLabel totalLabel = new JLabel(\"Total: $25\");\n    JLabel emailHint = new JLabel(\"\");\n    JLabel message = new JLabel(\"\");\n\n    public RaceSignupFrame()\n    {\n        super(\"Campus 5K sign-up\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout(FlowLayout.LEFT));\n        add(new JLabel(\"Name:\"));\n        add(nameField);\n        add(new JLabel(\"Email:\"));\n        add(emailField);\n        add(emailHint);\n        add(shirtBox);\n        add(totalLabel);\n        add(message);\n        nameField.addActionListener(this);\n        // TODO (R2): the check box and the email field need the right listeners.\n        shirtBox.addActionListener(this);\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        String name = nameField.getText().trim();\n        if (name.equals(\"\"))\n            message.setText(\"Please type your name.\");\n        else\n            message.setText(\"Thanks, \" + name + \"! You're registered.\");\n    }\n\n    // TODO (R3): Java never calls a handler with a name you invent.\n    public void shirtChanged(ItemEvent e)\n    {\n        int total = ENTRY_FEE;\n        if (shirtBox.isSelected())\n            total += SHIRT_FEE;\n        totalLabel.setText(\"Total: $\" + total);\n    }\n\n    public void checkEmail(FocusEvent e)\n    {\n        if (emailField.getText().contains(\"@\"))\n            emailHint.setText(\"\");\n        else\n            emailHint.setText(\"Check the email address.\");\n    }\n\n    public static void main(String[] args)\n    {\n        RaceSignupFrame form = new RaceSignupFrame();\n        form.setVisible(true);\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\n\npublic class RaceSignupFrame extends JFrame\n    implements ActionListener, ItemListener, FocusListener\n{\n    final int ENTRY_FEE = 25;\n    final int SHIRT_FEE = 8;\n    final int FRAME_WIDTH = 360;\n    final int FRAME_HEIGHT = 220;\n    JTextField nameField = new JTextField(14);\n    JTextField emailField = new JTextField(18);\n    JCheckBox shirtBox = new JCheckBox(\"Race T-shirt (+$8)\", false);\n    JLabel totalLabel = new JLabel(\"Total: $25\");\n    JLabel emailHint = new JLabel(\"\");\n    JLabel message = new JLabel(\"\");\n\n    public RaceSignupFrame()\n    {\n        super(\"Campus 5K sign-up\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout(FlowLayout.LEFT));\n        add(new JLabel(\"Name:\"));\n        add(nameField);\n        add(new JLabel(\"Email:\"));\n        add(emailField);\n        add(emailHint);\n        add(shirtBox);\n        add(totalLabel);\n        add(message);\n        nameField.addActionListener(this);\n        shirtBox.addItemListener(this);\n        emailField.addFocusListener(this);\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e)\n    {\n        String name = nameField.getText().trim();\n        if (name.equals(\"\"))\n            message.setText(\"Please type your name.\");\n        else\n            message.setText(\"Thanks, \" + name + \"! You're registered.\");\n    }\n\n    @Override\n    public void itemStateChanged(ItemEvent e)\n    {\n        int total = ENTRY_FEE;\n        if (shirtBox.isSelected())\n            total += SHIRT_FEE;\n        totalLabel.setText(\"Total: $\" + total);\n    }\n\n    @Override\n    public void focusGained(FocusEvent e)\n    {\n        emailHint.setText(\"\");\n    }\n\n    @Override\n    public void focusLost(FocusEvent e)\n    {\n        if (emailField.getText().contains(\"@\"))\n            emailHint.setText(\"\");\n        else\n            emailHint.setText(\"Check the email address.\");\n    }\n\n    public static void main(String[] args)\n    {\n        RaceSignupFrame form = new RaceSignupFrame();\n        form.setVisible(true);\n    }\n}\n"
+    }
+   ],
+   "main_file": "RaceSignupFrame.java",
+   "solution_notes": "A class can implement as many listener interfaces as it needs (p. 569); list them after `implements`, separated by commas. Table 14-3 (p. 570) pairs each component with its registering method: the name field fires `ActionEvent`s (Enter), the check box `ItemEvent`s (`addItemListener()`), and any Swing component focus events (`addFocusListener()`). A `JCheckBox` can also fire `ActionEvent`s, which is why the starter's `shirtBox.addActionListener(this)` sent clicks to the name confirmation. Table 14-4 (p. 571) gives the handler names: you can't choose your own, because the source calls the method the interface declares. So `shirtChanged` becomes `itemStateChanged(ItemEvent)` and `checkEmail` becomes `focusLost(FocusEvent)`. `FocusListener` declares two methods, so `focusGained()` must be written too; here it clears the warning while the runner fixes the address. `@Override` is optional but makes the compiler confirm each name.",
+   "warmup": [
+    {
+     "question": "In the starter, the runner ticks the T-shirt box. Which method runs, and what do the total and the message show afterwards?",
+     "model_answer": "The box is registered with addActionListener(this), so actionPerformed() runs: the name is empty, so the message says \"Please type your name.\" and the total stays $25. shirtChanged() never runs."
+    },
+    {
+     "question": "Using Table 14-4, which method or methods must the class write to implement `ItemListener`, and which to implement `FocusListener`?",
+     "model_answer": "ItemListener: itemStateChanged(ItemEvent). FocusListener: focusGained(FocusEvent) and focusLost(FocusEvent)."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The class implements all three listener interfaces",
+     "require": "\\bclass\\s+RaceSignupFrame\\b[^{]*\\bimplements\\s+(?=[^{]*\\bActionListener\\b)(?=[^{]*\\bItemListener\\b)(?=[^{]*\\bFocusListener\\b)",
+     "message": "List all three interfaces in the class header: `implements ActionListener, ItemListener, FocusListener`. A class can implement as many listeners as it needs."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Item and focus listeners are registered",
+     "within": "RaceSignupFrame.RaceSignupFrame",
+     "require": "^(?=[\\s\\S]*shirtBox\\s*\\.\\s*addItemListener\\s*\\(\\s*this\\s*\\))(?=[\\s\\S]*emailField\\s*\\.\\s*addFocusListener\\s*\\(\\s*this\\s*\\))",
+     "message": "Register the frame with `shirtBox.addItemListener(this);` and `emailField.addFocusListener(this);`. Table 14-3 pairs each component with the method that registers its kind of event."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The check box doesn't call actionPerformed()",
+     "within": "RaceSignupFrame.RaceSignupFrame",
+     "forbid": "shirtBox\\s*\\.\\s*addActionListener\\s*\\(",
+     "message": "Delete `shirtBox.addActionListener(this);`. A ticked box would still fire an `ActionEvent` and run the name confirmation."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "itemStateChanged() handles the check box",
+     "within": "RaceSignupFrame",
+     "require": "\\bpublic\\s+void\\s+itemStateChanged\\s*\\(\\s*ItemEvent\\s+\\w+\\s*\\)",
+     "message": "Rename `shirtChanged` to `itemStateChanged(ItemEvent e)`, the method `ItemListener` declares (Table 14-4). Java calls that name, never one you invent."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "focusLost() and focusGained() are both written",
+     "within": "RaceSignupFrame",
+     "require": "^(?=[\\s\\S]*\\bpublic\\s+void\\s+focusLost\\s*\\(\\s*FocusEvent\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bpublic\\s+void\\s+focusGained\\s*\\(\\s*FocusEvent\\s+\\w+\\s*\\))",
+     "message": "Rename `checkEmail` to `focusLost(FocusEvent e)` and add `focusGained(FocusEvent e)` that clears `emailHint`. `FocusListener` declares both, so the class must write both."
+    }
+   ],
+   "hints": [
+    "List the interfaces after `implements`, separated by commas. The compiler then insists on every method each interface declares, which tells you what to write.",
+    "Table 14-3 pairs each component with a registering method. The format is `source.addXXXListener(this);`.",
+    "Rename `shirtChanged` and `checkEmail` instead of rewriting them: their bodies are already right. `focusGained()` needs only one line."
+   ],
+   "test_program": {
+    "file_name": "TestRaceSignupFrame.java",
+    "code": "import javax.swing.*;\nimport java.awt.event.*;\nimport java.util.*;\n\npublic class TestRaceSignupFrame\n{\n    public static void main(String[] args)\n    {\n        RaceSignupFrame form = new RaceSignupFrame();\n        System.out.println(\"Form hears Enter in name field: \"\n            + Arrays.asList(form.nameField.getActionListeners()).contains(form));\n        System.out.println(\"Form hears T-shirt box changes: \"\n            + Arrays.asList(form.shirtBox.getItemListeners()).contains(form));\n        System.out.println(\"Form hears email field focus: \"\n            + Arrays.asList(form.emailField.getFocusListeners()).contains(form));\n\n        form.shirtBox.doClick();                 // the runner ticks the box\n        report(\"Tick T-shirt\", form);\n        form.shirtBox.doClick();                 // ...and changes their mind\n        report(\"Untick T-shirt\", form);\n\n        form.emailField.setText(\"ana.example.com\");\n        focus(form.emailField, false);           // the runner tabs out of the field\n        report(\"Leave email\", form);\n        focus(form.emailField, true);            // ...and clicks back in to fix it\n        report(\"Back in email\", form);\n        form.emailField.setText(\"ana@example.com\");\n        focus(form.emailField, false);\n        report(\"Leave email\", form);\n\n        form.nameField.setText(\"Ana\");\n        form.nameField.postActionEvent();        // the runner presses Enter\n        report(\"Enter in name\", form);\n        System.exit(0);   // close the window\n    }\n\n    // Tells every focus listener on the field, as Swing does when focus moves.\n    static void focus(JTextField field, boolean gained)\n    {\n        for (FocusListener listener : field.getFocusListeners())\n        {\n            if (gained)\n                listener.focusGained(new FocusEvent(field, FocusEvent.FOCUS_GAINED));\n            else\n                listener.focusLost(new FocusEvent(field, FocusEvent.FOCUS_LOST));\n        }\n    }\n\n    static void report(String action, RaceSignupFrame form)\n    {\n        System.out.println(action);\n        System.out.println(\"  \" + form.totalLabel.getText()\n            + \", hint: \\\"\" + form.emailHint.getText() + \"\\\"\");\n        System.out.println(\"  message: \\\"\" + form.message.getText() + \"\\\"\");\n    }\n}\n",
+    "expected_output": "Form hears Enter in name field: true\nForm hears T-shirt box changes: true\nForm hears email field focus: true\nTick T-shirt\n  Total: $33, hint: \"\"\n  message: \"\"\nUntick T-shirt\n  Total: $25, hint: \"\"\n  message: \"\"\nLeave email\n  Total: $25, hint: \"Check the email address.\"\n  message: \"\"\nBack in email\n  Total: $25, hint: \"\"\n  message: \"\"\nLeave email\n  Total: $25, hint: \"\"\n  message: \"\"\nEnter in name\n  Total: $25, hint: \"\"\n  message: \"Thanks, Ana! You're registered.\"\n",
+    "predict": "Before you change anything, predict the three `Form hears` lines and the `Tick T-shirt` line the starter prints. Why does ticking a box change the *message*?",
+    "how_to_run": "Put `RaceSignupFrame.java` and `TestRaceSignupFrame.java` in the same folder, then run `javac *.java` and `java TestRaceSignupFrame`. In an IDE, add both files to one project and run `TestRaceSignupFrame.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why can't you name an event handler whatever you like, the way you name your other methods?",
+     "model_answer": "The source calls the method declared in the listener interface, such as itemStateChanged(); it knows nothing about shirtChanged(). Implementing the interface guarantees that method exists, so Swing can call it."
+    },
+    {
+     "question": "The email check runs when the field *loses* focus, not on every key the runner types. Why is that kinder to the runner?",
+     "model_answer": "While typing, the address is incomplete and would be flagged as wrong after every key. Checking when they leave the field judges the finished address."
+    }
+   ],
+   "extension": "Make the form also implement `KeyListener` and count the characters in the name field after each key, showing `Name: 3 characters`. Look up which three methods `KeyListener` declares; which one is the right place for the count, and why?",
+   "worth_knowing": "When you need only one method of a multi-method listener, Java offers *adapter* classes such as `FocusAdapter` and `MouseAdapter`, which write every method as empty so you override just the one you want. `ActionListener` has a single method, so it has no adapter, and since Java 8 you can even write one as a lambda: `button.addActionListener(e -> ...)`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; `@Override` on each handler; one registering call per source."
+    }
+   ]
+  },
+  {
+   "id": "14.9",
+   "title": "The burrito builder that lets you pick three proteins",
+   "subtitle": "Use a JComboBox, a ButtonGroup and JCheckBoxes, and price the order from what is selected",
+   "source": "Ch. 14, section 14.9 (pp. 572–580)",
+   "minutes": 30,
+   "objectives": [
+    "Build a `JComboBox<String>` from an array and look up a price with `getSelectedIndex()` and a parallel array",
+    "Group `JCheckBox`es in a `ButtonGroup` so only one can be selected, and leave independent options ungrouped",
+    "Respond to `ItemEvent`s by recalculating from the components' current state with `isSelected()`"
+   ],
+   "scenario": "The campus food truck takes orders on a tablet. A burrito has one **size** (Small $7, Regular $9, Large $11), exactly one **protein** (chicken, beans, or steak for $2 more) and any number of **extras** (guacamole $2, extra cheese $1). In the current version the size list is empty, a customer can pick all three proteins, and the total drifts: it adds and subtracts a price on every event, so a missed or unexpected event leaves it wrong for the rest of the order.\n\nUse section 14.9:\n\n- Fill `sizeBox` from the `SIZES` array, start it on **Regular** and register the frame as its item listener. The prices are in `SIZE_PRICES`, a parallel array, so `getSelectedIndex()` finds the price.\n- Put the three protein boxes in one `ButtonGroup` so choosing one turns the others off. Guacamole and cheese must stay independent.\n- Make `itemStateChanged()` **recalculate** the total each time from what is selected right now, instead of adding and subtracting.\n\nThe test program clicks boxes and chooses sizes the way a customer would. When your code works it prints:\n\n```\nStart -> Total: $9\n  size: Regular   protein: Chicken\n  extras: none\nClick Steak -> Total: $11\n  size: Regular   protein: Steak +$2\n  extras: none\nClick Beans -> Total: $9\n  size: Regular   protein: Beans\n  extras: none\nClick Beans again -> Total: $9\n  size: Regular   protein: Beans\n  extras: none\nClick Guacamole -> Total: $11\n  size: Regular   protein: Beans\n  extras: Guacamole +$2\nClick Extra cheese -> Total: $12\n  size: Regular   protein: Beans\n  extras: Guacamole +$2, Extra cheese +$1\nChoose Large -> Total: $14\n  size: Large   protein: Beans\n  extras: Guacamole +$2, Extra cheese +$1\nClick Guacamole again -> Total: $12\n  size: Large   protein: Beans\n  extras: Extra cheese +$1\nChoose Small -> Total: $8\n  size: Small   protein: Beans\n  extras: Extra cheese +$1\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`sizeBox` is a `JComboBox<String>` filled from `SIZES`, starts on `Regular`, and has the frame registered as its item listener. The size price comes from `SIZE_PRICES[sizeBox.getSelectedIndex()]`."
+    },
+    {
+     "id": "R2",
+     "text": "`chicken`, `beans` and `steak` belong to one `ButtonGroup`; `guac` and `cheese` are not in it."
+    },
+    {
+     "id": "R3",
+     "text": "`itemStateChanged()` recalculates the total from scratch: the size price, plus `STEAK_EXTRA` if steak is selected, plus each extra whose box `isSelected()`. No `-=` on a running total."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "BurritoFrame.java",
+     "starter": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\n\npublic class BurritoFrame extends JFrame implements ItemListener\n{\n    final int FRAME_WIDTH = 380;\n    final int FRAME_HEIGHT = 200;\n    final String[] SIZES = {\"Small\", \"Regular\", \"Large\"};\n    final int[] SIZE_PRICES = {7, 9, 11};\n    final int STEAK_EXTRA = 2;\n    final int GUAC_PRICE = 2;\n    final int CHEESE_PRICE = 1;\n\n    // TODO (R1): the list of sizes is empty.\n    JComboBox<String> sizeBox = new JComboBox<String>();\n    JCheckBox chicken = new JCheckBox(\"Chicken\", true);\n    JCheckBox beans = new JCheckBox(\"Beans\", false);\n    JCheckBox steak = new JCheckBox(\"Steak +$2\", false);\n    JCheckBox guac = new JCheckBox(\"Guacamole +$2\", false);\n    JCheckBox cheese = new JCheckBox(\"Extra cheese +$1\", false);\n    JLabel totalLabel = new JLabel(\"Total: $9\");\n    int total = 9;\n\n    public BurritoFrame()\n    {\n        super(\"Burrito builder\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout());\n        add(new JLabel(\"Size:\"));\n        add(sizeBox);\n        // TODO (R2): a burrito has exactly one protein.\n        add(chicken);\n        add(beans);\n        add(steak);\n        add(guac);\n        add(cheese);\n        add(totalLabel);\n        chicken.addItemListener(this);\n        beans.addItemListener(this);\n        steak.addItemListener(this);\n        guac.addItemListener(this);\n        cheese.addItemListener(this);\n    }\n\n    @Override\n    public void itemStateChanged(ItemEvent e)\n    {\n        // TODO (R3): a running total drifts as soon as one event surprises it.\n        Object source = e.getSource();\n        int change = 0;\n        if (source == steak)\n            change = STEAK_EXTRA;\n        else if (source == guac)\n            change = GUAC_PRICE;\n        else if (source == cheese)\n            change = CHEESE_PRICE;\n        if (e.getStateChange() == ItemEvent.SELECTED)\n            total += change;\n        else\n            total -= change;\n        totalLabel.setText(\"Total: $\" + total);\n    }\n\n    public static void main(String[] args)\n    {\n        BurritoFrame order = new BurritoFrame();\n        order.setVisible(true);\n    }\n}\n",
+     "solution": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.*;\n\npublic class BurritoFrame extends JFrame implements ItemListener\n{\n    final int FRAME_WIDTH = 380;\n    final int FRAME_HEIGHT = 200;\n    final String[] SIZES = {\"Small\", \"Regular\", \"Large\"};\n    final int[] SIZE_PRICES = {7, 9, 11};\n    final int STEAK_EXTRA = 2;\n    final int GUAC_PRICE = 2;\n    final int CHEESE_PRICE = 1;\n\n    JComboBox<String> sizeBox = new JComboBox<String>(SIZES);\n    JCheckBox chicken = new JCheckBox(\"Chicken\", true);\n    JCheckBox beans = new JCheckBox(\"Beans\", false);\n    JCheckBox steak = new JCheckBox(\"Steak +$2\", false);\n    JCheckBox guac = new JCheckBox(\"Guacamole +$2\", false);\n    JCheckBox cheese = new JCheckBox(\"Extra cheese +$1\", false);\n    ButtonGroup proteins = new ButtonGroup();\n    JLabel totalLabel = new JLabel(\"\");\n\n    public BurritoFrame()\n    {\n        super(\"Burrito builder\");\n        setSize(FRAME_WIDTH, FRAME_HEIGHT);\n        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n        setLayout(new FlowLayout());\n        sizeBox.setSelectedIndex(1);\n        proteins.add(chicken);\n        proteins.add(beans);\n        proteins.add(steak);\n        add(new JLabel(\"Size:\"));\n        add(sizeBox);\n        add(chicken);\n        add(beans);\n        add(steak);\n        add(guac);\n        add(cheese);\n        add(totalLabel);\n        sizeBox.addItemListener(this);\n        chicken.addItemListener(this);\n        beans.addItemListener(this);\n        steak.addItemListener(this);\n        guac.addItemListener(this);\n        cheese.addItemListener(this);\n        updateTotal();\n    }\n\n    @Override\n    public void itemStateChanged(ItemEvent e)\n    {\n        updateTotal();\n    }\n\n    // Prices the order from what is selected right now.\n    private void updateTotal()\n    {\n        int total = SIZE_PRICES[sizeBox.getSelectedIndex()];\n        if (steak.isSelected())\n            total += STEAK_EXTRA;\n        if (guac.isSelected())\n            total += GUAC_PRICE;\n        if (cheese.isSelected())\n            total += CHEESE_PRICE;\n        totalLabel.setText(\"Total: $\" + total);\n    }\n\n    public static void main(String[] args)\n    {\n        BurritoFrame order = new BurritoFrame();\n        order.setVisible(true);\n    }\n}\n"
+    }
+   ],
+   "main_file": "BurritoFrame.java",
+   "solution_notes": "`new JComboBox<String>(SIZES)` fills the list from the array (p. 576), and `setSelectedIndex(1)` starts it on Regular (Table 14-6); calling `addItem()` for each size also passes. Because `SIZE_PRICES` is a parallel array, `SIZE_PRICES[sizeBox.getSelectedIndex()]` is the size price (p. 576). Creating a `ButtonGroup` groups nothing until each box is added to it (Don't Do It, p. 580); once chicken, beans and steak are in the group, selecting one deselects the others, and the selected one can't be unticked, which is why the second click on Beans changes nothing (p. 575). Guacamole and cheese stay outside the group so both can be chosen. When steak replaces chicken, two `ItemEvent`s fire (chicken deselected, steak selected), and a size change fires two as well; adding and subtracting on each event, like the book's resort calculator, gets fragile as these multiply. Recomputing from `getSelectedIndex()` and `isSelected()` gives the right total after any sequence of events. `updateTotal()` is also called once in the constructor so the label starts correct.",
+   "warmup": [
+    {
+     "question": "In the starter, a customer clicks Beans and then Steak (Chicken starts ticked). How many proteins does the burrito have, and which sentence of section 14.9 explains why?",
+     "model_answer": "Three: chicken, beans and steak are all ticked. Check boxes are independent unless they are added to a ButtonGroup, which lets the user select only one at a time."
+    },
+    {
+     "question": "The starter adds or subtracts a price on every `ItemEvent`. When Steak replaces Chicken inside a `ButtonGroup`, how many `ItemEvent`s do you expect, and for which boxes?",
+     "model_answer": "Two: one for Chicken (deselected) and one for Steak (selected), because each box whose state changes generates its own ItemEvent."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The size list is filled from SIZES",
+     "within": "BurritoFrame",
+     "require": [
+      "new\\s+JComboBox\\s*(<\\s*(String)?\\s*>)?\\s*\\(\\s*SIZES\\s*\\)",
+      "sizeBox\\s*\\.\\s*addItem\\s*\\("
+     ],
+     "message": "Build the list from the array: `JComboBox<String> sizeBox = new JComboBox<String>(SIZES);` (or call `addItem()` for each size). An empty combo box has nothing to choose."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The size list starts on Regular and is listened to",
+     "within": "BurritoFrame.BurritoFrame",
+     "require": "^(?=[\\s\\S]*sizeBox\\s*\\.\\s*setSelected(Index|Item)\\s*\\()(?=[\\s\\S]*sizeBox\\s*\\.\\s*addItemListener\\s*\\(\\s*this\\s*\\))",
+     "message": "In the constructor, call `sizeBox.setSelectedIndex(1);` (Regular) and `sizeBox.addItemListener(this);`, so choosing a size updates the total."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The three proteins share one ButtonGroup",
+     "within": "BurritoFrame",
+     "require": "^(?=[\\s\\S]*new\\s+ButtonGroup\\s*\\(\\s*\\))(?=[\\s\\S]*\\b(?!this\\b)\\w+\\s*\\.\\s*add\\s*\\(\\s*chicken\\s*\\))(?=[\\s\\S]*\\b(?!this\\b)\\w+\\s*\\.\\s*add\\s*\\(\\s*beans\\s*\\))(?=[\\s\\S]*\\b(?!this\\b)\\w+\\s*\\.\\s*add\\s*\\(\\s*steak\\s*\\))",
+     "message": "Create `ButtonGroup proteins = new ButtonGroup();` and add each protein to it: `proteins.add(chicken);`, `proteins.add(beans);`, `proteins.add(steak);`. Creating the group alone groups nothing."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "Extras stay independent",
+     "within": "BurritoFrame",
+     "forbid": "\\b(?!this\\b)\\w+\\s*\\.\\s*add\\s*\\(\\s*(guac|cheese)\\s*\\)",
+     "message": "Keep `guac` and `cheese` out of the `ButtonGroup`: a customer can want both. Add them only to the frame with `add(guac);` and `add(cheese);`.",
+     "starter_passes": true
+    },
+    {
+     "id": "C5",
+     "requirement": "R1",
+     "title": "The size price comes from the parallel array",
+     "within": "BurritoFrame",
+     "require": "SIZE_PRICES\\s*\\[\\s*sizeBox\\s*\\.\\s*getSelectedIndex\\s*\\(\\s*\\)\\s*\\]",
+     "message": "Look up the size price with `SIZE_PRICES[sizeBox.getSelectedIndex()]`. The list position of the selected size is also the position of its price."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "The total is recalculated from what is selected",
+     "within": "BurritoFrame",
+     "require": "^(?=[\\s\\S]*\\bsteak\\s*\\.\\s*isSelected\\s*\\()(?=[\\s\\S]*\\bguac\\s*\\.\\s*isSelected\\s*\\()(?=[\\s\\S]*\\bcheese\\s*\\.\\s*isSelected\\s*\\()",
+     "forbid": "-=",
+     "message": "Start from the size price and add `STEAK_EXTRA`, `GUAC_PRICE` and `CHEESE_PRICE` for each box whose `isSelected()` is true. Subtracting on deselection is what lets the total drift."
+    }
+   ],
+   "hints": [
+    "`JComboBox<String>` has a constructor that takes an array. The first item is at index 0, so Regular is index 1.",
+    "Creating a `ButtonGroup` groups nothing until you call its `add()` with each protein box (see the Don't Do It list).",
+    "Write the total as a fresh sum every time: the size price from the parallel array, plus every option whose box is selected right now."
+   ],
+   "test_program": {
+    "file_name": "TestBurritoFrame.java",
+    "code": "import javax.swing.*;\n\npublic class TestBurritoFrame\n{\n    public static void main(String[] args)\n    {\n        BurritoFrame order = new BurritoFrame();\n        show(\"Start\", order);\n        order.steak.doClick();                 // the customer taps Steak\n        show(\"Click Steak\", order);\n        order.beans.doClick();\n        show(\"Click Beans\", order);\n        order.beans.doClick();\n        show(\"Click Beans again\", order);\n        order.guac.doClick();\n        show(\"Click Guacamole\", order);\n        order.cheese.doClick();\n        show(\"Click Extra cheese\", order);\n        order.sizeBox.setSelectedItem(\"Large\"); // picks Large from the list\n        show(\"Choose Large\", order);\n        order.guac.doClick();\n        show(\"Click Guacamole again\", order);\n        order.sizeBox.setSelectedItem(\"Small\");\n        show(\"Choose Small\", order);\n        System.exit(0);   // close the window\n    }\n\n    static void show(String action, BurritoFrame order)\n    {\n        JCheckBox[] proteins = {order.chicken, order.beans, order.steak};\n        JCheckBox[] extras = {order.guac, order.cheese};\n        System.out.println(action + \" -> \" + order.totalLabel.getText());\n        System.out.println(\"  size: \" + order.sizeBox.getSelectedItem()\n            + \"   protein: \" + selected(proteins));\n        System.out.println(\"  extras: \" + selected(extras));\n    }\n\n    static String selected(JCheckBox[] boxes)\n    {\n        String names = \"\";\n        for (JCheckBox box : boxes)\n        {\n            if (box.isSelected())\n            {\n                if (!names.equals(\"\"))\n                    names += \", \";\n                names += box.getText();\n            }\n        }\n        if (names.equals(\"\"))\n            return \"none\";\n        return names;\n    }\n}\n",
+    "expected_output": "Start -> Total: $9\n  size: Regular   protein: Chicken\n  extras: none\nClick Steak -> Total: $11\n  size: Regular   protein: Steak +$2\n  extras: none\nClick Beans -> Total: $9\n  size: Regular   protein: Beans\n  extras: none\nClick Beans again -> Total: $9\n  size: Regular   protein: Beans\n  extras: none\nClick Guacamole -> Total: $11\n  size: Regular   protein: Beans\n  extras: Guacamole +$2\nClick Extra cheese -> Total: $12\n  size: Regular   protein: Beans\n  extras: Guacamole +$2, Extra cheese +$1\nChoose Large -> Total: $14\n  size: Large   protein: Beans\n  extras: Guacamole +$2, Extra cheese +$1\nClick Guacamole again -> Total: $12\n  size: Large   protein: Beans\n  extras: Extra cheese +$1\nChoose Small -> Total: $8\n  size: Small   protein: Beans\n  extras: Extra cheese +$1\n",
+    "predict": "Before you change anything, predict what the starter prints after `Click Beans`: which proteins are ticked, and what is the total? Then predict the `Click Beans again` lines once the proteins are in a `ButtonGroup`.",
+    "how_to_run": "Put `BurritoFrame.java` and `TestBurritoFrame.java` in the same folder, then run `javac *.java` and `java TestBurritoFrame`. In an IDE, add both files to one project and run `TestBurritoFrame.java`. A window may flash on screen for a moment; the test closes it when it finishes. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The book's resort calculator adds and subtracts on each event. Why is recalculating from `getSelectedIndex()` and `isSelected()` more reliable for this form? Describe one situation where the running total would go wrong.",
+     "model_answer": "The recalculated total always matches what's on screen, whatever events fired and in whatever order. A running total breaks when events come in pairs (steak replacing chicken, a size change fires a deselect and a select) or when one is missed, for example a box set before the listener was registered."
+    },
+    {
+     "question": "The test clicks Beans twice, yet Beans stays selected. Why? If the truck added a \"no protein\" option, how would you offer it?",
+     "model_answer": "In a ButtonGroup, once one box is selected, one always stays selected; clicking it again can't clear it. Add a fourth box, No protein, to the group (the book's trick is an invisible box, but a visible option is clearer for customers)."
+    }
+   ],
+   "extension": "Replace the three protein `JCheckBox`es with `JRadioButton`s (the rest of the code doesn't change), and add a second `JComboBox<String>` for salsa (Mild, Medium, Hot) that is shown on the order but doesn't change the price. Which listener method handles it?",
+   "worth_knowing": "Swing has `JRadioButton` for exactly this job. It is drawn as a circle instead of a square, and that shape alone tells people *pick one* before they click. Check boxes in a `ButtonGroup` behave the same way, but most users expect a square to mean *pick any*.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; prices only in the named constants and the parallel array; one method computes the total."
+    }
+   ]
+  }
+ ]
+}

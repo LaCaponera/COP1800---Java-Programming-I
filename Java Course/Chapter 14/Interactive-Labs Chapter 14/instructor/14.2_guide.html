@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bus-times window nobody can read</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.2</div>
+  <h1>The bus-times window nobody can read</h1>
+<h2>Objectives</h2><ul><li>Construct a <code>JFrame</code> with a title and set its size with named constants</li><li>Use <code>setResizable()</code> and <code>setVisible()</code> deliberately</li><li>Choose between <code>EXIT_ON_CLOSE</code> and <code>DISPOSE_ON_CLOSE</code> for each window of a program</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>createMainWindow(stopName)</code> returns a <code>JFrame</code> titled <code>Next buses: </code> followed by the stop name, sized with the named constants <code>MAIN_WIDTH</code> (480) and <code>MAIN_HEIGHT</code> (300).</li><li><strong>R2</strong> The main window can&#x27;t be resized, and closing it ends the program.</li><li><strong>R3</strong> <code>createAlertsWindow()</code> returns a resizable <code>JFrame</code> titled <code>Service alerts</code>, sized with named constants (360 × 200); closing it disposes of that window and keeps the program running.</li><li><strong>R4</strong> Neither method makes its window visible; the caller decides when to show it.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s main window calls <code>setVisible(true)</code> but never <code>setSize()</code>. According to section 14.2, what does a commuter see, and why?</p><div class="answer"><p>Only the title bar, because a JFrame&#x27;s size is 0 x 0 by default.</p></div></li><li><p>The alerts window keeps the default close operation. What does that default do when a commuter clicks Close, and which of the four values fits the alerts window better?</p><div class="answer"><p>HIDE_ON_CLOSE hides the window and keeps the program running, but the frame object stays around. DISPOSE_ON_CLOSE closes and disposes of it while the program keeps running.</p></div></li></ol>
+<h2>Solution</h2><div class="file">KioskWindows.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">KioskWindows</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAIN_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">480</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MAIN_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">300</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ALERTS_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">360</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ALERTS_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">200</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-nf">createMainWindow</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">stopName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-p">(</span><span class="t-s">"Next buses: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">stopName</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">setSize</span><span class="t-p">(</span><span class="t-n">MAIN_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">MAIN_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">setResizable</span><span class="t-p">(</span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-nf">createAlertsWindow</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-p">(</span><span class="t-s">"Service alerts"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">setSize</span><span class="t-p">(</span><span class="t-n">ALERTS_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">ALERTS_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">WindowConstants</span><span class="t-p">.</span><span class="t-na">DISPOSE_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The kiosk program: build both windows, load the bus data, then show them.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">times</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">createMainWindow</span><span class="t-p">(</span><span class="t-s">"Library Stop"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">alerts</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">createAlertsWindow</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-c1">// ... the bus data is loaded here ...</span>
+<span class="t-w">        </span><span class="t-n">alerts</span><span class="t-p">.</span><span class="t-na">setLocation</span><span class="t-p">(</span><span class="t-mi">500</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">times</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">alerts</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The <code>JFrame(String title)</code> constructor sets the title (p. 547); <code>setTitle()</code> also works. A frame is 0 × 0 by default, which is why the starter showed only a title bar (p. 548); <code>setSize()</code> with named constants fixes that and documents the numbers. <code>setResizable(false)</code> stops commuters from shrinking the times (Table 14-1). The default close operation, <code>HIDE_ON_CLOSE</code>, hides the frame and keeps the program running (p. 549): wrong for the main window, which needs <code>JFrame.EXIT_ON_CLOSE</code>, and not quite right for the alerts window, which needs <code>WindowConstants.DISPOSE_ON_CLOSE</code> so the frame is released while the program (and the bus times) keep running. Neither method calls <code>setVisible(true)</code>: section 14.2 points out that a frame can be built in the background and shown when appropriate, and here <code>main()</code> shows both once the data is loaded. <code>JFrame.DISPOSE_ON_CLOSE</code> is the same constant and also passes.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestKioskWindows.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestKioskWindows</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Main window"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">KioskWindows</span><span class="t-p">.</span><span class="t-na">createMainWindow</span><span class="t-p">(</span><span class="t-s">"Library Stop"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Alerts window"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">KioskWindows</span><span class="t-p">.</span><span class="t-na">createAlertsWindow</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close any window the test opened</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">report</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  title: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">getTitle</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  size: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">getWidth</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" x "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">getHeight</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  resizable: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">isResizable</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  visible: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">isVisible</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">frame</span><span class="t-p">.</span><span class="t-na">getDefaultCloseOperation</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  on close: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">closeName</span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">closeName</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">operation</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"EXIT_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">WindowConstants</span><span class="t-p">.</span><span class="t-na">DISPOSE_ON_CLOSE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"DISPOSE_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">WindowConstants</span><span class="t-p">.</span><span class="t-na">DO_NOTHING_ON_CLOSE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"DO_NOTHING_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"HIDE_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Main window
+  title: Next buses: Library Stop
+  size: 480 x 300
+  resizable: false
+  visible: false
+  on close: EXIT_ON_CLOSE
+Alerts window
+  title: Service alerts
+  size: 360 x 200
+  resizable: true
+  visible: false
+  on close: DISPOSE_ON_CLOSE
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The main window&#x27;s title includes the stop name<div class="small">in <code>KioskWindows.createMainWindow</code></div></td><td><div><span class="tag">require</span> <code>(new\s+JFrame|\.\s*setTitle)\s*\([^;]*\bstopName\b</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The main window is sized with named constants<div class="small">in <code>KioskWindows.createMainWindow</code></div></td><td><div><span class="tag">require</span> <code>\.\s*setSize\s*\(\s*MAIN_WIDTH\s*,\s*MAIN_HEIGHT\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Main window: fixed size, Close ends the program<div class="small">in <code>KioskWindows.createMainWindow</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\.\s*setResizable\s*\(\s*false\s*\))(?=[\s\S]*\.\s*setDefaultCloseOperation\s*\(\s*(JFrame|WindowConstants)\s*\.\s*EXIT_ON_CLOSE\s*\))</code></div></td></tr><tr><td>C4</td><td>R3</td><td>Alerts window: Close disposes of it only<div class="small">in <code>KioskWindows.createAlertsWindow</code></div></td><td><div><span class="tag">require</span> <code>\.\s*setDefaultCloseOperation\s*\(\s*(JFrame|WindowConstants)\s*\.\s*DISPOSE_ON_CLOSE\s*\)</code></div><div><span class="tag">forbid</span> <code>\bEXIT_ON_CLOSE\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The alerts size uses named constants<div class="small">in <code>KioskWindows.createAlertsWindow</code></div></td><td><div><span class="tag">require</span> <code>\.\s*setSize\s*\(\s*[A-Z][A-Z0-9_]*\s*,\s*[A-Z][A-Z0-9_]*\s*\)</code></div></td></tr><tr><td>C6</td><td>R4</td><td>createMainWindow() doesn&#x27;t show the window<div class="small">in <code>KioskWindows.createMainWindow</code></div></td><td><div><span class="tag">forbid</span> <code>\.\s*setVisible\s*\(\s*true\s*\)</code></div></td></tr><tr><td>C7</td><td>R4</td><td>createAlertsWindow() doesn&#x27;t show the window<div class="small">in <code>KioskWindows.createAlertsWindow</code></div></td><td><div><span class="tag">forbid</span> <code>\.\s*setVisible\s*\(\s*true\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The main window&#x27;s title includes the stop name</dt><dd><p>Pass the title to the constructor: <code>new JFrame(&quot;Next buses: &quot; + stopName)</code> (or call <code>setTitle()</code> with that text). A frame built with <code>new JFrame()</code> has no title.</p></dd><dt>C2 · The main window is sized with named constants</dt><dd><p>Declare <code>static final int MAIN_WIDTH = 480;</code> and <code>MAIN_HEIGHT = 300;</code> in the class, then call <code>frame.setSize(MAIN_WIDTH, MAIN_HEIGHT);</code>. Without a size a frame is 0 × 0.</p></dd><dt>C3 · Main window: fixed size, Close ends the program</dt><dd><p>Call <code>frame.setResizable(false);</code> and <code>frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</code>. The default only hides the frame, so the program would keep running.</p></dd><dt>C4 · Alerts window: Close disposes of it only</dt><dd><p>Use <code>frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);</code>. Closing alerts must not end the program, or the bus times would disappear with it.</p></dd><dt>C5 · The alerts size uses named constants</dt><dd><p>Replace <code>360</code> and <code>200</code> with named constants such as <code>ALERTS_WIDTH</code> and <code>ALERTS_HEIGHT</code>, declared next to the main window&#x27;s constants.</p></dd><dt>C6 · createMainWindow() doesn&#x27;t show the window</dt><dd><p>Remove <code>setVisible(true)</code> from <code>createMainWindow()</code>. The method builds the window; <code>main()</code> shows it once the bus data is loaded.</p></dd><dt>C7 · createAlertsWindow() doesn&#x27;t show the window</dt><dd><p>Remove <code>setVisible(true)</code> from <code>createAlertsWindow()</code>; <code>main()</code> already shows the window at the right moment.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Table 14-1 lists a method for each tester complaint: size, resizing and visibility. The close behaviour comes from the list of four constants on p. 549.</p></li><li><p>The main window and the alerts window need <em>different</em> close operations: one ends the program, the other disposes of only itself.</p></li><li><p>A frame you never call <code>setVisible(true)</code> on still exists: you can set its title, size and close operation, and the test program can read them back.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why might the kiosk program want its windows built invisible and shown later, instead of appearing the moment they are created?</p><div class="answer"><p>The program can load the bus data and fill in the window first, so commuters never see an empty or half-built window; it shows the frame only when it is ready.</p></div></li><li><p>A classmate sets both windows to <code>EXIT_ON_CLOSE</code>. Describe exactly what a commuter sees after closing the alerts window.</p><div class="answer"><p>The whole program ends, so the bus-times window disappears too and the kiosk screen is left empty until someone restarts the program.</p></div></li></ol>
+<h2>Extension</h2><p>At the start of <code>main()</code>, call the static method <code>setDefaultLookAndFeelDecorated(true)</code> on <code>JFrame</code>, then run it: the title bars switch to Java&#x27;s Metal look (Figure 14-5). Then replace <code>alerts.setLocation(500, 0)</code> with a <code>setBounds()</code> call that places the alerts window to the right of the main window at the same height.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; sizes in named constants; each method only builds its window.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

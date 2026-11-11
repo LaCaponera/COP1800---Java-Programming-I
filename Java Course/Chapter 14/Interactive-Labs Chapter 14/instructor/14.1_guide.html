@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The audit that thinks a Jukebox is a control</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.1</div>
+  <h1>The audit that thinks a Jukebox is a control</h1>
+<h2>Objectives</h2><ul><li>Describe how <code>JComponent</code>, <code>Container</code>, <code>Component</code>, <code>Window</code>, <code>Frame</code> and <code>JFrame</code> are related</li><li>Explain why every Swing control is also a container, and why a <code>JFrame</code> is not a <code>JComponent</code></li><li>Use <code>instanceof</code> to classify GUI objects by type instead of guessing from a class name</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>isSwingControl()</code> returns <code>true</code> exactly for objects that descend from <code>JComponent</code>. It must not look at the class name.</li><li><strong>R2</strong> <code>isContainer()</code> returns <code>true</code> for anything that can hold other components, that is, any <code>Container</code> (not only frames).</li><li><strong>R3</strong> <code>isWindow()</code> returns <code>true</code> for top-level windows: objects that descend from <code>Window</code>.</li><li><strong>R4</strong> <code>kind()</code> returns <code>&quot;window&quot;</code>, <code>&quot;Swing control&quot;</code>, <code>&quot;AWT component&quot;</code> (a <code>Component</code> that is neither a window nor a Swing control) or <code>&quot;not a component&quot;</code>.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace <code>ancestry()</code> for <code>new JButton(&quot;Print map&quot;)</code>. What does it return, and what does that chain tell you about whether a <code>JButton</code> is a <code>Container</code>?</p><div class="answer"><p>JButton &lt; AbstractButton &lt; JComponent &lt; Container &lt; Component &lt; Object. Container is an ancestor, so every JButton is a Container.</p></div></li><li><p>The starter says <code>Jukebox</code> and <code>JFrame</code> are both Swing controls. Which sentence in section 14.1 gives a test that doesn&#x27;t depend on names?</p><div class="answer"><p>Each Swing component is a descendant of JComponent, so the test is whether the object is a JComponent (instanceof JComponent). JFrame and Jukebox are not.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ComponentAudit.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ComponentAudit</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Returns the object's class and every ancestor class, for example</span>
+<span class="t-w">    </span><span class="t-c1">// "JLabel &lt; JComponent &lt; Container &lt; Component &lt; Object".</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">ancestry</span><span class="t-p">(</span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">chain</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">.</span><span class="t-na">getClass</span><span class="t-p">().</span><span class="t-na">getSimpleName</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">Class</span><span class="t-o">&lt;?&gt;</span><span class="t-w"> </span><span class="t-n">parent</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">.</span><span class="t-na">getClass</span><span class="t-p">().</span><span class="t-na">getSuperclass</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">while</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">parent</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">chain</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-s">" &lt; "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">parent</span><span class="t-p">.</span><span class="t-na">getSimpleName</span><span class="t-p">();</span>
+<span class="t-w">            </span><span class="t-n">parent</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">parent</span><span class="t-p">.</span><span class="t-na">getSuperclass</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">chain</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// True for the Swing controls you place in a window: labels, buttons, text fields...</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isSwingControl</span><span class="t-p">(</span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">JComponent</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// True for anything that can hold other components.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isContainer</span><span class="t-p">(</span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Container</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// True for a top-level window such as a JFrame.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isWindow</span><span class="t-p">(</span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Window</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// "window", "Swing control", "AWT component" or "not a component"</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">kind</span><span class="t-p">(</span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">isWindow</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"window"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">isSwingControl</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Swing control"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">item</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Component</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"AWT component"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"not a component"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Section 14.1 (p. 546) says each Swing component descends from <code>JComponent</code>, which inherits from <code>java.awt.Container</code>, so <code>instanceof JComponent</code> identifies the controls and <code>instanceof Container</code> identifies anything that can hold components. That is why a <code>JButton</code> reports <code>container: true</code>: through <code>JComponent</code> it <em>is a</em> <code>Container</code>. Figure 14-1 (p. 547) shows <code>JFrame</code> descending from <code>Frame</code>, <code>Window</code>, <code>Container</code> and <code>Component</code>; <code>JComponent</code> is not on that chain, so a frame is a window but not a Swing control. In <code>kind()</code> the order matters only for the last test: a <code>JButton</code> is also a <code>Component</code>, so <code>instanceof Component</code> must come after the more specific questions. <code>ButtonGroup</code> is in <code>javax.swing</code> yet descends directly from <code>Object</code> (p. 574), and <code>Jukebox</code> merely starts with J; neither is a component. Names starting with J are a reading aid for people (p. 546), not something a program should rely on.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestComponentAudit.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestComponentAudit</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// The kiosk's music player. It is not part of the GUI.</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Jukebox</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Object</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Welcome"</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JButton</span><span class="t-p">(</span><span class="t-s">"Print map"</span><span class="t-p">),</span>
+<span class="t-w">            </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-p">(</span><span class="t-s">"Kiosk"</span><span class="t-p">),</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Button</span><span class="t-p">(</span><span class="t-s">"Old print button"</span><span class="t-p">),</span>
+<span class="t-w">            </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ButtonGroup</span><span class="t-p">(),</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Jukebox</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">ComponentAudit</span><span class="t-p">.</span><span class="t-na">ancestry</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">));</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  control: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ComponentAudit</span><span class="t-p">.</span><span class="t-na">isSwingControl</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", container: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ComponentAudit</span><span class="t-p">.</span><span class="t-na">isContainer</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", window: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ComponentAudit</span><span class="t-p">.</span><span class="t-na">isWindow</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" -&gt; "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ComponentAudit</span><span class="t-p">.</span><span class="t-na">kind</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close the window objects this test created</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">JLabel &lt; JComponent &lt; Container &lt; Component &lt; Object
+  control: true, container: true, window: false -&gt; Swing control
+JButton &lt; AbstractButton &lt; JComponent &lt; Container &lt; Component &lt; Object
+  control: true, container: true, window: false -&gt; Swing control
+JFrame &lt; Frame &lt; Window &lt; Container &lt; Component &lt; Object
+  control: false, container: true, window: true -&gt; window
+Button &lt; Component &lt; Object
+  control: false, container: false, window: false -&gt; AWT component
+ButtonGroup &lt; Object
+  control: false, container: false, window: false -&gt; not a component
+Jukebox &lt; Object
+  control: false, container: false, window: false -&gt; not a component
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Controls are found by type, not by name<div class="small">in <code>ComponentAudit.isSwingControl</code></div></td><td><div><span class="tag">require</span> <code>\binstanceof\s+(javax\.swing\.)?JComponent\b</code></div><div><span class="tag">forbid</span> <code>\b(getSimpleName|getName|startsWith)\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Any Container can hold components<div class="small">in <code>ComponentAudit.isContainer</code></div></td><td><div><span class="tag">require</span> <code>\binstanceof\s+(java\.awt\.)?Container\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Windows are found with instanceof Window<div class="small">in <code>ComponentAudit.isWindow</code></div></td><td><div><span class="tag">require</span> <code>\binstanceof\s+(java\.awt\.)?Window\b</code></div></td></tr><tr><td>C4</td><td>R4</td><td>kind() recognises plain AWT components<div class="small">in <code>ComponentAudit.kind</code></div></td><td><div><span class="tag">require</span> <code>\binstanceof\s+(java\.awt\.)?Component\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Controls are found by type, not by name</dt><dd><p>Return <code>item instanceof JComponent;</code>. Every Swing control descends from <code>JComponent</code>, whatever its name; a class called <code>Jukebox</code> is not one.</p></dd><dt>C2 · Any Container can hold components</dt><dd><p>Return <code>item instanceof Container;</code>. Frames are containers, but so is every <code>JComponent</code>, because <code>JComponent</code> inherits from <code>java.awt.Container</code>.</p></dd><dt>C3 · Windows are found with instanceof Window</dt><dd><p>Return <code>item instanceof Window;</code>. Figure 14-1 shows <code>JFrame</code> descending from <code>Frame</code>, which descends from <code>Window</code>.</p></dd><dt>C4 · kind() recognises plain AWT components</dt><dd><p>After the window and Swing-control questions, return <code>&quot;AWT component&quot;</code> when <code>item instanceof Component</code>. An AWT <code>Button</code> is a <code>Component</code> but not a <code>JComponent</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p><code>instanceof</code> asks whether an object <em>is a</em> member of a class or of any class that descends from it. Pick the class for each question from the ancestry lines the program prints.</p></li><li><p>Look at the ancestry of <code>JFrame</code>: <code>JComponent</code> isn&#x27;t on it, but <code>Container</code> and <code>Window</code> are.</p></li><li><p>In <code>kind()</code>, ask the specific questions first. Every Swing control is also a <code>Component</code>, so the <code>Component</code> test must come last.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your audit says a <code>JButton</code> is a container. Use its ancestry line to explain why that is true, and why it still doesn&#x27;t make a button the place to put other components.</p><div class="answer"><p>JButton descends from JComponent, which descends from Container, so every button is a Container and inherits add(). Being able to doesn&#x27;t mean it&#x27;s designed for it: a button is a control the user clicks, and frames are the containers meant to hold controls.</p></div></li><li><p>Why is checking whether a class name starts with J a fragile way for a program to decide what an object is? Use two objects from this lab as examples.</p><div class="answer"><p>Names are conventions people choose. Jukebox starts with J but isn&#x27;t a GUI component, and JFrame starts with J but isn&#x27;t a JComponent. instanceof asks the type system, which a name can&#x27;t fool.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>new JTextField(10)</code>, <code>new JPanel()</code> and <code>new JDialog()</code> to the test&#x27;s array. Predict each pair of lines first, then run it. Which of the three is a window, and which section 14.1 note lists it as a heavyweight component?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; <code>ancestry()</code> left unchanged; one <code>instanceof</code> test per question.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The pay station that shows only the price</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.4</div>
+  <h1>The pay station that shows only the price</h1>
+<h2>Objectives</h2><ul><li>Explain why components added to a <code>JFrame</code> with its default <code>BorderLayout</code> hide each other</li><li>Install a layout manager with <code>setLayout()</code></li><li>Choose a <code>FlowLayout</code> alignment with <code>FlowLayout.LEFT</code>, <code>RIGHT</code> or <code>CENTER</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>build()</code> installs a <code>FlowLayout</code> on the screen with <code>setLayout()</code>, so all three labels are visible.</li><li><strong>R2</strong> The flow layout places components starting at the left edge of each row (<code>FlowLayout.LEFT</code>).</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter creates a <code>FlowLayout</code> named <code>flow</code>. Why do the labels still pile up on top of each other?</p><div class="answer"><p>flow is never passed to setLayout(), so the frame still uses its default BorderLayout and every label goes into the same region.</p></div></li><li><p>With the starter&#x27;s <code>BorderLayout</code>, which of the three labels can a driver read, and why that one?</p><div class="answer"><p>Rate: $2 per hour, the last one added. Each label added without a region is placed in the same region, on top of the earlier ones.</p></div></li></ol>
+<h2>Solution</h2><div class="file">PayStationScreen.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">PayStationScreen</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SCREEN_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">420</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SCREEN_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">160</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-nf">build</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">level</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">freeSpaces</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">screen</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-p">(</span><span class="t-s">"Garage pay station"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">setSize</span><span class="t-p">(</span><span class="t-n">SCREEN_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">SCREEN_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">FlowLayout</span><span class="t-w"> </span><span class="t-n">flow</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">(</span><span class="t-n">FlowLayout</span><span class="t-p">.</span><span class="t-na">LEFT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">setLayout</span><span class="t-p">(</span><span class="t-n">flow</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Level "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">level</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Spaces free: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">freeSpaces</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Rate: $2 per hour"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">screen</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">screen</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">build</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">37</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>With the default <code>BorderLayout</code> and no region given, every label goes into the same region and the last one added covers the others (p. 555); the test shows that only one label gets any room. Creating <code>new FlowLayout()</code> builds a layout manager object, but the frame keeps using its border layout until <code>screen.setLayout(flow)</code> installs it. <code>new FlowLayout(FlowLayout.LEFT)</code> starts each row at the left edge instead of the default center (p. 555), so the lines line up like a list. The compact form <code>screen.setLayout(new FlowLayout(FlowLayout.LEFT));</code> from p. 556 also passes, as does <code>FlowLayout.LEADING</code>, which means left in left-to-right languages.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestPayStationScreen.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestPayStationScreen</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-n">screen</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">PayStationScreen</span><span class="t-p">.</span><span class="t-na">build</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">37</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">addNotify</span><span class="t-p">();</span><span class="t-w">   </span><span class="t-c1">// lay the window out without showing it</span>
+<span class="t-w">        </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">validate</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">Container</span><span class="t-w"> </span><span class="t-n">content</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">screen</span><span class="t-p">.</span><span class="t-na">getContentPane</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">LayoutManager</span><span class="t-w"> </span><span class="t-n">layout</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">content</span><span class="t-p">.</span><span class="t-na">getLayout</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">layout</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Layout: FlowLayout, aligned "</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">alignment</span><span class="t-p">((</span><span class="t-n">FlowLayout</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">layout</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">layout</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">BorderLayout</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Layout: BorderLayout"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Layout: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">layout</span><span class="t-p">.</span><span class="t-na">getClass</span><span class="t-p">().</span><span class="t-na">getSimpleName</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Labels added: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">content</span><span class="t-p">.</span><span class="t-na">getComponentCount</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">shown</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Component</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">content</span><span class="t-p">.</span><span class="t-na">getComponents</span><span class="t-p">())</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">part</span><span class="t-p">.</span><span class="t-na">getWidth</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  showing: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">((</span><span class="t-n">JLabel</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-p">).</span><span class="t-na">getText</span><span class="t-p">());</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">shown</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Labels with room on screen: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shown</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close the window</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">alignment</span><span class="t-p">(</span><span class="t-n">FlowLayout</span><span class="t-w"> </span><span class="t-n">flow</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">flow</span><span class="t-p">.</span><span class="t-na">getAlignment</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">.</span><span class="t-na">LEFT</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"LEFT"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">.</span><span class="t-na">RIGHT</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"RIGHT"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">.</span><span class="t-na">CENTER</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"CENTER"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">.</span><span class="t-na">LEADING</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"LEFT"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"TRAILING"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Layout: FlowLayout, aligned LEFT
+Labels added: 3
+  showing: Level 2
+  showing: Spaces free: 37
+  showing: Rate: $2 per hour
+Labels with room on screen: 3
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The screen installs a layout manager<div class="small">in <code>PayStationScreen.build</code></div></td><td><div><span class="tag">require</span> <code>\.\s*setLayout\s*\(\s*(new\s+FlowLayout\b|\w+\s*\))</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Rows start at the left edge<div class="small">in <code>PayStationScreen.build</code></div></td><td><div><span class="tag">require</span> <code>new\s+FlowLayout\s*\(\s*FlowLayout\s*\.\s*(LEFT|LEADING)\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The screen installs a layout manager</dt><dd><p>Call <code>screen.setLayout(flow);</code>. Creating a layout manager doesn&#x27;t attach it to the frame; until you install it, the frame keeps its <code>BorderLayout</code>.</p></dd><dt>C2 · Rows start at the left edge</dt><dd><p>Create the layout with <code>new FlowLayout(FlowLayout.LEFT)</code>. Without an argument, <code>FlowLayout</code> centers each row.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Creating a layout manager does nothing by itself: the frame has to be told to use it.</p></li><li><p><code>FlowLayout</code> has a constructor that takes one of three constants defined in the <code>FlowLayout</code> class.</p></li><li><p>Section 14.4 installs a layout with <code>aFrame.setLayout(flow);</code>. Your frame is called <code>screen</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>What is the difference between <em>creating</em> a layout manager and <em>installing</em> it? Point to the line of your code that does each.</p><div class="answer"><p>new FlowLayout(FlowLayout.LEFT) creates the object; screen.setLayout(flow) installs it on the frame. Only after installing does the frame use it to place components.</p></div></li><li><p>Suppose the garage&#x27;s screen were only 150 pixels wide. What would <code>FlowLayout</code> do with the three labels, and would a driver lose any of them?</p><div class="answer"><p>When a row is full, the next components spill into a new row, so the labels would stack on separate rows. None would be hidden as long as the window is tall enough.</p></div></li></ol>
+<h2>Extension</h2><p>Add a fourth label, <code>Pay by card or cash</code>, and shrink <code>SCREEN_WIDTH</code> until the labels wrap onto two rows. Then try <code>FlowLayout.RIGHT</code> and <code>FlowLayout.CENTER</code> and decide which one reads best on a pay station, and why.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; the layout created once and installed with <code>setLayout()</code>; no unused variables.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The loyalty card whose buttons do nothing</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.7</div>
+  <h1>The loyalty card whose buttons do nothing</h1>
+<h2>Objectives</h2><ul><li>Name the source and the listener of an event in an event-driven program</li><li>Register a frame as the listener for several components with <code>addActionListener(this)</code></li><li>Use <code>getSource()</code> in <code>actionPerformed()</code> to respond differently to each source, and <code>setEnabled()</code> to switch buttons on and off</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The constructor registers the frame (<code>this</code>) as the action listener of <code>stampButton</code>, <code>redeemButton</code> and <code>nameField</code>.</li><li><strong>R2</strong> <code>actionPerformed()</code> uses <code>getSource()</code>: <strong>Add stamp</strong> adds one stamp; <strong>Redeem</strong> sets the stamps back to 0 and shows <code>Enjoy your free coffee! </code>; Enter in the name field shows <code>Hello, </code> + name + <code>! </code> and changes no stamps. Every status ends with <code>Stamps: n/5</code>, and the fifth stamp shows <code>Card full! </code> first.</li><li><strong>R3</strong> With <code>setEnabled()</code>: <strong>Redeem</strong> is off until the card has 5 stamps; at 5 stamps <strong>Add stamp</strong> is off and <strong>Redeem</strong> is on; after redeeming, <strong>Add stamp</strong> is on and <strong>Redeem</strong> is off.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter already says <code>implements ActionListener</code> and has an <code>actionPerformed()</code> method. Why does clicking <strong>Add stamp</strong> do nothing?</p><div class="answer"><p>The frame was never registered as a listener, so the button has no one to notify. stampButton.addActionListener(this) is missing.</p></div></li><li><p>In this program, which components are event <em>sources</em>, and which object is the <em>listener</em>?</p><div class="answer"><p>The sources are stampButton, redeemButton and nameField. The listener is the StampCardFrame itself (this), whose actionPerformed() handles their events.</p></div></li></ol>
+<h2>Solution</h2><div class="file">StampCardFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.event.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">StampCardFrame</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-kd">implements</span><span class="t-w"> </span><span class="t-n">ActionListener</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">STAMPS_FOR_FREE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">5</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">340</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">150</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-n">JTextField</span><span class="t-w"> </span><span class="t-n">nameField</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JTextField</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JButton</span><span class="t-w"> </span><span class="t-n">stampButton</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JButton</span><span class="t-p">(</span><span class="t-s">"Add stamp"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JButton</span><span class="t-w"> </span><span class="t-n">redeemButton</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JButton</span><span class="t-p">(</span><span class="t-s">"Redeem free coffee"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">status</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Stamps: 0/5"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">stamps</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">StampCardFrame</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-s">"Coffee card"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setSize</span><span class="t-p">(</span><span class="t-n">FRAME_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setLayout</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Customer:"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">nameField</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">stampButton</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">redeemButton</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">status</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">stampButton</span><span class="t-p">.</span><span class="t-na">addActionListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">redeemButton</span><span class="t-p">.</span><span class="t-na">addActionListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">nameField</span><span class="t-p">.</span><span class="t-na">addActionListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">updateButtons</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">actionPerformed</span><span class="t-p">(</span><span class="t-n">ActionEvent</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Object</span><span class="t-w"> </span><span class="t-n">source</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">.</span><span class="t-na">getSource</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">source</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">stampButton</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">stamps</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">stamps</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">STAMPS_FOR_FREE</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Card full! "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">());</span>
+<span class="t-w">            </span><span class="t-k">else</span>
+<span class="t-w">                </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">else</span><span class="t-w"> </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">source</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">redeemButton</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">stamps</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Enjoy your free coffee! "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Hello, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">nameField</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"! "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">updateButtons</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// "Stamps: 3/5"</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">count</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Stamps: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">stamps</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"/"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">STAMPS_FOR_FREE</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Only one of the two buttons makes sense at a time.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">updateButtons</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">stampButton</span><span class="t-p">.</span><span class="t-na">setEnabled</span><span class="t-p">(</span><span class="t-n">stamps</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">STAMPS_FOR_FREE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">redeemButton</span><span class="t-p">.</span><span class="t-na">setEnabled</span><span class="t-p">(</span><span class="t-n">stamps</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">STAMPS_FOR_FREE</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">StampCardFrame</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">StampCardFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Implementing <code>ActionListener</code> only prepares the class (p. 564). Until a source registers it with <code>addActionListener(this)</code>, the buttons have no listeners to notify, so nothing happens, just as in the section 14.6 frames. Registering both buttons and the text field makes the frame the listener for three sources (p. 566), and Enter in a <code>JTextField</code> fires an <code>ActionEvent</code> too. Because all three call the same <code>actionPerformed()</code>, the method compares <code>e.getSource()</code> with each component (Figure 14-28) to decide what to do. <code>setEnabled(false)</code> makes a button unusable (p. 567): a disabled button fires no event, so the sixth click is ignored without any extra test, and the barista sees which action is available. The helper <code>updateButtons()</code> passes <code>boolean</code> expressions to <code>setEnabled()</code>; writing <code>setEnabled(true)</code> and <code>setEnabled(false)</code> inside <code>if</code> statements works just as well.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestStampCardFrame.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestStampCardFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">StampCardFrame</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">StampCardFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Start"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">nameField</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Ana"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">nameField</span><span class="t-p">.</span><span class="t-na">postActionEvent</span><span class="t-p">();</span><span class="t-w">      </span><span class="t-c1">// the barista presses Enter</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Enter in name"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">click</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">click</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">6</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">click</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">stampButton</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span><span class="t-w">        </span><span class="t-c1">// the barista clicks Add stamp</span>
+<span class="t-w">            </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Add stamp"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">redeemButton</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Redeem"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">stampButton</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Add stamp"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close the window</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">show</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">action</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">StampCardFrame</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">stamp</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">stampButton</span><span class="t-p">.</span><span class="t-na">isEnabled</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">?</span><span class="t-w"> </span><span class="t-s">"on"</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-s">"off"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">redeem</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">redeemButton</span><span class="t-p">.</span><span class="t-na">isEnabled</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">?</span><span class="t-w"> </span><span class="t-s">"on"</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-s">"off"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">status</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  Add stamp "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">stamp</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", Redeem "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">redeem</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Start: Stamps: 0/5
+  Add stamp on, Redeem off
+Enter in name: Hello, Ana! Stamps: 0/5
+  Add stamp on, Redeem off
+Add stamp: Stamps: 1/5
+  Add stamp on, Redeem off
+Add stamp: Stamps: 2/5
+  Add stamp on, Redeem off
+Add stamp: Stamps: 3/5
+  Add stamp on, Redeem off
+Add stamp: Stamps: 4/5
+  Add stamp on, Redeem off
+Add stamp: Card full! Stamps: 5/5
+  Add stamp off, Redeem on
+Add stamp: Card full! Stamps: 5/5
+  Add stamp off, Redeem on
+Redeem: Enjoy your free coffee! Stamps: 0/5
+  Add stamp on, Redeem off
+Add stamp: Stamps: 1/5
+  Add stamp on, Redeem off
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The frame listens to both buttons and the name field<div class="small">in <code>StampCardFrame.StampCardFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*stampButton\s*\.\s*addActionListener\s*\(\s*this\s*\))(?=[\s\S]*redeemButton\s*\.\s*addActionListener\s*\(\s*this\s*\))(?=[\s\S]*nameField\s*\.\s*addActionListener\s*\(\s*this\s*\))</code></div></td></tr><tr><td>C2</td><td>R2</td><td>actionPerformed() asks which component fired<div class="small">in <code>StampCardFrame.actionPerformed</code></div></td><td><div><span class="tag">require</span> <code>\.\s*getSource\s*\(\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The source is compared with the components<div class="small">in <code>StampCardFrame.actionPerformed</code></div></td><td><div><span class="tag">require</span> <code>(==\s*(stampButton|redeemButton|nameField)\b|\b(stampButton|redeemButton|nameField)\s*==)</code></div></td></tr><tr><td>C4</td><td>R3</td><td>The buttons are switched on and off<div class="small">in <code>StampCardFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*stampButton\s*\.\s*setEnabled\s*\()(?=[\s\S]*redeemButton\s*\.\s*setEnabled\s*\()</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The frame listens to both buttons and the name field</dt><dd><p>In the constructor, register the frame with each source: <code>stampButton.addActionListener(this);</code>, <code>redeemButton.addActionListener(this);</code> and <code>nameField.addActionListener(this);</code>.</p></dd><dt>C2 · actionPerformed() asks which component fired</dt><dd><p>Start <code>actionPerformed()</code> with <code>Object source = e.getSource();</code>. All three sources call this one method, so it has to find out which one fired.</p></dd><dt>C3 · The source is compared with the components</dt><dd><p>Compare the source with each component, for example <code>if (source == stampButton)</code>, and handle the redeem button and the name field in their own branches.</p></dd><dt>C4 · The buttons are switched on and off</dt><dd><p>Use <code>setEnabled()</code> on both buttons: <code>redeemButton</code> off until the card is full, <code>stampButton</code> off at five stamps, and the reverse after redeeming.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Section 14.7 lists three jobs: prepare the class (done), register it as a listener on each source, and write the response in <code>actionPerformed()</code>.</p></li><li><p><code>e.getSource()</code> returns the component that fired the event. Compare it with <code>==</code> to each button; whatever is left is the name field.</p></li><li><p>A disabled button ignores clicks, so the sixth click needs no special code once <strong>Add stamp</strong> is turned off at five stamps. Set the buttons once in the constructor and again after every event.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The test clicks <strong>Add stamp</strong> six times, but the card stops at 5/5. Which part of your code stopped the sixth stamp, and why is that better for the barista than only checking the count inside <code>actionPerformed()</code>?</p><div class="answer"><p>Disabling stampButton at five stamps: a disabled button fires no event, so actionPerformed() never runs. The barista also sees the greyed-out button and knows the next step is Redeem.</p></div></li><li><p>Pressing Enter in the name field and clicking a button run the same <code>actionPerformed()</code>. What would happen without the <code>getSource()</code> test?</p><div class="answer"><p>Every event would be treated the same, so greeting a customer with Enter would add a stamp (and redeeming might add one too), giving free stamps.</p></div></li></ol>
+<h2>Extension</h2><p>Replace <code>source == nameField</code> with <code>source instanceof JTextField</code> (Figure 14-29) and add a second text field for the customer&#x27;s phone number. Pressing Enter in either field should greet the customer. Which version of the test is easier to extend, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; one <code>actionPerformed()</code> with a clear branch per source; button states set in one place.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

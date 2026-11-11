@@ -1,0 +1,56 @@
+POSTING CHECKLIST
+=================
+
+  Lab 14.1: The audit that thinks a Jukebox is a control
+    students : 14.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.1_guide.html
+
+  Lab 14.2: The bus-times window nobody can read
+    students : 14.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.2_guide.html
+
+  Lab 14.3: The pickup board that never shows the order
+    students : 14.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.3_guide.html
+
+  Lab 14.4: The pay station that shows only the price
+    students : 14.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.4_guide.html
+
+  Lab 14.5: Three desk windows, and a constructor that builds a stranger
+    students : 14.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.5_guide.html
+
+  Lab 14.6: The renewal form with a field too small for a barcode
+    students : 14.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.6_guide.html
+
+  Lab 14.7: The loyalty card whose buttons do nothing
+    students : 14.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.7_guide.html
+
+  Lab 14.8: The 5K sign-up form that ignores half of what runners do
+    students : 14.8.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.8_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.8_guide.html
+
+  Lab 14.9: The burrito builder that lets you pick three proteins
+    students : 14.9.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/14.9_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/14.9_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

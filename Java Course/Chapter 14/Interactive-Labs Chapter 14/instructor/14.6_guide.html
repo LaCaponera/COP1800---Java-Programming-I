@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The renewal form with a field too small for a barcode</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.6</div>
+  <h1>The renewal form with a field too small for a barcode</h1>
+<h2>Objectives</h2><ul><li>Add <code>JLabel</code>, <code>JTextField</code> and <code>JButton</code> components to a <code>JFrame</code> in the order users read them</li><li>Size a <code>JTextField</code> for the data it will hold</li><li>Use <code>getText()</code>, <code>setText()</code> and <code>setEditable()</code> on text fields and buttons</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The constructor adds <code>prompt</code>, <code>barcodeField</code>, <code>renewButton</code> and <code>status</code> to the frame, in that order.</li><li><strong>R2</strong> <code>barcodeField</code> is created with room for at least 16 characters: a 14-digit barcode plus a little extra.</li><li><strong>R3</strong> <code>getBarcode()</code> returns the field&#x27;s text with spaces removed at both ends. <code>clearForm()</code> empties the field and sets the status back to <code>READY</code>.</li><li><strong>R4</strong> <code>recordFailedAttempt()</code> shows <code>Barcode not found. Tries left: n</code> until <code>attempts</code> reaches <code>LIMIT</code>; from then on the field is not editable, the button reads <code>See the desk</code> and the status reads <code>Too many tries. Please see the desk.</code></li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In what order do the starter&#x27;s components appear in the window? Why does that order come from the constructor, not from the order of the field declarations?</p><div class="answer"><p>Barcode:, the Renew button, then the text field; the status label is missing. FlowLayout places components in the order add() is called, and the constructor adds the button before the field and never adds status.</p></div></li><li><p>A <code>JTextField(5)</code> still accepts 14 digits. What goes wrong for the patron, according to section 14.6?</p><div class="answer"><p>Only about five characters show; the rest scroll out of view, so the patron can&#x27;t check the barcode they typed.</p></div></li></ol>
+<h2>Solution</h2><div class="file">RenewalFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RenewalFrame</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">JFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">460</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">140</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">LIMIT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">READY</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Scan or type the barcode."</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">prompt</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Barcode:"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JTextField</span><span class="t-w"> </span><span class="t-n">barcodeField</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JTextField</span><span class="t-p">(</span><span class="t-mi">16</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JButton</span><span class="t-w"> </span><span class="t-n">renewButton</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JButton</span><span class="t-p">(</span><span class="t-s">"Renew"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">status</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-n">READY</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">attempts</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">RenewalFrame</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-s">"Renew a book"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setSize</span><span class="t-p">(</span><span class="t-n">FRAME_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setLayout</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">prompt</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">barcodeField</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">renewButton</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">status</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns what the patron typed, without spaces at either end.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getBarcode</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">barcodeField</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">().</span><span class="t-na">trim</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Gets the form ready for the next patron.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">clearForm</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">barcodeField</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-n">READY</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Called each time a barcode is not found.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">recordFailedAttempt</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">attempts</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">attempts</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">LIMIT</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">barcodeField</span><span class="t-p">.</span><span class="t-na">setEditable</span><span class="t-p">(</span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">renewButton</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"See the desk"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Too many tries. Please see the desk."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Barcode not found. Tries left: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">LIMIT</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-n">attempts</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>With <code>FlowLayout</code>, components appear left to right in the order they are added (p. 561), so the order of the <code>add()</code> calls, not the order of the field declarations, decides what the patron sees; the starter also never added <code>status</code>. <code>new JTextField(16)</code> leaves room for a 14-digit barcode; the section advises overestimating, because extra characters scroll out of view in a field that is too small (p. 559). <code>getText()</code> returns a <code>String</code> (p. 560), so <code>trim()</code> can remove the spaces a scanner adds. <code>setText(&quot;&quot;)</code> clears the field. <code>setEditable(false)</code> stops the patron from changing the field once <code>attempts</code> reaches <code>LIMIT</code>, the same idea as the book&#x27;s <code>if(attempts &gt; LIMIT)</code> example (p. 560); here the lock comes on at the third failure, so the comparison is <code>&gt;=</code>. A <code>JButton</code>&#x27;s text changes with <code>setText()</code> (p. 560). Any column count of 16 or more passes the checks.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRenewalFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRenewalFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">RenewalFrame</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">RenewalFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Title: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">getTitle</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Left to right:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Component</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">getContentPane</span><span class="t-p">().</span><span class="t-na">getComponents</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">describe</span><span class="t-p">(</span><span class="t-n">part</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">roomy</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">barcodeField</span><span class="t-p">.</span><span class="t-na">getColumns</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">16</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Field has room for a barcode: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">roomy</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">barcodeField</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"  31234005678901 "</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// what the scanner sends</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Barcode read: \""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">getBarcode</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">status</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Renewed until Dec 2."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">clearForm</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"After clearForm:"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  field: \""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">barcodeField</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  status: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">status</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">attempt</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">attempt</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">attempt</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">recordFailedAttempt</span><span class="t-p">();</span>
+<span class="t-w">            </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">field</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">barcodeField</span><span class="t-p">.</span><span class="t-na">isEditable</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">?</span><span class="t-w"> </span><span class="t-s">"editable"</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-s">"locked"</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Failed attempt "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">attempt</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": field "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">field</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  button: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">renewButton</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">());</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  status: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">status</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close the window</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">describe</span><span class="t-p">(</span><span class="t-n">Component</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">part</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"JLabel "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">((</span><span class="t-n">JLabel</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-p">).</span><span class="t-na">getText</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">part</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">JButton</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"JButton "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">((</span><span class="t-n">JButton</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-p">).</span><span class="t-na">getText</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">part</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">JTextField</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"JTextField"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-p">.</span><span class="t-na">getClass</span><span class="t-p">().</span><span class="t-na">getSimpleName</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Title: Renew a book
+Left to right:
+  JLabel Barcode:
+  JTextField
+  JButton Renew
+  JLabel Scan or type the barcode.
+Field has room for a barcode: true
+Barcode read: &quot;31234005678901&quot;
+After clearForm:
+  field: &quot;&quot;
+  status: Scan or type the barcode.
+Failed attempt 1: field editable
+  button: Renew
+  status: Barcode not found. Tries left: 2
+Failed attempt 2: field editable
+  button: Renew
+  status: Barcode not found. Tries left: 1
+Failed attempt 3: field locked
+  button: See the desk
+  status: Too many tries. Please see the desk.
+Failed attempt 4: field locked
+  button: See the desk
+  status: Too many tries. Please see the desk.
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Components are added in reading order<div class="small">in <code>RenewalFrame.RenewalFrame</code></div></td><td><div><span class="tag">require</span> <code>add\s*\(\s*prompt\s*\)[\s\S]*add\s*\(\s*barcodeField\s*\)[\s\S]*add\s*\(\s*renewButton\s*\)[\s\S]*add\s*\(\s*status\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The field has room for a whole barcode<div class="small">in <code>RenewalFrame</code></div></td><td><div><span class="tag">require</span> <code>new\s+JTextField\s*\(\s*(1[6-9]|[2-9]\d)\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>getBarcode() trims the field&#x27;s text<div class="small">in <code>RenewalFrame.getBarcode</code></div></td><td><div><span class="tag">require</span> <code>\.\s*getText\s*\(\s*\)\s*\.\s*trim\s*\(\s*\)</code></div></td></tr><tr><td>C4</td><td>R3</td><td>clearForm() resets the field and the status<div class="small">in <code>RenewalFrame.clearForm</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*barcodeField\s*\.\s*setText\s*\()(?=[\s\S]*status\s*\.\s*setText\s*\()</code></div></td></tr><tr><td>C5</td><td>R4</td><td>The field locks after LIMIT failed attempts<div class="small">in <code>RenewalFrame.recordFailedAttempt</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bLIMIT\b)(?=[\s\S]*barcodeField\s*\.\s*setEditable\s*\(\s*false\s*\))(?=[\s\S]*renewButton\s*\.\s*setText\s*\()</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Components are added in reading order</dt><dd><p>Add the components in reading order: <code>add(prompt);</code>, <code>add(barcodeField);</code>, <code>add(renewButton);</code>, <code>add(status);</code>. <code>FlowLayout</code> places them left to right in the order you add them.</p></dd><dt>C2 · The field has room for a whole barcode</dt><dd><p>Create the field with at least 16 columns, for example <code>new JTextField(16)</code>. A barcode has 14 digits, and section 14.6 advises overestimating a field&#x27;s size.</p></dd><dt>C3 · getBarcode() trims the field&#x27;s text</dt><dd><p>Return <code>barcodeField.getText().trim();</code>. <code>getText()</code> reads the field, and <code>trim()</code> removes the spaces a scanner can add at either end.</p></dd><dt>C4 · clearForm() resets the field and the status</dt><dd><p>In <code>clearForm()</code>, call <code>barcodeField.setText(&quot;&quot;)</code> and <code>status.setText(READY)</code> so the next patron starts with an empty field and the instructions.</p></dd><dt>C5 · The field locks after LIMIT failed attempts</dt><dd><p>Compare <code>attempts</code> with <code>LIMIT</code>; once it is reached, call <code>barcodeField.setEditable(false)</code> and change the button with <code>renewButton.setText(&quot;See the desk&quot;)</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p><code>FlowLayout</code> places components left to right in the order you call <code>add()</code>.</p></li><li><p><code>getText()</code> returns a <code>String</code>, so you can call any <code>String</code> method on the result.</p></li><li><p>In <code>recordFailedAttempt()</code>, decide with one <code>if</code> on <code>attempts</code> and <code>LIMIT</code>: lock the form, or report the tries left (<code>LIMIT - attempts</code>).</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why lock the field with <code>setEditable(false)</code> instead of removing it from the window?</p><div class="answer"><p>The patron and the staff can still see the barcode that was typed, and the layout doesn&#x27;t jump around; the field just stops accepting changes.</p></div></li><li><p>The test types the barcode with spaces around it, the way some scanners send it. What would go wrong in the library&#x27;s lookup if <code>getBarcode()</code> didn&#x27;t trim?</p><div class="answer"><p>&quot;  31234005678901 &quot; is not equal to the stored &quot;31234005678901&quot;, so a correct barcode would be reported as not found and count as a failed attempt.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>JPasswordField</code> for the patron&#x27;s four-digit PIN between the barcode and the button, and a method <code>pinLooksValid()</code> that returns <code>true</code> only when exactly four characters were typed. Look up <code>getPassword()</code> in the Java documentation first: why does it return a <code>char[]</code> instead of a <code>String</code>?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; named constants (<code>LIMIT</code>, <code>READY</code>) used instead of repeated literals; components added in reading order.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

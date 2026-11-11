@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The burrito builder that lets you pick three proteins</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.9</div>
+  <h1>The burrito builder that lets you pick three proteins</h1>
+<h2>Objectives</h2><ul><li>Build a <code>JComboBox&lt;String&gt;</code> from an array and look up a price with <code>getSelectedIndex()</code> and a parallel array</li><li>Group <code>JCheckBox</code>es in a <code>ButtonGroup</code> so only one can be selected, and leave independent options ungrouped</li><li>Respond to <code>ItemEvent</code>s by recalculating from the components&#x27; current state with <code>isSelected()</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>sizeBox</code> is a <code>JComboBox&lt;String&gt;</code> filled from <code>SIZES</code>, starts on <code>Regular</code>, and has the frame registered as its item listener. The size price comes from <code>SIZE_PRICES[sizeBox.getSelectedIndex()]</code>.</li><li><strong>R2</strong> <code>chicken</code>, <code>beans</code> and <code>steak</code> belong to one <code>ButtonGroup</code>; <code>guac</code> and <code>cheese</code> are not in it.</li><li><strong>R3</strong> <code>itemStateChanged()</code> recalculates the total from scratch: the size price, plus <code>STEAK_EXTRA</code> if steak is selected, plus each extra whose box <code>isSelected()</code>. No <code>-=</code> on a running total.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, a customer clicks Beans and then Steak (Chicken starts ticked). How many proteins does the burrito have, and which sentence of section 14.9 explains why?</p><div class="answer"><p>Three: chicken, beans and steak are all ticked. Check boxes are independent unless they are added to a ButtonGroup, which lets the user select only one at a time.</p></div></li><li><p>The starter adds or subtracts a price on every <code>ItemEvent</code>. When Steak replaces Chicken inside a <code>ButtonGroup</code>, how many <code>ItemEvent</code>s do you expect, and for which boxes?</p><div class="answer"><p>Two: one for Chicken (deselected) and one for Steak (selected), because each box whose state changes generates its own ItemEvent.</p></div></li></ol>
+<h2>Solution</h2><div class="file">BurritoFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.event.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BurritoFrame</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-w"> </span><span class="t-kd">implements</span><span class="t-w"> </span><span class="t-n">ItemListener</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">380</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">200</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">SIZES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"Small"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Regular"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Large"</span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">SIZE_PRICES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">7</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">9</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">11</span><span class="t-p">};</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">STEAK_EXTRA</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">GUAC_PRICE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">CHEESE_PRICE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-n">JComboBox</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">sizeBox</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JComboBox</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-p">(</span><span class="t-n">SIZES</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">chicken</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JCheckBox</span><span class="t-p">(</span><span class="t-s">"Chicken"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">beans</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JCheckBox</span><span class="t-p">(</span><span class="t-s">"Beans"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">steak</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JCheckBox</span><span class="t-p">(</span><span class="t-s">"Steak +$2"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">guac</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JCheckBox</span><span class="t-p">(</span><span class="t-s">"Guacamole +$2"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">cheese</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JCheckBox</span><span class="t-p">(</span><span class="t-s">"Extra cheese +$1"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">ButtonGroup</span><span class="t-w"> </span><span class="t-n">proteins</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ButtonGroup</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">totalLabel</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">);</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">BurritoFrame</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-s">"Burrito builder"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setSize</span><span class="t-p">(</span><span class="t-n">FRAME_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setLayout</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">sizeBox</span><span class="t-p">.</span><span class="t-na">setSelectedIndex</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">proteins</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">chicken</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">proteins</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">beans</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">proteins</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">steak</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Size:"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">sizeBox</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">chicken</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">beans</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">steak</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">guac</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">cheese</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">totalLabel</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">sizeBox</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">chicken</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">beans</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">steak</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">guac</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">cheese</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">updateTotal</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">itemStateChanged</span><span class="t-p">(</span><span class="t-n">ItemEvent</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">updateTotal</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Prices the order from what is selected right now.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">updateTotal</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">SIZE_PRICES</span><span class="t-o">[</span><span class="t-n">sizeBox</span><span class="t-p">.</span><span class="t-na">getSelectedIndex</span><span class="t-p">()</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">steak</span><span class="t-p">.</span><span class="t-na">isSelected</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">STEAK_EXTRA</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">guac</span><span class="t-p">.</span><span class="t-na">isSelected</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">GUAC_PRICE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">cheese</span><span class="t-p">.</span><span class="t-na">isSelected</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">CHEESE_PRICE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">totalLabel</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Total: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BurritoFrame</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BurritoFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>new JComboBox&lt;String&gt;(SIZES)</code> fills the list from the array (p. 576), and <code>setSelectedIndex(1)</code> starts it on Regular (Table 14-6); calling <code>addItem()</code> for each size also passes. Because <code>SIZE_PRICES</code> is a parallel array, <code>SIZE_PRICES[sizeBox.getSelectedIndex()]</code> is the size price (p. 576). Creating a <code>ButtonGroup</code> groups nothing until each box is added to it (Don&#x27;t Do It, p. 580); once chicken, beans and steak are in the group, selecting one deselects the others, and the selected one can&#x27;t be unticked, which is why the second click on Beans changes nothing (p. 575). Guacamole and cheese stay outside the group so both can be chosen. When steak replaces chicken, two <code>ItemEvent</code>s fire (chicken deselected, steak selected), and a size change fires two as well; adding and subtracting on each event, like the book&#x27;s resort calculator, gets fragile as these multiply. Recomputing from <code>getSelectedIndex()</code> and <code>isSelected()</code> gives the right total after any sequence of events. <code>updateTotal()</code> is also called once in the constructor so the label starts correct.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBurritoFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBurritoFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BurritoFrame</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BurritoFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Start"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">steak</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span><span class="t-w">                 </span><span class="t-c1">// the customer taps Steak</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Click Steak"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">beans</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Click Beans"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">beans</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Click Beans again"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">guac</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Click Guacamole"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">cheese</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Click Extra cheese"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">sizeBox</span><span class="t-p">.</span><span class="t-na">setSelectedItem</span><span class="t-p">(</span><span class="t-s">"Large"</span><span class="t-p">);</span><span class="t-w"> </span><span class="t-c1">// picks Large from the list</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Choose Large"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">guac</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Click Guacamole again"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">sizeBox</span><span class="t-p">.</span><span class="t-na">setSelectedItem</span><span class="t-p">(</span><span class="t-s">"Small"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Choose Small"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close the window</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">show</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">action</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">BurritoFrame</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">JCheckBox</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">proteins</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">chicken</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">beans</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">steak</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">JCheckBox</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">extras</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">guac</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">cheese</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" -&gt; "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">totalLabel</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  size: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">order</span><span class="t-p">.</span><span class="t-na">sizeBox</span><span class="t-p">.</span><span class="t-na">getSelectedItem</span><span class="t-p">()</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"   protein: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">selected</span><span class="t-p">(</span><span class="t-n">proteins</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  extras: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">selected</span><span class="t-p">(</span><span class="t-n">extras</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">selected</span><span class="t-p">(</span><span class="t-n">JCheckBox</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">boxes</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">box</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">boxes</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">box</span><span class="t-p">.</span><span class="t-na">isSelected</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-o">!</span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">))</span>
+<span class="t-w">                    </span><span class="t-n">names</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-n">names</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">box</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">();</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"none"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Start -&gt; Total: $9
+  size: Regular   protein: Chicken
+  extras: none
+Click Steak -&gt; Total: $11
+  size: Regular   protein: Steak +$2
+  extras: none
+Click Beans -&gt; Total: $9
+  size: Regular   protein: Beans
+  extras: none
+Click Beans again -&gt; Total: $9
+  size: Regular   protein: Beans
+  extras: none
+Click Guacamole -&gt; Total: $11
+  size: Regular   protein: Beans
+  extras: Guacamole +$2
+Click Extra cheese -&gt; Total: $12
+  size: Regular   protein: Beans
+  extras: Guacamole +$2, Extra cheese +$1
+Choose Large -&gt; Total: $14
+  size: Large   protein: Beans
+  extras: Guacamole +$2, Extra cheese +$1
+Click Guacamole again -&gt; Total: $12
+  size: Large   protein: Beans
+  extras: Extra cheese +$1
+Choose Small -&gt; Total: $8
+  size: Small   protein: Beans
+  extras: Extra cheese +$1
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The size list is filled from SIZES<div class="small">in <code>BurritoFrame</code></div></td><td><div><span class="tag">require</span> <code>new\s+JComboBox\s*(&lt;\s*(String)?\s*&gt;)?\s*\(\s*SIZES\s*\)</code></div><div><span class="tag">require</span> <code>sizeBox\s*\.\s*addItem\s*\(</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The size list starts on Regular and is listened to<div class="small">in <code>BurritoFrame.BurritoFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*sizeBox\s*\.\s*setSelected(Index|Item)\s*\()(?=[\s\S]*sizeBox\s*\.\s*addItemListener\s*\(\s*this\s*\))</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The three proteins share one ButtonGroup<div class="small">in <code>BurritoFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*new\s+ButtonGroup\s*\(\s*\))(?=[\s\S]*\b(?!this\b)\w+\s*\.\s*add\s*\(\s*chicken\s*\))(?=[\s\S]*\b(?!this\b)\w+\s*\.\s*add\s*\(\s*beans\s*\))(?=[\s\S]*\b(?!this\b)\w+\s*\.\s*add\s*\(\s*steak\s*\))</code></div></td></tr><tr><td>C4</td><td>R2</td><td>Extras stay independent<div class="small">in <code>BurritoFrame</code></div></td><td><div><span class="tag">forbid</span> <code>\b(?!this\b)\w+\s*\.\s*add\s*\(\s*(guac|cheese)\s*\)</code></div></td></tr><tr><td>C5</td><td>R1</td><td>The size price comes from the parallel array<div class="small">in <code>BurritoFrame</code></div></td><td><div><span class="tag">require</span> <code>SIZE_PRICES\s*\[\s*sizeBox\s*\.\s*getSelectedIndex\s*\(\s*\)\s*\]</code></div></td></tr><tr><td>C6</td><td>R3</td><td>The total is recalculated from what is selected<div class="small">in <code>BurritoFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bsteak\s*\.\s*isSelected\s*\()(?=[\s\S]*\bguac\s*\.\s*isSelected\s*\()(?=[\s\S]*\bcheese\s*\.\s*isSelected\s*\()</code></div><div><span class="tag">forbid</span> <code>-=</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The size list is filled from SIZES</dt><dd><p>Build the list from the array: <code>JComboBox&lt;String&gt; sizeBox = new JComboBox&lt;String&gt;(SIZES);</code> (or call <code>addItem()</code> for each size). An empty combo box has nothing to choose.</p></dd><dt>C2 · The size list starts on Regular and is listened to</dt><dd><p>In the constructor, call <code>sizeBox.setSelectedIndex(1);</code> (Regular) and <code>sizeBox.addItemListener(this);</code>, so choosing a size updates the total.</p></dd><dt>C3 · The three proteins share one ButtonGroup</dt><dd><p>Create <code>ButtonGroup proteins = new ButtonGroup();</code> and add each protein to it: <code>proteins.add(chicken);</code>, <code>proteins.add(beans);</code>, <code>proteins.add(steak);</code>. Creating the group alone groups nothing.</p></dd><dt>C4 · Extras stay independent</dt><dd><p>Keep <code>guac</code> and <code>cheese</code> out of the <code>ButtonGroup</code>: a customer can want both. Add them only to the frame with <code>add(guac);</code> and <code>add(cheese);</code>.</p></dd><dt>C5 · The size price comes from the parallel array</dt><dd><p>Look up the size price with <code>SIZE_PRICES[sizeBox.getSelectedIndex()]</code>. The list position of the selected size is also the position of its price.</p></dd><dt>C6 · The total is recalculated from what is selected</dt><dd><p>Start from the size price and add <code>STEAK_EXTRA</code>, <code>GUAC_PRICE</code> and <code>CHEESE_PRICE</code> for each box whose <code>isSelected()</code> is true. Subtracting on deselection is what lets the total drift.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p><code>JComboBox&lt;String&gt;</code> has a constructor that takes an array. The first item is at index 0, so Regular is index 1.</p></li><li><p>Creating a <code>ButtonGroup</code> groups nothing until you call its <code>add()</code> with each protein box (see the Don&#x27;t Do It list).</p></li><li><p>Write the total as a fresh sum every time: the size price from the parallel array, plus every option whose box is selected right now.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The book&#x27;s resort calculator adds and subtracts on each event. Why is recalculating from <code>getSelectedIndex()</code> and <code>isSelected()</code> more reliable for this form? Describe one situation where the running total would go wrong.</p><div class="answer"><p>The recalculated total always matches what&#x27;s on screen, whatever events fired and in whatever order. A running total breaks when events come in pairs (steak replacing chicken, a size change fires a deselect and a select) or when one is missed, for example a box set before the listener was registered.</p></div></li><li><p>The test clicks Beans twice, yet Beans stays selected. Why? If the truck added a &quot;no protein&quot; option, how would you offer it?</p><div class="answer"><p>In a ButtonGroup, once one box is selected, one always stays selected; clicking it again can&#x27;t clear it. Add a fourth box, No protein, to the group (the book&#x27;s trick is an invisible box, but a visible option is clearer for customers).</p></div></li></ol>
+<h2>Extension</h2><p>Replace the three protein <code>JCheckBox</code>es with <code>JRadioButton</code>s (the rest of the code doesn&#x27;t change), and add a second <code>JComboBox&lt;String&gt;</code> for salsa (Mild, Medium, Hot) that is shown on the order but doesn&#x27;t change the price. Which listener method handles it?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; prices only in the named constants and the parallel array; one method computes the total.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

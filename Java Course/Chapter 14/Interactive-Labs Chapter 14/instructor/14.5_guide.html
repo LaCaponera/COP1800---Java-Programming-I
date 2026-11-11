@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Three desk windows, and a constructor that builds a stranger</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.5</div>
+  <h1>Three desk windows, and a constructor that builds a stranger</h1>
+<h2>Objectives</h2><ul><li>Create a child class of <code>JFrame</code> whose constructor sets the frame&#x27;s title, size, position and close operation</li><li>Call the parent constructor with <code>super()</code> and use methods with an implied <code>this</code></li><li>Use <code>setBounds()</code> and close operations so several frames of one class can share a screen</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The constructor passes the title <code>Check-in: Desk n</code> to the <code>JFrame</code> constructor with <code>super(...)</code> and configures <em>this</em> frame; it creates no other <code>JFrame</code>.</li><li><strong>R2</strong> Each desk window is <code>DESK_WIDTH</code> × <code>DESK_HEIGHT</code> pixels and placed with <code>setBounds()</code> at x = (n − 1) × <code>DESK_WIDTH</code>, y = 0.</li><li><strong>R3</strong> Closing Desk 1 ends the program; closing any other desk disposes of that window and keeps the program running.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s constructor runs, yet the test program prints an empty title for every desk. Which object receives the title, and which object does the test ask?</p><div class="answer"><p>The title goes to the new JFrame stored in the local variable frame. The test asks the DeskFrame object being constructed (this), which never got a title or size.</p></div></li><li><p>Inside the constructor, what is the difference between <code>setBounds(0, 0, DESK_WIDTH, DESK_HEIGHT);</code> and <code>this.setBounds(0, 0, DESK_WIDTH, DESK_HEIGHT);</code>?</p><div class="answer"><p>None. Both call setBounds() on the current DeskFrame being constructed; this is just written out in the second.</p></div></li></ol>
+<h2>Solution</h2><div class="file">DeskFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DeskFrame</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">JFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">DESK_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">300</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">DESK_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">200</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">deskNumber</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Builds the window for one check-in desk, for example "Check-in: Desk 2".</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">DeskFrame</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">deskNumber</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-s">"Check-in: Desk "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">deskNumber</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">deskNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">deskNumber</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">setBounds</span><span class="t-p">((</span><span class="t-n">deskNumber</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">DESK_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">DESK_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">DESK_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">deskNumber</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">WindowConstants</span><span class="t-p">.</span><span class="t-na">DISPOSE_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getDeskNumber</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">deskNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">desk</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">DeskFrame</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">DeskFrame</span><span class="t-p">(</span><span class="t-n">desk</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>The starter&#x27;s constructor builds a second, separate <code>JFrame</code> and configures it, so the <code>DeskFrame</code> being constructed keeps an empty title and a 0 × 0 size; the stray frame is never shown. Because <code>DeskFrame</code> extends <code>JFrame</code>, the constructor can call <code>super(title)</code> as its first statement (p. 557) and then call the inherited methods with an implied <code>this</code>: <code>setBounds(...)</code> and <code>this.setBounds(...)</code> mean the same thing. <code>setBounds()</code> sets position and size in one call (Table 14-1), so the windows sit side by side instead of the second one covering the first (the note on p. 558). Section 14.5 also points out that every frame built by one constructor gets the same close operation; the <code>if</code> gives Desk 1 <code>EXIT_ON_CLOSE</code> and the other desks <code>DISPOSE_ON_CLOSE</code> (p. 558). <code>setSize()</code> plus <code>setLocation()</code> instead of <code>setBounds()</code> doesn&#x27;t pass the check but behaves the same.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestDeskFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestDeskFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">desk</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">DeskFrame</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">DeskFrame</span><span class="t-p">(</span><span class="t-n">desk</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">getTitle</span><span class="t-p">());</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  at ("</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">getX</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">getY</span><span class="t-p">()</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"), "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">getWidth</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" x "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">getHeight</span><span class="t-p">());</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">window</span><span class="t-p">.</span><span class="t-na">getDefaultCloseOperation</span><span class="t-p">();</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  on close: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">closeName</span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close any window the test opened</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">closeName</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">operation</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"EXIT_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">WindowConstants</span><span class="t-p">.</span><span class="t-na">DISPOSE_ON_CLOSE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"DISPOSE_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">operation</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">WindowConstants</span><span class="t-p">.</span><span class="t-na">DO_NOTHING_ON_CLOSE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"DO_NOTHING_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"HIDE_ON_CLOSE"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Check-in: Desk 1
+  at (0, 0), 300 x 200
+  on close: EXIT_ON_CLOSE
+Check-in: Desk 2
+  at (300, 0), 300 x 200
+  on close: DISPOSE_ON_CLOSE
+Check-in: Desk 3
+  at (600, 0), 300 x 200
+  on close: DISPOSE_ON_CLOSE
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The constructor calls super() and builds no other frame<div class="small">in <code>DeskFrame.DeskFrame</code></div></td><td><div><span class="tag">require</span> <code>\bsuper\s*\(</code></div><div><span class="tag">forbid</span> <code>\bnew\s+JFrame\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Each desk is placed and sized with setBounds()<div class="small">in <code>DeskFrame.DeskFrame</code></div></td><td><div><span class="tag">require</span> <code>\bsetBounds\s*\([^;]*\bDESK_WIDTH\b[^;]*\bDESK_HEIGHT\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Desk 1 exits; the other desks dispose<div class="small">in <code>DeskFrame.DeskFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bEXIT_ON_CLOSE\b)(?=[\s\S]*\bDISPOSE_ON_CLOSE\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The constructor calls super() and builds no other frame</dt><dd><p>Start the constructor with <code>super(&quot;Check-in: Desk &quot; + deskNumber);</code> and delete the local <code>JFrame</code>. A <code>DeskFrame</code> is already a frame; configure it, not a new one.</p></dd><dt>C2 · Each desk is placed and sized with setBounds()</dt><dd><p>Call <code>setBounds((deskNumber - 1) * DESK_WIDTH, 0, DESK_WIDTH, DESK_HEIGHT);</code>. The first two arguments position the window; the last two size it.</p></dd><dt>C3 · Desk 1 exits; the other desks dispose</dt><dd><p>Use an <code>if</code> on <code>deskNumber</code>: Desk 1 gets <code>JFrame.EXIT_ON_CLOSE</code>, every other desk gets <code>WindowConstants.DISPOSE_ON_CLOSE</code>, so closing one desk doesn&#x27;t shut the others down.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>A <code>DeskFrame</code> <em>is a</em> <code>JFrame</code>. Inside its constructor, call the frame methods with no object in front of them (or with <code>this.</code>).</p></li><li><p><code>super(...)</code> must be the very first statement in the constructor; it hands the title to the <code>JFrame</code> constructor.</p></li><li><p>Desk 1 is at x = 0, Desk 2 at x = 300, Desk 3 at x = 600: the x position grows by one window width per desk.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is a <code>DeskFrame</code> class better than repeating the title, size, position and close settings for each desk in <code>main()</code>?</p><div class="answer"><p>The setup is written once in the constructor, so every desk window automatically gets it; adding a fourth desk is one line, and a change (a new size) happens in one place instead of three.</p></div></li><li><p>Your constructor doesn&#x27;t call <code>setVisible(true)</code>; <code>main()</code> does. What does that choice allow that a constructor that shows itself would not?</p><div class="answer"><p>Code can create and set up a DeskFrame without it popping up, for example to finish filling it first or, as the test program does, to check its settings without showing a window.</p></div></li></ol>
+<h2>Extension</h2><p>Add a second constructor, <code>DeskFrame(int deskNumber, String service)</code>, that produces titles such as <code>Lab results: Desk 4</code>, and make the original constructor call it with <code>this(deskNumber, &quot;Check-in&quot;)</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; no leftover local <code>JFrame</code>; constants used for every size and position.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

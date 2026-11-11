@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The 5K sign-up form that ignores half of what runners do</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 14.8</div>
+  <h1>The 5K sign-up form that ignores half of what runners do</h1>
+<h2>Objectives</h2><ul><li>Implement more than one listener interface in a single class</li><li>Match each component to its listener-registering method (Table 14-3)</li><li>Write event handlers with the exact names Java calls (Table 14-4), including every method an interface declares</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>RaceSignupFrame</code> implements <code>ActionListener</code>, <code>ItemListener</code> and <code>FocusListener</code>.</li><li><strong>R2</strong> The constructor registers the frame on each source with the matching method: <code>addActionListener()</code> on the name field, <code>addItemListener()</code> on the check box and <code>addFocusListener()</code> on the email field. The check box no longer reports to <code>actionPerformed()</code>.</li><li><strong>R3</strong> The handlers have the names Java calls: <code>itemStateChanged(ItemEvent)</code> updates the total; <code>focusLost(FocusEvent)</code> shows <code>Check the email address.</code> when the email has no <code>@</code> (and clears the hint otherwise); <code>focusGained(FocusEvent)</code> clears the hint.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, the runner ticks the T-shirt box. Which method runs, and what do the total and the message show afterwards?</p><div class="answer"><p>The box is registered with addActionListener(this), so actionPerformed() runs: the name is empty, so the message says &quot;Please type your name.&quot; and the total stays $25. shirtChanged() never runs.</p></div></li><li><p>Using Table 14-4, which method or methods must the class write to implement <code>ItemListener</code>, and which to implement <code>FocusListener</code>?</p><div class="answer"><p>ItemListener: itemStateChanged(ItemEvent). FocusListener: focusGained(FocusEvent) and focusLost(FocusEvent).</p></div></li></ol>
+<h2>Solution</h2><div class="file">RaceSignupFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.event.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RaceSignupFrame</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">JFrame</span>
+<span class="t-w">    </span><span class="t-kd">implements</span><span class="t-w"> </span><span class="t-n">ActionListener</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">ItemListener</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FocusListener</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ENTRY_FEE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">25</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SHIRT_FEE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">8</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_WIDTH</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">360</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">220</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-n">JTextField</span><span class="t-w"> </span><span class="t-n">nameField</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JTextField</span><span class="t-p">(</span><span class="t-mi">14</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JTextField</span><span class="t-w"> </span><span class="t-n">emailField</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JTextField</span><span class="t-p">(</span><span class="t-mi">18</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JCheckBox</span><span class="t-w"> </span><span class="t-n">shirtBox</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JCheckBox</span><span class="t-p">(</span><span class="t-s">"Race T-shirt (+$8)"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">totalLabel</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Total: $25"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">emailHint</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-n">JLabel</span><span class="t-w"> </span><span class="t-n">message</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">);</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">RaceSignupFrame</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-s">"Campus 5K sign-up"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setSize</span><span class="t-p">(</span><span class="t-n">FRAME_WIDTH</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FRAME_HEIGHT</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setDefaultCloseOperation</span><span class="t-p">(</span><span class="t-n">JFrame</span><span class="t-p">.</span><span class="t-na">EXIT_ON_CLOSE</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">setLayout</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FlowLayout</span><span class="t-p">(</span><span class="t-n">FlowLayout</span><span class="t-p">.</span><span class="t-na">LEFT</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Name:"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">nameField</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">JLabel</span><span class="t-p">(</span><span class="t-s">"Email:"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">emailField</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">emailHint</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">shirtBox</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">totalLabel</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">add</span><span class="t-p">(</span><span class="t-n">message</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">nameField</span><span class="t-p">.</span><span class="t-na">addActionListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">shirtBox</span><span class="t-p">.</span><span class="t-na">addItemListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">emailField</span><span class="t-p">.</span><span class="t-na">addFocusListener</span><span class="t-p">(</span><span class="t-k">this</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">actionPerformed</span><span class="t-p">(</span><span class="t-n">ActionEvent</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">nameField</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">().</span><span class="t-na">trim</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-n">message</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Please type your name."</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">message</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Thanks, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"! You're registered."</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">itemStateChanged</span><span class="t-p">(</span><span class="t-n">ItemEvent</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ENTRY_FEE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">shirtBox</span><span class="t-p">.</span><span class="t-na">isSelected</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">SHIRT_FEE</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">totalLabel</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Total: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">focusGained</span><span class="t-p">(</span><span class="t-n">FocusEvent</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">emailHint</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">focusLost</span><span class="t-p">(</span><span class="t-n">FocusEvent</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">emailField</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">().</span><span class="t-na">contains</span><span class="t-p">(</span><span class="t-s">"@"</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-n">emailHint</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">""</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">emailHint</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Check the email address."</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">RaceSignupFrame</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">RaceSignupFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">setVisible</span><span class="t-p">(</span><span class="t-kc">true</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A class can implement as many listener interfaces as it needs (p. 569); list them after <code>implements</code>, separated by commas. Table 14-3 (p. 570) pairs each component with its registering method: the name field fires <code>ActionEvent</code>s (Enter), the check box <code>ItemEvent</code>s (<code>addItemListener()</code>), and any Swing component focus events (<code>addFocusListener()</code>). A <code>JCheckBox</code> can also fire <code>ActionEvent</code>s, which is why the starter&#x27;s <code>shirtBox.addActionListener(this)</code> sent clicks to the name confirmation. Table 14-4 (p. 571) gives the handler names: you can&#x27;t choose your own, because the source calls the method the interface declares. So <code>shirtChanged</code> becomes <code>itemStateChanged(ItemEvent)</code> and <code>checkEmail</code> becomes <code>focusLost(FocusEvent)</code>. <code>FocusListener</code> declares two methods, so <code>focusGained()</code> must be written too; here it clears the warning while the runner fixes the address. <code>@Override</code> is optional but makes the compiler confirm each name.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRaceSignupFrame.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">javax.swing.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.awt.event.*</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRaceSignupFrame</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">RaceSignupFrame</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">RaceSignupFrame</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Form hears Enter in name field: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">asList</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">nameField</span><span class="t-p">.</span><span class="t-na">getActionListeners</span><span class="t-p">()).</span><span class="t-na">contains</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Form hears T-shirt box changes: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">asList</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">shirtBox</span><span class="t-p">.</span><span class="t-na">getItemListeners</span><span class="t-p">()).</span><span class="t-na">contains</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Form hears email field focus: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Arrays</span><span class="t-p">.</span><span class="t-na">asList</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailField</span><span class="t-p">.</span><span class="t-na">getFocusListeners</span><span class="t-p">()).</span><span class="t-na">contains</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">shirtBox</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span><span class="t-w">                 </span><span class="t-c1">// the runner ticks the box</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Tick T-shirt"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">shirtBox</span><span class="t-p">.</span><span class="t-na">doClick</span><span class="t-p">();</span><span class="t-w">                 </span><span class="t-c1">// ...and changes their mind</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Untick T-shirt"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailField</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"ana.example.com"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">focus</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailField</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span><span class="t-w">           </span><span class="t-c1">// the runner tabs out of the field</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Leave email"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">focus</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailField</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">);</span><span class="t-w">            </span><span class="t-c1">// ...and clicks back in to fix it</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Back in email"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailField</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"ana@example.com"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">focus</span><span class="t-p">(</span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailField</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Leave email"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">nameField</span><span class="t-p">.</span><span class="t-na">setText</span><span class="t-p">(</span><span class="t-s">"Ana"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">nameField</span><span class="t-p">.</span><span class="t-na">postActionEvent</span><span class="t-p">();</span><span class="t-w">        </span><span class="t-c1">// the runner presses Enter</span>
+<span class="t-w">        </span><span class="t-n">report</span><span class="t-p">(</span><span class="t-s">"Enter in name"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">exit</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span><span class="t-w">   </span><span class="t-c1">// close the window</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Tells every focus listener on the field, as Swing does when focus moves.</span>
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">focus</span><span class="t-p">(</span><span class="t-n">JTextField</span><span class="t-w"> </span><span class="t-n">field</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">gained</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">FocusListener</span><span class="t-w"> </span><span class="t-n">listener</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">field</span><span class="t-p">.</span><span class="t-na">getFocusListeners</span><span class="t-p">())</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">gained</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">listener</span><span class="t-p">.</span><span class="t-na">focusGained</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FocusEvent</span><span class="t-p">(</span><span class="t-n">field</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FocusEvent</span><span class="t-p">.</span><span class="t-na">FOCUS_GAINED</span><span class="t-p">));</span>
+<span class="t-w">            </span><span class="t-k">else</span>
+<span class="t-w">                </span><span class="t-n">listener</span><span class="t-p">.</span><span class="t-na">focusLost</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FocusEvent</span><span class="t-p">(</span><span class="t-n">field</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">FocusEvent</span><span class="t-p">.</span><span class="t-na">FOCUS_LOST</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">report</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">action</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">RaceSignupFrame</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">totalLabel</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">()</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", hint: \""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">emailHint</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  message: \""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">form</span><span class="t-p">.</span><span class="t-na">message</span><span class="t-p">.</span><span class="t-na">getText</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"\""</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Form hears Enter in name field: true
+Form hears T-shirt box changes: true
+Form hears email field focus: true
+Tick T-shirt
+  Total: $33, hint: &quot;&quot;
+  message: &quot;&quot;
+Untick T-shirt
+  Total: $25, hint: &quot;&quot;
+  message: &quot;&quot;
+Leave email
+  Total: $25, hint: &quot;Check the email address.&quot;
+  message: &quot;&quot;
+Back in email
+  Total: $25, hint: &quot;&quot;
+  message: &quot;&quot;
+Leave email
+  Total: $25, hint: &quot;&quot;
+  message: &quot;&quot;
+Enter in name
+  Total: $25, hint: &quot;&quot;
+  message: &quot;Thanks, Ana! You&#x27;re registered.&quot;
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The class implements all three listener interfaces<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bclass\s+RaceSignupFrame\b[^{]*\bimplements\s+(?=[^{]*\bActionListener\b)(?=[^{]*\bItemListener\b)(?=[^{]*\bFocusListener\b)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Item and focus listeners are registered<div class="small">in <code>RaceSignupFrame.RaceSignupFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*shirtBox\s*\.\s*addItemListener\s*\(\s*this\s*\))(?=[\s\S]*emailField\s*\.\s*addFocusListener\s*\(\s*this\s*\))</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The check box doesn&#x27;t call actionPerformed()<div class="small">in <code>RaceSignupFrame.RaceSignupFrame</code></div></td><td><div><span class="tag">forbid</span> <code>shirtBox\s*\.\s*addActionListener\s*\(</code></div></td></tr><tr><td>C4</td><td>R3</td><td>itemStateChanged() handles the check box<div class="small">in <code>RaceSignupFrame</code></div></td><td><div><span class="tag">require</span> <code>\bpublic\s+void\s+itemStateChanged\s*\(\s*ItemEvent\s+\w+\s*\)</code></div></td></tr><tr><td>C5</td><td>R3</td><td>focusLost() and focusGained() are both written<div class="small">in <code>RaceSignupFrame</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bpublic\s+void\s+focusLost\s*\(\s*FocusEvent\s+\w+\s*\))(?=[\s\S]*\bpublic\s+void\s+focusGained\s*\(\s*FocusEvent\s+\w+\s*\))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The class implements all three listener interfaces</dt><dd><p>List all three interfaces in the class header: <code>implements ActionListener, ItemListener, FocusListener</code>. A class can implement as many listeners as it needs.</p></dd><dt>C2 · Item and focus listeners are registered</dt><dd><p>Register the frame with <code>shirtBox.addItemListener(this);</code> and <code>emailField.addFocusListener(this);</code>. Table 14-3 pairs each component with the method that registers its kind of event.</p></dd><dt>C3 · The check box doesn&#x27;t call actionPerformed()</dt><dd><p>Delete <code>shirtBox.addActionListener(this);</code>. A ticked box would still fire an <code>ActionEvent</code> and run the name confirmation.</p></dd><dt>C4 · itemStateChanged() handles the check box</dt><dd><p>Rename <code>shirtChanged</code> to <code>itemStateChanged(ItemEvent e)</code>, the method <code>ItemListener</code> declares (Table 14-4). Java calls that name, never one you invent.</p></dd><dt>C5 · focusLost() and focusGained() are both written</dt><dd><p>Rename <code>checkEmail</code> to <code>focusLost(FocusEvent e)</code> and add <code>focusGained(FocusEvent e)</code> that clears <code>emailHint</code>. <code>FocusListener</code> declares both, so the class must write both.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>List the interfaces after <code>implements</code>, separated by commas. The compiler then insists on every method each interface declares, which tells you what to write.</p></li><li><p>Table 14-3 pairs each component with a registering method. The format is <code>source.addXXXListener(this);</code>.</p></li><li><p>Rename <code>shirtChanged</code> and <code>checkEmail</code> instead of rewriting them: their bodies are already right. <code>focusGained()</code> needs only one line.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why can&#x27;t you name an event handler whatever you like, the way you name your other methods?</p><div class="answer"><p>The source calls the method declared in the listener interface, such as itemStateChanged(); it knows nothing about shirtChanged(). Implementing the interface guarantees that method exists, so Swing can call it.</p></div></li><li><p>The email check runs when the field <em>loses</em> focus, not on every key the runner types. Why is that kinder to the runner?</p><div class="answer"><p>While typing, the address is incomplete and would be flagged as wrong after every key. Checking when they leave the field judges the finished address.</p></div></li></ol>
+<h2>Extension</h2><p>Make the form also implement <code>KeyListener</code> and count the characters in the name field after each key, showing <code>Name: 3 characters</code>. Look up which three methods <code>KeyListener</code> declares; which one is the right place for the count, and why?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; <code>@Override</code> on each handler; one registering call per source.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
