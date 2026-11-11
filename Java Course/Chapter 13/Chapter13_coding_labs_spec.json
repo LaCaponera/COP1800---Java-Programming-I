@@ -1,0 +1,1046 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 13: Collections and Generics",
+ "collection_intro": "Hands-on labs for sections 13.1 to 13.7 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. You will trade fixed-size arrays for collections that grow, choose between `ArrayList` and `LinkedList`, loop safely with iterators, and write classes and methods that work for any reference type. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "13.1",
+   "title": "The waitlist that turns people away at three",
+   "subtitle": "Replace a fixed-size array with a Collection that grows and shrinks",
+   "source": "Ch. 13, section 13.1 (pp. 511–512)",
+   "minutes": 20,
+   "objectives": [
+    "Explain why a collection is *dynamically resizable* and an array is not",
+    "Store a group of objects in a `Collection<String>` instead of an array and a counter",
+    "Use the `Collection` methods `add()`, `contains()`, `remove()`, `removeAll()` and `size()` from Table 13-1"
+   ],
+   "scenario": "The robotics club keeps a waitlist for its Saturday workshop. Last week five students signed up but only the first three were kept: the class stores names in an array created with room for three, and an array's size can never change after it is created. The same student can also sign up twice, and the `dropNoShows()` method someone started was never finished.\n\nA **collection** grows and shrinks as objects are added and removed, and the `Collection` interface already offers the operations this class writes by hand. Rewrite `Waitlist` so it stores the names in a `Collection<String>` (an `ArrayList<String>` object works; you meet that class fully in section 13.3), delete the array and the counter, and let the collection do the work. Read Table 13-1 for the method that answers each question below.\n\nThe test program signs up six students (Ana twice), asks questions about the list and prints:\n\n```\nJoin Ana: true\nJoin Ben: true\nJoin Chen: true\nJoin Dara: true\nJoin Eli: true\nJoin Ana: false\nWaiting: 5 [Ana, Ben, Chen, Dara, Eli]\nIs Chen waiting? true\nLeave Ben: true\nLeave Zoe: false\nDropped no-shows: true\nDropped again: false\nWaiting: 2 [Ana, Dara]\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Store the names in a `Collection<String>` field (the type in angle brackets is `String`). Remove the `String[]` array and the `count` field."
+    },
+    {
+     "id": "R2",
+     "text": "`join()` returns `false` for a name that is already waiting (`contains()`); otherwise it adds the name and returns what `add()` returns."
+    },
+    {
+     "id": "R3",
+     "text": "`leave()`, `isWaiting()`, `size()` and `toString()` each use one `Collection` method instead of a loop."
+    },
+    {
+     "id": "R4",
+     "text": "`dropNoShows()` removes every name in `noShows` with a single `removeAll()` call and returns its result."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Waitlist.java",
+     "starter": "import java.util.*;\n\npublic class Waitlist\n{\n    // TODO (R1): an array's size is fixed the moment it is created.\n    private String[] names = new String[3];\n    private int count = 0;\n\n    // Adds a name to the end of the waitlist. Returns true if it was added.\n    public boolean join(String name)\n    {\n        // TODO (R2): the same student can't be waiting twice.\n        if (count == names.length)\n            return false;\n        names[count] = name;\n        ++count;\n        return true;\n    }\n\n    // Removes a name. Returns true if the name was on the list.\n    public boolean leave(String name)\n    {\n        // TODO (R3)\n        for (int x = 0; x < count; ++x)\n        {\n            if (names[x].equals(name))\n            {\n                for (int y = x; y < count - 1; ++y)\n                    names[y] = names[y + 1];\n                --count;\n                return true;\n            }\n        }\n        return false;\n    }\n\n    // Returns true if the name is on the list.\n    public boolean isWaiting(String name)\n    {\n        // TODO (R3)\n        for (int x = 0; x < count; ++x)\n            if (names[x].equals(name))\n                return true;\n        return false;\n    }\n\n    // Removes everyone in noShows. Returns true if anyone was removed.\n    public boolean dropNoShows(Collection<String> noShows)\n    {\n        // TODO (R4)\n        return false;\n    }\n\n    public int size()\n    {\n        return count;\n    }\n\n    public String toString()\n    {\n        String text = \"[\";\n        for (int x = 0; x < count; ++x)\n        {\n            if (x > 0)\n                text += \", \";\n            text += names[x];\n        }\n        return text + \"]\";\n    }\n}\n",
+     "solution": "import java.util.*;\n\npublic class Waitlist\n{\n    private Collection<String> names = new ArrayList<String>();\n\n    // Adds a name to the end of the waitlist. Returns true if it was added.\n    public boolean join(String name)\n    {\n        if (names.contains(name))\n            return false;\n        return names.add(name);\n    }\n\n    // Removes a name. Returns true if the name was on the list.\n    public boolean leave(String name)\n    {\n        return names.remove(name);\n    }\n\n    // Returns true if the name is on the list.\n    public boolean isWaiting(String name)\n    {\n        return names.contains(name);\n    }\n\n    // Removes everyone in noShows. Returns true if anyone was removed.\n    public boolean dropNoShows(Collection<String> noShows)\n    {\n        return names.removeAll(noShows);\n    }\n\n    public int size()\n    {\n        return names.size();\n    }\n\n    public String toString()\n    {\n        return names.toString();\n    }\n}\n"
+    }
+   ],
+   "main_file": "Waitlist.java",
+   "solution_notes": "An array must be given its size when it is created and that size can't change; a collection can grow and shrink as objects are added or removed (p. 511), so the limit of three disappears with the array. Every operation the starter wrote by hand is a method in Table 13-1 (p. 512): `contains()` answers \"is this name here?\", `add()` and `remove()` return `true` when the collection changed, `size()` counts the elements and `removeAll()` removes every element of another collection in one call, returning `true` only if something was removed (which is why the second call prints `false`). `ArrayList`'s `toString()` already prints `[Ana, Dara]`. Declaring the field as `Collection<String>` means the class uses only the operations every collection has; `ArrayList<String>` or `List<String>` also pass.",
+   "warmup": [
+    {
+     "question": "Trace the starter: which of the six `join()` calls return `true`, and why does Dara get `false`?",
+     "model_answer": "Ana, Ben and Chen get true. Dara, Eli and the second Ana get false because count reaches names.length (3) and the array can't grow."
+    },
+    {
+     "question": "The second `Join Ana` must print `false`. Which `Collection` method in Table 13-1 tells you whether Ana is already on the list?",
+     "model_answer": "contains(Object obj): it returns true if the object is an element of the collection."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Names live in a Collection of Strings",
+     "within": "Waitlist",
+     "require": "\\b(Collection|List|ArrayList|LinkedList)\\s*<\\s*String\\s*>\\s+\\w+\\s*=\\s*new\\b",
+     "message": "Declare the field as `private Collection<String> names = new ArrayList<String>();`. A collection grows as students join, so the limit of three disappears."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The array and the counter are gone",
+     "within": "Waitlist",
+     "forbid": [
+      "\\bString\\s*\\[\\s*\\]\\s*\\w+\\s*=",
+      "\\bint\\s+count\\b"
+     ],
+     "message": "Delete `String[] names` and `int count`. The collection stores the names and knows how many there are (`size()`)."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "join() refuses a name already waiting",
+     "within": "Waitlist.join",
+     "require": "^(?=[\\s\\S]*\\.\\s*contains\\s*\\()(?=[\\s\\S]*\\.\\s*add\\s*\\()",
+     "message": "In `join()`, return `false` when `names.contains(name)` is true; otherwise return `names.add(name)`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "leave() uses remove()",
+     "within": "Waitlist.leave",
+     "require": "\\.\\s*remove\\s*\\(\\s*\\w+\\s*\\)",
+     "forbid": "\\bfor\\s*\\(",
+     "message": "Replace the loop in `leave()` with `return names.remove(name);`. `remove()` already returns `true` only when the name was there."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "isWaiting() uses contains()",
+     "within": "Waitlist.isWaiting",
+     "require": "\\.\\s*contains\\s*\\(",
+     "forbid": "\\bfor\\s*\\(",
+     "message": "Replace the loop in `isWaiting()` with `return names.contains(name);`."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "size() and toString() ask the collection",
+     "within": "Waitlist",
+     "require": "^(?=[\\s\\S]*return\\s+\\w+\\s*\\.\\s*size\\s*\\(\\s*\\)\\s*;)(?=[\\s\\S]*return\\s+(\\w+\\s*\\.\\s*toString\\s*\\(\\s*\\)|\"\"\\s*\\+\\s*\\w+)\\s*;)",
+     "message": "Return `names.size()` from `size()` and `names.toString()` from `toString()`. The collection already formats itself as `[Ana, Dara]`."
+    },
+    {
+     "id": "C7",
+     "requirement": "R4",
+     "title": "dropNoShows() uses removeAll()",
+     "within": "Waitlist.dropNoShows",
+     "require": "return\\s+\\w+\\s*\\.\\s*removeAll\\s*\\(\\s*noShows\\s*\\)",
+     "message": "Write `return names.removeAll(noShows);`. One call removes every no-show and tells you whether anything changed."
+    }
+   ],
+   "hints": [
+    "Start with the field. Once the names are in a collection, every method that used `names[x]` or `count` turns red; fix them one at a time.",
+    "Read the *returns* column of Table 13-1: `add()`, `remove()` and `removeAll()` all return a `boolean` that says whether the collection changed. Those are exactly the values your methods must return.",
+    "`join()` needs one `if` before adding: a name that `contains()` finds gets `false`."
+   ],
+   "test_program": {
+    "file_name": "TestWaitlist.java",
+    "code": "import java.util.*;\n\npublic class TestWaitlist\n{\n    public static void main(String[] args)\n    {\n        Waitlist list = new Waitlist();\n        String[] arrivals = {\"Ana\", \"Ben\", \"Chen\", \"Dara\", \"Eli\", \"Ana\"};\n        for (String name : arrivals)\n            System.out.println(\"Join \" + name + \": \" + list.join(name));\n        System.out.println(\"Waiting: \" + list.size() + \" \" + list);\n        System.out.println(\"Is Chen waiting? \" + list.isWaiting(\"Chen\"));\n        System.out.println(\"Leave Ben: \" + list.leave(\"Ben\"));\n        System.out.println(\"Leave Zoe: \" + list.leave(\"Zoe\"));\n\n        ArrayList<String> noShows = new ArrayList<String>();\n        noShows.add(\"Chen\");\n        noShows.add(\"Eli\");\n        System.out.println(\"Dropped no-shows: \" + list.dropNoShows(noShows));\n        System.out.println(\"Dropped again: \" + list.dropNoShows(noShows));\n        System.out.println(\"Waiting: \" + list.size() + \" \" + list);\n    }\n}\n",
+    "expected_output": "Join Ana: true\nJoin Ben: true\nJoin Chen: true\nJoin Dara: true\nJoin Eli: true\nJoin Ana: false\nWaiting: 5 [Ana, Ben, Chen, Dara, Eli]\nIs Chen waiting? true\nLeave Ben: true\nLeave Zoe: false\nDropped no-shows: true\nDropped again: false\nWaiting: 2 [Ana, Dara]\n",
+    "predict": "Before you change anything, predict what the starter prints for the six `Join` lines and for the first `Waiting` line. Then predict what `Dropped again:` should print once your code works, and why it differs from the line above it.",
+    "how_to_run": "Put `Waitlist.java` and `TestWaitlist.java` in the same folder, then run `javac *.java` and `java TestWaitlist`. In an IDE, add both files to one project and run `TestWaitlist.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The book says collections cannot hold primitive types. What would happen if the club stored student ID numbers as `Collection<int>`, and what would you write instead?",
+     "model_answer": "It doesn't compile, because the type in angle brackets must be a class. Use Collection<Integer>; Java wraps each int in an Integer object when you add it."
+    },
+    {
+     "question": "Why did the second `dropNoShows(noShows)` call print `false`? What does that return value let a program do?",
+     "model_answer": "Chen and Eli had already been removed, so removeAll() changed nothing and returned false. The program can tell whether the call did anything, for example to report \"no one to drop\"."
+    }
+   ],
+   "extension": "Add `boolean keepOnly(Collection<String> confirmed)` that uses `retainAll()` to keep only students who confirmed by email, and `boolean allWaiting(Collection<String> group)` that uses `containsAll()` to check whether a whole group of friends is on the list.",
+   "worth_knowing": "An `ArrayList` is backed by an ordinary array. When that array fills up, the collection creates a bigger one (about one and a half times the size) and copies the elements over, so a resize is rare and adding stays fast on average. The collection does exactly what the starter couldn't: it replaces the array when it runs out of room.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; no leftover array code or unused variables."
+    }
+   ]
+  },
+  {
+   "id": "13.2",
+   "title": "The concert program that can't say who's in slot 3",
+   "subtitle": "A List keeps order, allows duplicates and works by index",
+   "source": "Ch. 13, section 13.2 (pp. 513–514)",
+   "minutes": 25,
+   "objectives": [
+    "Explain what a `List` adds to a `Collection`: positions (indexes) and duplicates",
+    "Use the `List` methods `indexOf()`, `lastIndexOf()`, `add(int, Object)` and `set()` from Table 13-2",
+    "Take part of a list with `subList()` without asking for an end past the list's size"
+   ],
+   "scenario": "The spring concert's stage manager keeps the running order in a `RunningOrder` object. The Choir opens the show and comes back for the finale, so the same act can appear twice. Late changes come in all night: *\"Put the Piano solo right after Jazz\"*, *\"Drums are out, put the Dancers in slot 3\"*, *\"Print the next three acts on my cue card\"*.\n\nThe class stores the acts in a `Collection`, and a collection has no positions: it can't insert *after* something, replace slot 3 or report where an act plays. The `List` interface extends `Collection` with exactly those operations (Table 13-2). Change the field's type and finish the methods. Slots start at 0, like array subscripts.\n\nOne decision is yours: `subList(start, end)` stops one element before `end`, and an `end` larger than the list's size throws an exception. The cue card for `nextUp(10)` must still print the whole show.\n\nThe test program prints:\n\n```\nBooked: [Choir, Jazz, Drums, Choir]\nPiano after Jazz: true\nMime after Magic: false\nNow: [Choir, Jazz, Piano, Drums, Choir]\nChoir opens at slot 0 and closes at slot 4\nReplaced Drums with Dancers\nCue card: [Choir, Jazz, Piano]\nWhole show: [Choir, Jazz, Piano, Dancers, Choir]\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Declare `acts` as a `List<String>` so the class can use the index methods."
+    },
+    {
+     "id": "R2",
+     "text": "`insertAfter()` finds the existing act with `indexOf()`, returns `false` when it gets `-1`, and otherwise inserts with `add(index, act)`. `firstSlot()` and `lastSlot()` return `indexOf()` and `lastIndexOf()`."
+    },
+    {
+     "id": "R3",
+     "text": "`replace()` uses `set()` and returns the act that was in the slot (`set()` returns it)."
+    },
+    {
+     "id": "R4",
+     "text": "`nextUp()` returns `subList(0, end)`, where `end` is never larger than the number of acts."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "RunningOrder.java",
+     "starter": "import java.util.*;\n\npublic class RunningOrder\n{\n    // TODO (R1): a Collection has no positions, so it can't answer \"which slot?\"\n    private Collection<String> acts = new ArrayList<String>();\n\n    // Books an act at the end of the show.\n    public void book(String act)\n    {\n        acts.add(act);\n    }\n\n    // Puts act in the slot right after existing.\n    // Returns false, and changes nothing, if existing isn't booked.\n    public boolean insertAfter(String existing, String act)\n    {\n        // TODO (R2): this always books the act at the end of the show.\n        acts.add(act);\n        return true;\n    }\n\n    // Slot of the first and of the last appearance of an act (0 = opener).\n    public int firstSlot(String act)\n    {\n        // TODO (R2)\n        return -1;\n    }\n\n    public int lastSlot(String act)\n    {\n        // TODO (R2)\n        return -1;\n    }\n\n    // Puts act in the given slot and returns the act it replaced.\n    public String replace(int slot, String act)\n    {\n        // TODO (R3)\n        return \"\";\n    }\n\n    // The next count acts for the stage manager's cue card.\n    // Asking for more acts than are booked gives the whole show.\n    public List<String> nextUp(int count)\n    {\n        // TODO (R4)\n        return new ArrayList<String>();\n    }\n\n    public String toString()\n    {\n        return acts.toString();\n    }\n}\n",
+     "solution": "import java.util.*;\n\npublic class RunningOrder\n{\n    private List<String> acts = new ArrayList<String>();\n\n    // Books an act at the end of the show.\n    public void book(String act)\n    {\n        acts.add(act);\n    }\n\n    // Puts act in the slot right after existing.\n    // Returns false, and changes nothing, if existing isn't booked.\n    public boolean insertAfter(String existing, String act)\n    {\n        int slot = acts.indexOf(existing);\n        if (slot == -1)\n            return false;\n        acts.add(slot + 1, act);\n        return true;\n    }\n\n    // Slot of the first and of the last appearance of an act (0 = opener).\n    public int firstSlot(String act)\n    {\n        return acts.indexOf(act);\n    }\n\n    public int lastSlot(String act)\n    {\n        return acts.lastIndexOf(act);\n    }\n\n    // Puts act in the given slot and returns the act it replaced.\n    public String replace(int slot, String act)\n    {\n        return acts.set(slot, act);\n    }\n\n    // The next count acts for the stage manager's cue card.\n    // Asking for more acts than are booked gives the whole show.\n    public List<String> nextUp(int count)\n    {\n        int end = Math.min(count, acts.size());\n        return acts.subList(0, end);\n    }\n\n    public String toString()\n    {\n        return acts.toString();\n    }\n}\n"
+    }
+   ],
+   "main_file": "RunningOrder.java",
+   "solution_notes": "`List` extends `Collection`, so it keeps every collection method and adds methods that work with an index (Table 13-2, p. 513). A list keeps its elements in order and may contain duplicates, which is why the Choir can open and close the show. `indexOf()` returns the first index of an element and `lastIndexOf()` the last, both `-1` when the element isn't there; checking for `-1` before inserting is what makes `Mime after Magic` change nothing. `add(index, obj)` inserts and keeps the existing elements (they shift one slot later), while `set(index, obj)` replaces the element and returns the old one. `subList(start, end)` returns the elements from `start` to one less than `end`, so `subList(0, 3)` is slots 0, 1 and 2; `Math.min(count, acts.size())` (or an `if`) keeps `end` legal. The field could also be `ArrayList<String>`; `List<String>` asks only for what the class needs.",
+   "warmup": [
+    {
+     "question": "The starter's `insertAfter(\"Jazz\", \"Piano\")` returns `true`. Where in the running order does the Piano act actually end up, and why?",
+     "model_answer": "At the end, after the second Choir, because the starter calls add(act), which always adds to the end. A Collection has no way to add at a position."
+    },
+    {
+     "question": "The running order is `[Choir, Jazz, Drums, Choir]`. What do `indexOf(\"Choir\")`, `lastIndexOf(\"Choir\")` and `indexOf(\"Mime\")` return?",
+     "model_answer": "0, 3 and -1. The first Choir is at index 0, the last at index 3, and Mime isn't in the list."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "acts is a List",
+     "within": "RunningOrder",
+     "require": "\\b(List|ArrayList|LinkedList)\\s*<\\s*String\\s*>\\s+acts\\b",
+     "message": "Change the field to `private List<String> acts = new ArrayList<String>();`. Only a `List` has `indexOf()`, `add(index, ...)`, `set()` and `subList()`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "insertAfter() finds the act and inserts after it",
+     "within": "RunningOrder.insertAfter",
+     "require": "^(?=[\\s\\S]*\\.\\s*indexOf\\s*\\(\\s*existing\\s*\\))(?=[\\s\\S]*\\.\\s*add\\s*\\(\\s*[^,()]+\\+\\s*1\\s*,)",
+     "message": "Store `acts.indexOf(existing)` in a variable, then insert with `acts.add(slot + 1, act)`. The new act goes one slot after the one you found."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "A missing act changes nothing",
+     "within": "RunningOrder.insertAfter",
+     "require": "(==|<)\\s*-?\\s*[01]\\b|-\\s*1\\s*==",
+     "message": "`indexOf()` returns `-1` when the act isn't booked. Test for it and `return false;` before adding anything."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "First and last slots",
+     "within": "RunningOrder",
+     "require": "^(?=[\\s\\S]*return\\s+acts\\s*\\.\\s*indexOf\\s*\\(\\s*act\\s*\\))(?=[\\s\\S]*return\\s+acts\\s*\\.\\s*lastIndexOf\\s*\\(\\s*act\\s*\\))",
+     "message": "`firstSlot()` returns `acts.indexOf(act)` and `lastSlot()` returns `acts.lastIndexOf(act)`. The Choir appears twice, and only `lastIndexOf()` finds the second one."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "replace() uses set()",
+     "within": "RunningOrder.replace",
+     "require": "\\.\\s*set\\s*\\(\\s*slot\\s*,\\s*act\\s*\\)",
+     "message": "Return `acts.set(slot, act)`. `set()` replaces the element and gives back the one that was there, which the stage manager wants to hear."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "nextUp() uses subList()",
+     "within": "RunningOrder",
+     "require": "\\.\\s*subList\\s*\\(\\s*0\\s*,",
+     "message": "Return `acts.subList(0, end)`. It holds the elements from index 0 up to one less than `end`."
+    },
+    {
+     "id": "C7",
+     "requirement": "R4",
+     "title": "The end never passes the list's size",
+     "within": "RunningOrder",
+     "require": "\\bMath\\s*\\.\\s*min\\s*\\(|\\bif\\s*\\([^)]*\\bsize\\s*\\(\\s*\\)|\\?[^;]*\\bsize\\s*\\(\\s*\\)",
+     "message": "`subList(0, 10)` on a five-act show throws `IndexOutOfBoundsException`. Use `Math.min(count, acts.size())` (or an `if`) as the end."
+    }
+   ],
+   "hints": [
+    "Change the field first. Every method you need in this lab is in Table 13-2, which lists what `List` adds to `Collection`.",
+    "`insertAfter()` takes three steps: find the position of `existing`, give up if it is `-1`, then insert one position later.",
+    "For `nextUp()`, ask yourself what the largest legal `end` for `subList()` is in a five-act show."
+   ],
+   "test_program": {
+    "file_name": "TestRunningOrder.java",
+    "code": "public class TestRunningOrder\n{\n    public static void main(String[] args)\n    {\n        RunningOrder show = new RunningOrder();\n        show.book(\"Choir\");\n        show.book(\"Jazz\");\n        show.book(\"Drums\");\n        show.book(\"Choir\");\n        System.out.println(\"Booked: \" + show);\n        System.out.println(\"Piano after Jazz: \" + show.insertAfter(\"Jazz\", \"Piano\"));\n        System.out.println(\"Mime after Magic: \" + show.insertAfter(\"Magic\", \"Mime\"));\n        System.out.println(\"Now: \" + show);\n        System.out.println(\"Choir opens at slot \" + show.firstSlot(\"Choir\")\n            + \" and closes at slot \" + show.lastSlot(\"Choir\"));\n        System.out.println(\"Replaced \" + show.replace(3, \"Dancers\") + \" with Dancers\");\n        System.out.println(\"Cue card: \" + show.nextUp(3));\n        System.out.println(\"Whole show: \" + show.nextUp(10));\n    }\n}\n",
+    "expected_output": "Booked: [Choir, Jazz, Drums, Choir]\nPiano after Jazz: true\nMime after Magic: false\nNow: [Choir, Jazz, Piano, Drums, Choir]\nChoir opens at slot 0 and closes at slot 4\nReplaced Drums with Dancers\nCue card: [Choir, Jazz, Piano]\nWhole show: [Choir, Jazz, Piano, Dancers, Choir]\n",
+    "predict": "Before you change anything, predict the starter's `Now:` line. Then predict what `nextUp(10)` would do if you returned `acts.subList(0, count)` without any limit.",
+    "how_to_run": "Put `RunningOrder.java` and `TestRunningOrder.java` in the same folder, then run `javac *.java` and `java TestRunningOrder`. In an IDE, add both files to one project and run `TestRunningOrder.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "`add(2, \"Piano\")` and `set(2, \"Piano\")` both take an index and an act. How do the running orders they produce differ?",
+     "model_answer": "add() inserts the act and moves every later act one slot down, so the show gets longer. set() overwrites the act in slot 2, so the show keeps its length and the old act is gone."
+    },
+    {
+     "question": "Why must `insertAfter()` check for `-1` before calling `add(slot + 1, act)`? What would happen without the check when the act isn't booked?",
+     "model_answer": "indexOf() returns -1 for a missing act, so slot + 1 would be 0 and the new act would quietly become the opener. The check makes the method report false and leave the show unchanged."
+    }
+   ],
+   "extension": "Add `boolean move(String act, int newSlot)` that removes the first appearance of `act` with `remove(int)` and puts it back at `newSlot` with `add(int, Object)`. Return `false` if the act isn't booked or `newSlot` is outside the show.",
+   "worth_knowing": "The list `subList()` returns isn't a copy: it is a view of the original list. Change an act through the view and the running order changes too, and `nextUp(3).clear()` would delete the first three acts from the show. To get an independent copy, pass the view to a new `ArrayList`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; the result of indexOf() is stored once in a well-named variable."
+    }
+   ]
+  },
+  {
+   "id": "13.3",
+   "title": "The race results that reshuffle the entry list",
+   "subtitle": "Store objects in an ArrayList and sort them with Comparable",
+   "source": "Ch. 13, section 13.3 (pp. 514–524)",
+   "minutes": 30,
+   "objectives": [
+    "Store objects of your own class in an `ArrayList` and remove one by its position",
+    "Make a class sortable by implementing `Comparable` and overriding `compareTo()`",
+    "Sort with `Collections.sort()` without destroying an order the program still needs"
+   ],
+   "scenario": "A charity 5K keeps two views of its runners: the official **entry list**, in the order runners registered (the timing crew reads bib numbers off it), and the **leaderboard**, fastest first. The leaderboard page is blank because `ranked()` was never written, and runners who drop out can't be withdrawn.\n\n`Collections.sort()` can sort an `ArrayList<Runner>` only if a `Runner` knows how to compare itself to another `Runner`, which means implementing `Comparable<Runner>` and writing `compareTo()`. Here *natural ordering* is by finishing time: fewer seconds comes first.\n\nThere is a trap. `Collections.sort(entries)` sorts the list you pass to it, so sorting `entries` itself would scramble the official entry list. `ranked()` must sort a copy (Table 13-1 has a method that copies one collection into another).\n\nThe test program prints:\n\n```\nEntry order:\n   #214 Priya 1520s\n   #108 Marco 1495s\n   #331 Lena 1610s\n   #150 Sam 1495s\nRanked:\n1. #108 Marco 1495s\n2. #150 Sam 1495s\n3. #214 Priya 1520s\n4. #331 Lena 1610s\nFirst entry is still #214 Priya 1520s\nWithdraw #331: true\nWithdraw #999: false\nRunners left: 3\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Runner` implements `Comparable<Runner>` and overrides `compareTo()`. It returns a negative number, 0 or a positive number by comparing `seconds`, so the fastest runner sorts first."
+    },
+    {
+     "id": "R2",
+     "text": "`ranked()` sorts with `Collections.sort()`."
+    },
+    {
+     "id": "R3",
+     "text": "`ranked()` sorts a new `ArrayList` that holds the same runners (for example, filled with `addAll()`) and returns it, leaving `entries` in registration order."
+    },
+    {
+     "id": "R4",
+     "text": "`withdraw()` loops through `entries` with `size()` and `get()`, removes the runner whose bib matches with `remove()`, and returns `true`. If no bib matches, it returns `false`."
+    },
+    {
+     "id": "R5",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Runner.java",
+     "starter": "// TODO (R1): Collections.sort() can only sort objects that know how to\n// compare themselves to another object of the same class.\npublic class Runner\n{\n    private int bib;\n    private String name;\n    private int seconds;\n\n    public Runner(int bib, String name, int seconds)\n    {\n        this.bib = bib;\n        this.name = name;\n        this.seconds = seconds;\n    }\n\n    public int getBib()\n    {\n        return bib;\n    }\n\n    public int getSeconds()\n    {\n        return seconds;\n    }\n\n    public String toString()\n    {\n        return \"#\" + bib + \" \" + name + \" \" + seconds + \"s\";\n    }\n}\n",
+     "solution": "public class Runner implements Comparable<Runner>\n{\n    private int bib;\n    private String name;\n    private int seconds;\n\n    public Runner(int bib, String name, int seconds)\n    {\n        this.bib = bib;\n        this.name = name;\n        this.seconds = seconds;\n    }\n\n    public int getBib()\n    {\n        return bib;\n    }\n\n    public int getSeconds()\n    {\n        return seconds;\n    }\n\n    public String toString()\n    {\n        return \"#\" + bib + \" \" + name + \" \" + seconds + \"s\";\n    }\n\n    // Faster runners come first: fewer seconds means \"less than\".\n    @Override\n    public int compareTo(Runner other)\n    {\n        int result;\n        if (seconds == other.seconds)\n            result = 0;\n        else\n            if (seconds > other.seconds)\n                result = 1;\n            else\n                result = -1;\n        return result;\n    }\n}\n"
+    },
+    {
+     "name": "Leaderboard.java",
+     "starter": "import java.util.*;\n\npublic class Leaderboard\n{\n    private ArrayList<Runner> entries = new ArrayList<Runner>();\n\n    // Adds a runner in the order the official entry list received them.\n    public void add(Runner r)\n    {\n        entries.add(r);\n    }\n\n    public ArrayList<Runner> entryOrder()\n    {\n        return entries;\n    }\n\n    // Returns the runners fastest first.\n    // The official entry order must stay exactly as it was.\n    public ArrayList<Runner> ranked()\n    {\n        // TODO (R2, R3)\n        return entries;\n    }\n\n    // Removes the runner wearing this bib. Returns true if one was removed.\n    public boolean withdraw(int bib)\n    {\n        // TODO (R4)\n        return false;\n    }\n\n    public int size()\n    {\n        return entries.size();\n    }\n}\n",
+     "solution": "import java.util.*;\n\npublic class Leaderboard\n{\n    private ArrayList<Runner> entries = new ArrayList<Runner>();\n\n    // Adds a runner in the order the official entry list received them.\n    public void add(Runner r)\n    {\n        entries.add(r);\n    }\n\n    public ArrayList<Runner> entryOrder()\n    {\n        return entries;\n    }\n\n    // Returns the runners fastest first.\n    // The official entry order must stay exactly as it was.\n    public ArrayList<Runner> ranked()\n    {\n        ArrayList<Runner> copy = new ArrayList<Runner>();\n        copy.addAll(entries);\n        Collections.sort(copy);\n        return copy;\n    }\n\n    // Removes the runner wearing this bib. Returns true if one was removed.\n    public boolean withdraw(int bib)\n    {\n        for (int x = 0; x < entries.size(); ++x)\n        {\n            if (entries.get(x).getBib() == bib)\n            {\n                entries.remove(x);\n                return true;\n            }\n        }\n        return false;\n    }\n\n    public int size()\n    {\n        return entries.size();\n    }\n}\n"
+    }
+   ],
+   "main_file": "Runner.java",
+   "solution_notes": "`Collections.sort()` orders objects with their `compareTo()` method (p. 520). For your own class you choose the natural ordering, write `implements Comparable<Runner>` in the class header and override `compareTo()` (pp. 520–521). The method returns 0 for equal times, 1 if this runner is slower and -1 if faster, the same pattern as the book's `Student` class; `Integer.compare(seconds, other.seconds)` returns the same signs. `Collections.sort()` changes the list it receives, so `ranked()` fills a new `ArrayList` with `addAll()` (Table 13-1) and sorts that; both lists hold references to the same `Runner` objects, so nothing is duplicated except the references. Marco and Sam tie at 1495 s, and they stay in entry order because `Collections.sort()` is stable. In `withdraw()`, `remove(x)` removes by position and closes the gap (p. 515); returning right away avoids skipping the element that moves into position `x`.",
+   "warmup": [
+    {
+     "question": "Without a `compareTo()` method, what goes wrong if `ranked()` calls `Collections.sort(entries)` on the starter's `Runner` class?",
+     "model_answer": "It doesn't compile: Collections.sort() needs elements that implement Comparable, and Runner doesn't, so Java can't tell how to order two runners."
+    },
+    {
+     "question": "Priya ran 1520 s and Marco ran 1495 s. With the natural ordering \"fewer seconds first\", what should `priya.compareTo(marco)` return: 1, 0 or -1? Why?",
+     "model_answer": "1, because Priya took more seconds, so she is \"greater\" and must sort after Marco."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Runner implements Comparable<Runner>",
+     "file": "Runner.java",
+     "require": "class\\s+Runner\\s+implements\\s+Comparable\\s*<\\s*Runner\\s*>",
+     "message": "Change the header to `public class Runner implements Comparable<Runner>`. The type in angle brackets says what a Runner is compared to."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "compareTo() is overridden",
+     "file": "Runner.java",
+     "within": "Runner",
+     "require": "@Override\\s+public\\s+int\\s+compareTo\\s*\\(\\s*Runner\\s+\\w+\\s*\\)",
+     "message": "Add `@Override public int compareTo(Runner other)` to `Runner`. It must be public, take a `Runner` and return an `int`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "title": "Runners are compared by time",
+     "file": "Runner.java",
+     "within": "Runner.compareTo",
+     "require": "\\bseconds\\b",
+     "forbid": "\\bbib\\b",
+     "message": "Compare `seconds` with `other.seconds`: return 0 when equal, 1 when this runner is slower, -1 when faster. The leaderboard ranks by time, not by bib."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "ranked() uses Collections.sort()",
+     "file": "Leaderboard.java",
+     "within": "Leaderboard",
+     "require": "\\bCollections\\s*\\.\\s*sort\\s*\\(",
+     "message": "Call `Collections.sort(copy)` in `ranked()`. It uses the `compareTo()` you wrote in `Runner`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "The entry list is never sorted",
+     "file": "Leaderboard.java",
+     "within": "Leaderboard",
+     "require": "\\.\\s*addAll\\s*\\(\\s*entries\\s*\\)|new\\s+ArrayList\\s*<\\s*(Runner)?\\s*>\\s*\\(\\s*entries\\s*\\)",
+     "forbid": "\\bsort\\s*\\(\\s*entries\\s*\\)",
+     "message": "Make a new `ArrayList<Runner>`, copy the runners into it with `copy.addAll(entries)`, then sort and return the copy. Sorting `entries` itself would reorder the official entry list."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "withdraw() removes by position",
+     "file": "Leaderboard.java",
+     "within": "Leaderboard.withdraw",
+     "require": "^(?=[\\s\\S]*\\.\\s*get\\s*\\(\\s*\\w+\\s*\\)\\s*\\.\\s*getBib\\s*\\(\\s*\\)\\s*==\\s*bib)(?=[\\s\\S]*\\.\\s*remove\\s*\\(\\s*\\w+\\s*\\))(?=[\\s\\S]*return\\s+true)",
+     "message": "Loop with `for (int x = 0; x < entries.size(); ++x)`. When `entries.get(x).getBib() == bib`, call `entries.remove(x)` and `return true;`."
+    }
+   ],
+   "hints": [
+    "Copy the shape of the book's `Student.compareTo()` on p. 521, but compare `seconds` instead of `id`.",
+    "`ranked()` takes three statements: create an empty `ArrayList<Runner>`, `addAll()` the entries into it, then sort it. Return the copy.",
+    "In `withdraw()`, `get(x)` gives you a `Runner`, and a `Runner` has `getBib()`. Return as soon as you have removed one."
+   ],
+   "test_program": {
+    "file_name": "TestLeaderboard.java",
+    "code": "import java.util.*;\n\npublic class TestLeaderboard\n{\n    public static void main(String[] args)\n    {\n        Leaderboard board = new Leaderboard();\n        board.add(new Runner(214, \"Priya\", 1520));\n        board.add(new Runner(108, \"Marco\", 1495));\n        board.add(new Runner(331, \"Lena\", 1610));\n        board.add(new Runner(150, \"Sam\", 1495));\n\n        System.out.println(\"Entry order:\");\n        display(board.entryOrder());\n\n        System.out.println(\"Ranked:\");\n        ArrayList<Runner> ranked = board.ranked();\n        for (int x = 0; x < ranked.size(); ++x)\n            System.out.println((x + 1) + \". \" + ranked.get(x));\n\n        System.out.println(\"First entry is still \" + board.entryOrder().get(0));\n        System.out.println(\"Withdraw #331: \" + board.withdraw(331));\n        System.out.println(\"Withdraw #999: \" + board.withdraw(999));\n        System.out.println(\"Runners left: \" + board.size());\n    }\n\n    public static void display(ArrayList<Runner> runners)\n    {\n        for (int x = 0; x < runners.size(); ++x)\n            System.out.println(\"   \" + runners.get(x));\n    }\n}\n",
+    "expected_output": "Entry order:\n   #214 Priya 1520s\n   #108 Marco 1495s\n   #331 Lena 1610s\n   #150 Sam 1495s\nRanked:\n1. #108 Marco 1495s\n2. #150 Sam 1495s\n3. #214 Priya 1520s\n4. #331 Lena 1610s\nFirst entry is still #214 Priya 1520s\nWithdraw #331: true\nWithdraw #999: false\nRunners left: 3\n",
+    "predict": "Predict the `Ranked:` section. Marco and Sam both ran 1495 s: who do you expect first, and why? Then predict the `First entry is still` line if `ranked()` sorted `entries` directly.",
+    "how_to_run": "Put `Runner.java`, `Leaderboard.java` and `TestLeaderboard.java` in the same folder, then run `javac *.java` and `java TestLeaderboard`. In an IDE, add all three files to one project and run `TestLeaderboard.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The race director now wants the leaderboard sorted by bib number. Which single method would you change, and why does `Leaderboard` not need to change at all?",
+     "model_answer": "Only Runner.compareTo(), to compare bib instead of seconds. Collections.sort() asks each Runner how it compares, so the sorting code in Leaderboard stays the same."
+    },
+    {
+     "question": "`copy` and `entries` are two different `ArrayList` objects. Are there now two Priya `Runner` objects in memory? Explain what `addAll()` copied.",
+     "model_answer": "No. A collection holds references, so addAll() copied the references. Both lists point to the same four Runner objects; only the order of the references differs."
+    }
+   ],
+   "extension": "Add `ArrayList<Runner> podium()` that returns only the three fastest runners (fewer if fewer finished). Use `ranked()` and a loop that stops at `Math.min(3, size())`.",
+   "worth_knowing": "`Collections.sort()` is guaranteed to be *stable*: elements that compare as equal keep their original order. That is why Marco, who registered before Sam, stays ahead of him on the leaderboard with the same time. Not every sorting algorithm promises this; Java's sort for objects does.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; `@Override` on `compareTo()`; the copy has a clear name."
+    }
+   ]
+  },
+  {
+   "id": "13.4",
+   "title": "The help desk that always serves the newest ticket",
+   "subtitle": "Choose a LinkedList when items keep joining and leaving at the front",
+   "source": "Ch. 13, section 13.4 (pp. 524–527)",
+   "minutes": 20,
+   "objectives": [
+    "Describe how a doubly-linked list stores each element with the addresses of the elements before and after it",
+    "Decide between `ArrayList` and `LinkedList` from how a program moves its data",
+    "Use `add(0, ...)`, `remove(0)` and `isEmpty()` to build a fair, first-come queue"
+   ],
+   "scenario": "The campus IT help desk keeps its tickets in a `HelpDesk` object. Students are furious: the person who arrived last is always served first, and at the end of the day the program crashes when the queue runs empty. Urgent tickets (a server down) are also supposed to jump ahead of everyone, but they land at the back.\n\nThis queue changes at its **front** all day long: urgent tickets are inserted there and every served ticket is removed from there. In an `ArrayList`, removing the first element moves every other element one position up; in a `LinkedList`, only the links of the neighbors change (Figure 13-18). Switch the class to a `LinkedList` and make the queue fair. The `add()`, `remove()` and `size()` methods work the same way on both classes.\n\nThe test program prints:\n\n```\nQueue: [T1 printer, T2 login, T3 Wi-Fi]\nQueue: [T4 outage, T1 printer, T2 login, T3 Wi-Fi]\nServing: T4 outage\nServing: T1 printer\nQueue: [T2 login, T3 Wi-Fi, T5 laptop]\nServing: T2 login\nServing: T3 Wi-Fi\nServing: T5 laptop\nServing: (none)\nWaiting: 0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Store the tickets in a `LinkedList<String>`; no `ArrayList` remains in the class."
+    },
+    {
+     "id": "R2",
+     "text": "`addUrgent()` inserts the ticket at the front of the queue (position 0)."
+    },
+    {
+     "id": "R3",
+     "text": "`serveNext()` returns `\"(none)\"` when the queue is empty; otherwise it removes and returns the ticket at the front."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "HelpDesk.java",
+     "starter": "import java.util.*;\n\npublic class HelpDesk\n{\n    // TODO (R1): tickets join and leave at the FRONT of this list all day long.\n    private ArrayList<String> tickets = new ArrayList<String>();\n\n    // A normal ticket waits behind everyone already in the queue.\n    public void addNormal(String ticket)\n    {\n        tickets.add(ticket);\n    }\n\n    // An urgent ticket goes ahead of everyone already waiting.\n    public void addUrgent(String ticket)\n    {\n        // TODO (R2)\n        tickets.add(ticket);\n    }\n\n    // Removes and returns the ticket at the front of the queue,\n    // or \"(none)\" when nobody is waiting.\n    public String serveNext()\n    {\n        // TODO (R3): this serves the NEWEST ticket and crashes on an empty queue.\n        return tickets.remove(tickets.size() - 1);\n    }\n\n    public int waiting()\n    {\n        return tickets.size();\n    }\n\n    public String toString()\n    {\n        return tickets.toString();\n    }\n}\n",
+     "solution": "import java.util.*;\n\npublic class HelpDesk\n{\n    private LinkedList<String> tickets = new LinkedList<String>();\n\n    // A normal ticket waits behind everyone already in the queue.\n    public void addNormal(String ticket)\n    {\n        tickets.add(ticket);\n    }\n\n    // An urgent ticket goes ahead of everyone already waiting.\n    public void addUrgent(String ticket)\n    {\n        tickets.add(0, ticket);\n    }\n\n    // Removes and returns the ticket at the front of the queue,\n    // or \"(none)\" when nobody is waiting.\n    public String serveNext()\n    {\n        if (tickets.isEmpty())\n            return \"(none)\";\n        return tickets.remove(0);\n    }\n\n    public int waiting()\n    {\n        return tickets.size();\n    }\n\n    public String toString()\n    {\n        return tickets.toString();\n    }\n}\n"
+    }
+   ],
+   "main_file": "HelpDesk.java",
+   "solution_notes": "Java's `LinkedList` is doubly-linked: each element holds the address of the one before it and the one after it (p. 524). Removing or inserting therefore changes only a couple of references (Figure 13-18), while an `ArrayList` must move every element after the gap (p. 526). A help-desk queue inserts and removes at the front constantly, so `LinkedList` is the better fit. The methods are the same as `ArrayList`'s (p. 526): `add(0, ticket)` puts an urgent ticket first, and `remove(0)` takes the oldest normal ticket because normal tickets are added at the end. The starter's `remove(size() - 1)` served the newest ticket (last in, first out) and threw `IndexOutOfBoundsException` on an empty list (`remove(-1)`), so check `isEmpty()` first. `LinkedList` also has `addFirst()` and `removeFirst()`, which the checks accept.",
+   "warmup": [
+    {
+     "question": "Trace the starter with T1, T2 and T3 added: which ticket does the first `serveNext()` return, and what happens when `serveNext()` is called on an empty queue?",
+     "model_answer": "T3, the newest ticket, because it removes the last element. On an empty queue it calls remove(-1), which throws IndexOutOfBoundsException and crashes."
+    },
+    {
+     "question": "Look at Figure 13-18. When item 102 is removed from the linked list, which references change, and does item 103 move in memory?",
+     "model_answer": "Only 101's next (now 103's address) and 103's previous (now 101's address) change. 103 stays where it is in memory."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Tickets live in a LinkedList",
+     "within": "HelpDesk",
+     "require": "\\bLinkedList\\s*<\\s*String\\s*>\\s+tickets\\s*=\\s*new\\s+LinkedList\\s*<",
+     "forbid": "\\bArrayList\\b",
+     "message": "Declare `private LinkedList<String> tickets = new LinkedList<String>();`. Inserting and removing at the front only relinks neighbors in a linked list."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Urgent tickets go first",
+     "within": "HelpDesk.addUrgent",
+     "require": "\\.\\s*add\\s*\\(\\s*0\\s*,\\s*ticket\\s*\\)|\\.\\s*addFirst\\s*\\(\\s*ticket\\s*\\)",
+     "message": "Use `tickets.add(0, ticket)`: the ticket goes into position 0, ahead of everyone already waiting."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The oldest ticket is served",
+     "within": "HelpDesk.serveNext",
+     "require": "\\.\\s*remove\\s*\\(\\s*0\\s*\\)|\\.\\s*removeFirst\\s*\\(\\s*\\)|\\.\\s*poll\\s*\\(\\s*\\)",
+     "forbid": "size\\s*\\(\\s*\\)\\s*-\\s*1",
+     "message": "Return `tickets.remove(0)`. Normal tickets join at the end, so the oldest one is at the front."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "An empty queue doesn't crash",
+     "within": "HelpDesk.serveNext",
+     "require": "\\bisEmpty\\s*\\(\\s*\\)|\\bsize\\s*\\(\\s*\\)\\s*(==|<=?)\\s*0",
+     "message": "Before removing, test `tickets.isEmpty()` and return `\"(none)\"`. Calling `remove()` on an empty list throws an exception."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "The empty-queue message",
+     "within": "HelpDesk.serveNext",
+     "strings": true,
+     "require": "\"\\(none\\)\"",
+     "message": "Return exactly `\"(none)\"` when nobody is waiting, so the front-desk screen shows it."
+    }
+   ],
+   "hints": [
+    "Only the declaration line needs `LinkedList`; the methods you already call (`add`, `remove`, `size`) work unchanged.",
+    "Decide where the front of the queue is. Normal tickets are added at the end, so the front is position 0 for both adding urgent tickets and serving.",
+    "Put the empty check first in `serveNext()`, so `remove()` is never called on an empty list."
+   ],
+   "test_program": {
+    "file_name": "TestHelpDesk.java",
+    "code": "public class TestHelpDesk\n{\n    public static void main(String[] args)\n    {\n        HelpDesk desk = new HelpDesk();\n        desk.addNormal(\"T1 printer\");\n        desk.addNormal(\"T2 login\");\n        desk.addNormal(\"T3 Wi-Fi\");\n        System.out.println(\"Queue: \" + desk);\n        desk.addUrgent(\"T4 outage\");\n        System.out.println(\"Queue: \" + desk);\n        System.out.println(\"Serving: \" + desk.serveNext());\n        System.out.println(\"Serving: \" + desk.serveNext());\n        desk.addNormal(\"T5 laptop\");\n        System.out.println(\"Queue: \" + desk);\n        System.out.println(\"Serving: \" + desk.serveNext());\n        System.out.println(\"Serving: \" + desk.serveNext());\n        System.out.println(\"Serving: \" + desk.serveNext());\n        System.out.println(\"Serving: \" + desk.serveNext());\n        System.out.println(\"Waiting: \" + desk.waiting());\n    }\n}\n",
+    "expected_output": "Queue: [T1 printer, T2 login, T3 Wi-Fi]\nQueue: [T4 outage, T1 printer, T2 login, T3 Wi-Fi]\nServing: T4 outage\nServing: T1 printer\nQueue: [T2 login, T3 Wi-Fi, T5 laptop]\nServing: T2 login\nServing: T3 Wi-Fi\nServing: T5 laptop\nServing: (none)\nWaiting: 0\n",
+    "predict": "Predict the starter's first two `Serving:` lines and what happens on the last call. Then predict the second `Queue:` line, printed right after the urgent ticket arrives, once your code works.",
+    "how_to_run": "Put `HelpDesk.java` and `TestHelpDesk.java` in the same folder, then run `javac *.java` and `java TestHelpDesk`. In an IDE, add both files to one project and run `TestHelpDesk.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The help desk also prints a daily report that walks through 5,000 closed tickets one by one with `get(x)`. Which class would you store *that* list in, and why?",
+     "model_answer": "An ArrayList. Reading every element in order is faster when the elements are stored next to each other; a LinkedList must follow each element's link to find the next one."
+    },
+    {
+     "question": "With 1,000 tickets waiting, what happens inside an `ArrayList` when the first ticket is removed, and what happens inside a `LinkedList`?",
+     "model_answer": "In the ArrayList the other 999 tickets each move one position up. In the LinkedList only the new first ticket's previous link changes; nothing moves."
+    }
+   ],
+   "extension": "Add `boolean cancel(String ticket)` that removes a ticket from anywhere in the queue with `remove(Object)` and returns whether it was there, and `String peekNext()` that shows the front ticket without removing it (`get(0)`), or `\"(none)\"`.",
+   "worth_knowing": "A `LinkedList` remembers both its first and its last node, so `add()` at the end and `remove(0)` at the front never walk the list. That makes it a natural first-in, first-out queue, and it also implements Java's `Queue` and `Deque` interfaces, which the book mentions in a note on p. 513.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers compare ArrayList and LinkedList with this queue in mind, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; the empty check comes before remove()."
+    }
+   ]
+  },
+  {
+   "id": "13.5",
+   "title": "The sensor log that keeps half its errors",
+   "subtitle": "Loop with the enhanced for, and remove safely with an Iterator",
+   "source": "Ch. 13, section 13.5 (pp. 528–529)",
+   "minutes": 25,
+   "objectives": [
+    "Process every element of a collection with an enhanced `for` loop, without an index",
+    "Create an `Iterator` with `iterator()` and loop with `hasNext()` and `next()`",
+    "Remove elements during a loop with the iterator's `remove()` instead of an index"
+   ],
+   "scenario": "A school greenhouse logs a temperature reading every hour in a `LinkedList<Integer>`. When the sensor glitches it records `-1`. Before the science class graphs the data, `removeErrors()` is supposed to delete every `-1`, but when two errors arrive back to back one of them survives and drags the average down.\n\nThe culprit is the index loop. When `remove(x)` deletes the element at position `x`, the next element slides into position `x`, and then `++x` skips right over it. An `Iterator` has no index to get out of step: `hasNext()` asks whether another element exists, `next()` returns it, and `remove()` deletes the element `next()` just returned.\n\nThe other two methods only read the list, so they need no index at all. On a `LinkedList`, `get(x)` follows the links from the start each time, so let an enhanced `for` loop (which uses an iterator behind the scenes) walk the list once.\n\nThe test program prints:\n\n```\nRaw: [21, -1, -1, 23, 19, -1, 22]\nErrors removed: 3\nClean: [21, 23, 19, 22]\nAverage: 21.25\nAbove 20: 21 23 22\nAbove 25: []\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`removeErrors()` loops with an `Iterator<Integer>` (`iterator()`, `hasNext()`, `next()`) and removes each error with the iterator's `remove()`, never with `readings.remove()`."
+    },
+    {
+     "id": "R2",
+     "text": "`average()` adds the readings with an enhanced `for` loop; no `get()` call."
+    },
+    {
+     "id": "R3",
+     "text": "`above(limit)` returns the readings greater than `limit`, in order, separated by single spaces (an empty string if there are none), using an enhanced `for` loop or an iterator and no `get()`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "SensorLog.java",
+     "starter": "import java.util.*;\n\npublic class SensorLog\n{\n    private static final int ERROR = -1;\n    private LinkedList<Integer> readings = new LinkedList<Integer>();\n\n    public void record(int value)\n    {\n        readings.add(value);\n    }\n\n    // Removes every error reading and returns how many were removed.\n    public int removeErrors()\n    {\n        int removed = 0;\n        // TODO (R1): when two errors are next to each other, the second one survives.\n        for (int x = 0; x < readings.size(); ++x)\n        {\n            if (readings.get(x) == ERROR)\n            {\n                readings.remove(x);\n                ++removed;\n            }\n        }\n        return removed;\n    }\n\n    // The average of the readings.\n    public double average()\n    {\n        // TODO (R2): get(x) on a LinkedList walks the links from the start every time.\n        int sum = 0;\n        for (int x = 0; x < readings.size(); ++x)\n            sum += readings.get(x);\n        return (double) sum / readings.size();\n    }\n\n    // The readings above limit, in order, separated by spaces.\n    public String above(int limit)\n    {\n        // TODO (R3)\n        return \"\";\n    }\n\n    public String toString()\n    {\n        return readings.toString();\n    }\n}\n",
+     "solution": "import java.util.*;\n\npublic class SensorLog\n{\n    private static final int ERROR = -1;\n    private LinkedList<Integer> readings = new LinkedList<Integer>();\n\n    public void record(int value)\n    {\n        readings.add(value);\n    }\n\n    // Removes every error reading and returns how many were removed.\n    public int removeErrors()\n    {\n        int removed = 0;\n        Iterator<Integer> iter = readings.iterator();\n        while (iter.hasNext())\n        {\n            if (iter.next() == ERROR)\n            {\n                iter.remove();\n                ++removed;\n            }\n        }\n        return removed;\n    }\n\n    // The average of the readings.\n    public double average()\n    {\n        int sum = 0;\n        for (int value : readings)\n            sum += value;\n        return (double) sum / readings.size();\n    }\n\n    // The readings above limit, in order, separated by spaces.\n    public String above(int limit)\n    {\n        String result = \"\";\n        for (int value : readings)\n            if (value > limit)\n                result += value + \" \";\n        return result.trim();\n    }\n\n    public String toString()\n    {\n        return readings.toString();\n    }\n}\n"
+    }
+   ],
+   "main_file": "SensorLog.java",
+   "solution_notes": "An iterator is an object that loops through the elements of a collection (p. 528). `iterator()` returns one; `hasNext()` reports whether another element exists, `next()` returns it, and `remove()` removes the last element `next()` returned (p. 529). Because the iterator keeps its own place, removing never makes it skip an element, unlike the index loop, where `remove(x)` shifts the next `-1` into position `x` just before `++x` moves past it. The enhanced `for` (foreach) loop creates an iterator behind the scenes (p. 528), so `average()` and `above()` need neither `size()` nor `get()`; the book notes an iterator avoids looking up the size and, on a linked list, avoids following links from the start for every `get(x)`. `iter.next() == ERROR` compares an `Integer` with an `int` constant, so Java unboxes the `Integer` and compares numbers. Building the string with a trailing space and calling `trim()` gives single spaces with nothing at the end.",
+   "warmup": [
+    {
+     "question": "Trace the starter's `removeErrors()` on `[21, -1, -1, 23]`. At x = 1 the first -1 is removed. What is at position 1 now, and what position does the loop check next?",
+     "model_answer": "The second -1 slides into position 1, but ++x makes the loop check position 2 (23) next, so the second -1 is never examined and survives."
+    },
+    {
+     "question": "An iterator offers three methods. Which one removes an element, and which element does it remove?",
+     "model_answer": "remove(). It removes the last element returned by next()."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "removeErrors() uses an Iterator",
+     "within": "SensorLog.removeErrors",
+     "require": "^(?=[\\s\\S]*\\bIterator\\s*<\\s*Integer\\s*>\\s+\\w+\\s*=\\s*readings\\s*\\.\\s*iterator\\s*\\(\\s*\\))(?=[\\s\\S]*\\.\\s*hasNext\\s*\\(\\s*\\))(?=[\\s\\S]*\\.\\s*next\\s*\\(\\s*\\))",
+     "message": "Create `Iterator<Integer> iter = readings.iterator();` and loop `while (iter.hasNext())`, getting each reading with `iter.next()`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The iterator does the removing",
+     "within": "SensorLog.removeErrors",
+     "require": "\\b(?!readings\\b)\\w+\\s*\\.\\s*remove\\s*\\(\\s*\\)",
+     "forbid": [
+      "\\breadings\\s*\\.\\s*remove\\s*\\(",
+      "\\.\\s*get\\s*\\("
+     ],
+     "message": "Call `iter.remove()` (no argument) to delete the reading `next()` just returned. `readings.remove(x)` shifts the list under an index and skips the next element."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "average() uses an enhanced for",
+     "within": "SensorLog.average",
+     "require": "\\bfor\\s*\\(\\s*(final\\s+)?(int|Integer)\\s+\\w+\\s*:\\s*readings\\s*\\)",
+     "forbid": "\\.\\s*get\\s*\\(",
+     "message": "Write `for (int value : readings)` and add `value` to the sum. No index and no `get()`: each reading is visited once."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "above() walks the list without get()",
+     "within": "SensorLog.above",
+     "require": "\\bfor\\s*\\(\\s*(final\\s+)?(int|Integer)\\s+\\w+\\s*:\\s*readings\\s*\\)|\\.\\s*iterator\\s*\\(\\s*\\)",
+     "forbid": "\\.\\s*get\\s*\\(",
+     "message": "Loop with `for (int value : readings)` and add each value greater than `limit` to the result."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "above() compares with limit",
+     "within": "SensorLog.above",
+     "require": ">\\s*limit\\b|\\blimit\\s*<",
+     "message": "Keep a reading only when it is greater than `limit` (`value > limit`). Equal readings are not above it."
+    }
+   ],
+   "hints": [
+    "In `removeErrors()`, the `for` loop and its index go away. Ask the iterator whether another reading exists as the loop condition, and fetch the reading inside the loop.",
+    "Calling `next()` twice in one pass skips a reading. Store `iter.next()` in a variable if you need the value more than once.",
+    "In `above()`, add `value + \" \"` to the result for each match and return `result.trim()`, or put the space before every value except the first."
+   ],
+   "test_program": {
+    "file_name": "TestSensorLog.java",
+    "code": "public class TestSensorLog\n{\n    public static void main(String[] args)\n    {\n        SensorLog log = new SensorLog();\n        int[] raw = {21, -1, -1, 23, 19, -1, 22};\n        for (int value : raw)\n            log.record(value);\n\n        System.out.println(\"Raw: \" + log);\n        System.out.println(\"Errors removed: \" + log.removeErrors());\n        System.out.println(\"Clean: \" + log);\n        System.out.println(\"Average: \" + log.average());\n        System.out.println(\"Above 20: \" + log.above(20));\n        System.out.println(\"Above 25: [\" + log.above(25) + \"]\");\n    }\n}\n",
+    "expected_output": "Raw: [21, -1, -1, 23, 19, -1, 22]\nErrors removed: 3\nClean: [21, 23, 19, 22]\nAverage: 21.25\nAbove 20: 21 23 22\nAbove 25: []\n",
+    "predict": "Before you change anything, predict the starter's `Errors removed:` and `Clean:` lines. Then predict the starter's `Average:` and explain why it is lower than 21.25.",
+    "how_to_run": "Put `SensorLog.java` and `TestSensorLog.java` in the same folder, then run `javac *.java` and `java TestSensorLog`. In an IDE, add both files to one project and run `TestSensorLog.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why can't `removeErrors()` simply use `for (int value : readings)` and call `readings.remove(...)` inside it? What does that tell you about when you need an explicit `Iterator`?",
+     "model_answer": "The foreach loop's hidden iterator notices that the list changed behind its back and throws ConcurrentModificationException. You need your own Iterator when you remove while looping, because only its remove() keeps it in step."
+    },
+    {
+     "question": "The greenhouse now wants a second pass that removes readings above 40. After `removeErrors()` has finished, can you reuse the same `Iterator` object? What does the book say to do?",
+     "model_answer": "No. That iterator has reached the end, and there is no reset. Create a new Iterator with readings.iterator() (p. 529)."
+    }
+   ],
+   "extension": "Add `int removeSpikes(int jump)` that uses an iterator to remove any reading that differs from the previous kept reading by more than `jump` degrees, and returns how many it removed. Keep the previous value in a variable as you go.",
+   "worth_knowing": "If a program changes a list while a foreach loop is walking it, the hidden iterator usually notices on its next step and throws `ConcurrentModificationException`. The name sounds like threads, but a single loop can trigger it. Java's collections check a modification counter and stop early rather than return wrong results.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers explain the skipped element and the iterator, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; `next()` is called once per pass; no unused index variables."
+    }
+   ]
+  },
+  {
+   "id": "13.6",
+   "title": "The hold shelf that only takes books",
+   "subtitle": "Write one generic class instead of a copy for every type",
+   "source": "Ch. 13, section 13.6 (pp. 530–532)",
+   "minutes": 25,
+   "objectives": [
+    "Declare a generic class with a type parameter section, `class Slot<T>`",
+    "Use the type parameter `T` for a field, a parameter and return types",
+    "Instantiate the same generic class with different reference types, and explain why a primitive can't be used"
+   ],
+   "scenario": "The library's hold shelf is a row of cubbies, and each one is a `Slot` object that keeps one reserved item until the student picks it up. `Slot` was written for books only. Now the library lends laptops too, and a colleague is about to copy the whole class as `LaptopSlot` (and next term, presumably, `CalculatorSlot`).\n\nA **generic class** solves this once. Its header names a *type parameter* in angle brackets, and the class uses that parameter wherever it used `Book`. The code that creates a slot chooses the type: `new Slot<Book>()`, `new Slot<Laptop>()`, even `new Slot<Integer>()` for a locker code.\n\nThe current class also has two bugs at the counter: putting a second book in a full cubby silently replaces the first one, and `take()` hands over the item but leaves it on the shelf.\n\nThe test program won't compile until `Slot` is generic (`Slot<Book>` needs a type parameter to fill in). When your class is finished, it prints:\n\n```\nPut Java Basics: true\nPut Data Stories: false\nWaiting in A: Java Basics\nPicked up: Java Basics\nA empty? true\nTake from empty A: null\nWaiting in B: Laptop L-07\nLocker code + 1: 4822\n```\n\n`Book.java` and `Laptop.java` are given and read-only.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The class header declares a type parameter: `public class Slot<T>`."
+    },
+    {
+     "id": "R2",
+     "text": "The field, the parameter of `put()` and the return types of `peek()` and `take()` use `T`; `Slot` mentions neither `Book` nor `Object`."
+    },
+    {
+     "id": "R3",
+     "text": "`put()` returns `false` and changes nothing when the slot is already full. `take()` returns the item and leaves the slot empty (`null`)."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Slot.java",
+     "starter": "// One cubby on the library's hold shelf. It can only hold a Book,\n// and someone was about to copy the whole class as LaptopSlot.\n// TODO (R1): give the class a type parameter.\npublic class Slot\n{\n    // TODO (R2): use the type parameter instead of Book everywhere.\n    private Book item;\n\n    // Puts an item in an empty slot. Returns false if the slot is taken.\n    public boolean put(Book newItem)\n    {\n        // TODO (R3): this replaces whatever was already waiting.\n        item = newItem;\n        return true;\n    }\n\n    // Returns the item without removing it (null if the slot is empty).\n    public Book peek()\n    {\n        return item;\n    }\n\n    // Removes and returns the item (null if the slot is empty).\n    public Book take()\n    {\n        // TODO (R3): the item should leave the slot.\n        return item;\n    }\n\n    public boolean isEmpty()\n    {\n        return item == null;\n    }\n}\n",
+     "solution": "// One cubby on the library's hold shelf. It holds one item of any type.\npublic class Slot<T>\n{\n    private T item;\n\n    // Puts an item in an empty slot. Returns false if the slot is taken.\n    public boolean put(T newItem)\n    {\n        if (item != null)\n            return false;\n        item = newItem;\n        return true;\n    }\n\n    // Returns the item without removing it (null if the slot is empty).\n    public T peek()\n    {\n        return item;\n    }\n\n    // Removes and returns the item (null if the slot is empty).\n    public T take()\n    {\n        T taken = item;\n        item = null;\n        return taken;\n    }\n\n    public boolean isEmpty()\n    {\n        return item == null;\n    }\n}\n"
+    },
+    {
+     "name": "Book.java",
+     "starter": "public class Book\n{\n    private String title;\n\n    public Book(String title)\n    {\n        this.title = title;\n    }\n\n    public String getTitle()\n    {\n        return title;\n    }\n\n    public String toString()\n    {\n        return title;\n    }\n}\n",
+     "solution": "public class Book\n{\n    private String title;\n\n    public Book(String title)\n    {\n        this.title = title;\n    }\n\n    public String getTitle()\n    {\n        return title;\n    }\n\n    public String toString()\n    {\n        return title;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "Laptop.java",
+     "starter": "public class Laptop\n{\n    private String tag;\n\n    public Laptop(String tag)\n    {\n        this.tag = tag;\n    }\n\n    public String toString()\n    {\n        return \"Laptop \" + tag;\n    }\n}\n",
+     "solution": "public class Laptop\n{\n    private String tag;\n\n    public Laptop(String tag)\n    {\n        this.tag = tag;\n    }\n\n    public String toString()\n    {\n        return \"Laptop \" + tag;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "Slot.java",
+   "solution_notes": "A generic class is declared like any class, but the class name is followed by a type parameter section in angle brackets (p. 530). `T` stands in for whatever reference type the program supplies, so `Slot<Book>` gets a `Book` field and `peek()` returns a `Book`. That's why the test can call `shelfA.peek().getTitle()` with no cast, as `bookObj.getObject().getTitle()` does in Figure 13-27. A type parameter can't be a primitive such as `int` (p. 530), so the locker code uses `Slot<Integer>`; Java wraps 4821 in an `Integer` when it is put in and unwraps it when it is assigned to `int code`. In `take()`, the item must be saved in a local variable before the field is set to `null`, or the method would return `null`. An `Object` field would also hold anything, but then every caller would need a cast and the compiler couldn't stop a laptop going into a book slot.",
+   "warmup": [
+    {
+     "question": "The test program creates `Slot<Book>`, `Slot<Laptop>` and `Slot<Integer>`. With the starter's class, what does the compiler say about those lines, and why?",
+     "model_answer": "It reports an error: the type Slot is not generic, so it can't be given a type argument like <Book>. The class header has no type parameter section."
+    },
+    {
+     "question": "Trace the starter: `put(new Book(\"Java Basics\"))`, then `put(new Book(\"Data Stories\"))`, then `peek()`. What does each call return?",
+     "model_answer": "true, true, and the Data Stories book. The second put() overwrote Java Basics, which is lost."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Slot has a type parameter",
+     "file": "Slot.java",
+     "require": "\\bclass\\s+Slot\\s*<\\s*[A-Z]\\w*\\s*>",
+     "message": "Change the header to `public class Slot<T>`. The angle brackets after the class name are the type parameter section."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The field and methods use T",
+     "file": "Slot.java",
+     "require": "^(?=[\\s\\S]*\\bprivate\\s+([A-Z])\\s+\\w+\\s*;)(?=[\\s\\S]*\\bput\\s*\\(\\s*[A-Z]\\s+\\w+\\s*\\))(?=[\\s\\S]*public\\s+[A-Z]\\s+peek\\s*\\()(?=[\\s\\S]*public\\s+[A-Z]\\s+take\\s*\\()",
+     "message": "Use `T` for the field (`private T item;`), for the parameter of `put(T newItem)` and as the return type of `peek()` and `take()`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "No Book or Object left in Slot",
+     "file": "Slot.java",
+     "forbid": [
+      "\\bBook\\b",
+      "\\bObject\\b"
+     ],
+     "message": "Replace every `Book` in `Slot.java` with `T`. With `Object` instead of `T`, every caller would need a cast and anything could go in any slot."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "A full slot refuses a second item",
+     "file": "Slot.java",
+     "within": "Slot.put",
+     "require": "^(?=[\\s\\S]*(!=\\s*null|null\\s*!=|!\\s*isEmpty\\s*\\(\\s*\\)))(?=[\\s\\S]*return\\s+false)",
+     "message": "At the top of `put()`, return `false` when `item != null`. Only an empty slot accepts an item."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "take() empties the slot",
+     "file": "Slot.java",
+     "within": "Slot.take",
+     "require": "^(?=[\\s\\S]*\\b[A-Z]\\s+\\w+\\s*=\\s*\\w+\\s*;)(?=[\\s\\S]*\\w+\\s*=\\s*null\\s*;)",
+     "message": "In `take()`, save the item in a local `T` variable, set the field to `null`, then return the saved item."
+    }
+   ],
+   "hints": [
+    "Compare `GenericClass<T>` in Figure 13-25 with the starter: the header is the only line that needs angle brackets.",
+    "After the header, replace each `Book` in `Slot.java` with `T`. The class never calls a `Book` method, so it doesn't need to know what `T` is.",
+    "Order matters in `take()`: if you set the field to `null` first, what is left to return?"
+   ],
+   "test_program": {
+    "file_name": "TestSlot.java",
+    "code": "public class TestSlot\n{\n    public static void main(String[] args)\n    {\n        Slot<Book> shelfA = new Slot<Book>();\n        System.out.println(\"Put Java Basics: \" + shelfA.put(new Book(\"Java Basics\")));\n        System.out.println(\"Put Data Stories: \" + shelfA.put(new Book(\"Data Stories\")));\n        System.out.println(\"Waiting in A: \" + shelfA.peek().getTitle());\n        Book picked = shelfA.take();\n        System.out.println(\"Picked up: \" + picked.getTitle());\n        System.out.println(\"A empty? \" + shelfA.isEmpty());\n        System.out.println(\"Take from empty A: \" + shelfA.take());\n\n        Slot<Laptop> shelfB = new Slot<Laptop>();\n        shelfB.put(new Laptop(\"L-07\"));\n        System.out.println(\"Waiting in B: \" + shelfB.peek());\n\n        Slot<Integer> lockerCode = new Slot<Integer>();\n        lockerCode.put(4821);\n        int code = lockerCode.take();\n        System.out.println(\"Locker code + 1: \" + (code + 1));\n    }\n}\n",
+    "expected_output": "Put Java Basics: true\nPut Data Stories: false\nWaiting in A: Java Basics\nPicked up: Java Basics\nA empty? true\nTake from empty A: null\nWaiting in B: Laptop L-07\nLocker code + 1: 4822\n",
+    "predict": "Predict the last line. `lockerCode.put(4821)` passes an `int` to a `Slot<Integer>`: what does Java do with it, and why couldn't the program use `Slot<int>`?",
+    "how_to_run": "Put `Slot.java`, `Book.java`, `Laptop.java` and `TestSlot.java` in the same folder, then run `javac *.java` and `java TestSlot`. In an IDE, add all four files to one project and run `TestSlot.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "A teammate says, \"Just make the field an `Object`; it can hold anything too.\" Using `shelfA.peek().getTitle()` from the test program, explain what the generic version gives you that the `Object` version doesn't.",
+     "model_answer": "With Slot<Book>, peek() returns a Book, so getTitle() compiles with no cast, and the compiler refuses a Laptop in a book slot. With Object, peek() returns Object, so each caller must cast, and a wrong type is found only when the program crashes."
+    },
+    {
+     "question": "Why does `take()` need a local variable, and what would the test print for `Picked up:` without it?",
+     "model_answer": "The field must be set to null to empty the slot, but the item still has to be returned, so it is saved first. Returning after setting the field to null would return null, and getTitle() would throw a NullPointerException."
+    }
+   ],
+   "extension": "Add `T swap(T newItem)` that puts `newItem` in the slot and returns whatever was there before (or `null`). Then write a short test with a `Slot<String>` that swaps a few student names.",
+   "worth_knowing": "Java's generics are checked by the compiler and then *erased*: in the compiled `.class` file, `Slot<Book>` and `Slot<Laptop>` are the same class, and `T` behaves like `Object` at run time. The casts you didn't write are inserted by the compiler, after it has checked that every use of `T` is type-safe.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers compare generic and non-generic code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; one type parameter named T used consistently."
+    }
+   ]
+  },
+  {
+   "id": "13.7",
+   "title": "Three copies of one loop, and a counter that finds nothing",
+   "subtitle": "Write generic methods, return a generic type, and compare with equals()",
+   "source": "Ch. 13, section 13.7 (pp. 532–537)",
+   "minutes": 30,
+   "objectives": [
+    "Write a generic method by placing a type parameter section before the return type",
+    "Replace near-identical overloads with one generic method",
+    "Use the type parameter as a return type so callers get the right type without a cast",
+    "Compare objects with `equals()` rather than `==`"
+   ],
+   "scenario": "The facilities office keeps a small utility class, `ListTools`, for printing furniture lists, inspection scores and the like. It has grown three copies of `printNumbered()`, one per type, and a request just came in for a fourth (a `Character[]` of grade letters). Two more problems have been reported:\n\n- `countMatches(scores, 1000)` reports **0** although 1000 appears twice, and `countMatches(rooms, typed)` misses \"chair\" when the text was built while the program ran. The method compares with `==`, which asks whether two references point to the *same object*, not whether the objects hold equal values.\n- `lastOf()` returns `Object`, so `String lastRoom = ListTools.lastOf(rooms);` doesn't compile without a cast, and an empty array crashes it.\n\nA **generic method** puts a type parameter section such as `<T>` before its return type. `countMatches()` already is one; read its header. Make the class short and correct. The test program won't compile until `printNumbered()` accepts a `Character[]` and `lastOf()` returns the caller's type. Then it prints:\n\n```\n1. table\n2. chair\n3. bed\n----------\n1. 1000\n2. 250\n3. 1000\n4. 75\n----------\n1. A\n2. B\n----------\nMatches for 1000: 2\nMatches for chair: 1\nLast room: BED\nLast score + 1: 76\nLast of nothing: null\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "One generic method, `public static <T> void printNumbered(T[] items)`, replaces the three type-specific copies."
+    },
+    {
+     "id": "R2",
+     "text": "`countMatches()` compares each element with `target` using `equals()`."
+    },
+    {
+     "id": "R3",
+     "text": "`lastOf()` is generic, `public static <T> T lastOf(T[] items)`, and returns `null` for an empty array."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ListTools.java",
+     "starter": "public class ListTools\n{\n    // TODO (R1): three copies of the same loop, one per type.\n    // A Character[] list already needs a fourth.\n    public static void printNumbered(String[] items)\n    {\n        int count = 1;\n        for (String element : items)\n        {\n            System.out.println(count + \". \" + element);\n            ++count;\n        }\n        System.out.println(\"----------\");\n    }\n\n    public static void printNumbered(Integer[] items)\n    {\n        int count = 1;\n        for (Integer element : items)\n        {\n            System.out.println(count + \". \" + element);\n            ++count;\n        }\n        System.out.println(\"----------\");\n    }\n\n    public static void printNumbered(Double[] items)\n    {\n        int count = 1;\n        for (Double element : items)\n        {\n            System.out.println(count + \". \" + element);\n            ++count;\n        }\n        System.out.println(\"----------\");\n    }\n\n    // Counts the elements equal to target.\n    public static <T> int countMatches(T[] items, T target)\n    {\n        int matches = 0;\n        for (T element : items)\n        {\n            // TODO (R2): == asks \"same object?\", not \"same value?\"\n            if (element == target)\n                ++matches;\n        }\n        return matches;\n    }\n\n    // Returns the last element, or null if the array is empty.\n    // TODO (R3): callers have to cast the Object this returns.\n    public static Object lastOf(Object[] items)\n    {\n        return items[items.length - 1];\n    }\n}\n",
+     "solution": "public class ListTools\n{\n    // One method prints a numbered list of any reference type.\n    public static <T> void printNumbered(T[] items)\n    {\n        int count = 1;\n        for (T element : items)\n        {\n            System.out.println(count + \". \" + element);\n            ++count;\n        }\n        System.out.println(\"----------\");\n    }\n\n    // Counts the elements equal to target.\n    public static <T> int countMatches(T[] items, T target)\n    {\n        int matches = 0;\n        for (T element : items)\n        {\n            if (element.equals(target))\n                ++matches;\n        }\n        return matches;\n    }\n\n    // Returns the last element, or null if the array is empty.\n    public static <T> T lastOf(T[] items)\n    {\n        if (items.length == 0)\n            return null;\n        return items[items.length - 1];\n    }\n}\n"
+    }
+   ],
+   "main_file": "ListTools.java",
+   "solution_notes": "A generic method puts its type parameter section in angle brackets before the return type (p. 532), exactly like the book's `displayNumberedList()`. The single `printNumbered()` then accepts an array of any reference type, so `Character[]` works without a fourth copy. Used as the return type, `T` lets the compiler know that `lastOf(rooms)` returns a `String` and `lastOf(scores)` an `Integer`, so the caller needs no cast and can call `toUpperCase()` or add 1 directly. Type parameters must be reference types (p. 532), which is why the arrays are `Integer[]` and `Character[]`, not `int[]` or `char[]`. `==` on objects compares references: the two 1000s were boxed into separate `Integer` objects, and `part + \"air\"` builds a new `String` at run time, so `==` finds no match even though the values are equal. `equals()` compares values. The empty-array check comes first because `items[items.length - 1]` is `items[-1]` when the length is 0.",
+   "warmup": [
+    {
+     "question": "Read the starter's `countMatches()` header. Where does the type parameter section `<T>` sit, and what does `T` become when the test calls `countMatches(scores, 1000)`?",
+     "model_answer": "Between static and the return type int. T becomes Integer, because scores is an Integer[] and 1000 is boxed to an Integer."
+    },
+    {
+     "question": "Why does `String lastRoom = ListTools.lastOf(rooms);` fail to compile with the starter even though the array holds Strings?",
+     "model_answer": "lastOf() is declared to return Object, and the compiler won't assign an Object to a String variable without a cast, whatever is actually in the array."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "One generic printNumbered()",
+     "within": "ListTools",
+     "require": "static\\s*<\\s*([A-Z]\\w*)\\s*>\\s*void\\s+printNumbered\\s*\\(\\s*\\1\\s*\\[\\s*\\]\\s*\\w+\\s*\\)",
+     "message": "Write `public static <T> void printNumbered(T[] items)` and use `T` for the loop variable. The `<T>` goes before the return type `void`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The type-specific copies are gone",
+     "within": "ListTools",
+     "forbid": "printNumbered\\s*\\(\\s*(String|Integer|Double|Character)\\s*\\[",
+     "message": "Delete the `String[]`, `Integer[]` and `Double[]` versions. The generic method handles them all, and the test's `Character[]` too."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "countMatches() compares values",
+     "within": "ListTools.countMatches",
+     "require": "\\.\\s*equals\\s*\\(",
+     "forbid": "==\\s*target\\b|\\btarget\\s*==|\\w+\\s*==\\s*\\w+\\s*\\)\\s*\\+\\+",
+     "message": "Use `element.equals(target)`. `==` is true only when both references point to the same object, so equal values in different objects don't match."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "lastOf() returns the caller's type",
+     "within": "ListTools",
+     "require": "static\\s*<\\s*([A-Z]\\w*)\\s*>\\s*\\1\\s+lastOf\\s*\\(\\s*\\1\\s*\\[\\s*\\]\\s*\\w+\\s*\\)",
+     "forbid": "\\bObject\\b",
+     "message": "Write `public static <T> T lastOf(T[] items)`. The second `T` is the return type: a `String[]` gives back a `String`, an `Integer[]` an `Integer`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "An empty array returns null",
+     "within": "ListTools.lastOf",
+     "require": "^(?=[\\s\\S]*\\blength\\s*(==\\s*0|<\\s*1|<=\\s*0))(?=[\\s\\S]*\\bnull\\b)",
+     "message": "Return `null` when `items.length == 0`, before reading `items[items.length - 1]`, which would be `items[-1]`."
+    }
+   ],
+   "hints": [
+    "Keep one copy of `printNumbered()`, add `<T>` before `void`, and change `String` to `T` in the parameter and the loop.",
+    "Inside `countMatches()`, ask the element whether it equals the target: `element.equals(target)`.",
+    "`lastOf()` needs `T` in three places: the type parameter section, the return type and the array parameter."
+   ],
+   "test_program": {
+    "file_name": "TestListTools.java",
+    "code": "public class TestListTools\n{\n    public static void main(String[] args)\n    {\n        String[] rooms = {\"table\", \"chair\", \"bed\"};\n        Integer[] scores = {1000, 250, 1000, 75};\n        Character[] grades = {'A', 'B'};\n\n        ListTools.printNumbered(rooms);\n        ListTools.printNumbered(scores);\n        ListTools.printNumbered(grades);\n\n        // Text built while the program runs, as typed input would be.\n        String part = \"ch\";\n        String typed = part + \"air\";\n        System.out.println(\"Matches for 1000: \" + ListTools.countMatches(scores, 1000));\n        System.out.println(\"Matches for chair: \" + ListTools.countMatches(rooms, typed));\n\n        String lastRoom = ListTools.lastOf(rooms);\n        Integer lastScore = ListTools.lastOf(scores);\n        System.out.println(\"Last room: \" + lastRoom.toUpperCase());\n        System.out.println(\"Last score + 1: \" + (lastScore + 1));\n        System.out.println(\"Last of nothing: \" + ListTools.lastOf(new String[0]));\n    }\n}\n",
+    "expected_output": "1. table\n2. chair\n3. bed\n----------\n1. 1000\n2. 250\n3. 1000\n4. 75\n----------\n1. A\n2. B\n----------\nMatches for 1000: 2\nMatches for chair: 1\nLast room: BED\nLast score + 1: 76\nLast of nothing: null\n",
+    "predict": "Predict both `Matches` lines if you made only the methods generic and kept `==`. Then predict them with `equals()`.",
+    "how_to_run": "Put `ListTools.java` and `TestListTools.java` in the same folder, then run `javac *.java` and `java TestListTools`. In an IDE, add both files to one project and run `TestListTools.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The office wants `Integer` lists printed differently, with each score right-aligned. The book (p. 533) says generic methods can be overloaded. Which method would Java call for `printNumbered(scores)` if you added `printNumbered(Integer[] items)` beside the generic one?",
+     "model_answer": "The Integer[] version, because it matches the argument more exactly. Every other type still goes to the generic <T> method."
+    },
+    {
+     "question": "Why did `countMatches(scores, 1000)` return 0 with `==`, even though 1000 appears twice?",
+     "model_answer": "Each 1000 was boxed into its own Integer object, so == compared three different references and never found the same object. equals() compares the values inside, which are equal."
+    }
+   ],
+   "extension": "Add a generic method with two type parameters, `public static <T, U> void printPair(T label, U value)`, that prints `label: value`, like `createInvoice()` on p. 535. Call it with a `String` and an `Integer`, then with a `Character` and a `Double`.",
+   "worth_knowing": "`==` sometimes appears to work for `Integer`: Java keeps one shared object for each value from -128 to 127, so `countMatches(scores, 75)` would count 75 even with `==`. 1000 is outside that range, so each 1000 gets its own object. Code that passes small test values and fails on real data is a classic `==` bug.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers explain generic methods and == versus equals(), in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; one type parameter section per method; no leftover overloads."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Three copies of one loop, and a counter that finds nothing</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 13.7</div>
+  <h1>Three copies of one loop, and a counter that finds nothing</h1>
+<h2>Objectives</h2><ul><li>Write a generic method by placing a type parameter section before the return type</li><li>Replace near-identical overloads with one generic method</li><li>Use the type parameter as a return type so callers get the right type without a cast</li><li>Compare objects with <code>equals()</code> rather than <code>==</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> One generic method, <code>public static &lt;T&gt; void printNumbered(T[] items)</code>, replaces the three type-specific copies.</li><li><strong>R2</strong> <code>countMatches()</code> compares each element with <code>target</code> using <code>equals()</code>.</li><li><strong>R3</strong> <code>lastOf()</code> is generic, <code>public static &lt;T&gt; T lastOf(T[] items)</code>, and returns <code>null</code> for an empty array.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Read the starter&#x27;s <code>countMatches()</code> header. Where does the type parameter section <code>&lt;T&gt;</code> sit, and what does <code>T</code> become when the test calls <code>countMatches(scores, 1000)</code>?</p><div class="answer"><p>Between static and the return type int. T becomes Integer, because scores is an Integer[] and 1000 is boxed to an Integer.</p></div></li><li><p>Why does <code>String lastRoom = ListTools.lastOf(rooms);</code> fail to compile with the starter even though the array holds Strings?</p><div class="answer"><p>lastOf() is declared to return Object, and the compiler won&#x27;t assign an Object to a String variable without a cast, whatever is actually in the array.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ListTools.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ListTools</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// One method prints a numbered list of any reference type.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-n">T</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">printNumbered</span><span class="t-p">(</span><span class="t-n">T</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">T</span><span class="t-w"> </span><span class="t-n">element</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">". "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">element</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"----------"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Counts the elements equal to target.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-n">T</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">countMatches</span><span class="t-p">(</span><span class="t-n">T</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">T</span><span class="t-w"> </span><span class="t-n">target</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">matches</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">T</span><span class="t-w"> </span><span class="t-n">element</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">element</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-n">target</span><span class="t-p">))</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">matches</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">matches</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the last element, or null if the array is empty.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-n">T</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">T</span><span class="t-w"> </span><span class="t-nf">lastOf</span><span class="t-p">(</span><span class="t-n">T</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">items</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">items</span><span class="t-o">[</span><span class="t-n">items</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A generic method puts its type parameter section in angle brackets before the return type (p. 532), exactly like the book&#x27;s <code>displayNumberedList()</code>. The single <code>printNumbered()</code> then accepts an array of any reference type, so <code>Character[]</code> works without a fourth copy. Used as the return type, <code>T</code> lets the compiler know that <code>lastOf(rooms)</code> returns a <code>String</code> and <code>lastOf(scores)</code> an <code>Integer</code>, so the caller needs no cast and can call <code>toUpperCase()</code> or add 1 directly. Type parameters must be reference types (p. 532), which is why the arrays are <code>Integer[]</code> and <code>Character[]</code>, not <code>int[]</code> or <code>char[]</code>. <code>==</code> on objects compares references: the two 1000s were boxed into separate <code>Integer</code> objects, and <code>part + &quot;air&quot;</code> builds a new <code>String</code> at run time, so <code>==</code> finds no match even though the values are equal. <code>equals()</code> compares values. The empty-array check comes first because <code>items[items.length - 1]</code> is <code>items[-1]</code> when the length is 0.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestListTools.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestListTools</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">rooms</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"table"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"chair"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"bed"</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">Integer</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">scores</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">1000</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">250</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1000</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">75</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-n">Character</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">grades</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-sc">'A'</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-sc">'B'</span><span class="t-p">};</span>
+
+<span class="t-w">        </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">printNumbered</span><span class="t-p">(</span><span class="t-n">rooms</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">printNumbered</span><span class="t-p">(</span><span class="t-n">scores</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">printNumbered</span><span class="t-p">(</span><span class="t-n">grades</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// Text built while the program runs, as typed input would be.</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"ch"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">part</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"air"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Matches for 1000: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">countMatches</span><span class="t-p">(</span><span class="t-n">scores</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1000</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Matches for chair: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">countMatches</span><span class="t-p">(</span><span class="t-n">rooms</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">typed</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">lastRoom</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">lastOf</span><span class="t-p">(</span><span class="t-n">rooms</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Integer</span><span class="t-w"> </span><span class="t-n">lastScore</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">lastOf</span><span class="t-p">(</span><span class="t-n">scores</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Last room: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lastRoom</span><span class="t-p">.</span><span class="t-na">toUpperCase</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Last score + 1: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">lastScore</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Last of nothing: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ListTools</span><span class="t-p">.</span><span class="t-na">lastOf</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">1. table
+2. chair
+3. bed
+----------
+1. 1000
+2. 250
+3. 1000
+4. 75
+----------
+1. A
+2. B
+----------
+Matches for 1000: 2
+Matches for chair: 1
+Last room: BED
+Last score + 1: 76
+Last of nothing: null
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>One generic printNumbered()<div class="small">in <code>ListTools</code></div></td><td><div><span class="tag">require</span> <code>static\s*&lt;\s*([A-Z]\w*)\s*&gt;\s*void\s+printNumbered\s*\(\s*\1\s*\[\s*\]\s*\w+\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The type-specific copies are gone<div class="small">in <code>ListTools</code></div></td><td><div><span class="tag">forbid</span> <code>printNumbered\s*\(\s*(String|Integer|Double|Character)\s*\[</code></div></td></tr><tr><td>C3</td><td>R2</td><td>countMatches() compares values<div class="small">in <code>ListTools.countMatches</code></div></td><td><div><span class="tag">require</span> <code>\.\s*equals\s*\(</code></div><div><span class="tag">forbid</span> <code>==\s*target\b|\btarget\s*==|\w+\s*==\s*\w+\s*\)\s*\+\+</code></div></td></tr><tr><td>C4</td><td>R3</td><td>lastOf() returns the caller&#x27;s type<div class="small">in <code>ListTools</code></div></td><td><div><span class="tag">require</span> <code>static\s*&lt;\s*([A-Z]\w*)\s*&gt;\s*\1\s+lastOf\s*\(\s*\1\s*\[\s*\]\s*\w+\s*\)</code></div><div><span class="tag">forbid</span> <code>\bObject\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>An empty array returns null<div class="small">in <code>ListTools.lastOf</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\blength\s*(==\s*0|&lt;\s*1|&lt;=\s*0))(?=[\s\S]*\bnull\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · One generic printNumbered()</dt><dd><p>Write <code>public static &lt;T&gt; void printNumbered(T[] items)</code> and use <code>T</code> for the loop variable. The <code>&lt;T&gt;</code> goes before the return type <code>void</code>.</p></dd><dt>C2 · The type-specific copies are gone</dt><dd><p>Delete the <code>String[]</code>, <code>Integer[]</code> and <code>Double[]</code> versions. The generic method handles them all, and the test&#x27;s <code>Character[]</code> too.</p></dd><dt>C3 · countMatches() compares values</dt><dd><p>Use <code>element.equals(target)</code>. <code>==</code> is true only when both references point to the same object, so equal values in different objects don&#x27;t match.</p></dd><dt>C4 · lastOf() returns the caller&#x27;s type</dt><dd><p>Write <code>public static &lt;T&gt; T lastOf(T[] items)</code>. The second <code>T</code> is the return type: a <code>String[]</code> gives back a <code>String</code>, an <code>Integer[]</code> an <code>Integer</code>.</p></dd><dt>C5 · An empty array returns null</dt><dd><p>Return <code>null</code> when <code>items.length == 0</code>, before reading <code>items[items.length - 1]</code>, which would be <code>items[-1]</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Keep one copy of <code>printNumbered()</code>, add <code>&lt;T&gt;</code> before <code>void</code>, and change <code>String</code> to <code>T</code> in the parameter and the loop.</p></li><li><p>Inside <code>countMatches()</code>, ask the element whether it equals the target: <code>element.equals(target)</code>.</p></li><li><p><code>lastOf()</code> needs <code>T</code> in three places: the type parameter section, the return type and the array parameter.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The office wants <code>Integer</code> lists printed differently, with each score right-aligned. The book (p. 533) says generic methods can be overloaded. Which method would Java call for <code>printNumbered(scores)</code> if you added <code>printNumbered(Integer[] items)</code> beside the generic one?</p><div class="answer"><p>The Integer[] version, because it matches the argument more exactly. Every other type still goes to the generic &lt;T&gt; method.</p></div></li><li><p>Why did <code>countMatches(scores, 1000)</code> return 0 with <code>==</code>, even though 1000 appears twice?</p><div class="answer"><p>Each 1000 was boxed into its own Integer object, so == compared three different references and never found the same object. equals() compares the values inside, which are equal.</p></div></li></ol>
+<h2>Extension</h2><p>Add a generic method with two type parameters, <code>public static &lt;T, U&gt; void printPair(T label, U value)</code>, that prints <code>label: value</code>, like <code>createInvoice()</code> on p. 535. Call it with a <code>String</code> and an <code>Integer</code>, then with a <code>Character</code> and a <code>Double</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers explain generic methods and == versus equals(), in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; one type parameter section per method; no leftover overloads.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

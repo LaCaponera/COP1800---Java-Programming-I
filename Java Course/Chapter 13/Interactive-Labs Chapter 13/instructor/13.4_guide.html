@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The help desk that always serves the newest ticket</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 13.4</div>
+  <h1>The help desk that always serves the newest ticket</h1>
+<h2>Objectives</h2><ul><li>Describe how a doubly-linked list stores each element with the addresses of the elements before and after it</li><li>Decide between <code>ArrayList</code> and <code>LinkedList</code> from how a program moves its data</li><li>Use <code>add(0, ...)</code>, <code>remove(0)</code> and <code>isEmpty()</code> to build a fair, first-come queue</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Store the tickets in a <code>LinkedList&lt;String&gt;</code>; no <code>ArrayList</code> remains in the class.</li><li><strong>R2</strong> <code>addUrgent()</code> inserts the ticket at the front of the queue (position 0).</li><li><strong>R3</strong> <code>serveNext()</code> returns <code>&quot;(none)&quot;</code> when the queue is empty; otherwise it removes and returns the ticket at the front.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter with T1, T2 and T3 added: which ticket does the first <code>serveNext()</code> return, and what happens when <code>serveNext()</code> is called on an empty queue?</p><div class="answer"><p>T3, the newest ticket, because it removes the last element. On an empty queue it calls remove(-1), which throws IndexOutOfBoundsException and crashes.</p></div></li><li><p>Look at Figure 13-18. When item 102 is removed from the linked list, which references change, and does item 103 move in memory?</p><div class="answer"><p>Only 101&#x27;s next (now 103&#x27;s address) and 103&#x27;s previous (now 101&#x27;s address) change. 103 stays where it is in memory.</p></div></li></ol>
+<h2>Solution</h2><div class="file">HelpDesk.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">HelpDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">LinkedList</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">LinkedList</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-c1">// A normal ticket waits behind everyone already in the queue.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">addNormal</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">ticket</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">tickets</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">ticket</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// An urgent ticket goes ahead of everyone already waiting.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">addUrgent</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">ticket</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">tickets</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">ticket</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes and returns the ticket at the front of the queue,</span>
+<span class="t-w">    </span><span class="t-c1">// or "(none)" when nobody is waiting.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">serveNext</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">tickets</span><span class="t-p">.</span><span class="t-na">isEmpty</span><span class="t-p">())</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"(none)"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">waiting</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toString</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">tickets</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Java&#x27;s <code>LinkedList</code> is doubly-linked: each element holds the address of the one before it and the one after it (p. 524). Removing or inserting therefore changes only a couple of references (Figure 13-18), while an <code>ArrayList</code> must move every element after the gap (p. 526). A help-desk queue inserts and removes at the front constantly, so <code>LinkedList</code> is the better fit. The methods are the same as <code>ArrayList</code>&#x27;s (p. 526): <code>add(0, ticket)</code> puts an urgent ticket first, and <code>remove(0)</code> takes the oldest normal ticket because normal tickets are added at the end. The starter&#x27;s <code>remove(size() - 1)</code> served the newest ticket (last in, first out) and threw <code>IndexOutOfBoundsException</code> on an empty list (<code>remove(-1)</code>), so check <code>isEmpty()</code> first. <code>LinkedList</code> also has <code>addFirst()</code> and <code>removeFirst()</code>, which the checks accept.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestHelpDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestHelpDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">HelpDesk</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">HelpDesk</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">addNormal</span><span class="t-p">(</span><span class="t-s">"T1 printer"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">addNormal</span><span class="t-p">(</span><span class="t-s">"T2 login"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">addNormal</span><span class="t-p">(</span><span class="t-s">"T3 Wi-Fi"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Queue: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">addUrgent</span><span class="t-p">(</span><span class="t-s">"T4 outage"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Queue: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Serving: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">serveNext</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Serving: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">serveNext</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">addNormal</span><span class="t-p">(</span><span class="t-s">"T5 laptop"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Queue: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Serving: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">serveNext</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Serving: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">serveNext</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Serving: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">serveNext</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Serving: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">serveNext</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Waiting: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">waiting</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Queue: [T1 printer, T2 login, T3 Wi-Fi]
+Queue: [T4 outage, T1 printer, T2 login, T3 Wi-Fi]
+Serving: T4 outage
+Serving: T1 printer
+Queue: [T2 login, T3 Wi-Fi, T5 laptop]
+Serving: T2 login
+Serving: T3 Wi-Fi
+Serving: T5 laptop
+Serving: (none)
+Waiting: 0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Tickets live in a LinkedList<div class="small">in <code>HelpDesk</code></div></td><td><div><span class="tag">require</span> <code>\bLinkedList\s*&lt;\s*String\s*&gt;\s+tickets\s*=\s*new\s+LinkedList\s*&lt;</code></div><div><span class="tag">forbid</span> <code>\bArrayList\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Urgent tickets go first<div class="small">in <code>HelpDesk.addUrgent</code></div></td><td><div><span class="tag">require</span> <code>\.\s*add\s*\(\s*0\s*,\s*ticket\s*\)|\.\s*addFirst\s*\(\s*ticket\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The oldest ticket is served<div class="small">in <code>HelpDesk.serveNext</code></div></td><td><div><span class="tag">require</span> <code>\.\s*remove\s*\(\s*0\s*\)|\.\s*removeFirst\s*\(\s*\)|\.\s*poll\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>size\s*\(\s*\)\s*-\s*1</code></div></td></tr><tr><td>C4</td><td>R3</td><td>An empty queue doesn&#x27;t crash<div class="small">in <code>HelpDesk.serveNext</code></div></td><td><div><span class="tag">require</span> <code>\bisEmpty\s*\(\s*\)|\bsize\s*\(\s*\)\s*(==|&lt;=?)\s*0</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The empty-queue message<div class="small">in <code>HelpDesk.serveNext</code>, strings included</div></td><td><div><span class="tag">require</span> <code>&quot;\(none\)&quot;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Tickets live in a LinkedList</dt><dd><p>Declare <code>private LinkedList&lt;String&gt; tickets = new LinkedList&lt;String&gt;();</code>. Inserting and removing at the front only relinks neighbors in a linked list.</p></dd><dt>C2 · Urgent tickets go first</dt><dd><p>Use <code>tickets.add(0, ticket)</code>: the ticket goes into position 0, ahead of everyone already waiting.</p></dd><dt>C3 · The oldest ticket is served</dt><dd><p>Return <code>tickets.remove(0)</code>. Normal tickets join at the end, so the oldest one is at the front.</p></dd><dt>C4 · An empty queue doesn&#x27;t crash</dt><dd><p>Before removing, test <code>tickets.isEmpty()</code> and return <code>&quot;(none)&quot;</code>. Calling <code>remove()</code> on an empty list throws an exception.</p></dd><dt>C5 · The empty-queue message</dt><dd><p>Return exactly <code>&quot;(none)&quot;</code> when nobody is waiting, so the front-desk screen shows it.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Only the declaration line needs <code>LinkedList</code>; the methods you already call (<code>add</code>, <code>remove</code>, <code>size</code>) work unchanged.</p></li><li><p>Decide where the front of the queue is. Normal tickets are added at the end, so the front is position 0 for both adding urgent tickets and serving.</p></li><li><p>Put the empty check first in <code>serveNext()</code>, so <code>remove()</code> is never called on an empty list.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The help desk also prints a daily report that walks through 5,000 closed tickets one by one with <code>get(x)</code>. Which class would you store <em>that</em> list in, and why?</p><div class="answer"><p>An ArrayList. Reading every element in order is faster when the elements are stored next to each other; a LinkedList must follow each element&#x27;s link to find the next one.</p></div></li><li><p>With 1,000 tickets waiting, what happens inside an <code>ArrayList</code> when the first ticket is removed, and what happens inside a <code>LinkedList</code>?</p><div class="answer"><p>In the ArrayList the other 999 tickets each move one position up. In the LinkedList only the new first ticket&#x27;s previous link changes; nothing moves.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>boolean cancel(String ticket)</code> that removes a ticket from anywhere in the queue with <code>remove(Object)</code> and returns whether it was there, and <code>String peekNext()</code> that shows the front ticket without removing it (<code>get(0)</code>), or <code>&quot;(none)&quot;</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers compare ArrayList and LinkedList with this queue in mind, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; the empty check comes before remove().</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

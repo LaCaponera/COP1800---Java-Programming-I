@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The waitlist that turns people away at three</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 13.1</div>
+  <h1>The waitlist that turns people away at three</h1>
+<h2>Objectives</h2><ul><li>Explain why a collection is <em>dynamically resizable</em> and an array is not</li><li>Store a group of objects in a <code>Collection&lt;String&gt;</code> instead of an array and a counter</li><li>Use the <code>Collection</code> methods <code>add()</code>, <code>contains()</code>, <code>remove()</code>, <code>removeAll()</code> and <code>size()</code> from Table 13-1</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Store the names in a <code>Collection&lt;String&gt;</code> field (the type in angle brackets is <code>String</code>). Remove the <code>String[]</code> array and the <code>count</code> field.</li><li><strong>R2</strong> <code>join()</code> returns <code>false</code> for a name that is already waiting (<code>contains()</code>); otherwise it adds the name and returns what <code>add()</code> returns.</li><li><strong>R3</strong> <code>leave()</code>, <code>isWaiting()</code>, <code>size()</code> and <code>toString()</code> each use one <code>Collection</code> method instead of a loop.</li><li><strong>R4</strong> <code>dropNoShows()</code> removes every name in <code>noShows</code> with a single <code>removeAll()</code> call and returns its result.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter: which of the six <code>join()</code> calls return <code>true</code>, and why does Dara get <code>false</code>?</p><div class="answer"><p>Ana, Ben and Chen get true. Dara, Eli and the second Ana get false because count reaches names.length (3) and the array can&#x27;t grow.</p></div></li><li><p>The second <code>Join Ana</code> must print <code>false</code>. Which <code>Collection</code> method in Table 13-1 tells you whether Ana is already on the list?</p><div class="answer"><p>contains(Object obj): it returns true if the object is an element of the collection.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Waitlist.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Waitlist</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Collection</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ArrayList</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-c1">// Adds a name to the end of the waitlist. Returns true if it was added.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">join</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">contains</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes a name. Returns true if the name was on the list.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">leave</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns true if the name is on the list.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isWaiting</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">contains</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes everyone in noShows. Returns true if anyone was removed.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">dropNoShows</span><span class="t-p">(</span><span class="t-n">Collection</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">noShows</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">removeAll</span><span class="t-p">(</span><span class="t-n">noShows</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">size</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toString</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">names</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>An array must be given its size when it is created and that size can&#x27;t change; a collection can grow and shrink as objects are added or removed (p. 511), so the limit of three disappears with the array. Every operation the starter wrote by hand is a method in Table 13-1 (p. 512): <code>contains()</code> answers &quot;is this name here?&quot;, <code>add()</code> and <code>remove()</code> return <code>true</code> when the collection changed, <code>size()</code> counts the elements and <code>removeAll()</code> removes every element of another collection in one call, returning <code>true</code> only if something was removed (which is why the second call prints <code>false</code>). <code>ArrayList</code>&#x27;s <code>toString()</code> already prints <code>[Ana, Dara]</code>. Declaring the field as <code>Collection&lt;String&gt;</code> means the class uses only the operations every collection has; <code>ArrayList&lt;String&gt;</code> or <code>List&lt;String&gt;</code> also pass.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestWaitlist.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestWaitlist</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Waitlist</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Waitlist</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">arrivals</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"Ana"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Ben"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Chen"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Dara"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Eli"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Ana"</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">arrivals</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Join "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">join</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Waiting: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Is Chen waiting? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">isWaiting</span><span class="t-p">(</span><span class="t-s">"Chen"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Leave Ben: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">leave</span><span class="t-p">(</span><span class="t-s">"Ben"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Leave Zoe: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">leave</span><span class="t-p">(</span><span class="t-s">"Zoe"</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">ArrayList</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">noShows</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ArrayList</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">noShows</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-s">"Chen"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">noShows</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-s">"Eli"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Dropped no-shows: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">dropNoShows</span><span class="t-p">(</span><span class="t-n">noShows</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Dropped again: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">dropNoShows</span><span class="t-p">(</span><span class="t-n">noShows</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Waiting: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">list</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Join Ana: true
+Join Ben: true
+Join Chen: true
+Join Dara: true
+Join Eli: true
+Join Ana: false
+Waiting: 5 [Ana, Ben, Chen, Dara, Eli]
+Is Chen waiting? true
+Leave Ben: true
+Leave Zoe: false
+Dropped no-shows: true
+Dropped again: false
+Waiting: 2 [Ana, Dara]
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Names live in a Collection of Strings<div class="small">in <code>Waitlist</code></div></td><td><div><span class="tag">require</span> <code>\b(Collection|List|ArrayList|LinkedList)\s*&lt;\s*String\s*&gt;\s+\w+\s*=\s*new\b</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The array and the counter are gone<div class="small">in <code>Waitlist</code></div></td><td><div><span class="tag">forbid</span> <code>\bString\s*\[\s*\]\s*\w+\s*=</code></div><div><span class="tag">forbid</span> <code>\bint\s+count\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>join() refuses a name already waiting<div class="small">in <code>Waitlist.join</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\.\s*contains\s*\()(?=[\s\S]*\.\s*add\s*\()</code></div></td></tr><tr><td>C4</td><td>R3</td><td>leave() uses remove()<div class="small">in <code>Waitlist.leave</code></div></td><td><div><span class="tag">require</span> <code>\.\s*remove\s*\(\s*\w+\s*\)</code></div><div><span class="tag">forbid</span> <code>\bfor\s*\(</code></div></td></tr><tr><td>C5</td><td>R3</td><td>isWaiting() uses contains()<div class="small">in <code>Waitlist.isWaiting</code></div></td><td><div><span class="tag">require</span> <code>\.\s*contains\s*\(</code></div><div><span class="tag">forbid</span> <code>\bfor\s*\(</code></div></td></tr><tr><td>C6</td><td>R3</td><td>size() and toString() ask the collection<div class="small">in <code>Waitlist</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*return\s+\w+\s*\.\s*size\s*\(\s*\)\s*;)(?=[\s\S]*return\s+(\w+\s*\.\s*toString\s*\(\s*\)|&quot;&quot;\s*\+\s*\w+)\s*;)</code></div></td></tr><tr><td>C7</td><td>R4</td><td>dropNoShows() uses removeAll()<div class="small">in <code>Waitlist.dropNoShows</code></div></td><td><div><span class="tag">require</span> <code>return\s+\w+\s*\.\s*removeAll\s*\(\s*noShows\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Names live in a Collection of Strings</dt><dd><p>Declare the field as <code>private Collection&lt;String&gt; names = new ArrayList&lt;String&gt;();</code>. A collection grows as students join, so the limit of three disappears.</p></dd><dt>C2 · The array and the counter are gone</dt><dd><p>Delete <code>String[] names</code> and <code>int count</code>. The collection stores the names and knows how many there are (<code>size()</code>).</p></dd><dt>C3 · join() refuses a name already waiting</dt><dd><p>In <code>join()</code>, return <code>false</code> when <code>names.contains(name)</code> is true; otherwise return <code>names.add(name)</code>.</p></dd><dt>C4 · leave() uses remove()</dt><dd><p>Replace the loop in <code>leave()</code> with <code>return names.remove(name);</code>. <code>remove()</code> already returns <code>true</code> only when the name was there.</p></dd><dt>C5 · isWaiting() uses contains()</dt><dd><p>Replace the loop in <code>isWaiting()</code> with <code>return names.contains(name);</code>.</p></dd><dt>C6 · size() and toString() ask the collection</dt><dd><p>Return <code>names.size()</code> from <code>size()</code> and <code>names.toString()</code> from <code>toString()</code>. The collection already formats itself as <code>[Ana, Dara]</code>.</p></dd><dt>C7 · dropNoShows() uses removeAll()</dt><dd><p>Write <code>return names.removeAll(noShows);</code>. One call removes every no-show and tells you whether anything changed.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start with the field. Once the names are in a collection, every method that used <code>names[x]</code> or <code>count</code> turns red; fix them one at a time.</p></li><li><p>Read the <em>returns</em> column of Table 13-1: <code>add()</code>, <code>remove()</code> and <code>removeAll()</code> all return a <code>boolean</code> that says whether the collection changed. Those are exactly the values your methods must return.</p></li><li><p><code>join()</code> needs one <code>if</code> before adding: a name that <code>contains()</code> finds gets <code>false</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The book says collections cannot hold primitive types. What would happen if the club stored student ID numbers as <code>Collection&lt;int&gt;</code>, and what would you write instead?</p><div class="answer"><p>It doesn&#x27;t compile, because the type in angle brackets must be a class. Use Collection&lt;Integer&gt;; Java wraps each int in an Integer object when you add it.</p></div></li><li><p>Why did the second <code>dropNoShows(noShows)</code> call print <code>false</code>? What does that return value let a program do?</p><div class="answer"><p>Chen and Eli had already been removed, so removeAll() changed nothing and returned false. The program can tell whether the call did anything, for example to report &quot;no one to drop&quot;.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>boolean keepOnly(Collection&lt;String&gt; confirmed)</code> that uses <code>retainAll()</code> to keep only students who confirmed by email, and <code>boolean allWaiting(Collection&lt;String&gt; group)</code> that uses <code>containsAll()</code> to check whether a whole group of friends is on the list.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; no leftover array code or unused variables.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

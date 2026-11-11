@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The concert program that can&#x27;t say who&#x27;s in slot 3</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 13.2</div>
+  <h1>The concert program that can&#x27;t say who&#x27;s in slot 3</h1>
+<h2>Objectives</h2><ul><li>Explain what a <code>List</code> adds to a <code>Collection</code>: positions (indexes) and duplicates</li><li>Use the <code>List</code> methods <code>indexOf()</code>, <code>lastIndexOf()</code>, <code>add(int, Object)</code> and <code>set()</code> from Table 13-2</li><li>Take part of a list with <code>subList()</code> without asking for an end past the list&#x27;s size</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Declare <code>acts</code> as a <code>List&lt;String&gt;</code> so the class can use the index methods.</li><li><strong>R2</strong> <code>insertAfter()</code> finds the existing act with <code>indexOf()</code>, returns <code>false</code> when it gets <code>-1</code>, and otherwise inserts with <code>add(index, act)</code>. <code>firstSlot()</code> and <code>lastSlot()</code> return <code>indexOf()</code> and <code>lastIndexOf()</code>.</li><li><strong>R3</strong> <code>replace()</code> uses <code>set()</code> and returns the act that was in the slot (<code>set()</code> returns it).</li><li><strong>R4</strong> <code>nextUp()</code> returns <code>subList(0, end)</code>, where <code>end</code> is never larger than the number of acts.</li><li><strong>R5</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s <code>insertAfter(&quot;Jazz&quot;, &quot;Piano&quot;)</code> returns <code>true</code>. Where in the running order does the Piano act actually end up, and why?</p><div class="answer"><p>At the end, after the second Choir, because the starter calls add(act), which always adds to the end. A Collection has no way to add at a position.</p></div></li><li><p>The running order is <code>[Choir, Jazz, Drums, Choir]</code>. What do <code>indexOf(&quot;Choir&quot;)</code>, <code>lastIndexOf(&quot;Choir&quot;)</code> and <code>indexOf(&quot;Mime&quot;)</code> return?</p><div class="answer"><p>0, 3 and -1. The first Choir is at index 0, the last at index 3, and Mime isn&#x27;t in the list.</p></div></li></ol>
+<h2>Solution</h2><div class="file">RunningOrder.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RunningOrder</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">List</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ArrayList</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-c1">// Books an act at the end of the show.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">book</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">act</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Puts act in the slot right after existing.</span>
+<span class="t-w">    </span><span class="t-c1">// Returns false, and changes nothing, if existing isn't booked.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">insertAfter</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">existing</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">slot</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">indexOf</span><span class="t-p">(</span><span class="t-n">existing</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">slot</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">slot</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Slot of the first and of the last appearance of an act (0 = opener).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">firstSlot</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">indexOf</span><span class="t-p">(</span><span class="t-n">act</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">lastSlot</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">lastIndexOf</span><span class="t-p">(</span><span class="t-n">act</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Puts act in the given slot and returns the act it replaced.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">replace</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">slot</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">set</span><span class="t-p">(</span><span class="t-n">slot</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">act</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The next count acts for the stage manager's cue card.</span>
+<span class="t-w">    </span><span class="t-c1">// Asking for more acts than are booked gives the whole show.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">List</span><span class="t-o">&lt;</span><span class="t-n">String</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-nf">nextUp</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">end</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Math</span><span class="t-p">.</span><span class="t-na">min</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">subList</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">end</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toString</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">acts</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>List</code> extends <code>Collection</code>, so it keeps every collection method and adds methods that work with an index (Table 13-2, p. 513). A list keeps its elements in order and may contain duplicates, which is why the Choir can open and close the show. <code>indexOf()</code> returns the first index of an element and <code>lastIndexOf()</code> the last, both <code>-1</code> when the element isn&#x27;t there; checking for <code>-1</code> before inserting is what makes <code>Mime after Magic</code> change nothing. <code>add(index, obj)</code> inserts and keeps the existing elements (they shift one slot later), while <code>set(index, obj)</code> replaces the element and returns the old one. <code>subList(start, end)</code> returns the elements from <code>start</code> to one less than <code>end</code>, so <code>subList(0, 3)</code> is slots 0, 1 and 2; <code>Math.min(count, acts.size())</code> (or an <code>if</code>) keeps <code>end</code> legal. The field could also be <code>ArrayList&lt;String&gt;</code>; <code>List&lt;String&gt;</code> asks only for what the class needs.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRunningOrder.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRunningOrder</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">RunningOrder</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">RunningOrder</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">book</span><span class="t-p">(</span><span class="t-s">"Choir"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">book</span><span class="t-p">(</span><span class="t-s">"Jazz"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">book</span><span class="t-p">(</span><span class="t-s">"Drums"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">book</span><span class="t-p">(</span><span class="t-s">"Choir"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Booked: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Piano after Jazz: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">insertAfter</span><span class="t-p">(</span><span class="t-s">"Jazz"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Piano"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Mime after Magic: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">insertAfter</span><span class="t-p">(</span><span class="t-s">"Magic"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Mime"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Now: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Choir opens at slot "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">firstSlot</span><span class="t-p">(</span><span class="t-s">"Choir"</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" and closes at slot "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">lastSlot</span><span class="t-p">(</span><span class="t-s">"Choir"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Replaced "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">replace</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Dancers"</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" with Dancers"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Cue card: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">nextUp</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Whole show: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">show</span><span class="t-p">.</span><span class="t-na">nextUp</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Booked: [Choir, Jazz, Drums, Choir]
+Piano after Jazz: true
+Mime after Magic: false
+Now: [Choir, Jazz, Piano, Drums, Choir]
+Choir opens at slot 0 and closes at slot 4
+Replaced Drums with Dancers
+Cue card: [Choir, Jazz, Piano]
+Whole show: [Choir, Jazz, Piano, Dancers, Choir]
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>acts is a List<div class="small">in <code>RunningOrder</code></div></td><td><div><span class="tag">require</span> <code>\b(List|ArrayList|LinkedList)\s*&lt;\s*String\s*&gt;\s+acts\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>insertAfter() finds the act and inserts after it<div class="small">in <code>RunningOrder.insertAfter</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\.\s*indexOf\s*\(\s*existing\s*\))(?=[\s\S]*\.\s*add\s*\(\s*[^,()]+\+\s*1\s*,)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>A missing act changes nothing<div class="small">in <code>RunningOrder.insertAfter</code></div></td><td><div><span class="tag">require</span> <code>(==|&lt;)\s*-?\s*[01]\b|-\s*1\s*==</code></div></td></tr><tr><td>C4</td><td>R2</td><td>First and last slots<div class="small">in <code>RunningOrder</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*return\s+acts\s*\.\s*indexOf\s*\(\s*act\s*\))(?=[\s\S]*return\s+acts\s*\.\s*lastIndexOf\s*\(\s*act\s*\))</code></div></td></tr><tr><td>C5</td><td>R3</td><td>replace() uses set()<div class="small">in <code>RunningOrder.replace</code></div></td><td><div><span class="tag">require</span> <code>\.\s*set\s*\(\s*slot\s*,\s*act\s*\)</code></div></td></tr><tr><td>C6</td><td>R4</td><td>nextUp() uses subList()<div class="small">in <code>RunningOrder</code></div></td><td><div><span class="tag">require</span> <code>\.\s*subList\s*\(\s*0\s*,</code></div></td></tr><tr><td>C7</td><td>R4</td><td>The end never passes the list&#x27;s size<div class="small">in <code>RunningOrder</code></div></td><td><div><span class="tag">require</span> <code>\bMath\s*\.\s*min\s*\(|\bif\s*\([^)]*\bsize\s*\(\s*\)|\?[^;]*\bsize\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · acts is a List</dt><dd><p>Change the field to <code>private List&lt;String&gt; acts = new ArrayList&lt;String&gt;();</code>. Only a <code>List</code> has <code>indexOf()</code>, <code>add(index, ...)</code>, <code>set()</code> and <code>subList()</code>.</p></dd><dt>C2 · insertAfter() finds the act and inserts after it</dt><dd><p>Store <code>acts.indexOf(existing)</code> in a variable, then insert with <code>acts.add(slot + 1, act)</code>. The new act goes one slot after the one you found.</p></dd><dt>C3 · A missing act changes nothing</dt><dd><p><code>indexOf()</code> returns <code>-1</code> when the act isn&#x27;t booked. Test for it and <code>return false;</code> before adding anything.</p></dd><dt>C4 · First and last slots</dt><dd><p><code>firstSlot()</code> returns <code>acts.indexOf(act)</code> and <code>lastSlot()</code> returns <code>acts.lastIndexOf(act)</code>. The Choir appears twice, and only <code>lastIndexOf()</code> finds the second one.</p></dd><dt>C5 · replace() uses set()</dt><dd><p>Return <code>acts.set(slot, act)</code>. <code>set()</code> replaces the element and gives back the one that was there, which the stage manager wants to hear.</p></dd><dt>C6 · nextUp() uses subList()</dt><dd><p>Return <code>acts.subList(0, end)</code>. It holds the elements from index 0 up to one less than <code>end</code>.</p></dd><dt>C7 · The end never passes the list&#x27;s size</dt><dd><p><code>subList(0, 10)</code> on a five-act show throws <code>IndexOutOfBoundsException</code>. Use <code>Math.min(count, acts.size())</code> (or an <code>if</code>) as the end.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Change the field first. Every method you need in this lab is in Table 13-2, which lists what <code>List</code> adds to <code>Collection</code>.</p></li><li><p><code>insertAfter()</code> takes three steps: find the position of <code>existing</code>, give up if it is <code>-1</code>, then insert one position later.</p></li><li><p>For <code>nextUp()</code>, ask yourself what the largest legal <code>end</code> for <code>subList()</code> is in a five-act show.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p><code>add(2, &quot;Piano&quot;)</code> and <code>set(2, &quot;Piano&quot;)</code> both take an index and an act. How do the running orders they produce differ?</p><div class="answer"><p>add() inserts the act and moves every later act one slot down, so the show gets longer. set() overwrites the act in slot 2, so the show keeps its length and the old act is gone.</p></div></li><li><p>Why must <code>insertAfter()</code> check for <code>-1</code> before calling <code>add(slot + 1, act)</code>? What would happen without the check when the act isn&#x27;t booked?</p><div class="answer"><p>indexOf() returns -1 for a missing act, so slot + 1 would be 0 and the new act would quietly become the opener. The check makes the method report false and leave the show unchanged.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>boolean move(String act, int newSlot)</code> that removes the first appearance of <code>act</code> with <code>remove(int)</code> and puts it back at <code>newSlot</code> with <code>add(int, Object)</code>. Return <code>false</code> if the act isn&#x27;t booked or <code>newSlot</code> is outside the show.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; the result of indexOf() is stored once in a well-named variable.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

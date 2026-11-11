@@ -1,0 +1,46 @@
+POSTING CHECKLIST
+=================
+
+  Lab 13.1: The waitlist that turns people away at three
+    students : 13.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.1_guide.html
+
+  Lab 13.2: The concert program that can't say who's in slot 3
+    students : 13.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.2_guide.html
+
+  Lab 13.3: The race results that reshuffle the entry list
+    students : 13.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.3_guide.html
+
+  Lab 13.4: The help desk that always serves the newest ticket
+    students : 13.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.4_guide.html
+
+  Lab 13.5: The sensor log that keeps half its errors
+    students : 13.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.5_guide.html
+
+  Lab 13.6: The hold shelf that only takes books
+    students : 13.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.6_guide.html
+
+  Lab 13.7: Three copies of one loop, and a counter that finds nothing
+    students : 13.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/13.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/13.7_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

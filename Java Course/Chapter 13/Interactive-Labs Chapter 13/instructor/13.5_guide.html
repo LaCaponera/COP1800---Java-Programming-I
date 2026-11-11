@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The sensor log that keeps half its errors</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 13.5</div>
+  <h1>The sensor log that keeps half its errors</h1>
+<h2>Objectives</h2><ul><li>Process every element of a collection with an enhanced <code>for</code> loop, without an index</li><li>Create an <code>Iterator</code> with <code>iterator()</code> and loop with <code>hasNext()</code> and <code>next()</code></li><li>Remove elements during a loop with the iterator&#x27;s <code>remove()</code> instead of an index</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>removeErrors()</code> loops with an <code>Iterator&lt;Integer&gt;</code> (<code>iterator()</code>, <code>hasNext()</code>, <code>next()</code>) and removes each error with the iterator&#x27;s <code>remove()</code>, never with <code>readings.remove()</code>.</li><li><strong>R2</strong> <code>average()</code> adds the readings with an enhanced <code>for</code> loop; no <code>get()</code> call.</li><li><strong>R3</strong> <code>above(limit)</code> returns the readings greater than <code>limit</code>, in order, separated by single spaces (an empty string if there are none), using an enhanced <code>for</code> loop or an iterator and no <code>get()</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter&#x27;s <code>removeErrors()</code> on <code>[21, -1, -1, 23]</code>. At x = 1 the first -1 is removed. What is at position 1 now, and what position does the loop check next?</p><div class="answer"><p>The second -1 slides into position 1, but ++x makes the loop check position 2 (23) next, so the second -1 is never examined and survives.</p></div></li><li><p>An iterator offers three methods. Which one removes an element, and which element does it remove?</p><div class="answer"><p>remove(). It removes the last element returned by next().</p></div></li></ol>
+<h2>Solution</h2><div class="file">SensorLog.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.*</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">SensorLog</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">ERROR</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">LinkedList</span><span class="t-o">&lt;</span><span class="t-n">Integer</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">LinkedList</span><span class="t-o">&lt;</span><span class="t-n">Integer</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">record</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">readings</span><span class="t-p">.</span><span class="t-na">add</span><span class="t-p">(</span><span class="t-n">value</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes every error reading and returns how many were removed.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">removeErrors</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">removed</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">Iterator</span><span class="t-o">&lt;</span><span class="t-n">Integer</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">iter</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">.</span><span class="t-na">iterator</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-k">while</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">iter</span><span class="t-p">.</span><span class="t-na">hasNext</span><span class="t-p">())</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">iter</span><span class="t-p">.</span><span class="t-na">next</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">ERROR</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">iter</span><span class="t-p">.</span><span class="t-na">remove</span><span class="t-p">();</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">removed</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">removed</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The average of the readings.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">average</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">sum</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">sum</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">sum</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">.</span><span class="t-na">size</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The readings above limit, in order, separated by spaces.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">above</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">limit</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">limit</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" "</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">.</span><span class="t-na">trim</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toString</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">.</span><span class="t-na">toString</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>An iterator is an object that loops through the elements of a collection (p. 528). <code>iterator()</code> returns one; <code>hasNext()</code> reports whether another element exists, <code>next()</code> returns it, and <code>remove()</code> removes the last element <code>next()</code> returned (p. 529). Because the iterator keeps its own place, removing never makes it skip an element, unlike the index loop, where <code>remove(x)</code> shifts the next <code>-1</code> into position <code>x</code> just before <code>++x</code> moves past it. The enhanced <code>for</code> (foreach) loop creates an iterator behind the scenes (p. 528), so <code>average()</code> and <code>above()</code> need neither <code>size()</code> nor <code>get()</code>; the book notes an iterator avoids looking up the size and, on a linked list, avoids following links from the start for every <code>get(x)</code>. <code>iter.next() == ERROR</code> compares an <code>Integer</code> with an <code>int</code> constant, so Java unboxes the <code>Integer</code> and compares numbers. Building the string with a trailing space and calling <code>trim()</code> gives single spaces with nothing at the end.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSensorLog.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSensorLog</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">SensorLog</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">SensorLog</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">raw</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">21</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">23</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">19</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">22</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">raw</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">record</span><span class="t-p">(</span><span class="t-n">value</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Raw: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Errors removed: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">removeErrors</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Clean: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Average: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">average</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Above 20: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">above</span><span class="t-p">(</span><span class="t-mi">20</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Above 25: ["</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">log</span><span class="t-p">.</span><span class="t-na">above</span><span class="t-p">(</span><span class="t-mi">25</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"]"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Raw: [21, -1, -1, 23, 19, -1, 22]
+Errors removed: 3
+Clean: [21, 23, 19, 22]
+Average: 21.25
+Above 20: 21 23 22
+Above 25: []
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>removeErrors() uses an Iterator<div class="small">in <code>SensorLog.removeErrors</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bIterator\s*&lt;\s*Integer\s*&gt;\s+\w+\s*=\s*readings\s*\.\s*iterator\s*\(\s*\))(?=[\s\S]*\.\s*hasNext\s*\(\s*\))(?=[\s\S]*\.\s*next\s*\(\s*\))</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The iterator does the removing<div class="small">in <code>SensorLog.removeErrors</code></div></td><td><div><span class="tag">require</span> <code>\b(?!readings\b)\w+\s*\.\s*remove\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\breadings\s*\.\s*remove\s*\(</code></div><div><span class="tag">forbid</span> <code>\.\s*get\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td>average() uses an enhanced for<div class="small">in <code>SensorLog.average</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\(\s*(final\s+)?(int|Integer)\s+\w+\s*:\s*readings\s*\)</code></div><div><span class="tag">forbid</span> <code>\.\s*get\s*\(</code></div></td></tr><tr><td>C4</td><td>R3</td><td>above() walks the list without get()<div class="small">in <code>SensorLog.above</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\(\s*(final\s+)?(int|Integer)\s+\w+\s*:\s*readings\s*\)|\.\s*iterator\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\.\s*get\s*\(</code></div></td></tr><tr><td>C5</td><td>R3</td><td>above() compares with limit<div class="small">in <code>SensorLog.above</code></div></td><td><div><span class="tag">require</span> <code>&gt;\s*limit\b|\blimit\s*&lt;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · removeErrors() uses an Iterator</dt><dd><p>Create <code>Iterator&lt;Integer&gt; iter = readings.iterator();</code> and loop <code>while (iter.hasNext())</code>, getting each reading with <code>iter.next()</code>.</p></dd><dt>C2 · The iterator does the removing</dt><dd><p>Call <code>iter.remove()</code> (no argument) to delete the reading <code>next()</code> just returned. <code>readings.remove(x)</code> shifts the list under an index and skips the next element.</p></dd><dt>C3 · average() uses an enhanced for</dt><dd><p>Write <code>for (int value : readings)</code> and add <code>value</code> to the sum. No index and no <code>get()</code>: each reading is visited once.</p></dd><dt>C4 · above() walks the list without get()</dt><dd><p>Loop with <code>for (int value : readings)</code> and add each value greater than <code>limit</code> to the result.</p></dd><dt>C5 · above() compares with limit</dt><dd><p>Keep a reading only when it is greater than <code>limit</code> (<code>value &gt; limit</code>). Equal readings are not above it.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>In <code>removeErrors()</code>, the <code>for</code> loop and its index go away. Ask the iterator whether another reading exists as the loop condition, and fetch the reading inside the loop.</p></li><li><p>Calling <code>next()</code> twice in one pass skips a reading. Store <code>iter.next()</code> in a variable if you need the value more than once.</p></li><li><p>In <code>above()</code>, add <code>value + &quot; &quot;</code> to the result for each match and return <code>result.trim()</code>, or put the space before every value except the first.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why can&#x27;t <code>removeErrors()</code> simply use <code>for (int value : readings)</code> and call <code>readings.remove(...)</code> inside it? What does that tell you about when you need an explicit <code>Iterator</code>?</p><div class="answer"><p>The foreach loop&#x27;s hidden iterator notices that the list changed behind its back and throws ConcurrentModificationException. You need your own Iterator when you remove while looping, because only its remove() keeps it in step.</p></div></li><li><p>The greenhouse now wants a second pass that removes readings above 40. After <code>removeErrors()</code> has finished, can you reuse the same <code>Iterator</code> object? What does the book say to do?</p><div class="answer"><p>No. That iterator has reached the end, and there is no reset. Create a new Iterator with readings.iterator() (p. 529).</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>int removeSpikes(int jump)</code> that uses an iterator to remove any reading that differs from the previous kept reading by more than <code>jump</code> degrees, and returns how many it removed. Keep the previous value in a variable as you go.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers explain the skipped element and the iterator, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; <code>next()</code> is called once per pass; no unused index variables.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

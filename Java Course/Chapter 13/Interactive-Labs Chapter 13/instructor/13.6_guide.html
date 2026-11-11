@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The hold shelf that only takes books</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 13.6</div>
+  <h1>The hold shelf that only takes books</h1>
+<h2>Objectives</h2><ul><li>Declare a generic class with a type parameter section, <code>class Slot&lt;T&gt;</code></li><li>Use the type parameter <code>T</code> for a field, a parameter and return types</li><li>Instantiate the same generic class with different reference types, and explain why a primitive can&#x27;t be used</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The class header declares a type parameter: <code>public class Slot&lt;T&gt;</code>.</li><li><strong>R2</strong> The field, the parameter of <code>put()</code> and the return types of <code>peek()</code> and <code>take()</code> use <code>T</code>; <code>Slot</code> mentions neither <code>Book</code> nor <code>Object</code>.</li><li><strong>R3</strong> <code>put()</code> returns <code>false</code> and changes nothing when the slot is already full. <code>take()</code> returns the item and leaves the slot empty (<code>null</code>).</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The test program creates <code>Slot&lt;Book&gt;</code>, <code>Slot&lt;Laptop&gt;</code> and <code>Slot&lt;Integer&gt;</code>. With the starter&#x27;s class, what does the compiler say about those lines, and why?</p><div class="answer"><p>It reports an error: the type Slot is not generic, so it can&#x27;t be given a type argument like &lt;Book&gt;. The class header has no type parameter section.</p></div></li><li><p>Trace the starter: <code>put(new Book(&quot;Java Basics&quot;))</code>, then <code>put(new Book(&quot;Data Stories&quot;))</code>, then <code>peek()</code>. What does each call return?</p><div class="answer"><p>true, true, and the Data Stories book. The second put() overwrote Java Basics, which is lost.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Slot.java</div><pre class="code-block"><code><span class="t-c1">// One cubby on the library's hold shelf. It can only hold a Book,</span>
+<span class="t-c1">// and someone was about to copy the whole class as LaptopSlot.</span>
+<span class="t-c1">// TODO (R1): give the class a type parameter.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Slot</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R2): use the type parameter instead of Book everywhere.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Puts an item in an empty slot. Returns false if the slot is taken.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">put</span><span class="t-p">(</span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-n">newItem</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): this replaces whatever was already waiting.</span>
+<span class="t-w">        </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">newItem</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the item without removing it (null if the slot is empty).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-nf">peek</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes and returns the item (null if the slot is empty).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-nf">take</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): the item should leave the slot.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isEmpty</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Book.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Book</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Book</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">title</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getTitle</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toString</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Laptop.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Laptop</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">tag</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Laptop</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">tag</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">tag</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">tag</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toString</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Laptop "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">tag</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Slot.java</div><pre class="code-block"><code><span class="t-c1">// One cubby on the library's hold shelf. It holds one item of any type.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Slot</span><span class="t-o">&lt;</span><span class="t-n">T</span><span class="t-o">&gt;</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">T</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Puts an item in an empty slot. Returns false if the slot is taken.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">put</span><span class="t-p">(</span><span class="t-n">T</span><span class="t-w"> </span><span class="t-n">newItem</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">newItem</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Returns the item without removing it (null if the slot is empty).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">T</span><span class="t-w"> </span><span class="t-nf">peek</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Removes and returns the item (null if the slot is empty).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">T</span><span class="t-w"> </span><span class="t-nf">take</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">T</span><span class="t-w"> </span><span class="t-n">taken</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">taken</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isEmpty</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A generic class is declared like any class, but the class name is followed by a type parameter section in angle brackets (p. 530). <code>T</code> stands in for whatever reference type the program supplies, so <code>Slot&lt;Book&gt;</code> gets a <code>Book</code> field and <code>peek()</code> returns a <code>Book</code>. That&#x27;s why the test can call <code>shelfA.peek().getTitle()</code> with no cast, as <code>bookObj.getObject().getTitle()</code> does in Figure 13-27. A type parameter can&#x27;t be a primitive such as <code>int</code> (p. 530), so the locker code uses <code>Slot&lt;Integer&gt;</code>; Java wraps 4821 in an <code>Integer</code> when it is put in and unwraps it when it is assigned to <code>int code</code>. In <code>take()</code>, the item must be saved in a local variable before the field is set to <code>null</code>, or the method would return <code>null</code>. An <code>Object</code> field would also hold anything, but then every caller would need a cast and the compiler couldn&#x27;t stop a laptop going into a book slot.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestSlot.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestSlot</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Slot</span><span class="t-o">&lt;</span><span class="t-n">Book</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Slot</span><span class="t-o">&lt;</span><span class="t-n">Book</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Put Java Basics: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-p">.</span><span class="t-na">put</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-p">(</span><span class="t-s">"Java Basics"</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Put Data Stories: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-p">.</span><span class="t-na">put</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-p">(</span><span class="t-s">"Data Stories"</span><span class="t-p">)));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Waiting in A: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-p">.</span><span class="t-na">peek</span><span class="t-p">().</span><span class="t-na">getTitle</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-n">picked</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-p">.</span><span class="t-na">take</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Picked up: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">picked</span><span class="t-p">.</span><span class="t-na">getTitle</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"A empty? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-p">.</span><span class="t-na">isEmpty</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Take from empty A: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shelfA</span><span class="t-p">.</span><span class="t-na">take</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">Slot</span><span class="t-o">&lt;</span><span class="t-n">Laptop</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">shelfB</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Slot</span><span class="t-o">&lt;</span><span class="t-n">Laptop</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">shelfB</span><span class="t-p">.</span><span class="t-na">put</span><span class="t-p">(</span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Laptop</span><span class="t-p">(</span><span class="t-s">"L-07"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Waiting in B: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">shelfB</span><span class="t-p">.</span><span class="t-na">peek</span><span class="t-p">());</span>
+
+<span class="t-w">        </span><span class="t-n">Slot</span><span class="t-o">&lt;</span><span class="t-n">Integer</span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">lockerCode</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Slot</span><span class="t-o">&lt;</span><span class="t-n">Integer</span><span class="t-o">&gt;</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">lockerCode</span><span class="t-p">.</span><span class="t-na">put</span><span class="t-p">(</span><span class="t-mi">4821</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">code</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">lockerCode</span><span class="t-p">.</span><span class="t-na">take</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Locker code + 1: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">code</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Put Java Basics: true
+Put Data Stories: false
+Waiting in A: Java Basics
+Picked up: Java Basics
+A empty? true
+Take from empty A: null
+Waiting in B: Laptop L-07
+Locker code + 1: 4822
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Slot has a type parameter<div class="small">whole file of <code>Slot.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+Slot\s*&lt;\s*[A-Z]\w*\s*&gt;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The field and methods use T<div class="small">whole file of <code>Slot.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bprivate\s+([A-Z])\s+\w+\s*;)(?=[\s\S]*\bput\s*\(\s*[A-Z]\s+\w+\s*\))(?=[\s\S]*public\s+[A-Z]\s+peek\s*\()(?=[\s\S]*public\s+[A-Z]\s+take\s*\()</code></div></td></tr><tr><td>C3</td><td>R2</td><td>No Book or Object left in Slot<div class="small">whole file of <code>Slot.java</code></div></td><td><div><span class="tag">forbid</span> <code>\bBook\b</code></div><div><span class="tag">forbid</span> <code>\bObject\b</code></div></td></tr><tr><td>C4</td><td>R3</td><td>A full slot refuses a second item<div class="small">in <code>Slot.put</code> of <code>Slot.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*(!=\s*null|null\s*!=|!\s*isEmpty\s*\(\s*\)))(?=[\s\S]*return\s+false)</code></div></td></tr><tr><td>C5</td><td>R3</td><td>take() empties the slot<div class="small">in <code>Slot.take</code> of <code>Slot.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\b[A-Z]\s+\w+\s*=\s*\w+\s*;)(?=[\s\S]*\w+\s*=\s*null\s*;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Slot has a type parameter</dt><dd><p>Change the header to <code>public class Slot&lt;T&gt;</code>. The angle brackets after the class name are the type parameter section.</p></dd><dt>C2 · The field and methods use T</dt><dd><p>Use <code>T</code> for the field (<code>private T item;</code>), for the parameter of <code>put(T newItem)</code> and as the return type of <code>peek()</code> and <code>take()</code>.</p></dd><dt>C3 · No Book or Object left in Slot</dt><dd><p>Replace every <code>Book</code> in <code>Slot.java</code> with <code>T</code>. With <code>Object</code> instead of <code>T</code>, every caller would need a cast and anything could go in any slot.</p></dd><dt>C4 · A full slot refuses a second item</dt><dd><p>At the top of <code>put()</code>, return <code>false</code> when <code>item != null</code>. Only an empty slot accepts an item.</p></dd><dt>C5 · take() empties the slot</dt><dd><p>In <code>take()</code>, save the item in a local <code>T</code> variable, set the field to <code>null</code>, then return the saved item.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compare <code>GenericClass&lt;T&gt;</code> in Figure 13-25 with the starter: the header is the only line that needs angle brackets.</p></li><li><p>After the header, replace each <code>Book</code> in <code>Slot.java</code> with <code>T</code>. The class never calls a <code>Book</code> method, so it doesn&#x27;t need to know what <code>T</code> is.</p></li><li><p>Order matters in <code>take()</code>: if you set the field to <code>null</code> first, what is left to return?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>A teammate says, &quot;Just make the field an <code>Object</code>; it can hold anything too.&quot; Using <code>shelfA.peek().getTitle()</code> from the test program, explain what the generic version gives you that the <code>Object</code> version doesn&#x27;t.</p><div class="answer"><p>With Slot&lt;Book&gt;, peek() returns a Book, so getTitle() compiles with no cast, and the compiler refuses a Laptop in a book slot. With Object, peek() returns Object, so each caller must cast, and a wrong type is found only when the program crashes.</p></div></li><li><p>Why does <code>take()</code> need a local variable, and what would the test print for <code>Picked up:</code> without it?</p><div class="answer"><p>The field must be set to null to empty the slot, but the item still has to be returned, so it is saved first. Returning after setting the field to null would return null, and getTitle() would throw a NullPointerException.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>T swap(T newItem)</code> that puts <code>newItem</code> in the slot and returns whatever was there before (or <code>null</code>). Then write a short test with a <code>Slot&lt;String&gt;</code> that swaps a few student names.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers compare generic and non-generic code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; one type parameter named T used consistently.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
