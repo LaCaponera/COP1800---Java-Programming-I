@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Chapter 12: Recursion</title>
+<style>
+:root{--surface:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--rule-2:#CFCCC2;--ok:#2C6A41;--ok-soft:#EBF3ED;--bad:#9B3127;--bad-soft:#F8EDEB;--code-bg:#F2F1EB;--code-ink:#24231F;--code-kw:#7A2E8E;--code-str:#2E6B3A;--code-com:#67665F;--code-num:#A14C12;--code-fn:#1F4E79;--code-builtin:#735500;--paper:#F3F5F4;--accent:#0B5D58;--accent-soft:#E2F0EE;--accent-ink:#FFFFFF;--focus:#0B5D58;--pat:rgba(27,27,24,.055);--pat-strong:rgba(27,27,24,.095);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--surface:#1B1B19;--ink:#ECEBE6;--ink-2:#BDBCB4;--ink-3:#9A9991;--rule:#2D2C29;--rule-2:#403F3A;--ok:#86C79B;--ok-soft:#17261C;--bad:#E9A097;--bad-soft:#2D1B19;--code-bg:#20201D;--code-ink:#E4E3DD;--code-kw:#D3A3E3;--code-str:#9ED3A6;--code-com:#9A9991;--code-num:#F0B27A;--code-fn:#9CC0E6;--code-builtin:#E3C77A;--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}}
+:root[data-theme="dark"]{--surface:#1B1B19;--ink:#ECEBE6;--ink-2:#BDBCB4;--ink-3:#9A9991;--rule:#2D2C29;--rule-2:#403F3A;--ok:#86C79B;--ok-soft:#17261C;--bad:#E9A097;--bad-soft:#2D1B19;--code-bg:#20201D;--code-ink:#E4E3DD;--code-kw:#D3A3E3;--code-str:#9ED3A6;--code-com:#9A9991;--code-num:#F0B27A;--code-fn:#9CC0E6;--code-builtin:#E3C77A;--paper:#101514;--accent:#7ED3C8;--accent-soft:#13302D;--accent-ink:#111110;--focus:#7ED3C8;--pat:rgba(236,235,230,.045);--pat-strong:rgba(236,235,230,.08);--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(var(--pat) 1.1px, transparent 1.4px) 0 0/22px 22px, var(--grain);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - 36rem),transparent calc(50% - 25rem),transparent calc(50% + 25rem),#000 calc(50% + 36rem),#000 100%);mask-image:linear-gradient(90deg,#000 0,#000 calc(50% - 36rem),transparent calc(50% - 25rem),transparent calc(50% + 25rem),#000 calc(50% + 36rem),#000 100%)}
+@media print{body::before{display:none}}
+
+:root{
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans);-webkit-font-smoothing:antialiased;position:relative;z-index:0;min-height:100vh}
+a{color:var(--accent)}
+.wrap{max-width:64rem;margin:0 auto;padding:3rem 1rem 4rem}
+@media (min-width:40rem){.wrap{padding:4rem 1.5rem 5rem}}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+.top{display:flex;justify-content:flex-end;margin-bottom:2rem}
+.theme-btn{background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;padding:.3rem .75rem;font:inherit;font-size:.8rem;cursor:pointer}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:.65rem}
+.eyebrow::before{content:"";flex:none;width:1.6rem;height:2px;background:var(--accent);border-radius:1px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,5vw,2.75rem);line-height:1.12;letter-spacing:-.01em;margin:.5rem 0 1rem;max-width:22ch}
+.intro{color:var(--ink-2);max-width:40rem}
+.intro p{margin:0 0 .75rem}
+.overall{margin:2rem 0 2.5rem;padding-top:1rem;border-top:1px solid var(--rule);color:var(--ink-3);font-size:.9rem}
+.grid{list-style:none;margin:0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr))}
+.card{display:flex;flex-direction:column;height:100%;background:var(--surface);border:1px solid var(--rule);border-radius:10px;
+  padding:1.35rem 1.35rem 1.15rem;text-decoration:none;color:inherit;box-shadow:0 1px 0 var(--rule),0 18px 40px -34px rgba(0,0,0,.35);
+  transition:border-color .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 1px 0 var(--rule),0 22px 40px -30px rgba(0,0,0,.4)}
+.card .num{font:600 .75rem/1 var(--sans);letter-spacing:.08em;color:var(--accent);margin-bottom:.6rem}
+.card h2{font-family:var(--serif);font-weight:600;font-size:1.2rem;line-height:1.3;margin:0 0 .4rem}
+.card .sub{color:var(--ink-2);font-size:.9rem;margin:0 0 1rem;flex:1}
+.card .facts{display:flex;flex-wrap:wrap;gap:.15rem 1rem;color:var(--ink-3);font-size:.8rem}
+.bar{height:3px;background:var(--rule);border-radius:2px;margin-top:1rem;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);transform-origin:left;animation:grow .7s var(--ease) both .15s}
+@keyframes grow{from{transform:scaleX(0)}to{transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.grid li{animation:rise .4s var(--ease) both}
+.status{display:flex;justify-content:space-between;margin-top:.5rem;font-size:.8rem;color:var(--ink-3)}
+.status .go{color:var(--accent);font-weight:600}
+footer{margin-top:3rem;color:var(--ink-3);font-size:.8rem;border-top:1px solid var(--rule);padding-top:1rem}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+/* full screen */
+.tools{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.fs-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--rule-2);color:var(--ink-2);border-radius:999px;
+  padding:.3rem .8rem .3rem .65rem;font:inherit;font-size:.8rem;cursor:pointer;transition:border-color .18s ease,color .18s ease}
+.fs-btn:hover{border-color:var(--accent);color:var(--ink)}
+.fs-btn svg{width:.95rem;height:.95rem;flex:none}
+.fs-btn .fs-out{display:none} .fs-btn.on .fs-in{display:none} .fs-btn.on .fs-out{display:inline}
+.fs-note{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);z-index:60;max-width:min(32rem,calc(100vw - 2rem));background:var(--ink);color:var(--surface);
+  border-radius:8px;padding:.7rem 1rem;font-size:.875rem;line-height:1.45;box-shadow:0 12px 32px -12px rgba(0,0,0,.4)}
+html:fullscreen{background:var(--paper);overflow-y:auto}
+html:-webkit-full-screen{background:var(--paper);overflow-y:auto}
+::backdrop{background:var(--paper)}
+@media print{.tools{display:none}}
+@media print{.top{display:none}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span class="tools"><button class="fs-btn" id="fsBtn" type="button" aria-pressed="false" hidden><svg class="fs-in" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><svg class="fs-out" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4"/></svg><span class="fs-t">Full screen</span></button><button class="theme-btn" id="themeBtn" type="button" aria-label="Switch colour theme">Theme</button></span></div>
+  <header>
+    <div class="eyebrow" id="course"></div>
+    <h1 id="title"></h1>
+    <div class="intro" id="intro"></div>
+  </header>
+  <p class="overall" id="overall"></p>
+  <ul class="grid" id="grid"></ul>
+  <footer>Practice only. Nothing here is graded or sent anywhere; progress is kept in this browser.</footer>
+</div>
+<script type="application/json" id="hub-data">{"course": "COP1800 · Java Programming I", "title": "Chapter 12: Recursion", "intro": "\u003cp>Short, ungraded practice checks, one for each section of Chapter 12 of \u003cem>Java Programming\u003c/em>, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.\u003c/p>", "checks": [{"href": "12.1.html", "title": "Understanding Recursion", "subtitle": "Methods that call themselves, what makes them stop, how many times they run, and what recursion costs", "source": "Ch. 12, section 12.1 (pp. 487–489)", "count": 5, "minutes": 8, "storageKey": "kc:COP1800 · Java Programming I:12.1:327fb56e28"}, {"href": "12.2.html", "title": "Using Recursion to Solve Mathematical Problems", "subtitle": "Sums and factorials, base and recursive cases, and how pending calls finish in reverse order", "source": "Ch. 12, section 12.2 (pp. 489–495)", "count": 6, "minutes": 9, "storageKey": "kc:COP1800 · Java Programming I:12.2:e21320fa25"}, {"href": "12.3.html", "title": "Using Recursion to Manipulate Strings", "subtitle": "Splitting a phrase into words, reversing a string, removing dashes, and why each piece must get shorter", "source": "Ch. 12, section 12.3 (pp. 495–499)", "count": 5, "minutes": 8, "storageKey": "kc:COP1800 · Java Programming I:12.3:ffad9afc5c"}, {"href": "12.4.html", "title": "Using Recursion to Create Visual Patterns", "subtitle": "Drawing a diagonal line, passing information to the next line, and what changes when output comes after the call", "source": "Ch. 12, section 12.4 (pp. 499–500)", "count": 4, "minutes": 6, "storageKey": "kc:COP1800 · Java Programming I:12.4:80b3fce719"}, {"href": "12.5.html", "title": "Recursion's Relationship to Iterative Programming", "subtitle": "The same calculation written recursively and with a loop, indirect recursion, and choosing between the two", "source": "Ch. 12, section 12.5 (pp. 500–503)", "count": 5, "minutes": 8, "storageKey": "kc:COP1800 · Java Programming I:12.5:963f291a67"}]}</script>
+<script>
+(function(){
+  "use strict";
+  var D = JSON.parse(document.getElementById("hub-data").textContent);
+  var $ = function(id){ return document.getElementById(id); };
+  $("course").textContent = D.course; $("title").textContent = D.title; $("intro").innerHTML = D.intro || "";
+  var root = document.documentElement;
+  try { var th = localStorage.getItem("kc:theme"); if (th) root.setAttribute("data-theme", th); } catch(e){}
+  $("themeBtn").addEventListener("click", function(){
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark"; root.setAttribute("data-theme", next);
+    try { localStorage.setItem("kc:theme", next); } catch(e){}
+  });
+  function stats(key){ try { var s = JSON.parse(localStorage.getItem(key) || "null"); return s && s.stats; } catch(e){ return null; } }
+  var started = 0, finished = 0;
+  D.checks.forEach(function(c, i){
+    var s = stats(c.storageKey), done = s ? Math.min(s.done || 0, c.count) : 0, pct = c.count ? Math.round(100 * done / c.count) : 0;
+    if (done) started++; if (done && done === c.count) finished++;
+    var status = !done ? '<span>Not started</span><span class="go">Start</span>'
+      : done < c.count ? '<span>' + done + ' of ' + c.count + ' answered</span><span class="go">Continue</span>'
+      : '<span>' + s.first + ' of ' + c.count + ' right on first try</span><span class="go">Review</span>';
+    var li = document.createElement("li");
+    li.style.animationDelay = Math.min(i, 8) * 45 + 'ms';
+    li.innerHTML = '<a class="card" href="' + encodeURI(c.href) + '"><div class="num">' + String(i + 1).padStart(2, '0') + '</div><h2></h2><p class="sub"></p>' +
+      '<div class="facts"><span>' + c.count + ' questions</span><span>about ' + c.minutes + ' min</span>' + (c.source ? '<span>' + c.source + '</span>' : '') + '</div>' +
+      '<div class="bar" aria-hidden="true"><span style="width:' + pct + '%"></span></div><div class="status">' + status + '</div></a>';
+    li.querySelector("h2").textContent = c.title;
+    var sub = li.querySelector(".sub"); if (c.subtitle) sub.textContent = c.subtitle; else sub.remove();
+    $("grid").appendChild(li);
+  });
+  var n = D.checks.length;
+  $("overall").textContent = n + (n === 1 ? " check" : " checks") + (started ? " · " + finished + " finished, " + (started - finished) + " in progress" : " · start anywhere; each one takes a few minutes");
+})();
+</script>
+<script>
+/* Full screen. Blackboard often shows an uploaded page inside a frame; when that frame doesn't allow full screen,
+   the button opens the page on its own in a new tab (same address, so saved progress comes along), where full
+   screen works. Hidden where the browser has no full screen for pages (iPhone). */
+(function(){
+  "use strict";
+  var btn = document.getElementById("fsBtn"); if (!btn) return;
+  var d = document, el = d.documentElement, txt = btn.querySelector(".fs-t"), timer;
+  var can = !!(d.fullscreenEnabled || d.webkitFullscreenEnabled);
+  var framed = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+  var KEYS = /Mac|iPad/.test(navigator.platform || navigator.userAgent) ? "Control+Command+F" : "F11";
+  function isFs(){ return !!(d.fullscreenElement || d.webkitFullscreenElement); }
+  function note(msg){
+    var n = d.getElementById("fsNote");
+    if (!n) { n = d.createElement("div"); n.id = "fsNote"; n.className = "fs-note"; n.setAttribute("role", "status"); d.body.appendChild(n); }
+    n.textContent = msg; n.hidden = false; clearTimeout(timer); timer = setTimeout(function(){ n.hidden = true; }, 7000);
+  }
+  function openPage(){
+    var w = null;
+    try { w = window.open(location.href, "_blank"); } catch(e){}
+    if (w) { try { w.opener = null; } catch(e){} }
+    else note("Your course page blocked the new tab. Open this page on its own, or press " + KEYS + " for full screen.");
+  }
+  function sync(){
+    var on = isFs();
+    btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on ? "true" : "false");
+    txt.textContent = on ? "Exit full screen" : "Full screen";
+    btn.title = on ? "Leave full screen (Esc)" : "Fill the screen with this page";
+  }
+  if (can) {
+    btn.hidden = false; sync();
+    btn.addEventListener("click", function(){
+      if (isFs()) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+      var req = el.requestFullscreen || el.webkitRequestFullscreen, p;
+      try { p = req.call(el, { navigationUI: "hide" }); } catch(e){ p = null; fail(); return; }
+      if (p && p.catch) p.catch(fail);
+    });
+    d.addEventListener("fullscreenchange", sync); d.addEventListener("webkitfullscreenchange", sync);
+  } else if (framed) {
+    btn.hidden = false; txt.textContent = "Open full page";
+    btn.title = "Open this page in its own tab, where it can go full screen";
+    btn.addEventListener("click", openPage);
+  }
+  function fail(){ if (framed) openPage(); else note("Full screen isn't available here. Press " + KEYS + " instead."); }
+})();
+</script>
+</body>
+</html>

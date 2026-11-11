@@ -1,0 +1,956 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 12: Recursion",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 12 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "12.1",
+   "title": "Understanding Recursion",
+   "subtitle": "Methods that call themselves, what makes them stop, how many times they run, and what recursion costs",
+   "source": "Ch. 12, section 12.1 (pp. 487–489)",
+   "intro": "A method that calls itself fills the screen with the same message until someone presses Ctrl+C. Five questions on what a recursive method needs so that it stops, and what it costs.",
+   "takeaways": [
+    "A recursive method calls itself. To be useful, each call must change an argument and test it, so that the calls eventually stop.",
+    "When you count a recursive method's executions, include the last one, which does nothing: `messageMethod(4)` runs five times, for 4, 3, 2, 1 and 0.",
+    "A loop and a recursive method can produce the same output. Recursion makes the computer remember where to return after every call, so the iterative version usually runs faster."
+   ],
+   "questions": [
+    {
+     "id": "trace-message-method",
+     "concept": "Tracing a recursive method",
+     "level": "apply",
+     "stem": "What does this code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void messageMethod(int reps)\n{\n   if(reps > 0)\n   {\n      System.out.println(\"Message \" + reps);\n      messageMethod(reps - 1);\n   }\n}\n\n// in main()\nmessageMethod(3);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static void messageMethod(int reps)\n    {\n       if(reps > 0)\n       {\n          System.out.println(\"Message \" + reps);\n          messageMethod(reps - 1);\n       }\n    }\n    public static void main(String[] args)\n    {\n        messageMethod(3);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Message 3 Message 2 Message 1`",
+       "feedback": "Each call displays its own `reps`, then calls itself with one less. The call with `reps` equal to 0 fails the `if` test and displays nothing.",
+       "correct": true
+      },
+      {
+       "text": "`Message 1 Message 2 Message 3`",
+       "feedback": "This assumes the lines appear as the calls finish. Here, `println()` runs *before* the recursive call, so each line appears on the way down: 3 first."
+      },
+      {
+       "text": "`Message 3 Message 2 Message 1 Message 0`",
+       "feedback": "The method is called with 0, but `0 > 0` is false, so that call neither displays a line nor calls itself again."
+      },
+      {
+       "text": "`Message 3`",
+       "feedback": "A method that calls itself doesn't stop after its first line. The call `messageMethod(reps - 1)` runs the whole method again with 2, then with 1."
+      }
+     ],
+     "hint": "Follow the value of `reps` into each new call. In which call does the `if` test first fail?",
+     "explanation": "Each call to a recursive method gets its own copy of the parameter. Here every call displays its value and then calls itself with a smaller one, until the `if` test fails and the chain stops.",
+     "ref": "Ch. 12.1, Figures 12-3 and 12-4 (pp. 487–488)"
+    },
+    {
+     "id": "count-calls",
+     "concept": "Depth of recursion",
+     "level": "understand",
+     "stem": "In the book's `DemoRecursion` program, `main()` calls `messageMethod(4)`, the version that runs only `if(reps > 0)` and then calls itself with `reps - 1`. How many times does `messageMethod()` execute in total?",
+     "options": [
+      {
+       "text": "Five: once each for `reps` equal to 4, 3, 2, 1 and 0",
+       "feedback": "The call with 0 runs too: it is the one whose `if` test fails. That's the book's count, four displaying calls plus the one that stops.",
+       "correct": true
+      },
+      {
+       "text": "Four: once for each line of output it displays",
+       "feedback": "Counting output lines misses the final call. The method still runs when `reps` is 0; it just does nothing because the test fails."
+      },
+      {
+       "text": "One: `main()` calls it once and the rest happens inside that call",
+       "feedback": "Each self-call is a complete new execution of the method, with its own `reps`. Only the first one comes from `main()`."
+      },
+      {
+       "text": "Eight: each call runs twice, once to display and once to call",
+       "feedback": "Displaying and calling happen inside the same execution. One execution covers both statements in the `if` block."
+      }
+     ],
+     "hint": "Is the method executed when `reps` is 0, even though it displays nothing?",
+     "explanation": "Every self-call is a separate execution of the method, including the last one, which only tests the condition and ends. The book calls the number of times a method calls itself the *depth* of the recursion.",
+     "ref": "Ch. 12.1, explanation of Figure 12-3 (p. 488)"
+    },
+    {
+     "id": "infinite-recursion",
+     "concept": "A recursive method needs a way to stop",
+     "level": "analyze",
+     "stem": "This method, from the book's `DemoInfiniteRecursion` program, never stops calling itself. What is the real problem, and what fixes it?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void messageMethod()\n{\n   System.out.println(\"Message \");\n   messageMethod();\n}",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "StackOverflowError"
+       ],
+       "program": "public class Demo\n{\n    public static void messageMethod()\n    {\n       System.out.println(\"Message \");\n       messageMethod();\n    }\n    public static void main(String[] args)\n    {\n        messageMethod();\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "Nothing is tested before each call; pass a shrinking count and call again only while it's above 0",
+       "feedback": "A useful recursive method changes something on each call and tests it. Without that test, every call makes another one.",
+       "correct": true
+      },
+      {
+       "text": "The method has no `return`; adding `return;` after the self-call ends it after the first message",
+       "feedback": "Execution never reaches a statement after the self-call, because that call starts another one first. A `return` placed there never runs."
+      },
+      {
+       "text": "The self-call comes after `println()`; moving it to the top stops it once nothing is left to display",
+       "feedback": "Moving the call only changes when the message appears. Nothing would test whether to stop, so the calls would still never end."
+      },
+      {
+       "text": "It takes no parameter; adding `int reps` and displaying it lets the method know when it's done",
+       "feedback": "A parameter is only part of the fix. The method also has to make the value smaller on each call and test it before calling itself again."
+      }
+     ],
+     "hint": "What would have to be different between one call and the next for the calls to ever end?",
+     "explanation": "A recursive method must have a way to stop infinite repetition. Usually an argument moves toward a stopping value on each call, and an `if` test calls the method again only until that value is reached.",
+     "aside": "The book says the message displays forever, but Java does stop it eventually. Each pending call takes up a frame on the call stack. After some thousands of calls the stack fills up and the program crashes with a `StackOverflowError`. An infinite *loop* can run forever because it never uses extra memory.",
+     "ref": "Ch. 12.1, Figures 12-1 to 12-3 (pp. 487–488)"
+    },
+    {
+     "id": "recursion-overhead",
+     "concept": "Why iteration usually runs faster",
+     "level": "understand",
+     "stem": "A method runs inside a payment system where every millisecond counts, and a team lead asks for its recursive version to be rewritten as a loop. According to the reading, what justifies the rewrite?",
+     "options": [
+      {
+       "text": "Each recursive call adds overhead: the computer must remember where to return; a loop doesn't",
+       "feedback": "This is the book's reason. Remembering the return point for every pending call is extra work, and iterative programs don't have it.",
+       "correct": true
+      },
+      {
+       "text": "Recursive methods can't return values, so a loop is needed to hand the computed result back",
+       "feedback": "Recursive methods return values all the time. `sumNumbers()` and `factorial()` in section 12.2 both do."
+      },
+      {
+       "text": "A loop always takes fewer lines of code than recursion, and fewer lines always run faster",
+       "feedback": "The book lists this as a lie: an iterative version may or may not take more lines than a recursive one. Line count isn't the reason anyway."
+      },
+      {
+       "text": "Each recursive call reruns all of the earlier calls again, so the total work grows with every step",
+       "feedback": "Earlier calls aren't repeated. They are paused, waiting to finish. The cost is in keeping track of them, not in redoing them."
+      }
+     ],
+     "hint": "What does the computer have to keep track of for a call that hasn't finished yet?",
+     "explanation": "Recursion and iteration can solve the same problem. Each recursive call adds overhead, because the computer must remember where each unfinished call should resume, so an iterative solution usually runs more quickly.",
+     "ref": "Ch. 12.1, reasons to choose each approach (p. 489)"
+    },
+    {
+     "id": "why-choose-recursion",
+     "concept": "Why programmers still choose recursion",
+     "level": "understand",
+     "stem": "If loops usually run faster, why does the book say programmers sometimes choose recursion anyway?",
+     "options": [
+      {
+       "text": "Once used to it, they can see a problem as smaller copies of itself and develop the logic faster",
+       "feedback": "The book's reason is development speed. Programmers who are used to recursion can see a big problem as repeated, smaller versions of itself.",
+       "correct": true
+      },
+      {
+       "text": "A recursive method uses less memory than a loop, since it doesn't need a loop control variable",
+       "feedback": "It's the other way round. Every pending call keeps its own parameters and return point, which uses more memory than one loop variable."
+      },
+      {
+       "text": "Only recursion can repeat statements inside a method that receives its data through parameters",
+       "feedback": "Loops work in any method. The `while` loop version of `messageMethod()` in Figure 12-5 takes the same parameter."
+      },
+      {
+       "text": "The compiler quietly turns recursive calls into loops, so choosing recursion costs nothing at run time",
+       "feedback": "Java's compiler doesn't do this. Every call really happens and carries its overhead, which is why the book weighs speed against development time."
+      }
+     ],
+     "hint": "The book weighs the program's speed against something else. Whose time does that something else save?",
+     "explanation": "The choice is a trade-off. Iteration usually runs faster, while recursion can be faster to *develop* for problems whose solution is a smaller copy of the same problem.",
+     "ref": "Ch. 12.1, reasons to choose each approach (p. 489)"
+    }
+   ]
+  },
+  {
+   "id": "12.2",
+   "title": "Using Recursion to Solve Mathematical Problems",
+   "subtitle": "Sums and factorials, base and recursive cases, and how pending calls finish in reverse order",
+   "source": "Ch. 12, section 12.2 (pp. 489–495)",
+   "intro": "Five plus four plus three plus two plus one: a sum is a small number plus a smaller sum. Six questions on tracing `sumNumbers()` and `factorial()` and on what keeps them from running forever.",
+   "takeaways": [
+    "Every recursive method needs a base case, which is solved without recursion, and every recursive case must move its argument toward that base case. If the argument can skip past it, the calls never stop.",
+    "A call that can't finish yet stays on the call stack as a reminder. The calls finish in reverse order (the last one called finishes first), and each passes its result back to the call that made it.",
+    "The base case's return value goes into every result above it, so it must be the right starting value: 0 for a sum, 1 for a product."
+   ],
+   "questions": [
+    {
+     "id": "trace-sum",
+     "concept": "Tracing a recursive sum",
+     "level": "apply",
+     "stem": "What does this code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static int sumNumbers(int x)\n{\n   if(x != 0)\n      return(x + sumNumbers(x - 1));\n   else\n      return(x);\n}\n\n// in main()\nint sum = sumNumbers(4);\nSystem.out.println(\"Sum is \" + sum);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static int sumNumbers(int x)\n    {\n       if(x != 0)\n          return(x + sumNumbers(x - 1));\n       else\n          return(x);\n    }\n    public static void main(String[] args)\n    {\n        int sum = sumNumbers(4);\n        System.out.println(\"Sum is \" + sum);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Sum is 10`",
+       "feedback": "Each call adds its `x` to the result of the call below it: 4 + 3 + 2 + 1 + 0. The total reaches `main()` only after every call has finished.",
+       "correct": true
+      },
+      {
+       "text": "`Sum is 4`",
+       "feedback": "The first call can't return 4 by itself: its `return` statement still needs the value of `sumNumbers(3)`, so it waits for that call to finish."
+      },
+      {
+       "text": "`Sum is 0`",
+       "feedback": "The base case returns 0 to the call that made it, `sumNumbers(1)`, not to `main()`. That call adds 1, and so on up the chain."
+      },
+      {
+       "text": "`Sum is 6`",
+       "feedback": "6 is 3 + 2 + 1, which leaves out the first call's own 4. Every call, including the first, adds its own `x`."
+      }
+     ],
+     "hint": "What can `return(4 + sumNumbers(3))` not do until `sumNumbers(3)` has finished?",
+     "explanation": "When a method calls itself in its `return` statement, it can't finish until the inner call returns. The results come back up the chain, and each call adds its own part on the way.",
+     "ref": "Ch. 12.2, Computing Sums, Figures 12-6 and 12-7 (pp. 490–491)"
+    },
+    {
+     "id": "trace-sum-with-prints",
+     "concept": "When statements run in a recursive method",
+     "level": "apply",
+     "stem": "This version of `sumNumbers()` displays `x` on its way in, like the book's `SumOfNumbers2`. What does the code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static int sumNumbers(int x)\n{\n   if(x != 0)\n   {\n      System.out.println(x);\n      return(x + sumNumbers(x - 1));\n   }\n   else\n   {\n      System.out.println(\"-------\");\n      return(x);\n   }\n}\n\n// in main()\nSystem.out.println(\"Sum is \" + sumNumbers(3));",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static int sumNumbers(int x)\n    {\n       if(x != 0)\n       {\n          System.out.println(x);\n          return(x + sumNumbers(x - 1));\n       }\n       else\n       {\n          System.out.println(\"-------\");\n          return(x);\n       }\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(\"Sum is \" + sumNumbers(3));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 2 1 ------- Sum is 6`",
+       "feedback": "Each call displays its `x` before calling itself, so the values appear as the calls go deeper. The dashes come from the base case. The sum is displayed last, after every call has returned.",
+       "correct": true
+      },
+      {
+       "text": "`1 2 3 ------- Sum is 6`",
+       "feedback": "This order would need `println(x)` to run after the recursive call returns. Here it runs before the call, so 3 comes first."
+      },
+      {
+       "text": "`3 2 1 0 ------- Sum is 6`",
+       "feedback": "When `x` is 0, the `else` branch runs: it displays the dashes instead of the number."
+      },
+      {
+       "text": "`3 ------- 2 ------- 1 ------- Sum is 6`",
+       "feedback": "Only the base case displays dashes, and the base case runs once, when `x` reaches 0."
+      }
+     ],
+     "hint": "Is `println(x)` before or after the recursive call? And which branch runs when `x` is 0?",
+     "explanation": "A statement placed before the recursive call runs as the calls go deeper. Adding output statements like these is a good way to see the order in which a recursive method runs.",
+     "ref": "Ch. 12.2, Figures 12-8 and 12-9 (p. 491)"
+    },
+    {
+     "id": "base-case-factorial",
+     "concept": "Base case versus recursive case",
+     "level": "understand",
+     "stem": "In this `factorial()` method, which part is the base case?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "private static int factorial(int x)\n{\n   if(x == 0)\n      return 1;\n   else\n      return(x * factorial(x - 1));\n}",
+      "verify": {
+       "expect": "compiles",
+       "program": "public class Demo\n{\n    private static int factorial(int x)\n    {\n       if(x == 0)\n          return 1;\n       else\n          return(x * factorial(x - 1));\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(factorial(3));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "When `x` is 0: it returns 1 and makes no recursive call",
+       "feedback": "The base case is the case that's solved without recursion. When `x` is 0, the method returns 1 straight away.",
+       "correct": true
+      },
+      {
+       "text": "When `x` is 1: it is the last value that gets multiplied",
+       "feedback": "The method has no test for 1. When `x` is 1 it still calls `factorial(0)`, so that is a recursive case."
+      },
+      {
+       "text": "The `else` branch: it is where the final answer is built",
+       "feedback": "The `else` branch makes the recursive call, so it handles the recursive cases. The base case is where no call is made."
+      },
+      {
+       "text": "When `x` is 0: it returns 0, because nothing is multiplied",
+       "feedback": "The test is right but the value isn't. The method returns 1, because 0! is defined as 1."
+      }
+     ],
+     "hint": "Which branch can produce an answer without calling `factorial()` again?",
+     "explanation": "The base case is the case in which the method can solve the problem without recursion. All the other cases are recursive cases. Most recursive methods have one base case, but some, like a Fibonacci method, have more than one.",
+     "ref": "Ch. 12.2, Computing Factorials (pp. 491–494)"
+    },
+    {
+     "id": "wrong-base-value",
+     "concept": "The base case value feeds every result",
+     "level": "analyze",
+     "stem": "A student changes the base case to return 0, reasoning that \"the factorial of nothing is nothing.\" What does this code display now?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "private static int factorial(int x)\n{\n   if(x == 0)\n      return 0;\n   else\n      return(x * factorial(x - 1));\n}\n\n// in main()\nSystem.out.println(factorial(4));",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    private static int factorial(int x)\n    {\n       if(x == 0)\n          return 0;\n       else\n          return(x * factorial(x - 1));\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(factorial(4));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`0`",
+       "feedback": "The base case's 0 goes back into `1 * factorial(0)`, which is 0. Then `2 * 0`, `3 * 0` and `4 * 0` are all 0 as well, so the 0 reaches every result.",
+       "correct": true
+      },
+      {
+       "text": "`24`",
+       "feedback": "That would be true only if the base case's value didn't matter. Every product in the chain starts from what the base case returns."
+      },
+      {
+       "text": "`6`",
+       "feedback": "This assumes the bad value removes only one step. But every call multiplies its `x` by the result below it, so the 0 affects all of them."
+      },
+      {
+       "text": "`1`",
+       "feedback": "Nothing in this version returns 1. The chain starts from the 0 that the base case returns."
+      }
+     ],
+     "hint": "Work upward: what does `1 * factorial(0)` produce now?",
+     "explanation": "The base case's return value is the starting point for every result above it. For a product it must be 1, the value that leaves a product unchanged. For a sum it is 0, as in `sumNumbers()`.",
+     "aside": "Even with the right base case, `int` runs out quickly. 12! (479,001,600) still fits, but 13! is 6,227,020,800, which is larger than the biggest `int`, so `factorial(13)` returns the wrong value 1,932,053,504 without any error. Changing the method to use `long` raises the limit only to 20!.",
+     "ref": "Ch. 12.2, Computing Factorials (pp. 491–494)"
+    },
+    {
+     "id": "base-case-never-reached",
+     "concept": "Recursive cases must move toward the base case",
+     "level": "analyze",
+     "stem": "What happens when this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static int sumNumbers(int x)\n{\n   if(x != 0)\n      return(x + sumNumbers(x - 1));\n   else\n      return(x);\n}\n\n// in main()\nSystem.out.println(sumNumbers(-3));",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "StackOverflowError"
+       ],
+       "program": "public class Demo\n{\n    public static int sumNumbers(int x)\n    {\n       if(x != 0)\n          return(x + sumNumbers(x - 1));\n       else\n          return(x);\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(sumNumbers(-3));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "It recurses on -4, -5, -6 and so on, never reaching 0, until the program fails",
+       "feedback": "Subtracting 1 from a negative number moves away from 0, so the `x != 0` test never fails. The calls pile up until Java runs out of stack space.",
+       "correct": true
+      },
+      {
+       "text": "It displays `-6`, the sum of -3, -2 and -1, then stops at 0",
+       "feedback": "That would require each call to move toward 0. But `x - 1` makes a negative number more negative."
+      },
+      {
+       "text": "It displays `-3`, because a negative argument skips the recursion",
+       "feedback": "The test is `x != 0`, not `x > 0`. A negative value isn't 0, so the method does recurse."
+      },
+      {
+       "text": "It displays `0`, because the base case handles any value that isn't positive",
+       "feedback": "The base case handles exactly one value, 0, and the argument has to reach it by subtracting 1 each time."
+      }
+     ],
+     "hint": "Starting from -3 and subtracting 1 each time, do you ever reach the value the `if` is testing for?",
+     "explanation": "Having a base case isn't enough: every recursive case must make the argument closer to it. If an argument can move away from the base case or skip past it, the recursion never ends.",
+     "ref": "Ch. 12.2, base and recursive cases (pp. 491, 494)"
+    },
+    {
+     "id": "finish-order",
+     "concept": "The call stack: last called, first finished",
+     "level": "understand",
+     "stem": "In the book's `FactorialDemo`, `main()` calls `factorial(4)`, which leads to calls with 3, 2, 1 and 0. Which call is the first to finish and return a value?",
+     "options": [
+      {
+       "text": "`factorial(0)`, the last one called",
+       "feedback": "It is the only call that can answer without waiting. Its 1 lets `factorial(1)` finish, then `factorial(2)`, and so on, as in Figure 12-12.",
+       "correct": true
+      },
+      {
+       "text": "`factorial(4)`, the first one called",
+       "feedback": "The first call finishes last. Its `return` statement needs `factorial(3)`, which needs `factorial(2)`, and so on all the way down."
+      },
+      {
+       "text": "`factorial(1)`, the last one that multiplies",
+       "feedback": "`factorial(1)` has to wait for `factorial(0)` before it can compute `1 * factorial(0)`."
+      },
+      {
+       "text": "None of them; all five return together when `main()` receives 24",
+       "feedback": "Each call returns separately, one after another. Every pending call waits on the call stack for the one it made."
+      }
+     ],
+     "hint": "Which call can produce its answer without waiting for any other call?",
+     "explanation": "When a call can't finish before calling itself again, a reminder to finish it goes on the call stack. The calls finish in the reverse of the order they were made, and each passes its result to the call that is waiting for it.",
+     "ref": "Ch. 12.2, Figure 12-12 (pp. 493–494)"
+    }
+   ]
+  },
+  {
+   "id": "12.3",
+   "title": "Using Recursion to Manipulate Strings",
+   "subtitle": "Splitting a phrase into words, reversing a string, removing dashes, and why each piece must get shorter",
+   "source": "Ch. 12, section 12.3 (pp. 495–499)",
+   "intro": "Users type phone numbers as `111-222-3333` or `1112223333`, and you want them stored the same way. Five questions on recursive methods that take a string apart one piece at a time.",
+   "takeaways": [
+    "A recursive string method passes a shorter `substring()` on each call, such as the part before a marker or the part after it, until a piece has no marker left. That piece is the base case.",
+    "When a method makes two recursive calls, the first call (and every call it leads to) finishes before the second one starts. The order of the calls decides the order of the output.",
+    "In `substring(space + 1)`, the `+ 1` skips the marker. Without it, the next piece still starts with the marker and is no shorter, so the same string can be passed forever."
+   ],
+   "questions": [
+    {
+     "id": "words-base-case",
+     "concept": "The base case of breakIntoWords()",
+     "level": "understand",
+     "stem": "In the book's `breakIntoWords()` method (shown below), `s.indexOf(' ')` returns -1. What does that tell the method, and what does it do next?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void breakIntoWords(String s)\n{\n   int space = s.indexOf(' ');\n   if(space == -1)\n   {\n      System.out.println(s);\n   }\n   else\n   {\n      breakIntoWords(s.substring(0, space));\n      breakIntoWords(s.substring(space + 1));\n   }\n}",
+      "verify": {
+       "expect": "compiles",
+       "program": "public class Demo\n{\n    public static void breakIntoWords(String s)\n    {\n       int space = s.indexOf(' ');\n       if(space == -1)\n       {\n          System.out.println(s);\n       }\n       else\n       {\n          breakIntoWords(s.substring(0, space));\n          breakIntoWords(s.substring(space + 1));\n       }\n    }\n    public static void main(String[] args)\n    {\n        breakIntoWords(\"a b\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "No space is left, so `s` is one word; it displays `s` and makes no more calls",
+       "feedback": "`indexOf()` returns -1 when the character isn't found. With no space, the whole string is a single word, so this is the base case.",
+       "correct": true
+      },
+      {
+       "text": "The space is the last character; it calls itself on the part before the space",
+       "feedback": "A space at the end would give a nonnegative position, not -1. The value -1 means there's no space at all."
+      },
+      {
+       "text": "The string is empty; it returns without displaying anything",
+       "feedback": "An empty string also gives -1, but the method doesn't test for emptiness. It displays `s` whatever it holds."
+      },
+      {
+       "text": "The search failed; Java throws an exception that the method must catch",
+       "feedback": "`indexOf()` doesn't throw an exception when it finds nothing. It returns -1, a normal value the method tests with `if`."
+      }
+     ],
+     "hint": "What does `indexOf()` return when it can't find the character?",
+     "explanation": "`indexOf()` returns the position of the first match, or -1 if there isn't one. A recursive string method often uses that -1 as its base case: once no marker is left, the piece can be handled directly.",
+     "ref": "Ch. 12.3, Using Recursion to Separate a Phrase into Words (pp. 495–496)"
+    },
+    {
+     "id": "count-word-calls",
+     "concept": "Counting calls in a method that recurses twice",
+     "level": "analyze",
+     "stem": "`main()` calls `breakIntoWords(\"red fox runs\")` using the book's method (shown below). How many times does `breakIntoWords()` execute in total, counting the call from `main()`?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void breakIntoWords(String s)\n{\n   int space = s.indexOf(' ');\n   if(space == -1)\n   {\n      System.out.println(s);\n   }\n   else\n   {\n      breakIntoWords(s.substring(0, space));\n      breakIntoWords(s.substring(space + 1));\n   }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "red fox runs 5",
+       "program": "public class Demo\n{\n    static int calls = 0;\n    public static void breakIntoWords(String s)\n    {\n       calls++;\n       int space = s.indexOf(' ');\n       if(space == -1)\n       {\n          System.out.println(s);\n       }\n       else\n       {\n          breakIntoWords(s.substring(0, space));\n          breakIntoWords(s.substring(space + 1));\n       }\n    }\n    public static void main(String[] args)\n    {\n        breakIntoWords(\"red fox runs\");\n        System.out.println(calls);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "5",
+       "feedback": "The calls are on \"red fox runs\", \"red\", \"fox runs\", \"fox\" and \"runs\". Every string with a space leads to two more calls, and every single word is the end of a chain.",
+       "correct": true
+      },
+      {
+       "text": "3",
+       "feedback": "Three is the number of words, so it counts only the calls that display something. The calls on \"red fox runs\" and \"fox runs\" split the string without displaying anything."
+      },
+      {
+       "text": "2",
+       "feedback": "The `else` branch makes two calls, but each of those calls can make two more calls of its own."
+      },
+      {
+       "text": "4",
+       "feedback": "This counts the calls the method makes to itself but leaves out the first one, from `main()`."
+      }
+     ],
+     "hint": "Write down each string the method receives. Which ones contain a space, and how many calls does each of those make?",
+     "explanation": "A method with two recursive calls forms a tree of calls: each string with a space splits into the part before the space and the part after it. Writing down each argument is the most reliable way to trace it.",
+     "ref": "Ch. 12.3, the \"Somewhere over the rainbow\" walkthrough (pp. 495–496)"
+    },
+    {
+     "id": "swapped-calls",
+     "concept": "The order of the recursive calls decides the output",
+     "level": "analyze",
+     "stem": "A student swaps the two recursive calls in `breakIntoWords()`. What does `breakIntoWords(\"red fox runs\")` display now?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void breakIntoWords(String s)\n{\n   int space = s.indexOf(' ');\n   if(space == -1)\n   {\n      System.out.println(s);\n   }\n   else\n   {\n      breakIntoWords(s.substring(space + 1));\n      breakIntoWords(s.substring(0, space));\n   }\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static void breakIntoWords(String s)\n    {\n       int space = s.indexOf(' ');\n       if(space == -1)\n       {\n          System.out.println(s);\n       }\n       else\n       {\n          breakIntoWords(s.substring(space + 1));\n          breakIntoWords(s.substring(0, space));\n       }\n    }\n    public static void main(String[] args)\n    {\n        breakIntoWords(\"red fox runs\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`runs fox red`",
+       "feedback": "The part after the first space, \"fox runs\", is handled completely before \"red\", and inside it \"runs\" comes before \"fox\". The words come out last to first.",
+       "correct": true
+      },
+      {
+       "text": "`red fox runs`",
+       "feedback": "This assumes the order of the calls doesn't matter. Each call finishes completely before the next statement runs, so swapping them changes what appears first."
+      },
+      {
+       "text": "`fox runs red`",
+       "feedback": "This applies the swap only once. The swapped order also applies inside the call on \"fox runs\", so \"runs\" appears before \"fox\"."
+      },
+      {
+       "text": "`runs red fox`",
+       "feedback": "\"red\" is handled last, after everything that comes from \"fox runs\". It can't appear in the middle."
+      }
+     ],
+     "hint": "The first statement in the `else` branch finishes completely, with every call it leads to, before the second one starts. What does the first call get?",
+     "explanation": "When a method makes two recursive calls in a row, everything that comes from the first call finishes before the second call begins. Changing the order of the calls changes the order in which the pieces are handled.",
+     "ref": "Ch. 12.3, Figure 12-14 (p. 495)"
+    },
+    {
+     "id": "trace-reverse",
+     "concept": "Reversing a string recursively",
+     "level": "apply",
+     "stem": "Using the book's `reverseString()` method, what does this code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void reverseString(String s)\n{\n   if(s.length() <= 1)\n      System.out.println(s);\n   else\n   {\n      System.out.print(s.charAt(s.length() - 1));\n      reverseString(s.substring(0, s.length() - 1));\n   }\n}\n\n// in main()\nreverseString(\"Java\");",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static void reverseString(String s)\n    {\n       if(s.length() <= 1)\n          System.out.println(s);\n       else\n       {\n          System.out.print(s.charAt(s.length() - 1));\n          reverseString(s.substring(0, s.length() - 1));\n       }\n    }\n    public static void main(String[] args)\n    {\n        reverseString(\"Java\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`avaJ`",
+       "feedback": "Each call displays the last character and passes everything except that character to the next call. When only `J` is left, the base case displays it.",
+       "correct": true
+      },
+      {
+       "text": "`ava`",
+       "feedback": "The base case doesn't end with nothing. When one character is left, it displays that character, here `J`."
+      },
+      {
+       "text": "`Java`",
+       "feedback": "Each character is displayed before the next call, so the last character appears first. Nothing is displayed as the calls return."
+      },
+      {
+       "text": "`a`",
+       "feedback": "Displaying one character doesn't end the method. Each call passes a shorter string to the next one, and that call displays its own last character."
+      }
+     ],
+     "hint": "Which character does each call display, and what does it pass to the next call?",
+     "explanation": "Reversing works by displaying the last character and then passing the string without it to the next call. Each call gets a shorter string, until a one-character base case is displayed by itself.",
+     "aside": "Java's `StringBuilder` has a `reverse()` method that does this in one call. It even handles characters that Java stores as two `char` values, such as many emoji, which reversing one `char` at a time would split apart.",
+     "ref": "Ch. 12.3, Figures 12-16 and 12-17 (pp. 496–497)"
+    },
+    {
+     "id": "dash-plus-one",
+     "concept": "Each recursive call must get a smaller piece",
+     "level": "analyze",
+     "stem": "In the book's `removeDashes()`, a student writes `s.substring(dashLoc)` instead of `s.substring(dashLoc + 1)`. What happens when the method is called with `\"111-2222\"`?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void removeDashes(String s)\n{\n   int dashLoc = s.indexOf('-');\n   if(dashLoc == -1)\n   {\n      System.out.print(s);\n   }\n   else\n   {\n      removeDashes(s.substring(0, dashLoc));\n      removeDashes(s.substring(dashLoc));\n   }\n}",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "StackOverflowError"
+       ],
+       "program": "public class Demo\n{\n    public static void removeDashes(String s)\n    {\n       int dashLoc = s.indexOf('-');\n       if(dashLoc == -1)\n       {\n          System.out.print(s);\n       }\n       else\n       {\n          removeDashes(s.substring(0, dashLoc));\n          removeDashes(s.substring(dashLoc));\n       }\n    }\n    public static void main(String[] args)\n    {\n        removeDashes(\"111-2222\");\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "The piece after the dash still starts with it, so `\"-2222\"` repeats until the program fails",
+       "feedback": "`substring(dashLoc)` includes the dash. The next call finds it at position 0, and its second call receives the same `\"-2222\"`, so the piece never gets shorter.",
+       "correct": true
+      },
+      {
+       "text": "It displays `111-2222` unchanged, because each dash stays at the front of the next piece",
+       "feedback": "The dash is never displayed: as long as a piece contains a dash, it isn't displayed. The piece that starts with the dash just keeps being passed again."
+      },
+      {
+       "text": "It displays `1112222`; the `+ 1` only skips a character that `indexOf()` has already removed",
+       "feedback": "`indexOf()` doesn't remove anything. It only reports where the dash is. The `+ 1` is what leaves the dash out of the next piece."
+      },
+      {
+       "text": "It displays `111` and then stops, because a piece that starts with a dash is skipped",
+       "feedback": "No code skips such a piece. A dash at position 0 makes `indexOf()` return 0, and the method recurses again."
+      }
+     ],
+     "hint": "What is the first character of `s.substring(dashLoc)`, and what will `indexOf('-')` return for that piece?",
+     "explanation": "Each recursive call has to work on a smaller problem than the one before. Skipping past the marker with `+ 1` is what makes each piece shorter. Without it, a call can get the same string it received, and the recursion never reaches the base case.",
+     "ref": "Ch. 12.3, You Do It: RemoveDashes (pp. 497–499)"
+    }
+   ]
+  },
+  {
+   "id": "12.4",
+   "title": "Using Recursion to Create Visual Patterns",
+   "subtitle": "Drawing a diagonal line, passing information to the next line, and what changes when output comes after the call",
+   "source": "Ch. 12, section 12.4 (pp. 499–500)",
+   "intro": "A diagonal of `O`s down the screen: each line is the previous line with one more space in front. Four questions on the `DiagonalOs` method. In these versions it prints a dot instead of a space, so you can count them.",
+   "takeaways": [
+    "A recursive method that draws a pattern passes forward what the next line needs (here, the amount of indentation) and counts down a separate parameter to the base case.",
+    "Statements before the recursive call run as the calls go deeper. Statements after it run as the calls return, so the output comes out in reverse order."
+   ],
+   "questions": [
+    {
+     "id": "trace-diagonal",
+     "concept": "Tracing the DiagonalOs method",
+     "level": "apply",
+     "stem": "This is the book's `display()` method from `DiagonalOs`, with one change: it prints `.` where the book prints a space. What does this code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void display(int spaces, int lines)\n{\n   if(lines == 0)\n      return;\n   else\n   {\n      spaces++;\n      for(int x = 0; x < spaces; ++x)\n         System.out.print(\".\");\n      System.out.println(\"O\");\n      display(spaces, lines - 1);\n   }\n}\n\n// in main()\ndisplay(0, 3);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static void display(int spaces, int lines)\n    {\n       if(lines == 0)\n          return;\n       else\n       {\n          spaces++;\n          for(int x = 0; x < spaces; ++x)\n             System.out.print(\".\");\n          System.out.println(\"O\");\n          display(spaces, lines - 1);\n       }\n    }\n    public static void main(String[] args)\n    {\n        display(0, 3);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`.O ..O ...O`",
+       "feedback": "`spaces` goes up by 1 before the loop, so the first line gets one dot. Each call passes its `spaces` on, so each line has one more dot than the one before.",
+       "correct": true
+      },
+      {
+       "text": "`O .O ..O`",
+       "feedback": "This assumes the first line uses `spaces` before it is increased. But `spaces++` runs before the `for` loop, so even the first line gets one dot."
+      },
+      {
+       "text": "`...O ..O .O`",
+       "feedback": "The line is displayed before the recursive call, so the first call's line, with the fewest dots, appears first."
+      },
+      {
+       "text": "`.O ..O ...O ....O`",
+       "feedback": "When `lines` reaches 0, the method returns at once without displaying anything. Three lines were asked for, and three appear."
+      }
+     ],
+     "hint": "Follow both arguments through each call. When is `spaces` increased compared with when the dots are displayed?",
+     "explanation": "Each call displays one line and then passes what it knows (the current indentation) to the next call, with one fewer line left to draw. The base case, `lines == 0`, just ends the method.",
+     "ref": "Ch. 12.4, Figures 12-19 and 12-20 (pp. 499–500)"
+    },
+    {
+     "id": "two-parameters",
+     "concept": "What each parameter does",
+     "level": "understand",
+     "stem": "The book's `display(int spaces, int lines)` method has two parameters. What does each one do in the recursion?",
+     "options": [
+      {
+       "text": "`lines` counts down to the base case; `spaces` carries each line's indentation to the next call",
+       "feedback": "Only `lines` is tested, and it gets smaller with every call. `spaces` grows by 1 each time, so each line builds on the one before it.",
+       "correct": true
+      },
+      {
+       "text": "`spaces` counts down to the base case; `lines` carries each line's indentation to the next call",
+       "feedback": "This reverses their jobs. The `if` tests `lines == 0`, and it is `spaces` that grows and sets the indentation."
+      },
+      {
+       "text": "Both count down together, one per call, and the method stops when either of them reaches 0",
+       "feedback": "`spaces` goes *up* with every call, and only `lines` is tested. Neither parameter does both jobs."
+      },
+      {
+       "text": "`spaces` stops the recursion: the method ends once `spaces` becomes equal to `lines`",
+       "feedback": "The two parameters are never compared. The stopping test uses only `lines`."
+      }
+     ],
+     "hint": "Which parameter does the `if` statement test, and which one changes the output?",
+     "explanation": "In a pattern like this, one parameter controls when the recursion stops and the other carries information from one line to the next. That is how each line uses what the previous line knew.",
+     "aside": "The book mentions fractals, pictures made of copies of themselves. One famous example is the Koch snowflake: every straight side is replaced by four sides one-third as long, again and again. Its outline grows without limit, but the area it encloses stays finite.",
+     "ref": "Ch. 12.4, Using Recursion to Create Visual Patterns (pp. 499–500)"
+    },
+    {
+     "id": "print-after-call",
+     "concept": "Statements after the recursive call run in reverse order",
+     "level": "analyze",
+     "stem": "A student moves the recursive call above the loop. What does `display(0, 3)` display now?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void display(int spaces, int lines)\n{\n   if(lines == 0)\n      return;\n   else\n   {\n      spaces++;\n      display(spaces, lines - 1);\n      for(int x = 0; x < spaces; ++x)\n         System.out.print(\".\");\n      System.out.println(\"O\");\n   }\n}",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static void display(int spaces, int lines)\n    {\n       if(lines == 0)\n          return;\n       else\n       {\n          spaces++;\n          display(spaces, lines - 1);\n          for(int x = 0; x < spaces; ++x)\n             System.out.print(\".\");\n          System.out.println(\"O\");\n       }\n    }\n    public static void main(String[] args)\n    {\n        display(0, 3);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`...O ..O .O`",
+       "feedback": "Every call now starts the next call before displaying its own line. The deepest call, with three dots, displays first, and the first call displays last.",
+       "correct": true
+      },
+      {
+       "text": "`.O ..O ...O`",
+       "feedback": "This assumes that moving the call changes nothing. Each call's line now appears only after every call below it has finished."
+      },
+      {
+       "text": "`...O ...O ...O`",
+       "feedback": "Each call has its own copy of `spaces`. The deeper calls increase their own copies, not the copy in the call that made them."
+      },
+      {
+       "text": "`O .O ..O`",
+       "feedback": "`spaces++` still runs before the call, so each call's own value is 1, 2 or 3. None of them is 0."
+      }
+     ],
+     "hint": "Which call reaches its loop first, now that every call starts the next call before its loop?",
+     "explanation": "Statements after a recursive call wait until the calls below it have finished, so they run in reverse order. Moving output to before or after the call is a simple way to reverse what a recursive method displays.",
+     "ref": "Ch. 12.4, Figure 12-19 (p. 499)"
+    },
+    {
+     "id": "choose-arguments",
+     "concept": "Choosing arguments for a recursive call",
+     "level": "apply",
+     "stem": "Using the dot version of `display()` below, you want 6 lines, with 3 dots before the first `O`. Which call from `main()` produces that?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void display(int spaces, int lines)\n{\n   if(lines == 0)\n      return;\n   else\n   {\n      spaces++;\n      for(int x = 0; x < spaces; ++x)\n         System.out.print(\".\");\n      System.out.println(\"O\");\n      display(spaces, lines - 1);\n   }\n}",
+      "verify": {
+       "expect": "output",
+       "output": "...O ....O .....O ......O .......O ........O",
+       "program": "public class Demo\n{\n    public static void display(int spaces, int lines)\n    {\n       if(lines == 0)\n          return;\n       else\n       {\n          spaces++;\n          for(int x = 0; x < spaces; ++x)\n             System.out.print(\".\");\n          System.out.println(\"O\");\n          display(spaces, lines - 1);\n       }\n    }\n    public static void main(String[] args)\n    {\n        display(2, 6);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`display(2, 6)`",
+       "feedback": "`spaces` goes up by 1 before the first line is displayed, so starting from 2 gives 3 dots. The second argument is the number of lines.",
+       "correct": true
+      },
+      {
+       "text": "`display(3, 6)`",
+       "feedback": "This forgets that `spaces++` runs before the dots are displayed. Starting from 3, the first line would have 4 dots."
+      },
+      {
+       "text": "`display(6, 3)`",
+       "feedback": "This swaps the arguments: the first one sets the indentation and the second one sets the number of lines."
+      },
+      {
+       "text": "`display(3, 5)`",
+       "feedback": "`lines` counts the lines that are displayed, and the call with 0 displays nothing. Six lines need 6."
+      }
+     ],
+     "hint": "What happens to `spaces` before the first dot is displayed?",
+     "explanation": "To choose the arguments for a recursive method, trace the first call: what changes before its output appears, and which argument the base case tests. That tells you which starting values produce the output you want.",
+     "ref": "Ch. 12.4, explanation of Figure 12-19 (pp. 499–500)"
+    }
+   ]
+  },
+  {
+   "id": "12.5",
+   "title": "Recursion's Relationship to Iterative Programming",
+   "subtitle": "The same calculation written recursively and with a loop, indirect recursion, and choosing between the two",
+   "source": "Ch. 12, section 12.5 (pp. 500–503)",
+   "intro": "You save $1,000 a year at 10 percent interest. Each year's balance depends on the year before, so the calculation can be written recursively or with a loop. Five questions on how the two versions relate.",
+   "takeaways": [
+    "Any repetition can be written recursively or iteratively. The base case corresponds to the loop's exit condition, the smaller argument to the update, and each recursive step to one pass through the loop.",
+    "A base case can return a value that was built up along the way: `computeSavings()` returns `total`, which holds every year's deposits and interest, not 0.",
+    "Indirect (mutual) recursion is still recursion: a method that leads back to itself through another method needs a base case just as much."
+   ],
+   "questions": [
+    {
+     "id": "trace-savings",
+     "concept": "Tracing a recursive accumulation",
+     "level": "apply",
+     "stem": "What does this code display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static double computeSavings(double amt, int years,\n   double rate, double total)\n{\n   if(years == 0)\n      return total;\n   else\n   {\n      total = total + (total * rate) + amt;\n      return computeSavings(amt, years - 1, rate, total);\n   }\n}\n\n// in main()\ndouble value = computeSavings(1000, 3, 0.10, 0);\nSystem.out.println(\"Future value is \" + value);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static double computeSavings(double amt, int years,\n       double rate, double total)\n    {\n       if(years == 0)\n          return total;\n       else\n       {\n          total = total + (total * rate) + amt;\n          return computeSavings(amt, years - 1, rate, total);\n       }\n    }\n    public static void main(String[] args)\n    {\n        double value = computeSavings(1000, 3, 0.10, 0);\n        System.out.println(\"Future value is \" + value);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`Future value is 3310.0`",
+       "feedback": "Year 1: 0 + 0 + 1000 = 1000. Year 2: 1000 + 100 + 1000 = 2100. Year 3: 2100 + 210 + 1000 = 3310. The base case then returns that total.",
+       "correct": true
+      },
+      {
+       "text": "`Future value is 3000.0`",
+       "feedback": "This adds the deposits but leaves out the interest. From the second year on, `total * rate` adds interest on the balance so far."
+      },
+      {
+       "text": "`Future value is 3641.0`",
+       "feedback": "This also pays interest on the deposit made in the current year. The formula pays interest on the balance before the new `amt` is added."
+      },
+      {
+       "text": "`Future value is 0.0`",
+       "feedback": "The base case returns `total`, and by then `total` holds three years of savings. It returns 0 only if the method is first called with 0 years and a total of 0."
+      }
+     ],
+     "hint": "Use `total = total + (total * rate) + amt` once for each year, starting with a total of 0.",
+     "explanation": "This recursive method passes its running total to the next call, and the base case returns the finished total. Each call does one year's work, just as one pass through a loop would.",
+     "ref": "Ch. 12.5, Figures 12-21 to 12-23 (pp. 500–502)"
+    },
+    {
+     "id": "loop-base-case",
+     "concept": "Matching the recursive and iterative versions",
+     "level": "understand",
+     "stem": "This is the book's iterative `computeSavings()`, which produces the same results as the recursive version. Which part of it does the same job as the recursive version's base case?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static double computeSavings\n   (double amt, int years, double rate, double total)\n{\n   while(years != 0)\n   {\n      total = total + (total * rate) + amt;\n      --years;\n   }\n   return total;\n}",
+      "verify": {
+       "expect": "compiles",
+       "program": "public class Demo\n{\n    public static double computeSavings\n       (double amt, int years, double rate, double total)\n    {\n       while(years != 0)\n       {\n          total = total + (total * rate) + amt;\n          --years;\n       }\n       return total;\n    }\n    public static void main(String[] args)\n    {\n        System.out.println(computeSavings(1000, 3, 0.10, 0));\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "The `while` test failing when `years` reaches 0, after which it returns `total`",
+       "feedback": "The recursive version stops calling itself when `years == 0` and returns `total`. The loop stops repeating at the same point and returns the same thing.",
+       "correct": true
+      },
+      {
+       "text": "The `--years;` statement, which makes the remaining problem one year smaller",
+       "feedback": "That does the job of `years - 1` in the recursive call: it moves toward the stopping point. The stopping point itself is the test."
+      },
+      {
+       "text": "The first pass through the loop, when `total` is still its starting value",
+       "feedback": "The first pass does what the first call did, a recursive case. The base case is the point where the work stops."
+      },
+      {
+       "text": "Nothing: a loop runs a fixed number of times, so it doesn't need a stopping point",
+       "feedback": "The `while` loop stops only because its condition becomes false. That condition is its stopping point."
+      }
+     ],
+     "hint": "In the recursive version, what does the base case test, and what does it return?",
+     "explanation": "The two versions correspond part for part. The base case becomes the loop's exit condition, the smaller argument becomes the update, and each recursive call becomes one pass through the loop. Both stop when `years` reaches 0 and return `total`.",
+     "ref": "Ch. 12.5, Figure 12-24 and the list of similarities (pp. 502–503)"
+    },
+    {
+     "id": "indirect-recursion",
+     "concept": "Indirect recursion",
+     "level": "apply",
+     "stem": "Neither method calls itself directly. What does `ping(3)` display?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "public static void ping(int n)\n{\n   if(n > 0)\n   {\n      System.out.print(\"ping \");\n      pong(n - 1);\n   }\n}\npublic static void pong(int n)\n{\n   if(n > 0)\n   {\n      System.out.print(\"pong \");\n      ping(n - 1);\n   }\n}\n\n// in main()\nping(3);",
+      "verify": {
+       "expect": "output",
+       "program": "public class Demo\n{\n    public static void ping(int n)\n    {\n       if(n > 0)\n       {\n          System.out.print(\"ping \");\n          pong(n - 1);\n       }\n    }\n    public static void pong(int n)\n    {\n       if(n > 0)\n       {\n          System.out.print(\"pong \");\n          ping(n - 1);\n       }\n    }\n    public static void main(String[] args)\n    {\n        ping(3);\n    }\n}"
+      }
+     },
+     "options": [
+      {
+       "text": "`ping pong ping`",
+       "feedback": "`ping(3)` calls `pong(2)`, which calls `ping(1)`, which calls `pong(0)`. The last call fails its test. Each method leads back to the other, which is indirect recursion.",
+       "correct": true
+      },
+      {
+       "text": "`ping pong ping pong`",
+       "feedback": "This counts one call too many. `pong(0)` is called, but `0 > 0` is false, so it displays nothing."
+      },
+      {
+       "text": "`ping`",
+       "feedback": "Although `ping()` never calls itself, it calls `pong()`, which calls `ping()` again. That chain is still recursion."
+      },
+      {
+       "text": "`ping pong ping pong ping pong`",
+       "feedback": "Each call displays one word, not a pair, and `n` goes down by 1 with every call in either method."
+      }
+     ],
+     "hint": "Write down each call with its argument: `ping(3)`, then...?",
+     "explanation": "Indirect recursion, also called mutual recursion, happens when a method calls another method that eventually calls the original method again. The same rules apply: something must move toward a base case, or the calls never end.",
+     "ref": "Ch. 12.5, Note on indirect recursion (p. 503)"
+    },
+    {
+     "id": "lines-of-code-claim",
+     "concept": "Neither approach is always shorter",
+     "level": "evaluate",
+     "stem": "A classmate says: \"Recursive solutions are always shorter, so iteration is just the beginner's version.\" Which response does the reading support?",
+     "options": [
+      {
+       "text": "Either can take more lines; both can give the same results, and each suits some problems better",
+       "feedback": "The book lists \"iterative programs always require more lines\" as the lie. The two approaches can produce identical output, and which is more natural depends on the problem.",
+       "correct": true
+      },
+      {
+       "text": "Agreed: a loop needs its own counter and an update statement, so it always takes more lines",
+       "feedback": "A recursive method also needs a test and an argument that changes. The `computeSavings()` versions in Figures 12-21 and 12-24 are about the same length."
+      },
+      {
+       "text": "The reverse is true: recursion always takes more lines, because it needs a base case as well",
+       "feedback": "A loop needs an exit condition too, which does the same job. Neither approach is always longer."
+      },
+      {
+       "text": "Agreed, but only for math problems; problems that work with strings always need a loop",
+       "feedback": "Section 12.3 solves string problems recursively, and section 12.2 shows math problems that a loop can solve too."
+      }
+     ],
+     "hint": "Look for the word \"always\" in the claim. Does the reading back it up?",
+     "explanation": "Recursive and iterative methods can produce identical results, and either one may need more lines. Some problems feel more natural recursively and others iteratively, and some workplaces prefer one style.",
+     "ref": "Ch. 12.5, Two Truths & a Lie (p. 503)"
+    },
+    {
+     "id": "choose-iteration",
+     "concept": "Choosing between recursion and iteration",
+     "level": "evaluate",
+     "stem": "`computeSavings()` will run millions of times in a live dashboard where speed is critical. A teammate wants the recursive version because it reads more like the problem. What does the reading recommend?",
+     "options": [
+      {
+       "text": "Use the loop: same results, without the overhead of remembering every pending call",
+       "feedback": "Both versions return the same values, and the book's advice is to avoid recursion when speed is critical, because each call adds overhead.",
+       "correct": true
+      },
+      {
+       "text": "Use recursion: Java saves each call's result, so it gets faster after the first run",
+       "feedback": "Java doesn't save results between calls. Every call to `computeSavings()` does all of its recursive calls again."
+      },
+      {
+       "text": "Either one is fine: the compiler turns both versions into exactly the same instructions",
+       "feedback": "The two versions run differently. The recursive one really makes a method call for every year, and the loop doesn't."
+      },
+      {
+       "text": "Use recursion: the loop works out the whole total again from the start in every year",
+       "feedback": "The loop keeps `total` from one pass to the next and updates it once per year, exactly as each recursive call does."
+      }
+     ],
+     "hint": "What does the \"Don't Do It\" list say about recursion when speed is critical?",
+     "explanation": "When the two versions produce the same results, choose based on what matters most. If speed is critical, the iterative approach usually wins because it avoids the overhead of method calls. Otherwise, choose the one that is clearer for the problem.",
+     "aside": "`computeSavings()` is *tail recursive*: its recursive call is the last thing it does. Some languages, such as Scheme, are required to run calls like this as efficiently as a loop. The Java virtual machine doesn't do that, so a very deep tail-recursive Java method can still run out of stack space.",
+     "ref": "Ch. 12.5 and Don't Do It (pp. 502–503)"
+    }
+   ]
+  }
+ ]
+}
