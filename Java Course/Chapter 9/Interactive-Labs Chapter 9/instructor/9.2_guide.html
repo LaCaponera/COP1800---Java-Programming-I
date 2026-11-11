@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The VIP who was sent to the general line</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.2</div>
+  <h1>The VIP who was sent to the general line</h1>
+<h2>Objectives</h2><ul><li>Use <code>extends</code> so a subclass receives its parent&#x27;s fields and methods</li><li>Put a field and its methods in the most specific class that needs them</li><li>Use <code>instanceof</code> to test whether an object is a member of a class</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>Ticket</code> has no vouchers at all. <code>VipTicket</code> declares <code>private int vouchers</code> and the methods <code>getVouchers()</code>, <code>setVouchers(int)</code> and <code>useVoucher()</code>.</li><li><strong>R2</strong> <code>Gate.laneFor()</code> sends a ticket to the VIP lane when it is a <code>VipTicket</code> (use <code>instanceof</code>), whatever its voucher count.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, a general ticket for seat F12 calls <code>getVouchers()</code>. What does it return, and does that number mean anything?</p><div class="answer"><p>It returns 0. The number means nothing, because general tickets never come with vouchers; the field shouldn&#x27;t exist for them.</p></div></li><li><p>The starter&#x27;s <code>laneFor()</code> tests <code>t.getVouchers() &gt; 0</code>. Describe a VIP ticket for which this test gives the wrong lane.</p><div class="answer"><p>A VIP ticket whose vouchers have all been used (count 0), or one that was sold without vouchers. The test says General lane even though it is a VIP ticket.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Ticket.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Ticket</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">seat</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): only VIP tickets come with drink vouchers.</span>
+<span class="t-w">    </span><span class="t-c1">// Move this field and its three methods to VipTicket.</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">vouchers</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getSeat</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">seat</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getPrice</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setSeat</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">seatCode</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">seat</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">seatCode</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setPrice</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getVouchers</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">vouchers</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setVouchers</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">vouchers</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">useVoucher</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">vouchers</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">--</span><span class="t-n">vouchers</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">VipTicket.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">VipTicket</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Ticket</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): the voucher field and its three methods belong here.</span>
+<span class="t-p">}</span></code></pre><div class="file">Gate.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Gate</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Sends each ticket holder to the right entrance lane.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">laneFor</span><span class="t-p">(</span><span class="t-n">Ticket</span><span class="t-w"> </span><span class="t-n">t</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): a VIP who has used every voucher is still a VIP.</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">.</span><span class="t-na">getVouchers</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"VIP lane"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"General lane"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Ticket.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Ticket</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">seat</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getSeat</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">seat</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getPrice</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setSeat</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">seatCode</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">seat</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">seatCode</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setPrice</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">VipTicket.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">VipTicket</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Ticket</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">vouchers</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getVouchers</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">vouchers</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setVouchers</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">vouchers</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">useVoucher</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">vouchers</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">--</span><span class="t-n">vouchers</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Gate.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Gate</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Sends each ticket holder to the right entrance lane.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">laneFor</span><span class="t-p">(</span><span class="t-n">Ticket</span><span class="t-w"> </span><span class="t-n">t</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">t</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">VipTicket</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"VIP lane"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"General lane"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>VipTicket extends Ticket</code>, so it already has a seat, a price and their get and set methods; it only adds what is particular to it, as <code>DinnerParty</code> adds <code>dinnerChoice</code> to <code>Party</code> (pp. 335–336). Inheritance is one-way: a parent can&#x27;t use its child&#x27;s members, and it shouldn&#x27;t carry fields that only some children need (p. 333). <code>instanceof</code> is true when the object on the left is a member or descendant of the class on the right (p. 333), so <code>t instanceof VipTicket</code> is true for every VIP ticket, used vouchers or not. Once <code>Ticket</code> has no <code>getVouchers()</code>, the starter&#x27;s <code>laneFor()</code> no longer compiles, which forces the change. Passing a <code>VipTicket</code> to a <code>Ticket</code> parameter works because every VipTicket is a Ticket; section 9.9 explains this in detail.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestGate.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestGate</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Ticket</span><span class="t-w"> </span><span class="t-n">general</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Ticket</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">general</span><span class="t-p">.</span><span class="t-na">setSeat</span><span class="t-p">(</span><span class="t-s">"F12"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">general</span><span class="t-p">.</span><span class="t-na">setPrice</span><span class="t-p">(</span><span class="t-mf">45.0</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">VipTicket</span><span class="t-w"> </span><span class="t-n">vip</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">VipTicket</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">setSeat</span><span class="t-p">(</span><span class="t-s">"A3"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">setPrice</span><span class="t-p">(</span><span class="t-mf">180.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">setVouchers</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">useVoucher</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">useVoucher</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">useVoucher</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">general</span><span class="t-p">.</span><span class="t-na">getSeat</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">general</span><span class="t-p">.</span><span class="t-na">getPrice</span><span class="t-p">()</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Gate</span><span class="t-p">.</span><span class="t-na">laneFor</span><span class="t-p">(</span><span class="t-n">general</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Seat "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">getSeat</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">getPrice</span><span class="t-p">()</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", vouchers left "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">vip</span><span class="t-p">.</span><span class="t-na">getVouchers</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Gate</span><span class="t-p">.</span><span class="t-na">laneFor</span><span class="t-p">(</span><span class="t-n">vip</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"A VipTicket is a Ticket: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">vip</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Ticket</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"A Ticket is a VipTicket: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">general</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">VipTicket</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Seat F12, $45.0: General lane
+Seat A3, $180.0, vouchers left 0: VIP lane
+A VipTicket is a Ticket: true
+A Ticket is a VipTicket: false
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Ticket knows nothing about vouchers<div class="small">whole file of <code>Ticket.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+Ticket\b</code></div><div><span class="tag">forbid</span> <code>[Vv]oucher</code></div></td></tr><tr><td>C2</td><td>R1</td><td>VipTicket holds the vouchers<div class="small">whole file of <code>VipTicket.java</code></div></td><td><div><span class="tag">require</span> <code>\bprivate\s+int\s+vouchers\s*;</code></div><div><span class="tag">forbid</span> <code>\b(?:seat|price)\b</code></div></td></tr><tr><td>C3</td><td>R1</td><td>VipTicket has the three voucher methods<div class="small">whole file of <code>VipTicket.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bint\s+getVouchers\s*\(\s*\))(?=[\s\S]*\bvoid\s+setVouchers\s*\(\s*int\s+\w+\s*\))(?=[\s\S]*\bvoid\s+useVoucher\s*\(\s*\))</code></div></td></tr><tr><td>C4</td><td>R2</td><td>The gate checks the kind of ticket<div class="small">in <code>Gate.laneFor</code> of <code>Gate.java</code></div></td><td><div><span class="tag">require</span> <code>\b\w+\s+instanceof\s+VipTicket\b</code></div><div><span class="tag">forbid</span> <code>\bgetVouchers\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Ticket knows nothing about vouchers</dt><dd><p>Remove the <code>vouchers</code> field and <code>getVouchers()</code>, <code>setVouchers()</code> and <code>useVoucher()</code> from Ticket. A general ticket has no vouchers, and a parent class shouldn&#x27;t hold what only one child needs.</p></dd><dt>C2 · VipTicket holds the vouchers</dt><dd><p>Declare <code>private int vouchers;</code> in VipTicket. Don&#x27;t redeclare the seat or the price: VipTicket inherits them from Ticket.</p></dd><dt>C3 · VipTicket has the three voucher methods</dt><dd><p>Move <code>getVouchers()</code>, <code>setVouchers(int)</code> and <code>useVoucher()</code> into VipTicket, with the same headers they had in Ticket.</p></dd><dt>C4 · The gate checks the kind of ticket</dt><dd><p>Test <code>t instanceof VipTicket</code>. Being a VIP depends on the kind of ticket, not on how many vouchers are left.</p><div class='small'><strong>Hint:</strong></div><p>instanceof is written in lowercase, with the object on the left and the class on the right.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Cut the field and its three methods from Ticket and paste them into VipTicket. Nothing else in Ticket changes.</p></li><li><p>After the move, <code>t.getVouchers()</code> no longer compiles in Gate: a plain Ticket has no such method. That&#x27;s the line to replace.</p></li><li><p>The condition you need is an <code>instanceof</code> expression with <code>t</code> on the left and the VIP class on the right.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is <code>instanceof VipTicket</code> a better test than counting vouchers? Use seat A3 in your answer.</p><div class="answer"><p>Seat A3 is a VIP ticket whatever happens to its vouchers. instanceof asks what the object is, which never changes; the voucher count changes as the guest uses vouchers, so it can&#x27;t identify a VIP.</p></div></li><li><p><code>vip instanceof Ticket</code> is true but <code>general instanceof VipTicket</code> is false. Explain why in terms of “is a”.</p><div class="answer"><p>Every VipTicket is a Ticket because it extends Ticket, but a plain Ticket is not a VipTicket. Inheritance goes one way, from parent to child.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>StudentTicket</code> subclass with a <code>schoolId</code> field. Without touching <code>Gate</code>, which lane does a student go to? Then add a third lane for students and decide where in <code>laneFor()</code> its <code>instanceof</code> test must go.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; each member lives in the most specific class that needs it.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

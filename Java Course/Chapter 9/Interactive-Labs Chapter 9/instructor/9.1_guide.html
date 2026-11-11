@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The audiobook that never got the label fix</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.1</div>
+  <h1>The audiobook that never got the label fix</h1>
+<h2>Objectives</h2><ul><li>Use the “is a” test to decide which class should inherit from which</li><li>Tell inheritance (is-a) apart from containment (has-a)</li><li>Explain how reusing a tested parent class reduces errors</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>AudioBook</code> inherits from <code>Book</code> and declares only what is new: the <code>narrator</code> field and its two methods.</li><li><strong>R2</strong> <code>Library</code> does not inherit from <code>Book</code>. It keeps the branch name in its own <code>private String</code> field, and still <em>has</em> books in its <code>Book[] shelf</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Say each pair in an “is a” sentence: AudioBook/Book and Library/Book. Which sentence is true?</p><div class="answer"><p>“An AudioBook is a Book” is true. “A Library is a Book” is false; a library has books.</p></div></li><li><p>With the starter, what would <code>branch.getLabel()</code> return for the Eastside Branch library, and why does the compiler allow the call at all?</p><div class="answer"><p>It would return “Eastside Branch by null”. Library extends Book, so it inherits getLabel() and the author field, even though a library has no author.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Book.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Book</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">author</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getTitle</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getAuthor</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">author</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setTitle</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">bookTitle</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">title</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bookTitle</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setAuthor</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">bookAuthor</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">author</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bookAuthor</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// The catalog label, fixed last month: "Title by Author".</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getLabel</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" by "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">author</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">AudioBook.java</div><pre class="code-block"><code><span class="t-c1">// Copied from Book.java last year, then the narrator was added.</span>
+<span class="t-c1">// TODO (R1): an audiobook IS A book. Make AudioBook inherit from Book</span>
+<span class="t-c1">// and keep only what is new in this class.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">AudioBook</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">author</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">narrator</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getTitle</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getAuthor</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">author</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setTitle</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">bookTitle</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">title</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bookTitle</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setAuthor</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">bookAuthor</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">author</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bookAuthor</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Still the old label format: Book's version was fixed, this copy wasn't.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getLabel</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">title</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" - "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">author</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getNarrator</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">narrator</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setNarrator</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">narrator</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Library.java</div><pre class="code-block"><code><span class="t-c1">// TODO (R2): a library HAS books; it is not a book.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Library</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Book</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">shelf</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-o">[</span><span class="t-mi">50</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Library</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">branchName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Borrows Book's title field to hold the branch name.</span>
+<span class="t-w">        </span><span class="t-n">setTitle</span><span class="t-p">(</span><span class="t-n">branchName</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">getTitle</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">addBook</span><span class="t-p">(</span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">shelf</span><span class="t-o">[</span><span class="t-n">count</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getCount</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-nf">getBook</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">index</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">shelf</span><span class="t-o">[</span><span class="t-n">index</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">AudioBook.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">AudioBook</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Book</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">narrator</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getNarrator</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">narrator</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setNarrator</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">narrator</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">reader</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Library.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Library</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">shelf</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-o">[</span><span class="t-mi">50</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Library</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">branchName</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">branchName</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">addBook</span><span class="t-p">(</span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">shelf</span><span class="t-o">[</span><span class="t-n">count</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getCount</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-nf">getBook</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">index</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">shelf</span><span class="t-o">[</span><span class="t-n">index</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>An audiobook passes the “is a” test (an AudioBook is a Book, not the other way around), so <code>AudioBook</code> inherits every field and method of <code>Book</code> and only adds the narrator (pp. 330–331). Deleting the copy also deletes the stale <code>getLabel()</code>: the inherited version is the one that was fixed and tested, which is the “reduce errors” benefit on p. 330. A library fails the “is a” test (a library is not a book); it <em>has</em> books, which is containment (aggregation, because the books would still exist if the branch closed; p. 331). The <code>extends</code> keyword is explained in section 9.2; here it is enough to know it is how Java writes “inherits from”.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestLibrary.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestLibrary</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Book</span><span class="t-w"> </span><span class="t-n">paper</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Book</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">paper</span><span class="t-p">.</span><span class="t-na">setTitle</span><span class="t-p">(</span><span class="t-s">"Parable of the Sower"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">paper</span><span class="t-p">.</span><span class="t-na">setAuthor</span><span class="t-p">(</span><span class="t-s">"Octavia E. Butler"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">AudioBook</span><span class="t-w"> </span><span class="t-n">audio</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">AudioBook</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">audio</span><span class="t-p">.</span><span class="t-na">setTitle</span><span class="t-p">(</span><span class="t-s">"Kindred"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">audio</span><span class="t-p">.</span><span class="t-na">setAuthor</span><span class="t-p">(</span><span class="t-s">"Octavia E. Butler"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">audio</span><span class="t-p">.</span><span class="t-na">setNarrator</span><span class="t-p">(</span><span class="t-s">"Lena Okoro"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Library</span><span class="t-w"> </span><span class="t-n">branch</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Library</span><span class="t-p">(</span><span class="t-s">"Eastside Branch"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">branch</span><span class="t-p">.</span><span class="t-na">addBook</span><span class="t-p">(</span><span class="t-n">paper</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">branch</span><span class="t-p">.</span><span class="t-na">addBook</span><span class="t-p">(</span><span class="t-n">audio</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">paper</span><span class="t-p">.</span><span class="t-na">getLabel</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">audio</span><span class="t-p">.</span><span class="t-na">getLabel</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", narrated by "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">audio</span><span class="t-p">.</span><span class="t-na">getNarrator</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">branch</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" holds "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">branch</span><span class="t-p">.</span><span class="t-na">getCount</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" items"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Item 2 on the shelf: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">branch</span><span class="t-p">.</span><span class="t-na">getBook</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">).</span><span class="t-na">getLabel</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Parable of the Sower by Octavia E. Butler
+Kindred by Octavia E. Butler, narrated by Lena Okoro
+Eastside Branch holds 2 items
+Item 2 on the shelf: Kindred by Octavia E. Butler
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>AudioBook inherits from Book<div class="small">whole file of <code>AudioBook.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+AudioBook\s+extends\s+Book\b</code></div></td></tr><tr><td>C2</td><td>R1</td><td>AudioBook keeps only what is new<div class="small">whole file of <code>AudioBook.java</code></div></td><td><div><span class="tag">require</span> <code>\bprivate\s+String\s+narrator\s*;</code></div><div><span class="tag">forbid</span> <code>\bString\s+(?:title|author)\s*;|\b(?:get|set)(?:Title|Author)\s*\([^)]*\)\s*\{|\bgetLabel\s*\(\s*\)\s*\{</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Library is not a Book<div class="small">whole file of <code>Library.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+Library\b</code></div><div><span class="tag">forbid</span> <code>\bextends\s+Book\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>Library stores its own name<div class="small">in <code>Library</code> of <code>Library.java</code></div></td><td><div><span class="tag">require</span> <code>\bprivate\s+String\s+\w+\s*;</code></div></td></tr><tr><td>C5</td><td>R2</td><td>getName() returns that field<div class="small">in <code>Library.getName</code> of <code>Library.java</code></div></td><td><div><span class="tag">require</span> <code>\breturn\s+(?:this\s*\.\s*)?\w+\s*;</code></div><div><span class="tag">forbid</span> <code>\bgetTitle\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · AudioBook inherits from Book</dt><dd><p>Write the header as <code>public class AudioBook extends Book</code>: an audiobook is a book, so it should receive Book&#x27;s fields and methods instead of copying them.</p><div class='small'><strong>Hint:</strong></div><p>Which keyword in the Library header already says “inherits from”?</p></dd><dt>C2 · AudioBook keeps only what is new</dt><dd><p>Delete the copied <code>title</code> and <code>author</code> fields, their get and set methods, and the old <code>getLabel()</code>. Keep <code>narrator</code> and its two methods. The inherited versions are the tested ones, including the fixed label.</p></dd><dt>C3 · Library is not a Book</dt><dd><p>Remove <code>extends Book</code> from the Library header. A library has books; it is not one, so it shouldn&#x27;t inherit an author or a label.</p></dd><dt>C4 · Library stores its own name</dt><dd><p>Declare a field such as <code>private String name;</code> and set it in the constructor. Once Library no longer extends Book, <code>setTitle()</code> isn&#x27;t available, and the name was never a title anyway.</p></dd><dt>C5 · getName() returns that field</dt><dd><p>Return the library&#x27;s own name field from <code>getName()</code>, not <code>getTitle()</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start with the “is a” sentence for each class. Only the true sentence earns <code>extends</code>.</p></li><li><p>After <code>AudioBook extends Book</code>, every line that also appears in Book.java can go. What is left is the narrator.</p></li><li><p>In Library, replace <code>extends Book</code> with a String field of Library&#x27;s own: set it in the constructor and return it from <code>getName()</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The label bug was fixed once, in Book, yet audiobooks kept the old label. Explain how inheritance would have prevented that.</p><div class="answer"><p>With inheritance there is only one getLabel(), the one in Book. Fixing it fixes every subclass at once; a copied method has to be found and fixed separately, and this copy was forgotten.</p></div></li><li><p>Why is <code>Library extends Book</code> worse than the duplicated code in AudioBook, even though it saved the programmer some typing?</p><div class="answer"><p>It claims a library is a book, so Library inherits an author, a label and setTitle() that make no sense for it, and the compiler can no longer catch misuse. Containment (a name field plus a Book array) models what a library really is.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>PrintedBook</code> class with a <code>pages</code> field. Which class should it extend, and what is the only code it needs? Then write the “is a” and “has a” sentences for <code>Library</code>, <code>Book</code> and a new <code>Member</code> class that can borrow up to five books.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; no leftover copied members in AudioBook; clear field name in Library.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

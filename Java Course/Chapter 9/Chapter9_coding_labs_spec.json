@@ -1,0 +1,1759 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 9: Inheritance and Interfaces",
+ "collection_intro": "Hands-on labs for sections 9.1 to 9.13 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Lab 9.13 uses records, so use JDK 16 or later. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "9.1",
+   "title": "The audiobook that never got the label fix",
+   "subtitle": "An AudioBook “is a” Book; a Library “has” books",
+   "source": "Ch. 9, section 9.1 (pp. 329–332)",
+   "minutes": 20,
+   "objectives": [
+    "Use the “is a” test to decide which class should inherit from which",
+    "Tell inheritance (is-a) apart from containment (has-a)",
+    "Explain how reusing a tested parent class reduces errors"
+   ],
+   "scenario": "The Eastside Branch library catalogs printed books with `Book` and audiobooks with `AudioBook`. Last year someone made `AudioBook` by copying every line of `Book.java` and adding a narrator. Last month the catalog label was fixed in `Book` to read *Title by Author*, but the copy in `AudioBook` still prints *Title - Author*, so the two kinds of item no longer match.\n\nThere is a second problem. To reuse `setTitle()` for the branch name, someone wrote `Library extends Book`. Now the compiler accepts nonsense such as asking a library for its author, and an audiobook can't even go on a `Book` shelf.\n\n`Book.java` is tested and read-only. Make `AudioBook` inherit from it and remove the copied code, and give `Library` its own name instead of pretending to be a book. The test program then prints:\n\n```\nParable of the Sower by Octavia E. Butler\nKindred by Octavia E. Butler, narrated by Lena Okoro\nEastside Branch holds 2 items\nItem 2 on the shelf: Kindred by Octavia E. Butler\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`AudioBook` inherits from `Book` and declares only what is new: the `narrator` field and its two methods."
+    },
+    {
+     "id": "R2",
+     "text": "`Library` does not inherit from `Book`. It keeps the branch name in its own `private String` field, and still *has* books in its `Book[] shelf`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Book.java",
+     "starter": "public class Book\n{\n    private String title;\n    private String author;\n\n    public String getTitle()\n    {\n        return title;\n    }\n\n    public String getAuthor()\n    {\n        return author;\n    }\n\n    public void setTitle(String bookTitle)\n    {\n        title = bookTitle;\n    }\n\n    public void setAuthor(String bookAuthor)\n    {\n        author = bookAuthor;\n    }\n\n    // The catalog label, fixed last month: \"Title by Author\".\n    public String getLabel()\n    {\n        return title + \" by \" + author;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "AudioBook.java",
+     "starter": "// Copied from Book.java last year, then the narrator was added.\n// TODO (R1): an audiobook IS A book. Make AudioBook inherit from Book\n// and keep only what is new in this class.\npublic class AudioBook\n{\n    private String title;\n    private String author;\n    private String narrator;\n\n    public String getTitle()\n    {\n        return title;\n    }\n\n    public String getAuthor()\n    {\n        return author;\n    }\n\n    public void setTitle(String bookTitle)\n    {\n        title = bookTitle;\n    }\n\n    public void setAuthor(String bookAuthor)\n    {\n        author = bookAuthor;\n    }\n\n    // Still the old label format: Book's version was fixed, this copy wasn't.\n    public String getLabel()\n    {\n        return title + \" - \" + author;\n    }\n\n    public String getNarrator()\n    {\n        return narrator;\n    }\n\n    public void setNarrator(String reader)\n    {\n        narrator = reader;\n    }\n}\n",
+     "solution": "public class AudioBook extends Book\n{\n    private String narrator;\n\n    public String getNarrator()\n    {\n        return narrator;\n    }\n\n    public void setNarrator(String reader)\n    {\n        narrator = reader;\n    }\n}\n"
+    },
+    {
+     "name": "Library.java",
+     "starter": "// TODO (R2): a library HAS books; it is not a book.\npublic class Library extends Book\n{\n    private Book[] shelf = new Book[50];\n    private int count;\n\n    public Library(String branchName)\n    {\n        // Borrows Book's title field to hold the branch name.\n        setTitle(branchName);\n    }\n\n    public String getName()\n    {\n        return getTitle();\n    }\n\n    public void addBook(Book item)\n    {\n        shelf[count] = item;\n        ++count;\n    }\n\n    public int getCount()\n    {\n        return count;\n    }\n\n    public Book getBook(int index)\n    {\n        return shelf[index];\n    }\n}\n",
+     "solution": "public class Library\n{\n    private String name;\n    private Book[] shelf = new Book[50];\n    private int count;\n\n    public Library(String branchName)\n    {\n        name = branchName;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public void addBook(Book item)\n    {\n        shelf[count] = item;\n        ++count;\n    }\n\n    public int getCount()\n    {\n        return count;\n    }\n\n    public Book getBook(int index)\n    {\n        return shelf[index];\n    }\n}\n"
+    }
+   ],
+   "main_file": "AudioBook.java",
+   "solution_notes": "An audiobook passes the “is a” test (an AudioBook is a Book, not the other way around), so `AudioBook` inherits every field and method of `Book` and only adds the narrator (pp. 330–331). Deleting the copy also deletes the stale `getLabel()`: the inherited version is the one that was fixed and tested, which is the “reduce errors” benefit on p. 330. A library fails the “is a” test (a library is not a book); it *has* books, which is containment (aggregation, because the books would still exist if the branch closed; p. 331). The `extends` keyword is explained in section 9.2; here it is enough to know it is how Java writes “inherits from”.",
+   "warmup": [
+    {
+     "question": "Say each pair in an “is a” sentence: AudioBook/Book and Library/Book. Which sentence is true?",
+     "model_answer": "“An AudioBook is a Book” is true. “A Library is a Book” is false; a library has books."
+    },
+    {
+     "question": "With the starter, what would `branch.getLabel()` return for the Eastside Branch library, and why does the compiler allow the call at all?",
+     "model_answer": "It would return “Eastside Branch by null”. Library extends Book, so it inherits getLabel() and the author field, even though a library has no author."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "AudioBook.java",
+     "title": "AudioBook inherits from Book",
+     "require": "\\bclass\\s+AudioBook\\s+extends\\s+Book\\b",
+     "message": "Write the header as `public class AudioBook extends Book`: an audiobook is a book, so it should receive Book's fields and methods instead of copying them.",
+     "hint": "Which keyword in the Library header already says “inherits from”?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "AudioBook.java",
+     "title": "AudioBook keeps only what is new",
+     "require": "\\bprivate\\s+String\\s+narrator\\s*;",
+     "forbid": "\\bString\\s+(?:title|author)\\s*;|\\b(?:get|set)(?:Title|Author)\\s*\\([^)]*\\)\\s*\\{|\\bgetLabel\\s*\\(\\s*\\)\\s*\\{",
+     "message": "Delete the copied `title` and `author` fields, their get and set methods, and the old `getLabel()`. Keep `narrator` and its two methods. The inherited versions are the tested ones, including the fixed label."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "Library.java",
+     "title": "Library is not a Book",
+     "require": "\\bclass\\s+Library\\b",
+     "forbid": "\\bextends\\s+Book\\b",
+     "message": "Remove `extends Book` from the Library header. A library has books; it is not one, so it shouldn't inherit an author or a label."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "file": "Library.java",
+     "title": "Library stores its own name",
+     "within": "Library",
+     "require": "\\bprivate\\s+String\\s+\\w+\\s*;",
+     "message": "Declare a field such as `private String name;` and set it in the constructor. Once Library no longer extends Book, `setTitle()` isn't available, and the name was never a title anyway."
+    },
+    {
+     "id": "C5",
+     "requirement": "R2",
+     "file": "Library.java",
+     "title": "getName() returns that field",
+     "within": "Library.getName",
+     "require": "\\breturn\\s+(?:this\\s*\\.\\s*)?\\w+\\s*;",
+     "forbid": "\\bgetTitle\\b",
+     "message": "Return the library's own name field from `getName()`, not `getTitle()`."
+    }
+   ],
+   "hints": [
+    "Start with the “is a” sentence for each class. Only the true sentence earns `extends`.",
+    "After `AudioBook extends Book`, every line that also appears in Book.java can go. What is left is the narrator.",
+    "In Library, replace `extends Book` with a String field of Library's own: set it in the constructor and return it from `getName()`."
+   ],
+   "test_program": {
+    "file_name": "TestLibrary.java",
+    "code": "public class TestLibrary\n{\n    public static void main(String[] args)\n    {\n        Book paper = new Book();\n        paper.setTitle(\"Parable of the Sower\");\n        paper.setAuthor(\"Octavia E. Butler\");\n\n        AudioBook audio = new AudioBook();\n        audio.setTitle(\"Kindred\");\n        audio.setAuthor(\"Octavia E. Butler\");\n        audio.setNarrator(\"Lena Okoro\");\n\n        Library branch = new Library(\"Eastside Branch\");\n        branch.addBook(paper);\n        branch.addBook(audio);\n\n        System.out.println(paper.getLabel());\n        System.out.println(audio.getLabel() + \", narrated by \" + audio.getNarrator());\n        System.out.println(branch.getName() + \" holds \" + branch.getCount() + \" items\");\n        System.out.println(\"Item 2 on the shelf: \" + branch.getBook(1).getLabel());\n    }\n}\n",
+    "expected_output": "Parable of the Sower by Octavia E. Butler\nKindred by Octavia E. Butler, narrated by Lena Okoro\nEastside Branch holds 2 items\nItem 2 on the shelf: Kindred by Octavia E. Butler\n",
+    "predict": "Before you change anything, predict: will the test program even compile with the starter? Look at `branch.addBook(audio)`: what type does `addBook()` accept, and is an AudioBook that type yet?",
+    "how_to_run": "Put `Book.java`, `AudioBook.java`, `Library.java` and `TestLibrary.java` in the same folder, then run `javac *.java` and `java TestLibrary`. In an IDE, add all of them to one project and run `TestLibrary.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The label bug was fixed once, in Book, yet audiobooks kept the old label. Explain how inheritance would have prevented that.",
+     "model_answer": "With inheritance there is only one getLabel(), the one in Book. Fixing it fixes every subclass at once; a copied method has to be found and fixed separately, and this copy was forgotten."
+    },
+    {
+     "question": "Why is `Library extends Book` worse than the duplicated code in AudioBook, even though it saved the programmer some typing?",
+     "model_answer": "It claims a library is a book, so Library inherits an author, a label and setTitle() that make no sense for it, and the compiler can no longer catch misuse. Containment (a name field plus a Book array) models what a library really is."
+    }
+   ],
+   "extension": "Add a `PrintedBook` class with a `pages` field. Which class should it extend, and what is the only code it needs? Then write the “is a” and “has a” sentences for `Library`, `Book` and a new `Member` class that can borrow up to five books.",
+   "worth_knowing": "“Favor object composition over class inheritance” is one of the best-known rules in software design. It comes from the 1994 book *Design Patterns*, whose four authors are nicknamed the Gang of Four. Use `extends` only when the “is a” sentence is true.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; no leftover copied members in AudioBook; clear field name in Library."
+    }
+   ]
+  },
+  {
+   "id": "9.2",
+   "title": "The VIP who was sent to the general line",
+   "subtitle": "A subclass adds what only it needs; instanceof asks what an object is",
+   "source": "Ch. 9, section 9.2 (pp. 332–336)",
+   "minutes": 25,
+   "objectives": [
+    "Use `extends` so a subclass receives its parent's fields and methods",
+    "Put a field and its methods in the most specific class that needs them",
+    "Use `instanceof` to test whether an object is a member of a class"
+   ],
+   "scenario": "The Harbor Hall concert venue sells general tickets and VIP tickets. A VIP ticket includes drink vouchers, but when vouchers were added they went into `Ticket`, so every general ticket carries a voucher count of 0 that means nothing.\n\nWorse, the entrance scanner decides the lane by counting vouchers. On Saturday a VIP guest who had already used both vouchers rescanned at the door and was sent to the general line.\n\nMove the vouchers into `VipTicket`, where they belong, and make `Gate.laneFor()` ask what kind of ticket it has been given, not how many vouchers are left. The test program then prints:\n\n```\nSeat F12, $45.0: General lane\nSeat A3, $180.0, vouchers left 0: VIP lane\nA VipTicket is a Ticket: true\nA Ticket is a VipTicket: false\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Ticket` has no vouchers at all. `VipTicket` declares `private int vouchers` and the methods `getVouchers()`, `setVouchers(int)` and `useVoucher()`."
+    },
+    {
+     "id": "R2",
+     "text": "`Gate.laneFor()` sends a ticket to the VIP lane when it is a `VipTicket` (use `instanceof`), whatever its voucher count."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Ticket.java",
+     "starter": "public class Ticket\n{\n    private String seat;\n    private double price;\n    // TODO (R1): only VIP tickets come with drink vouchers.\n    // Move this field and its three methods to VipTicket.\n    private int vouchers;\n\n    public String getSeat()\n    {\n        return seat;\n    }\n\n    public double getPrice()\n    {\n        return price;\n    }\n\n    public void setSeat(String seatCode)\n    {\n        seat = seatCode;\n    }\n\n    public void setPrice(double amount)\n    {\n        price = amount;\n    }\n\n    public int getVouchers()\n    {\n        return vouchers;\n    }\n\n    public void setVouchers(int count)\n    {\n        vouchers = count;\n    }\n\n    public void useVoucher()\n    {\n        if (vouchers > 0)\n            --vouchers;\n    }\n}\n",
+     "solution": "public class Ticket\n{\n    private String seat;\n    private double price;\n\n    public String getSeat()\n    {\n        return seat;\n    }\n\n    public double getPrice()\n    {\n        return price;\n    }\n\n    public void setSeat(String seatCode)\n    {\n        seat = seatCode;\n    }\n\n    public void setPrice(double amount)\n    {\n        price = amount;\n    }\n}\n"
+    },
+    {
+     "name": "VipTicket.java",
+     "starter": "public class VipTicket extends Ticket\n{\n    // TODO (R1): the voucher field and its three methods belong here.\n}\n",
+     "solution": "public class VipTicket extends Ticket\n{\n    private int vouchers;\n\n    public int getVouchers()\n    {\n        return vouchers;\n    }\n\n    public void setVouchers(int count)\n    {\n        vouchers = count;\n    }\n\n    public void useVoucher()\n    {\n        if (vouchers > 0)\n            --vouchers;\n    }\n}\n"
+    },
+    {
+     "name": "Gate.java",
+     "starter": "public class Gate\n{\n    // Sends each ticket holder to the right entrance lane.\n    public static String laneFor(Ticket t)\n    {\n        // TODO (R2): a VIP who has used every voucher is still a VIP.\n        if (t.getVouchers() > 0)\n            return \"VIP lane\";\n        else\n            return \"General lane\";\n    }\n}\n",
+     "solution": "public class Gate\n{\n    // Sends each ticket holder to the right entrance lane.\n    public static String laneFor(Ticket t)\n    {\n        if (t instanceof VipTicket)\n            return \"VIP lane\";\n        else\n            return \"General lane\";\n    }\n}\n"
+    }
+   ],
+   "main_file": "VipTicket.java",
+   "solution_notes": "`VipTicket extends Ticket`, so it already has a seat, a price and their get and set methods; it only adds what is particular to it, as `DinnerParty` adds `dinnerChoice` to `Party` (pp. 335–336). Inheritance is one-way: a parent can't use its child's members, and it shouldn't carry fields that only some children need (p. 333). `instanceof` is true when the object on the left is a member or descendant of the class on the right (p. 333), so `t instanceof VipTicket` is true for every VIP ticket, used vouchers or not. Once `Ticket` has no `getVouchers()`, the starter's `laneFor()` no longer compiles, which forces the change. Passing a `VipTicket` to a `Ticket` parameter works because every VipTicket is a Ticket; section 9.9 explains this in detail.",
+   "warmup": [
+    {
+     "question": "In the starter, a general ticket for seat F12 calls `getVouchers()`. What does it return, and does that number mean anything?",
+     "model_answer": "It returns 0. The number means nothing, because general tickets never come with vouchers; the field shouldn't exist for them."
+    },
+    {
+     "question": "The starter's `laneFor()` tests `t.getVouchers() > 0`. Describe a VIP ticket for which this test gives the wrong lane.",
+     "model_answer": "A VIP ticket whose vouchers have all been used (count 0), or one that was sold without vouchers. The test says General lane even though it is a VIP ticket."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Ticket.java",
+     "title": "Ticket knows nothing about vouchers",
+     "require": "\\bclass\\s+Ticket\\b",
+     "forbid": "[Vv]oucher",
+     "message": "Remove the `vouchers` field and `getVouchers()`, `setVouchers()` and `useVoucher()` from Ticket. A general ticket has no vouchers, and a parent class shouldn't hold what only one child needs."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "VipTicket.java",
+     "title": "VipTicket holds the vouchers",
+     "require": "\\bprivate\\s+int\\s+vouchers\\s*;",
+     "forbid": "\\b(?:seat|price)\\b",
+     "message": "Declare `private int vouchers;` in VipTicket. Don't redeclare the seat or the price: VipTicket inherits them from Ticket."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "file": "VipTicket.java",
+     "title": "VipTicket has the three voucher methods",
+     "require": "^(?=[\\s\\S]*\\bint\\s+getVouchers\\s*\\(\\s*\\))(?=[\\s\\S]*\\bvoid\\s+setVouchers\\s*\\(\\s*int\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bvoid\\s+useVoucher\\s*\\(\\s*\\))",
+     "message": "Move `getVouchers()`, `setVouchers(int)` and `useVoucher()` into VipTicket, with the same headers they had in Ticket."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "file": "Gate.java",
+     "title": "The gate checks the kind of ticket",
+     "within": "Gate.laneFor",
+     "require": "\\b\\w+\\s+instanceof\\s+VipTicket\\b",
+     "forbid": "\\bgetVouchers\\b",
+     "message": "Test `t instanceof VipTicket`. Being a VIP depends on the kind of ticket, not on how many vouchers are left.",
+     "hint": "instanceof is written in lowercase, with the object on the left and the class on the right."
+    }
+   ],
+   "hints": [
+    "Cut the field and its three methods from Ticket and paste them into VipTicket. Nothing else in Ticket changes.",
+    "After the move, `t.getVouchers()` no longer compiles in Gate: a plain Ticket has no such method. That's the line to replace.",
+    "The condition you need is an `instanceof` expression with `t` on the left and the VIP class on the right."
+   ],
+   "test_program": {
+    "file_name": "TestGate.java",
+    "code": "public class TestGate\n{\n    public static void main(String[] args)\n    {\n        Ticket general = new Ticket();\n        general.setSeat(\"F12\");\n        general.setPrice(45.0);\n\n        VipTicket vip = new VipTicket();\n        vip.setSeat(\"A3\");\n        vip.setPrice(180.0);\n        vip.setVouchers(2);\n        vip.useVoucher();\n        vip.useVoucher();\n        vip.useVoucher();\n\n        System.out.println(\"Seat \" + general.getSeat() + \", $\" + general.getPrice()\n            + \": \" + Gate.laneFor(general));\n        System.out.println(\"Seat \" + vip.getSeat() + \", $\" + vip.getPrice()\n            + \", vouchers left \" + vip.getVouchers() + \": \" + Gate.laneFor(vip));\n        System.out.println(\"A VipTicket is a Ticket: \" + (vip instanceof Ticket));\n        System.out.println(\"A Ticket is a VipTicket: \" + (general instanceof VipTicket));\n    }\n}\n",
+    "expected_output": "Seat F12, $45.0: General lane\nSeat A3, $180.0, vouchers left 0: VIP lane\nA VipTicket is a Ticket: true\nA Ticket is a VipTicket: false\n",
+    "predict": "Before you change anything, run the test program with the starter and predict the lane for seat A3: it was sold with 2 vouchers and `useVoucher()` is called three times. Then predict the last two lines: which way does `instanceof` work?",
+    "how_to_run": "Put `Ticket.java`, `VipTicket.java`, `Gate.java` and `TestGate.java` in the same folder, then run `javac *.java` and `java TestGate`. In an IDE, add all of them to one project and run `TestGate.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why is `instanceof VipTicket` a better test than counting vouchers? Use seat A3 in your answer.",
+     "model_answer": "Seat A3 is a VIP ticket whatever happens to its vouchers. instanceof asks what the object is, which never changes; the voucher count changes as the guest uses vouchers, so it can't identify a VIP."
+    },
+    {
+     "question": "`vip instanceof Ticket` is true but `general instanceof VipTicket` is false. Explain why in terms of “is a”.",
+     "model_answer": "Every VipTicket is a Ticket because it extends Ticket, but a plain Ticket is not a VipTicket. Inheritance goes one way, from parent to child."
+    }
+   ],
+   "extension": "Add a `StudentTicket` subclass with a `schoolId` field. Without touching `Gate`, which lane does a student go to? Then add a third lane for students and decide where in `laneFor()` its `instanceof` test must go.",
+   "worth_knowing": "Since Java 16, `instanceof` can also name the object it just tested: `if (t instanceof VipTicket vip)` makes `vip` usable as a VipTicket inside the `if`, so you can call `vip.getVouchers()` right away. This is called pattern matching for instanceof.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; each member lives in the most specific class that needs it."
+    }
+   ]
+  },
+  {
+   "id": "9.3",
+   "title": "The day pass that costs $25.0 per month",
+   "subtitle": "Override with the same name and parameter list, and let @Override check it",
+   "source": "Ch. 9, section 9.3 (pp. 336–339)",
+   "minutes": 20,
+   "objectives": [
+    "Override a parent method by writing a child method with the same name and parameter list",
+    "Tell overriding apart from overloading",
+    "Use the `@Override` annotation so the compiler catches a method that doesn't override"
+   ],
+   "scenario": "Dock 9 Coworking prints a rate on every receipt with `rateLabel()`. The standard `Plan` is billed by the month. A `DayPass` was supposed to print *per day*, and its author wrote the method, but every day-pass receipt still says **$25.0 per month**. Nobody saw an error message.\n\nThe new `HourlyDesk` has the same problem in a different form: it has a `rateLabel(int hours)` for the booking screen, but the receipt calls `rateLabel()` with no arguments and gets the monthly wording.\n\n`Plan.java` is read-only. Make both subclasses override `rateLabel()` properly, and mark each override with `@Override` so this can't happen silently again. The test program then prints:\n\n```\nMonthly: $250.0 per month\nDay pass: $25.0 per day\nHot desk: $6.5 per hour\nHot desk, 4 hours: $26.0 for 4 hours\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`DayPass` overrides `rateLabel()` (same name, same empty parameter list) and marks it `@Override`; its label ends in `per day`."
+    },
+    {
+     "id": "R2",
+     "text": "`HourlyDesk` keeps its `rateLabel(int hours)` and also overrides `rateLabel()`, marked `@Override`, with a label ending in `per hour`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Plan.java",
+     "starter": "public class Plan\n{\n    private double rate;\n\n    public double getRate()\n    {\n        return rate;\n    }\n\n    public void setRate(double newRate)\n    {\n        rate = newRate;\n    }\n\n    // Members on the standard plan pay by the month.\n    public String rateLabel()\n    {\n        return \"$\" + rate + \" per month\";\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "DayPass.java",
+     "starter": "public class DayPass extends Plan\n{\n    // TODO (R1): the front desk still prints \"per month\" for day passes.\n    public String ratelabel()\n    {\n        return \"$\" + getRate() + \" per day\";\n    }\n}\n",
+     "solution": "public class DayPass extends Plan\n{\n    @Override\n    public String rateLabel()\n    {\n        return \"$\" + getRate() + \" per day\";\n    }\n}\n"
+    },
+    {
+     "name": "HourlyDesk.java",
+     "starter": "public class HourlyDesk extends Plan\n{\n    // Price of a block of hours, for the booking screen.\n    public String rateLabel(int hours)\n    {\n        return \"$\" + getRate() * hours + \" for \" + hours + \" hours\";\n    }\n\n    // TODO (R2): a hot desk is rented by the hour, so its label must say\n    // \"per hour\" wherever rateLabel() is called with no arguments.\n}\n",
+     "solution": "public class HourlyDesk extends Plan\n{\n    // Price of a block of hours, for the booking screen.\n    public String rateLabel(int hours)\n    {\n        return \"$\" + getRate() * hours + \" for \" + hours + \" hours\";\n    }\n\n    @Override\n    public String rateLabel()\n    {\n        return \"$\" + getRate() + \" per hour\";\n    }\n}\n"
+    }
+   ],
+   "main_file": "DayPass.java",
+   "solution_notes": "A child method overrides a parent method only when both the name and the parameter list match; with a child object, the child's version then runs (p. 337). `ratelabel()` with a lowercase *l* is simply a new method, so `day.rateLabel()` runs the inherited `Plan` version. `rateLabel(int hours)` has a different parameter list, so it overloads the parent method and the object has both versions (p. 337). `@Override` asks the compiler to confirm the method overrides something; on `ratelabel()` it produces “method does not override or implement a method from a supertype” (pp. 337–339). Using one name, `rateLabel()`, for every kind of plan is subtype polymorphism (p. 337).",
+   "warmup": [
+    {
+     "question": "With the starter, which class's `rateLabel()` runs for `day.rateLabel()`, and why doesn't the DayPass method run?",
+     "model_answer": "Plan's version runs. DayPass's method is named ratelabel with a lowercase l, so it is a different method that doesn't override rateLabel()."
+    },
+    {
+     "question": "HourlyDesk has `rateLabel(int hours)`. Does it override `Plan.rateLabel()`? What happens when the receipt calls `desk.rateLabel()`?",
+     "model_answer": "No. Its parameter list is different, so it overloads the method. desk.rateLabel() with no arguments runs Plan's version and prints per month."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "DayPass.java",
+     "title": "DayPass overrides rateLabel()",
+     "require": "@Override\\s+public\\s+String\\s+rateLabel\\s*\\(\\s*\\)",
+     "forbid": "\\bratelabel\\b",
+     "message": "Name the method `rateLabel` exactly as in Plan (capital L, no parameters) and put `@Override` on the line above it. Java names are case-sensitive, so `ratelabel` is a different method.",
+     "hint": "Compare the DayPass header with the one in Plan.java letter by letter."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "HourlyDesk.java",
+     "title": "HourlyDesk overrides rateLabel() too",
+     "require": "@Override\\s+public\\s+String\\s+rateLabel\\s*\\(\\s*\\)",
+     "message": "Add a second method, `@Override public String rateLabel()` with no parameters. Keep `rateLabel(int hours)`: the booking screen still uses that overload."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "HourlyDesk.java",
+     "title": "The hot-desk label says per hour",
+     "strings": true,
+     "require": "\\\"\\s*per hour\\\"",
+     "message": "The no-argument label should be built like Plan's, ending in `\" per hour\"`, for example `\"$\" + getRate() + \" per hour\"`."
+    }
+   ],
+   "hints": [
+    "Overriding needs two things to match the parent: the method name, letter for letter, and the parameter list.",
+    "`@Override` goes on the line just above the method header. Put it on `ratelabel()` first and read the compiler's message.",
+    "HourlyDesk ends up with two methods named `rateLabel`: one with an `int` parameter (overload) and one with none (override)."
+   ],
+   "test_program": {
+    "file_name": "TestPlans.java",
+    "code": "public class TestPlans\n{\n    public static void main(String[] args)\n    {\n        Plan monthly = new Plan();\n        monthly.setRate(250.0);\n        DayPass day = new DayPass();\n        day.setRate(25.0);\n        HourlyDesk desk = new HourlyDesk();\n        desk.setRate(6.5);\n\n        System.out.println(\"Monthly: \" + monthly.rateLabel());\n        System.out.println(\"Day pass: \" + day.rateLabel());\n        System.out.println(\"Hot desk: \" + desk.rateLabel());\n        System.out.println(\"Hot desk, 4 hours: \" + desk.rateLabel(4));\n    }\n}\n",
+    "expected_output": "Monthly: $250.0 per month\nDay pass: $25.0 per day\nHot desk: $6.5 per hour\nHot desk, 4 hours: $26.0 for 4 hours\n",
+    "predict": "Before you change anything, predict all four lines the starter prints. Which of them will say per month?",
+    "how_to_run": "Put `Plan.java`, `DayPass.java`, `HourlyDesk.java` and `TestPlans.java` in the same folder, then run `javac *.java` and `java TestPlans`. In an IDE, add all of them to one project and run `TestPlans.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The starter compiled and ran without a single error, yet two receipts were wrong. How would `@Override` have changed that?",
+     "model_answer": "With @Override on ratelabel(), the compiler would have refused it because it overrides nothing. The typo would have been caught at compile time instead of on customers' receipts."
+    },
+    {
+     "question": "HourlyDesk now has two methods named `rateLabel`. Explain which one runs for `desk.rateLabel()` and for `desk.rateLabel(4)`, and why both may exist.",
+     "model_answer": "desk.rateLabel() runs the override with no parameters; desk.rateLabel(4) runs the overload with an int. Methods may share a name when their parameter lists differ, and Java picks one by the arguments."
+    }
+   ],
+   "extension": "Add a `MeetingRoom` plan billed per booking. Write its override first *without* `@Override` and with a deliberate typo, run the test, then add `@Override` and read the compiler message. Which version would you rather discover in production?",
+   "worth_knowing": "Annotations such as `@Override` arrived in Java 5, in 2004. Before that, a misspelled override compiled silently, exactly like `ratelabel()`. Other languages added the same safety net later: C# requires the `override` keyword, and Python 3.12 added an `@override` decorator for type checkers.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; @Override on every overriding method; the overload left intact."
+    }
+   ]
+  },
+  {
+   "id": "9.4",
+   "title": "The hotel suites that won't compile",
+   "subtitle": "When the parent needs arguments, the child's constructor must call super() first",
+   "source": "Ch. 9, section 9.4 (pp. 339–343)",
+   "minutes": 25,
+   "objectives": [
+    "Predict the order in which parent and child constructors run",
+    "Call a parent constructor that requires arguments with `super(...)` as the first statement",
+    "Write a child constructor that passes a constant to its parent"
+   ],
+   "scenario": "The Seawall Hotel registers every room with `Room`, whose only constructor requires a room number and a nightly rate. A developer added `Suite` and `StaffRoom`, and the build broke: the compiler reports that `Room` can't be constructed without arguments.\n\nSuites need their number and rate passed on to `Room`, plus a bedroom count of their own. Staff rooms are never rented, so the front desk only ever gives a number; their rate is always $0.0.\n\n`Room.java` is read-only. Write the constructors so each subclass gives `Room` what it needs. The test program then prints (notice which line comes first for the suite):\n\n```\nRoom 101 registered at $129.0 a night\nRoom 501 registered at $349.0 a night\n  Suite 501 has 2 bedrooms\nRoom B12 registered at $0.0 a night\nSuite 501: $349.0, 2 bedrooms\nStaff room B12: $0.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Suite`'s constructor passes the room number and rate to `Room` with `super(...)` as its first statement, then sets `bedrooms` itself."
+    },
+    {
+     "id": "R2",
+     "text": "`StaffRoom` has a constructor with one parameter, the room number, that calls `super(...)` with that number and a rate of `0.0`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Room.java",
+     "starter": "public class Room\n{\n    private String number;\n    private double nightlyRate;\n\n    // Every room must be created with a number and a nightly rate.\n    public Room(String roomNumber, double rate)\n    {\n        number = roomNumber;\n        nightlyRate = rate;\n        System.out.println(\"Room \" + number + \" registered at $\" + nightlyRate + \" a night\");\n    }\n\n    public String getNumber()\n    {\n        return number;\n    }\n\n    public double getNightlyRate()\n    {\n        return nightlyRate;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "Suite.java",
+     "starter": "public class Suite extends Room\n{\n    private int bedrooms;\n\n    // TODO (R1): Room has no constructor without arguments, so this\n    // constructor must hand Room the number and rate it needs, first.\n    public Suite(String roomNumber, double rate, int numBedrooms)\n    {\n        bedrooms = numBedrooms;\n        System.out.println(\"  Suite \" + getNumber() + \" has \" + bedrooms + \" bedrooms\");\n    }\n\n    public int getBedrooms()\n    {\n        return bedrooms;\n    }\n}\n",
+     "solution": "public class Suite extends Room\n{\n    private int bedrooms;\n\n    public Suite(String roomNumber, double rate, int numBedrooms)\n    {\n        super(roomNumber, rate);\n        bedrooms = numBedrooms;\n        System.out.println(\"  Suite \" + getNumber() + \" has \" + bedrooms + \" bedrooms\");\n    }\n\n    public int getBedrooms()\n    {\n        return bedrooms;\n    }\n}\n"
+    },
+    {
+     "name": "StaffRoom.java",
+     "starter": "public class StaffRoom extends Room\n{\n    // TODO (R2): staff rooms are never rented, so they always cost $0.0\n    // a night. Write a constructor that takes only the room number.\n}\n",
+     "solution": "public class StaffRoom extends Room\n{\n    public StaffRoom(String roomNumber)\n    {\n        super(roomNumber, 0.0);\n    }\n}\n"
+    }
+   ],
+   "main_file": "Suite.java",
+   "solution_notes": "Creating a subclass object runs the superclass constructor first, then the subclass constructor (p. 339), which is why “Room 501 registered” prints before “Suite 501 has 2 bedrooms”. A constructor that doesn't call `super(...)` gets an automatic call to the parent's no-argument constructor; `Room` has none, so the starter fails to compile, like Figure 9-9 (p. 343). When a superclass has only constructors that require arguments, each subclass constructor must call one with `super(arguments)` as its first statement (pp. 340–341, Table 9-1). The child constructor need not match the parent's parameters: `StaffRoom(String)` passes a constant `0.0`, like the `HourlyEmployee()` example on p. 341. Java does not allow `Room(...)` by name; you must write `super`.",
+   "warmup": [
+    {
+     "question": "Read `Room.java`. Can you write `new Room()` with no arguments? Why does that matter for `Suite`?",
+     "model_answer": "No: Room's only constructor requires a number and a rate, and writing it removed the automatic default constructor. Suite's constructor implicitly calls Room() unless told otherwise, so it fails to compile."
+    },
+    {
+     "question": "When `new Suite(\"501\", 349.0, 2)` runs, which constructor's message prints first, Room's or Suite's?",
+     "model_answer": "Room's. The superclass constructor always runs before the subclass constructor's own statements."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Suite.java",
+     "title": "Suite calls super(number, rate) first",
+     "within": "Suite.Suite",
+     "require": "\\)\\s*\\{\\s*super\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)\\s*;",
+     "forbid": "\\bRoom\\s*\\(",
+     "message": "Make `super(roomNumber, rate);` the very first statement of the Suite constructor, before setting `bedrooms`. Java doesn't let you call `Room(...)` by name; use `super`.",
+     "hint": "Only comments may come before super(...) in a constructor."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "StaffRoom.java",
+     "title": "StaffRoom passes a $0.0 rate to Room",
+     "within": "StaffRoom",
+     "require": "\\bpublic\\s+StaffRoom\\s*\\(\\s*String\\s+\\w+\\s*\\)\\s*\\{\\s*super\\s*\\(\\s*\\w+\\s*,\\s*0(?:\\.0+)?\\s*\\)\\s*;",
+     "message": "Write `public StaffRoom(String roomNumber)` whose first statement is `super(roomNumber, 0.0);`. The child constructor's parameters don't have to match the parent's; it only has to pass what Room needs."
+    }
+   ],
+   "hints": [
+    "Compile the starter and read the first error: which constructor is Java looking for, and in which class?",
+    "In Suite, the parent's two values are already parameters: `roomNumber` and `rate`. Hand them to `super(...)`.",
+    "StaffRoom takes one parameter but Room needs two. The second one is a constant you know."
+   ],
+   "test_program": {
+    "file_name": "TestRooms.java",
+    "code": "public class TestRooms\n{\n    public static void main(String[] args)\n    {\n        Room standard = new Room(\"101\", 129.0);\n        Suite corner = new Suite(\"501\", 349.0, 2);\n        StaffRoom staff = new StaffRoom(\"B12\");\n\n        System.out.println(\"Suite \" + corner.getNumber() + \": $\" + corner.getNightlyRate()\n            + \", \" + corner.getBedrooms() + \" bedrooms\");\n        System.out.println(\"Staff room \" + staff.getNumber() + \": $\" + staff.getNightlyRate());\n    }\n}\n",
+    "expected_output": "Room 101 registered at $129.0 a night\nRoom 501 registered at $349.0 a night\n  Suite 501 has 2 bedrooms\nRoom B12 registered at $0.0 a night\nSuite 501: $349.0, 2 bedrooms\nStaff room B12: $0.0\n",
+    "predict": "Before you fix anything, compile the starter and predict the error message. After the fix, predict how many lines `new Suite(\"501\", 349.0, 2)` prints, and in what order.",
+    "how_to_run": "Put `Room.java`, `Suite.java`, `StaffRoom.java` and `TestRooms.java` in the same folder, then run `javac *.java` and `java TestRooms`. In an IDE, add all of them to one project and run `TestRooms.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why must the Room part of a Suite be built before the Suite part? Use `getNumber()` in the Suite constructor as your example.",
+     "model_answer": "The Suite constructor calls getNumber(), which reads Room's number field. That field only has a value once Room's constructor has run, so the parent must be built first."
+    },
+    {
+     "question": "StaffRoom's constructor has one parameter while Room's has two. Why is that allowed?",
+     "model_answer": "A child constructor only has to call super(...) with the arguments the parent needs. It can supply them from its own parameters or from constants, so StaffRoom passes its number plus 0.0."
+    }
+   ],
+   "extension": "Give `Room` a second constructor `Room(String roomNumber)` that calls `this(roomNumber, 99.0)`. Now which subclass constructors still need `super(...)`, according to Table 9-1? Then try putting `bedrooms = numBedrooms;` above `super(...)` and read the error.",
+   "worth_knowing": "Every constructor chain ends at `Object`, the class every Java class descends from (section 9.11). So `new Suite(...)` runs three constructors: Object's, then Room's, then Suite's. If you write no `super(...)` at all, the compiler quietly inserts `super();` for you.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; super(...) is the first statement; no fields duplicated from Room."
+    }
+   ]
+  },
+  {
+   "id": "9.5",
+   "title": "The insured parcel that never finishes printing",
+   "subtitle": "Inside an override, super.method() runs the parent's version",
+   "source": "Ch. 9, section 9.5 (pp. 344–346)",
+   "minutes": 25,
+   "objectives": [
+    "Call an overridden parent method from the child with `super.methodName()`",
+    "Explain the difference between `label()`, `this.label()` and `super.label()` inside an override",
+    "Extend a parent's result instead of copying its formula"
+   ],
+   "scenario": "Gulf Courier prints a label and a price for every parcel. `InsuredShipment` overrides both methods so they include the insurance, and both overrides are broken.\n\n- `totalCost()` copies the parent's formula from last winter, with the old rate of $4.0 per kg. Shipping went up to $4.5 in March, so every insured parcel is undercharged.\n- `label()` was meant to reuse the parent's label, but printing the first insured label crashes the program with a `StackOverflowError`.\n\n`Shipment.java` is read-only and its fields are private. Make both overrides build on the parent's version. The test program then prints:\n\n```\nShipment #1001 to Miami, 2.0 kg\nTotal: $14.0\nShipment #1002 to Denver, 2.0 kg, insured for $500.0\nInsurance fee: $10.0\nTotal: $24.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`InsuredShipment.totalCost()` returns the parent's `totalCost()` plus `insuranceFee()`; it repeats no rates or formulas from Shipment."
+    },
+    {
+     "id": "R2",
+     "text": "`InsuredShipment.label()` returns the parent's `label()` followed by `, insured for $` and the insured value."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Shipment.java",
+     "starter": "public class Shipment\n{\n    private int trackingNumber;\n    private String city;\n    private double weightKg;\n\n    public Shipment(int number, String destination, double kg)\n    {\n        trackingNumber = number;\n        city = destination;\n        weightKg = kg;\n    }\n\n    public double getWeightKg()\n    {\n        return weightKg;\n    }\n\n    // Base fee plus a rate per kilogram (the per-kg rate rose to 4.5 in March).\n    public double totalCost()\n    {\n        return 5.0 + weightKg * 4.5;\n    }\n\n    public String label()\n    {\n        return \"Shipment #\" + trackingNumber + \" to \" + city + \", \" + weightKg + \" kg\";\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "InsuredShipment.java",
+     "starter": "public class InsuredShipment extends Shipment\n{\n    private double insuredValue;\n\n    public InsuredShipment(int number, String destination, double kg, double value)\n    {\n        super(number, destination, kg);\n        insuredValue = value;\n    }\n\n    // Insurance costs 2% of the declared value.\n    public double insuranceFee()\n    {\n        return insuredValue * 0.02;\n    }\n\n    @Override\n    public double totalCost()\n    {\n        // TODO (R1): copied from Shipment last winter. Reuse the parent's\n        // shipping cost instead, then add the insurance fee.\n        return 5.0 + getWeightKg() * 4.0 + insuranceFee();\n    }\n\n    @Override\n    public String label()\n    {\n        // TODO (R2): meant to reuse Shipment's label and add the insurance.\n        return label() + \", insured for $\" + insuredValue;\n    }\n}\n",
+     "solution": "public class InsuredShipment extends Shipment\n{\n    private double insuredValue;\n\n    public InsuredShipment(int number, String destination, double kg, double value)\n    {\n        super(number, destination, kg);\n        insuredValue = value;\n    }\n\n    // Insurance costs 2% of the declared value.\n    public double insuranceFee()\n    {\n        return insuredValue * 0.02;\n    }\n\n    @Override\n    public double totalCost()\n    {\n        return super.totalCost() + insuranceFee();\n    }\n\n    @Override\n    public String label()\n    {\n        return super.label() + \", insured for $\" + insuredValue;\n    }\n}\n"
+    }
+   ],
+   "main_file": "InsuredShipment.java",
+   "solution_notes": "When a child overrides a method but still needs the parent's version, it calls `super.methodName()` (p. 344), as `PreferredCustomer.display()` calls `super.display()` in Figure 9-11. Inside the override, plain `label()` and `this.label()` both mean the child's own version (p. 345), so the starter's `label()` calls itself again and again until the call stack runs out: a `StackOverflowError`. `super.totalCost()` reuses Shipment's current formula, so the March price change reaches insured parcels too. Unlike a `super(...)` constructor call, `super.method()` does not have to be the first statement (p. 344); here it is part of the `return` expression.",
+   "warmup": [
+    {
+     "question": "Inside `InsuredShipment.label()`, the starter calls `label()`. Which class's `label()` is that, and what happens next?",
+     "model_answer": "It is InsuredShipment's own label(), the method that is running. It calls itself, which calls itself again, forever, until Java throws a StackOverflowError."
+    },
+    {
+     "question": "For a 2.0 kg parcel insured for $500.0, what does the starter's `totalCost()` return, and what should it return?",
+     "model_answer": "The starter returns 5.0 + 8.0 + 10.0 = 23.0. It should return Shipment's 5.0 + 9.0 = 14.0 plus the 10.0 fee, which is 24.0."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "InsuredShipment.java",
+     "title": "totalCost() builds on the parent's cost",
+     "within": "InsuredShipment.totalCost",
+     "require": "\\bsuper\\s*\\.\\s*totalCost\\s*\\(\\s*\\)",
+     "forbid": "\\bgetWeightKg\\b|\\b4\\.[05]\\b",
+     "message": "Return `super.totalCost() + insuranceFee()`. Copying Shipment's formula means every future price change has to be made twice, and this copy already missed one."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "InsuredShipment.java",
+     "title": "label() calls the parent's label()",
+     "within": "InsuredShipment.label",
+     "require": "\\bsuper\\s*\\.\\s*label\\s*\\(\\s*\\)",
+     "forbid": "\\breturn\\s+label\\s*\\(|\\bthis\\s*\\.\\s*label\\s*\\(",
+     "message": "Write `super.label()` to get Shipment's text. Without `super`, `label()` means this same method, so it calls itself until the program crashes.",
+     "hint": "Which keyword means “my parent's version”?"
+    }
+   ],
+   "hints": [
+    "Both overrides need the same move: get the parent's result first, then add the part that is new.",
+    "Shipment's fields are private, so you can't rebuild its label yourself. Ask the parent class for it.",
+    "The keyword `super`, then a dot, then the method name calls the parent's version of an overridden method."
+   ],
+   "test_program": {
+    "file_name": "TestShipments.java",
+    "code": "public class TestShipments\n{\n    public static void main(String[] args)\n    {\n        Shipment plain = new Shipment(1001, \"Miami\", 2.0);\n        InsuredShipment camera = new InsuredShipment(1002, \"Denver\", 2.0, 500.0);\n\n        System.out.println(plain.label());\n        System.out.println(\"Total: $\" + plain.totalCost());\n        System.out.println(camera.label());\n        System.out.println(\"Insurance fee: $\" + camera.insuranceFee());\n        System.out.println(\"Total: $\" + camera.totalCost());\n    }\n}\n",
+    "expected_output": "Shipment #1001 to Miami, 2.0 kg\nTotal: $14.0\nShipment #1002 to Denver, 2.0 kg, insured for $500.0\nInsurance fee: $10.0\nTotal: $24.0\n",
+    "predict": "Before you change anything, predict how far the starter gets. Which lines print before the program stops, and what is the first line of the error?",
+    "how_to_run": "Put `Shipment.java`, `InsuredShipment.java` and `TestShipments.java` in the same folder, then run `javac *.java` and `java TestShipments`. In an IDE, add all of them to one project and run `TestShipments.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Explain why `return label() + ...` inside `label()` crashes, but `return super.label() + ...` works.",
+     "model_answer": "Inside the override, label() refers to the child's own method, so it calls itself endlessly and fills the call stack. super.label() runs Shipment's version, which returns a string and ends."
+    },
+    {
+     "question": "Shipping prices will change again next year. Why is `super.totalCost()` safer than writing the formula into InsuredShipment?",
+     "model_answer": "The formula then lives only in Shipment. When it changes, insured parcels automatically use the new price; a copy would have to be found and changed by hand, which is how the $4.0 rate survived."
+    }
+   ],
+   "extension": "Add an `ExpressShipment` that extends `InsuredShipment` and charges $15.0 extra. Its `totalCost()` calls `super.totalCost()`: which class's version is that, and does the express price include the insurance? Check by printing it.",
+   "worth_knowing": "Each running method takes a slot on the thread's call stack, a fixed-size area of memory (often around 1 MB by default on desktop Java). A method that calls itself with no way to stop adds slots until the stack is full, and Java throws `StackOverflowError`. That is the error the starter's `label()` produced.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; no rates or formulas copied from Shipment."
+    }
+   ]
+  },
+  {
+   "id": "9.6",
+   "title": "The gift card that holds $505.0 on a $500.0 limit",
+   "subtitle": "Keep fields private, and let subclasses go through the parent's methods",
+   "source": "Ch. 9, section 9.6 (pp. 346–347)",
+   "minutes": 20,
+   "objectives": [
+    "Explain why information hiding keeps a class's rules in force",
+    "Decide between `private` and `protected` for a field a subclass wants to change",
+    "Change inherited data through the parent's public methods"
+   ],
+   "scenario": "The Bayfront Café gift card may never hold more than $500.0; the payment processor rejects anything above that. `GiftCard.load()` enforces the limit.\n\nFor the holidays, `PromoGiftCard` adds a $10.0 bonus to every load of $50.0 or more. It writes the bonus straight into `balance`, which is public, so a customer who loaded $495.0 ended up with **$505.0** on the card, and the processor declined it at the register.\n\nHide the balance so no other class can change it directly, and make the promo add its bonus through the same rule every other load follows. When the bonus would break the limit, the customer simply doesn't get it. The test program then prints:\n\n```\nLoad $495.0: true, balance $495.0\nLoad $15.0: false, balance $495.0\nSpend $200.0: true, balance $295.0\nLoad $60.0: true, balance $365.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`GiftCard.balance` is `private`: not `public`, and not `protected` either."
+    },
+    {
+     "id": "R2",
+     "text": "`PromoGiftCard.loadWithBonus()` adds the $10.0 bonus by calling `load()`, so the $500.0 limit applies to it; it never touches `balance` directly."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "GiftCard.java",
+     "starter": "public class GiftCard\n{\n    public static final double MAX_BALANCE = 500.0;\n    // TODO (R1): any class can change this, skipping every rule below.\n    public double balance;\n\n    public double getBalance()\n    {\n        return balance;\n    }\n\n    // Adds money unless the amount is not positive or the card would\n    // go over MAX_BALANCE. Returns whether the money was added.\n    public boolean load(double amount)\n    {\n        if (amount <= 0 || balance + amount > MAX_BALANCE)\n            return false;\n        balance += amount;\n        return true;\n    }\n\n    // Takes money off unless the card doesn't have enough.\n    public boolean spend(double amount)\n    {\n        if (amount <= 0 || amount > balance)\n            return false;\n        balance -= amount;\n        return true;\n    }\n}\n",
+     "solution": "public class GiftCard\n{\n    public static final double MAX_BALANCE = 500.0;\n    private double balance;\n\n    public double getBalance()\n    {\n        return balance;\n    }\n\n    // Adds money unless the amount is not positive or the card would\n    // go over MAX_BALANCE. Returns whether the money was added.\n    public boolean load(double amount)\n    {\n        if (amount <= 0 || balance + amount > MAX_BALANCE)\n            return false;\n        balance += amount;\n        return true;\n    }\n\n    // Takes money off unless the card doesn't have enough.\n    public boolean spend(double amount)\n    {\n        if (amount <= 0 || amount > balance)\n            return false;\n        balance -= amount;\n        return true;\n    }\n}\n"
+    },
+    {
+     "name": "PromoGiftCard.java",
+     "starter": "public class PromoGiftCard extends GiftCard\n{\n    // Holiday promo: every load of $50.0 or more earns a $10.0 bonus.\n    public boolean loadWithBonus(double amount)\n    {\n        boolean loaded = load(amount);\n        if (loaded && amount >= 50.0)\n        {\n            // TODO (R2): this skips the $500.0 limit that load() enforces.\n            balance = balance + 10.0;\n        }\n        return loaded;\n    }\n}\n",
+     "solution": "public class PromoGiftCard extends GiftCard\n{\n    // Holiday promo: every load of $50.0 or more earns a $10.0 bonus.\n    public boolean loadWithBonus(double amount)\n    {\n        boolean loaded = load(amount);\n        if (loaded && amount >= 50.0)\n            load(10.0);\n        return loaded;\n    }\n}\n"
+    }
+   ],
+   "main_file": "PromoGiftCard.java",
+   "solution_notes": "Keeping data private (information hiding) means it can be changed only by the methods you choose and only in ways you control (p. 347), which is how `load()` guarantees the limit. A subclass can't use its parent's private fields directly (p. 347), so once `balance` is private, `PromoGiftCard` must go through `load(10.0)` like any other class. `protected` would compile, but it would let the subclass skip the limit again: protected access is meant to be used sparingly, and classes that use their parent's fields directly are “fragile” (p. 347). A child seldom needs protected fields because it can use the parent's public methods (p. 347). The bonus that would exceed the limit is refused by `load()`; `loadWithBonus()` still reports `true` because the customer's own money was loaded.",
+   "warmup": [
+    {
+     "question": "Trace the starter for `loadWithBonus(495.0)` on a new card. What is the balance afterwards, and which line broke the rule?",
+     "model_answer": "load(495.0) succeeds and the balance is 495.0; then `balance = balance + 10.0` makes it 505.0. That line changes the field directly and skips load()'s limit check."
+    },
+    {
+     "question": "Besides PromoGiftCard, what else could change `balance` while it is public?",
+     "model_answer": "Any class at all, for example a test program or a register app writing card.balance = 1000.0 or a negative value, without any of GiftCard's checks."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "GiftCard.java",
+     "title": "The balance is private",
+     "require": "\\bprivate\\s+double\\s+balance\\b",
+     "forbid": "\\b(?:public|protected)\\s+double\\s+balance\\b",
+     "message": "Declare `private double balance;`. `protected` would still let PromoGiftCard (and any future subclass) skip the $500.0 limit, which is exactly what went wrong.",
+     "hint": "Which access level lets only GiftCard's own methods touch the field?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "PromoGiftCard.java",
+     "title": "The bonus goes through load()",
+     "within": "PromoGiftCard.loadWithBonus",
+     "require": "\\bload\\s*\\(\\s*(?:10(?:\\.0+)?|[A-Z_]+)\\s*\\)",
+     "forbid": "\\bbalance\\b",
+     "message": "Add the bonus with `load(10.0)` instead of changing `balance`. load() applies the same $500.0 rule to the bonus as to any other money."
+    }
+   ],
+   "hints": [
+    "Change the access specifier of `balance` first and compile: the error in PromoGiftCard shows exactly which line breaks the rule.",
+    "PromoGiftCard already calls one parent method that adds money and checks the limit.",
+    "The bonus line becomes a call: `load(10.0);`. You don't need to know whether it succeeded."
+   ],
+   "test_program": {
+    "file_name": "TestGiftCards.java",
+    "code": "public class TestGiftCards\n{\n    public static void main(String[] args)\n    {\n        PromoGiftCard card = new PromoGiftCard();\n\n        System.out.println(\"Load $495.0: \" + card.loadWithBonus(495.0)\n            + \", balance $\" + card.getBalance());\n        System.out.println(\"Load $15.0: \" + card.loadWithBonus(15.0)\n            + \", balance $\" + card.getBalance());\n        System.out.println(\"Spend $200.0: \" + card.spend(200.0)\n            + \", balance $\" + card.getBalance());\n        System.out.println(\"Load $60.0: \" + card.loadWithBonus(60.0)\n            + \", balance $\" + card.getBalance());\n    }\n}\n",
+    "expected_output": "Load $495.0: true, balance $495.0\nLoad $15.0: false, balance $495.0\nSpend $200.0: true, balance $295.0\nLoad $60.0: true, balance $365.0\n",
+    "predict": "Before you change anything, predict the balance after each of the four lines with the starter. On which line does the card first break the $500.0 limit?",
+    "how_to_run": "Put `GiftCard.java`, `PromoGiftCard.java` and `TestGiftCards.java` in the same folder, then run `javac *.java` and `java TestGiftCards`. In an IDE, add all of them to one project and run `TestGiftCards.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Making `balance` `protected` would also let PromoGiftCard compile. Why is `private` the better choice here?",
+     "model_answer": "With protected, the subclass could still change balance without the limit check, so the bug could come back in this or any future subclass. Private forces every change through load() and spend(), which enforce the rules."
+    },
+    {
+     "question": "The customer who loads $495.0 doesn't get the $10.0 bonus. Is that the right behaviour? Who decides?",
+     "model_answer": "Yes: the processor rejects cards over $500.0, so a bonus that breaks the limit can't be honoured. That rule belongs to GiftCard; the promo class shouldn't be able to override it."
+    }
+   ],
+   "extension": "Add `public boolean refund(double amount)` to GiftCard for returned purchases. Should a refund that would push the card over $500.0 be refused, or capped? Write it, then decide whether `spend()` and `refund()` should share a private helper method.",
+   "worth_knowing": "Java's own `String` class keeps its characters in a field declared `private final`, and no method changes it. That is why strings are immutable: `toUpperCase()` returns a new String instead of changing the old one, and no subclass can interfere because `String` is a final class (section 9.7).",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; every change to the balance goes through load() or spend()."
+    }
+   ]
+  },
+  {
+   "id": "9.7",
+   "title": "The promo loan that rewrote the legal notice",
+   "subtitle": "final methods and final classes can't be overridden; static methods are hidden, not overridden",
+   "source": "Ch. 9, section 9.7 (pp. 348–352)",
+   "minutes": 25,
+   "objectives": [
+    "Declare a method `final` so no subclass can override it",
+    "Explain why a static method is hidden rather than overridden, and call the parent's version by class name",
+    "Declare a class `final` so it can't be extended"
+   ],
+   "scenario": "Pelican Credit Union's `Loan` class prints a legal notice whose wording is set by the compliance office. Marketing wrote `PromoLoan` and overrode the notice with **No fees, ever!**, which is false (late fees apply) and could get the credit union fined.\n\nThe promo class also copied the loan category back when it was *Consumer loan*. `Loan` has said *Personal loan* for a year, but promo statements still print the old name.\n\nMake the notice impossible to override, make the promo category build on the parent's, and lock `PromoLoan` so nobody can subclass it to change the promo terms. The test program then prints:\n\n```\nPersonal loan: 3 years of interest $1800.0\nPersonal loan (promo): 2 years of interest $300.0\nPromo: Fixed rate. Late fee $35.0 after 10 days.\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Loan.legalNotice()` is declared `final`, and `PromoLoan` no longer tries to override it."
+    },
+    {
+     "id": "R2",
+     "text": "The static `PromoLoan.category()` returns `Loan.category()` followed by ` (promo)`, calling the parent's static method by its class name."
+    },
+    {
+     "id": "R3",
+     "text": "`PromoLoan` is a `final` class."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Loan.java",
+     "starter": "public class Loan\n{\n    private double principal;\n    private double annualRate;\n\n    public Loan(double amount, double rate)\n    {\n        principal = amount;\n        annualRate = rate;\n    }\n\n    // Simple interest: principal x rate x years.\n    public double totalInterest(int years)\n    {\n        return principal * annualRate * years;\n    }\n\n    public static String category()\n    {\n        return \"Personal loan\";\n    }\n\n    // Wording approved by the compliance office.\n    // TODO (R1): no subclass may ever change this notice.\n    public String legalNotice()\n    {\n        return \"Fixed rate. Late fee $35.0 after 10 days.\";\n    }\n}\n",
+     "solution": "public class Loan\n{\n    private double principal;\n    private double annualRate;\n\n    public Loan(double amount, double rate)\n    {\n        principal = amount;\n        annualRate = rate;\n    }\n\n    // Simple interest: principal x rate x years.\n    public double totalInterest(int years)\n    {\n        return principal * annualRate * years;\n    }\n\n    public static String category()\n    {\n        return \"Personal loan\";\n    }\n\n    // Wording approved by the compliance office.\n    public final String legalNotice()\n    {\n        return \"Fixed rate. Late fee $35.0 after 10 days.\";\n    }\n}\n"
+    },
+    {
+     "name": "PromoLoan.java",
+     "starter": "// TODO (R3): promo terms are final. No class may extend PromoLoan.\npublic class PromoLoan extends Loan\n{\n    public PromoLoan(double amount, double rate)\n    {\n        super(amount, rate);\n    }\n\n    // TODO (R2): copied back when Loan said \"Consumer loan\". Build on\n    // Loan's category instead of repeating its text.\n    public static String category()\n    {\n        return \"Consumer loan (promo)\";\n    }\n\n    // Marketing's version.\n    // TODO (R1): this replaces the legal notice on every promo loan.\n    @Override\n    public String legalNotice()\n    {\n        return \"No fees, ever!\";\n    }\n}\n",
+     "solution": "public final class PromoLoan extends Loan\n{\n    public PromoLoan(double amount, double rate)\n    {\n        super(amount, rate);\n    }\n\n    public static String category()\n    {\n        return Loan.category() + \" (promo)\";\n    }\n}\n"
+    }
+   ],
+   "main_file": "PromoLoan.java",
+   "solution_notes": "A subclass cannot override a method declared `final` (p. 350); with `final` on `legalNotice()`, the marketing override no longer compiles, like Figures 9-25 and 9-26 (p. 351), so it has to go. A subclass cannot override a static method either; a static method with the same signature only hides the parent's (p. 348). A static method receives no `this`, so `super.category()` is not allowed (p. 349), but a child can call the parent's nonprivate static method by class name, `Loan.category()`, as Figure 9-21 does with `BaseballPlayer.showOrigins()` (p. 350). That is also why `@Override` must not be placed on the static method. A `final` class cannot be a parent (p. 351); Java's `Math` class is one (p. 352).",
+   "warmup": [
+    {
+     "question": "The starter compiles and the promo loan prints No fees, ever! Which keyword in Loan would have made the compiler refuse PromoLoan's override?",
+     "model_answer": "final. Declaring legalNotice() final means no subclass may override it, so PromoLoan's version would be a compile error."
+    },
+    {
+     "question": "PromoLoan's `category()` is static. Why can't it simply call `super.category()`?",
+     "model_answer": "A static method belongs to the class and runs without an object, so it has no this and no super. The parent's static method is reached by class name: Loan.category()."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Loan.java",
+     "title": "The legal notice is final",
+     "within": "Loan.legalNotice",
+     "require": "\\b(?:public\\s+final|final\\s+public)\\s+String\\s+legalNotice\\s*\\(",
+     "message": "Declare the method `public final String legalNotice()`. Then no subclass can replace the compliance wording."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "PromoLoan.java",
+     "title": "PromoLoan doesn't override the notice",
+     "require": "\\bclass\\s+PromoLoan\\b",
+     "forbid": "\\blegalNotice\\s*\\(\\s*\\)\\s*\\{",
+     "message": "Delete PromoLoan's `legalNotice()` method. Once the parent's version is final, this override is a compile error, and every promo loan must show the approved notice."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "PromoLoan.java",
+     "title": "The promo category builds on Loan's",
+     "within": "PromoLoan.category",
+     "require": "\\bLoan\\s*\\.\\s*category\\s*\\(\\s*\\)",
+     "forbid": "\\bsuper\\b",
+     "message": "Return `Loan.category() + \" (promo)\"`. A static method can't use `super`, but it can call the parent's static method through the class name."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "file": "PromoLoan.java",
+     "title": "PromoLoan is a final class",
+     "require": "\\bfinal\\s+(?:public\\s+)?class\\s+PromoLoan\\b",
+     "message": "Write the header as `public final class PromoLoan extends Loan`, so no class can extend PromoLoan and change the promo terms."
+    }
+   ],
+   "hints": [
+    "One keyword fixes R1 and another use of the same keyword fixes R3; R1 also means deleting a method.",
+    "After adding `final` to legalNotice() in Loan, compile: the error tells you which method in PromoLoan must go.",
+    "In a static method, reach the parent's static method with `ClassName.methodName()`."
+   ],
+   "test_program": {
+    "file_name": "TestLoans.java",
+    "code": "public class TestLoans\n{\n    public static void main(String[] args)\n    {\n        Loan car = new Loan(12000.0, 0.05);\n        PromoLoan spring = new PromoLoan(5000.0, 0.03);\n\n        System.out.println(Loan.category() + \": 3 years of interest $\"\n            + car.totalInterest(3));\n        System.out.println(PromoLoan.category() + \": 2 years of interest $\"\n            + spring.totalInterest(2));\n        System.out.println(\"Promo: \" + spring.legalNotice());\n    }\n}\n",
+    "expected_output": "Personal loan: 3 years of interest $1800.0\nPersonal loan (promo): 2 years of interest $300.0\nPromo: Fixed rate. Late fee $35.0 after 10 days.\n",
+    "predict": "Before you change anything, predict the last line the starter prints. Then predict what the compiler says after you add `final` to `legalNotice()` but before you delete the override.",
+    "how_to_run": "Put `Loan.java`, `PromoLoan.java` and `TestLoans.java` in the same folder, then run `javac *.java` and `java TestLoans`. In an IDE, add all of them to one project and run `TestLoans.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why is `final` a better protection for the legal notice than a comment saying “do not override”?",
+     "model_answer": "The compiler enforces final: an override simply won't compile. A comment can be missed or ignored, which is what happened with the marketing version."
+    },
+    {
+     "question": "Why is `@Override` not allowed on the static `category()` in PromoLoan?",
+     "model_answer": "A static method can't override a parent method; it only hides it. @Override would tell the compiler it overrides something, so the compiler reports an error."
+    }
+   ],
+   "extension": "Try writing `public class HolidayLoan extends PromoLoan` and read the error. Then explain in one sentence why `totalInterest()` was *not* made final: what might a future subclass legitimately want to change about it?",
+   "worth_knowing": "`String` is a final class. Nobody can write a subclass of String, so code that receives a String knows exactly how its methods behave. That guarantee matters for security, because strings carry file names, passwords and web addresses through every Java program.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; no @Override on the static method; final used only where the rules require it."
+    }
+   ]
+  },
+  {
+   "id": "9.8",
+   "title": "The drone deliveries billed at $0.0",
+   "subtitle": "An abstract method forces every subclass to write its own version",
+   "source": "Ch. 9, section 9.8 (pp. 352–359)",
+   "minutes": 25,
+   "objectives": [
+    "Declare an abstract class that exists only to be extended",
+    "Declare an abstract method with no body that every concrete subclass must implement",
+    "Avoid overloading an abstract method by mistake instead of overriding it"
+   ],
+   "scenario": "Harborside Eats delivers by bike and, since last month, by drone. Every receipt calls `fee()`. To make the code compile, `Delivery` was given a placeholder `fee()` that returns 0.0.\n\nThe drone team wrote their pricing, but every drone receipt says **fee $0.0**: their method takes a `double` parameter, so it never replaced the placeholder. Two weeks of drone orders went out free before accounting noticed. No error, no warning.\n\n`BikeDelivery.java` is read-only. Make `Delivery` abstract with an abstract `fee()`, so a missing or misspelled fee becomes a compile error, then fix the drone class. The test program then prints:\n\n```\nOrder A-104: 4.0 km, fee $5.5\nOrder A-105: 4.0 km, fee $11.0\nOrder A-106: 8.0 km, fee $16.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Delivery` is an `abstract` class, and `fee()` is an `abstract` method with no body (the header ends with a semicolon)."
+    },
+    {
+     "id": "R2",
+     "text": "`DroneDelivery` overrides `fee()` with no parameters, marked `@Override`, using the distance from `getKm()`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Delivery.java",
+     "starter": "// TODO (R1): there is no such thing as a plain Delivery. Make the class\n// abstract so no one can create one.\npublic class Delivery\n{\n    private String orderId;\n    private double km;\n\n    public Delivery(String id, double distanceKm)\n    {\n        orderId = id;\n        km = distanceKm;\n    }\n\n    public String getOrderId()\n    {\n        return orderId;\n    }\n\n    public double getKm()\n    {\n        return km;\n    }\n\n    // Placeholder so the class compiles.\n    // TODO (R1): every kind of delivery prices itself. Make fee() a method\n    // that each subclass is forced to write.\n    public double fee()\n    {\n        return 0.0;\n    }\n\n    public String receipt()\n    {\n        return \"Order \" + orderId + \": \" + km + \" km, fee $\" + fee();\n    }\n}\n",
+     "solution": "public abstract class Delivery\n{\n    private String orderId;\n    private double km;\n\n    public Delivery(String id, double distanceKm)\n    {\n        orderId = id;\n        km = distanceKm;\n    }\n\n    public String getOrderId()\n    {\n        return orderId;\n    }\n\n    public double getKm()\n    {\n        return km;\n    }\n\n    public abstract double fee();\n\n    public String receipt()\n    {\n        return \"Order \" + orderId + \": \" + km + \" km, fee $\" + fee();\n    }\n}\n"
+    },
+    {
+     "name": "BikeDelivery.java",
+     "starter": "public class BikeDelivery extends Delivery\n{\n    public BikeDelivery(String id, double distanceKm)\n    {\n        super(id, distanceKm);\n    }\n\n    // $2.5 to start plus $0.75 per km.\n    @Override\n    public double fee()\n    {\n        return 2.5 + 0.75 * getKm();\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "DroneDelivery.java",
+     "starter": "public class DroneDelivery extends Delivery\n{\n    public DroneDelivery(String id, double distanceKm)\n    {\n        super(id, distanceKm);\n    }\n\n    // $6.0 to launch plus $1.25 per km.\n    // TODO (R2): receipts show a $0.0 fee for every drone order.\n    public double fee(double distance)\n    {\n        return 6.0 + 1.25 * distance;\n    }\n}\n",
+     "solution": "public class DroneDelivery extends Delivery\n{\n    public DroneDelivery(String id, double distanceKm)\n    {\n        super(id, distanceKm);\n    }\n\n    // $6.0 to launch plus $1.25 per km.\n    @Override\n    public double fee()\n    {\n        return 6.0 + 1.25 * getKm();\n    }\n}\n"
+    }
+   ],
+   "main_file": "Delivery.java",
+   "solution_notes": "A class you create only to extend is an abstract class, declared with `abstract`; no objects of it can be created (p. 352). An abstract method has the keyword `abstract`, a header and a semicolon, with no braces and no statements (p. 353), and a concrete subclass must implement every inherited abstract method (p. 353). With the placeholder gone, the starter's `DroneDelivery` doesn't compile, because `fee(double)` overloads instead of overriding: “Don't mistakenly overload an abstract method instead of overriding it” (p. 381). An abstract class may still have fields, a constructor and ordinary methods such as `receipt()`, like the abstract `Vehicle` in the You Do It section (pp. 355–356). When `receipt()` calls `fee()`, the subclass's version runs, the same idea as `speak()` in Figure 9-33 (p. 354).",
+   "warmup": [
+    {
+     "question": "With the starter, `drone.receipt()` calls `fee()`. Which `fee()` runs, and why doesn't the drone's own method run?",
+     "model_answer": "Delivery's placeholder runs and returns 0.0. The drone's method has a double parameter, so it is a different method (an overload) that receipt() never calls."
+    },
+    {
+     "question": "A placeholder that returns 0.0 compiled fine. What should happen instead when someone forgets a subclass's fee?",
+     "model_answer": "The compiler should refuse the subclass. An abstract fee() in Delivery forces every concrete subclass to implement fee(), so a missing or misspelled one becomes a compile error."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Delivery.java",
+     "title": "Delivery is abstract",
+     "require": "\\b(?:public\\s+abstract|abstract\\s+public)\\s+class\\s+Delivery\\b",
+     "message": "Write the header as `public abstract class Delivery`. There is no such thing as a plain delivery, so nobody should be able to write `new Delivery(...)`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "Delivery.java",
+     "title": "fee() is abstract, with no body",
+     "require": "\\babstract\\s+double\\s+fee\\s*\\(\\s*\\)\\s*;",
+     "forbid": "\\bdouble\\s+fee\\s*\\(\\s*\\)\\s*\\{",
+     "message": "Replace the placeholder with `public abstract double fee();`: a header and a semicolon, no braces. Each subclass must then write its own fee.",
+     "hint": "An abstract method ends where its header ends."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "DroneDelivery.java",
+     "title": "DroneDelivery overrides fee()",
+     "require": "@Override\\s+public\\s+double\\s+fee\\s*\\(\\s*\\)",
+     "forbid": "\\bfee\\s*\\(\\s*double\\b",
+     "message": "Give the drone's method the same header as the abstract one, `public double fee()` with no parameters, and mark it `@Override`. With a parameter, it is an overload that nothing calls."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "file": "DroneDelivery.java",
+     "title": "The drone fee uses getKm()",
+     "within": "DroneDelivery.fee",
+     "require": "\\bgetKm\\s*\\(\\s*\\)",
+     "message": "Get the distance from `getKm()`: without the parameter, the inherited getter is where the delivery's kilometres come from."
+    }
+   ],
+   "hints": [
+    "Make Delivery and its fee() abstract first, then compile. The error names the class that doesn't implement fee().",
+    "Compare the drone's fee header with Delivery's abstract one. What is different?",
+    "The kilometres are already stored in every Delivery; the subclass reads them with the inherited getter."
+   ],
+   "test_program": {
+    "file_name": "TestDeliveries.java",
+    "code": "public class TestDeliveries\n{\n    public static void main(String[] args)\n    {\n        BikeDelivery bike = new BikeDelivery(\"A-104\", 4.0);\n        DroneDelivery drone = new DroneDelivery(\"A-105\", 4.0);\n        DroneDelivery farm = new DroneDelivery(\"A-106\", 8.0);\n\n        System.out.println(bike.receipt());\n        System.out.println(drone.receipt());\n        System.out.println(farm.receipt());\n    }\n}\n",
+    "expected_output": "Order A-104: 4.0 km, fee $5.5\nOrder A-105: 4.0 km, fee $11.0\nOrder A-106: 8.0 km, fee $16.0\n",
+    "predict": "Before you change anything, predict the three receipts the starter prints. Then predict what the compiler says once fee() is abstract but DroneDelivery hasn't been fixed yet.",
+    "how_to_run": "Put `Delivery.java`, `BikeDelivery.java`, `DroneDelivery.java` and `TestDeliveries.java` in the same folder, then run `javac *.java` and `java TestDeliveries`. In an IDE, add all of them to one project and run `TestDeliveries.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why is a compile error better than a placeholder method that returns 0.0? Use the two weeks of free drone orders in your answer.",
+     "model_answer": "The placeholder let the wrong code run silently, so free orders went out for two weeks. With an abstract fee(), the drone class couldn't have compiled until it had a correct fee(), so the mistake would have been caught before release."
+    },
+    {
+     "question": "Delivery is abstract, yet it has a constructor and a `receipt()` method with a body. Why keep them in the abstract class?",
+     "model_answer": "Every kind of delivery has an order ID and a distance and prints the same receipt, so that code is written once and inherited. Only the fee differs, so only fee() is abstract."
+    }
+   ],
+   "extension": "Add a `CarDelivery` with a $4.0 base fee, $1.0 per km and a $3.0 surcharge over 10 km. Before writing its `fee()`, compile it with only a constructor: what does the compiler tell you? Then try `Delivery d = new Delivery(\"X\", 1.0);` in the test and read the error.",
+   "worth_knowing": "Java's own library uses this design. `java.util.AbstractList` is an abstract class that writes most of a list's behaviour for you; to build a working read-only list you extend it and implement just two abstract methods, `get(int)` and `size()`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; @Override on the drone's fee(); no placeholder bodies left in Delivery."
+    }
+   ]
+  },
+  {
+   "id": "9.9",
+   "title": "The water alert that skipped the phone app",
+   "subtitle": "With a superclass parameter, each object picks its own method at run time",
+   "source": "Ch. 9, section 9.9 (pp. 359–361)",
+   "minutes": 20,
+   "objectives": [
+    "Assign subclass objects to a superclass reference",
+    "Write a method with a superclass parameter that works for every subclass",
+    "Explain dynamic method binding: the object, not the variable's type, decides which method runs"
+   ],
+   "scenario": "When the boil-water notice was lifted, the City Water Department sent the alert through `AlertCenter`. Email worked. Texts went out with the old *SMS to* wording the carrier had asked the city to stop using, and people on the new phone app got nothing: the log says **No channel for Lena**. None of the alerts had the *[City Water]* prefix.\n\nEvery channel already knows how to send a message: each `Notifier` subclass has its own `send()`. `AlertCenter` ignores that and rebuilds each channel's text with `instanceof` tests.\n\nThe notifier classes are read-only. Rewrite `alert()` so it works for any `Notifier`, including channels that don't exist yet. The test program then prints:\n\n```\nEmail to ana@example.com: [City Water] Notice lifted\nText to +1 305 555 0142: [City Water] Notice lifted\nPush to Lena's phone: [City Water] Notice lifted\nText to +1 305 555 0199: Crew arrives at 9 AM\nEmail to ops@example.com: Crew arrives at 9 AM\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`AlertCenter.alert()` sends the alert by calling `send()` on the `Notifier` it receives, with no `instanceof` tests and no channel-specific text."
+    },
+    {
+     "id": "R2",
+     "text": "Every alert's message starts with `[City Water] ` (with a space after the bracket)."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "AlertCenter.java",
+     "starter": "public class AlertCenter\n{\n    // Sends one city alert through whatever channel the notifier uses.\n    // Every alert starts with \"[City Water] \".\n    public static String alert(Notifier n, String message)\n    {\n        // TODO (R1, R2): this rebuilds each channel's text by hand and\n        // forgets the prefix. It breaks whenever a channel changes or a\n        // new one is added.\n        if (n instanceof EmailNotifier)\n            return \"Email to \" + n.getRecipient() + \": \" + message;\n        else if (n instanceof SmsNotifier)\n            return \"SMS to \" + n.getRecipient() + \": \" + message;\n        else\n            return \"No channel for \" + n.getRecipient();\n    }\n}\n",
+     "solution": "public class AlertCenter\n{\n    // Sends one city alert through whatever channel the notifier uses.\n    // Every alert starts with \"[City Water] \".\n    public static String alert(Notifier n, String message)\n    {\n        return n.send(\"[City Water] \" + message);\n    }\n}\n"
+    },
+    {
+     "name": "Notifier.java",
+     "starter": "public abstract class Notifier\n{\n    private String recipient;\n\n    public Notifier(String to)\n    {\n        recipient = to;\n    }\n\n    public String getRecipient()\n    {\n        return recipient;\n    }\n\n    // Each channel formats and sends the message in its own way.\n    public abstract String send(String message);\n}\n",
+     "editable": false
+    },
+    {
+     "name": "EmailNotifier.java",
+     "starter": "public class EmailNotifier extends Notifier\n{\n    public EmailNotifier(String address)\n    {\n        super(address);\n    }\n\n    @Override\n    public String send(String message)\n    {\n        return \"Email to \" + getRecipient() + \": \" + message;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "SmsNotifier.java",
+     "starter": "public class SmsNotifier extends Notifier\n{\n    public SmsNotifier(String phone)\n    {\n        super(phone);\n    }\n\n    // The carrier asked us to call these \"texts\" (changed in May).\n    @Override\n    public String send(String message)\n    {\n        return \"Text to \" + getRecipient() + \": \" + message;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "PushNotifier.java",
+     "starter": "public class PushNotifier extends Notifier\n{\n    public PushNotifier(String userName)\n    {\n        super(userName);\n    }\n\n    // New this week: alerts in the city's phone app.\n    @Override\n    public String send(String message)\n    {\n        return \"Push to \" + getRecipient() + \"'s phone: \" + message;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "AlertCenter.java",
+   "solution_notes": "Every subclass object “is a” superclass object, so a `Notifier` reference can hold an EmailNotifier, an SmsNotifier or a PushNotifier, even though `Notifier` is abstract (p. 359). When `n.send(...)` runs, Java chooses the `send()` of the object `n` currently refers to: dynamic (late) method binding (p. 360). That makes a superclass parameter the natural design, like `talkingAnimal(Animal animal)` in Figure 9-38 (p. 360): the method works for every present and future subclass. The last two lines of the test show the same variable `channel` calling two different `send()` methods, like `animalRef.speak()` in Figure 9-36 (p. 359).",
+   "warmup": [
+    {
+     "question": "`Notifier third = new PushNotifier(\"Lena\");` compiles even though Notifier is abstract. What kind of object does `third` refer to?",
+     "model_answer": "A PushNotifier. The variable's type is Notifier, but the object is a concrete PushNotifier; a Notifier reference can hold any subclass object."
+    },
+    {
+     "question": "Read the starter's `alert()`. What does it return for the push notifier, and why?",
+     "model_answer": "“No channel for Lena”. It only tests for EmailNotifier and SmsNotifier, so a PushNotifier falls through to the else branch."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "AlertCenter.java",
+     "title": "alert() lets the notifier send",
+     "within": "AlertCenter.alert",
+     "require": "\\b\\w+\\s*\\.\\s*send\\s*\\(",
+     "message": "Return `n.send(...)`. Each notifier already knows how to format its message; Java picks the right `send()` for the object while the program runs."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "AlertCenter.java",
+     "title": "No type tests or copied channel text",
+     "within": "AlertCenter.alert",
+     "require": "\\bsend\\b",
+     "forbid": "\\binstanceof\\b|\\bgetRecipient\\b",
+     "message": "Remove the `instanceof` chain and the hand-built text. With them, every new or changed channel needs an edit here; without them, alert() works for any Notifier."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "AlertCenter.java",
+     "title": "Every alert has the [City Water] prefix",
+     "within": "AlertCenter.alert",
+     "strings": true,
+     "require": "\\\"\\[City Water\\] \\\"",
+     "message": "Pass `\"[City Water] \" + message` to `send()`, so every channel receives the prefix."
+    }
+   ],
+   "hints": [
+    "Every Notifier, whatever its subclass, has a `send(String)` method. Which object do you have in `alert()`?",
+    "The whole method body can be one `return` statement.",
+    "Build the prefixed text first, then hand it to `n.send(...)`."
+   ],
+   "test_program": {
+    "file_name": "TestAlerts.java",
+    "code": "public class TestAlerts\n{\n    public static void main(String[] args)\n    {\n        Notifier first = new EmailNotifier(\"ana@example.com\");\n        Notifier second = new SmsNotifier(\"+1 305 555 0142\");\n        Notifier third = new PushNotifier(\"Lena\");\n\n        System.out.println(AlertCenter.alert(first, \"Notice lifted\"));\n        System.out.println(AlertCenter.alert(second, \"Notice lifted\"));\n        System.out.println(AlertCenter.alert(third, \"Notice lifted\"));\n\n        Notifier channel = new SmsNotifier(\"+1 305 555 0199\");\n        System.out.println(channel.send(\"Crew arrives at 9 AM\"));\n        channel = new EmailNotifier(\"ops@example.com\");\n        System.out.println(channel.send(\"Crew arrives at 9 AM\"));\n    }\n}\n",
+    "expected_output": "Email to ana@example.com: [City Water] Notice lifted\nText to +1 305 555 0142: [City Water] Notice lifted\nPush to Lena's phone: [City Water] Notice lifted\nText to +1 305 555 0199: Crew arrives at 9 AM\nEmail to ops@example.com: Crew arrives at 9 AM\n",
+    "predict": "Before you change anything, predict the first three lines with the starter. Then look at the last two lines: the same variable `channel` calls `send()` twice. Which class's `send()` runs each time?",
+    "how_to_run": "Put `AlertCenter.java`, `Notifier.java`, `EmailNotifier.java`, `SmsNotifier.java`, `PushNotifier.java` and `TestAlerts.java` in the same folder, then run `javac *.java` and `java TestAlerts`. In an IDE, add all of them to one project and run `TestAlerts.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Next month the city adds a `VoiceCallNotifier`. What has to change in your `alert()`, and what would have had to change in the starter's?",
+     "model_answer": "Nothing changes in my alert(), because it calls send() on any Notifier and dynamic binding runs the new class's send(). The starter would need another instanceof branch with copied text, or voice calls would get “No channel”."
+    },
+    {
+     "question": "In `channel.send(...)`, the variable's type is Notifier both times. What decides which `send()` runs, and when is that decided?",
+     "model_answer": "The type of the object the variable refers to at that moment decides it, and it is decided while the program runs, not when it compiles. That is dynamic method binding."
+    }
+   ],
+   "extension": "Add a `static String alertAll(Notifier[] list, String message)` to `AlertCenter` that returns all the alerts joined with line breaks (section 9.10 shows arrays of superclass references). Then write a `VoiceCallNotifier` and pass one in without changing `AlertCenter`.",
+   "worth_knowing": "Dynamic binding costs a little time on each call, and Java's just-in-time compiler works to remove it. If only one loaded class implements a method, it calls that method directly, even inlines it, and quietly undoes the shortcut the moment another subclass is loaded.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; alert() contains no type tests; the prefix appears once."
+    }
+   ]
+  },
+  {
+   "id": "9.10",
+   "title": "The clinic payroll that only pays doctors",
+   "subtitle": "One array of superclass references holds every kind of employee",
+   "source": "Ch. 9, section 9.10 (pp. 361–363)",
+   "minutes": 25,
+   "objectives": [
+    "Create an array of superclass references, even when the superclass is abstract",
+    "Store objects of different subclasses in the same array",
+    "Loop through the array and let each element run its own version of a method"
+   ],
+   "scenario": "Tidewater Clinic's `Payroll` was written when everyone was on a salary: it stores `SalariedEmployee` objects and divides each annual salary by 52. The clinic now has hourly nurses and an IT contractor, and the test program that hires them doesn't even compile.\n\nEvery employee type already knows its own weekly pay: `Employee` declares an abstract `weeklyPay()` and each subclass implements it. The employee classes are read-only.\n\nChange `Payroll` so one array holds every kind of employee, in hiring order, and each pay stub uses that employee's own pay rule. The test program then prints:\n\n```\nDr. Okafor: $2000.0\nMarisol: $900.0\nIvan (IT): $750.0\nTheo: $450.0\nTotal this week: $4100.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Payroll` keeps one `Employee[]` array (created with `new Employee[capacity]`) and `hire()` accepts any `Employee`."
+    },
+    {
+     "id": "R2",
+     "text": "`printPayStubs()` and `totalWeeklyPay()` call `weeklyPay()` on each element; nothing in Payroll mentions a salary."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Payroll.java",
+     "starter": "// Written when the clinic paid salaried staff only.\npublic class Payroll\n{\n    // TODO (R1): hourly staff and contractors don't fit in this array.\n    private SalariedEmployee[] staff;\n    private int count;\n\n    public Payroll(int capacity)\n    {\n        staff = new SalariedEmployee[capacity];\n    }\n\n    // TODO (R1): accept any kind of employee.\n    public void hire(SalariedEmployee worker)\n    {\n        staff[count] = worker;\n        ++count;\n    }\n\n    // One line per employee, in hiring order.\n    public void printPayStubs()\n    {\n        for (int x = 0; x < count; ++x)\n        {\n            // TODO (R2): only salaried staff have an annual salary.\n            System.out.println(staff[x].getName() + \": $\" + staff[x].getAnnualSalary() / 52);\n        }\n    }\n\n    public double totalWeeklyPay()\n    {\n        double total = 0.0;\n        for (int x = 0; x < count; ++x)\n        {\n            // TODO (R2)\n            total += staff[x].getAnnualSalary() / 52;\n        }\n        return total;\n    }\n}\n",
+     "solution": "public class Payroll\n{\n    private Employee[] staff;\n    private int count;\n\n    public Payroll(int capacity)\n    {\n        staff = new Employee[capacity];\n    }\n\n    public void hire(Employee worker)\n    {\n        staff[count] = worker;\n        ++count;\n    }\n\n    // One line per employee, in hiring order.\n    public void printPayStubs()\n    {\n        for (int x = 0; x < count; ++x)\n        {\n            System.out.println(staff[x].getName() + \": $\" + staff[x].weeklyPay());\n        }\n    }\n\n    public double totalWeeklyPay()\n    {\n        double total = 0.0;\n        for (int x = 0; x < count; ++x)\n        {\n            total += staff[x].weeklyPay();\n        }\n        return total;\n    }\n}\n"
+    },
+    {
+     "name": "Employee.java",
+     "starter": "public abstract class Employee\n{\n    private String name;\n\n    public Employee(String fullName)\n    {\n        name = fullName;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    // What this employee earns in one week.\n    public abstract double weeklyPay();\n}\n",
+     "editable": false
+    },
+    {
+     "name": "SalariedEmployee.java",
+     "starter": "public class SalariedEmployee extends Employee\n{\n    private double annualSalary;\n\n    public SalariedEmployee(String fullName, double salary)\n    {\n        super(fullName);\n        annualSalary = salary;\n    }\n\n    public double getAnnualSalary()\n    {\n        return annualSalary;\n    }\n\n    @Override\n    public double weeklyPay()\n    {\n        return annualSalary / 52;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "HourlyEmployee.java",
+     "starter": "public class HourlyEmployee extends Employee\n{\n    private double hourlyRate;\n    private int hours;\n\n    public HourlyEmployee(String fullName, double rate, int hoursThisWeek)\n    {\n        super(fullName);\n        hourlyRate = rate;\n        hours = hoursThisWeek;\n    }\n\n    @Override\n    public double weeklyPay()\n    {\n        return hourlyRate * hours;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "ContractEmployee.java",
+     "starter": "public class ContractEmployee extends Employee\n{\n    private double weeklyFee;\n\n    public ContractEmployee(String fullName, double fee)\n    {\n        super(fullName);\n        weeklyFee = fee;\n    }\n\n    @Override\n    public double weeklyPay()\n    {\n        return weeklyFee;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "Payroll.java",
+   "solution_notes": "Creating an array of objects creates space for references, not objects (p. 361), so `new Employee[capacity]` is legal even though `Employee` is abstract, like `new Animal[3]` on p. 361. An array of superclass references can hold subclass references (p. 361), so one array keeps every employee in hiring order. Because every subclass implements `weeklyPay()`, a loop over the array can call it on each element and the right version runs for each object (pp. 361–362, Figure 9-40). `getAnnualSalary()` exists only in `SalariedEmployee`, so it can't be called through an `Employee` reference: the compiler forces the switch to `weeklyPay()`.",
+   "warmup": [
+    {
+     "question": "Compile the starter with the test program. Which line fails first, and what does the message say about types?",
+     "model_answer": "clinic.hire(new HourlyEmployee(...)) fails: an HourlyEmployee cannot be converted to a SalariedEmployee, because hire() and the array only accept salaried staff."
+    },
+    {
+     "question": "`Employee` is abstract, so `new Employee(\"X\")` is illegal. Is `new Employee[5]` legal? What does it create?",
+     "model_answer": "Yes. It creates an array of five Employee references, all null at first. No Employee objects are created."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Payroll.java",
+     "title": "One Employee[] array",
+     "within": "Payroll",
+     "require": "^(?=[\\s\\S]*\\bEmployee\\s*\\[\\s*\\]\\s+\\w+\\s*;)(?=[\\s\\S]*\\bnew\\s+Employee\\s*\\[)",
+     "forbid": "\\bSalariedEmployee\\s*\\[",
+     "message": "Declare the field as `private Employee[] staff;` and create it with `new Employee[capacity]`. A superclass array can hold salaried, hourly and contract employees alike."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "Payroll.java",
+     "title": "hire() accepts any Employee",
+     "require": "\\bvoid\\s+hire\\s*\\(\\s*Employee\\s+\\w+\\s*\\)",
+     "message": "Change the parameter to `Employee worker`, so the clinic can hire any kind of employee."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "Payroll.java",
+     "title": "Pay stubs use each employee's weeklyPay()",
+     "within": "Payroll.printPayStubs",
+     "require": "\\]\\s*\\.\\s*weeklyPay\\s*\\(\\s*\\)",
+     "forbid": "\\bgetAnnualSalary\\b",
+     "message": "Print `staff[x].weeklyPay()`. Each element runs its own class's version, so salaried, hourly and contract staff are all paid correctly."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "file": "Payroll.java",
+     "title": "The total uses weeklyPay() too",
+     "within": "Payroll.totalWeeklyPay",
+     "require": "\\]\\s*\\.\\s*weeklyPay\\s*\\(\\s*\\)",
+     "forbid": "\\bgetAnnualSalary\\b",
+     "message": "Add `staff[x].weeklyPay()` to the total. Only salaried staff have an annual salary; every employee has a weekly pay."
+    }
+   ],
+   "hints": [
+    "Three places name `SalariedEmployee`: the field, the `new` expression and the `hire()` parameter. All three should name the superclass.",
+    "Once the array is `Employee[]`, `getAnnualSalary()` stops compiling. Which method does every Employee have?",
+    "Each loop body ends up calling `staff[x].weeklyPay()`."
+   ],
+   "test_program": {
+    "file_name": "TestPayroll.java",
+    "code": "public class TestPayroll\n{\n    public static void main(String[] args)\n    {\n        Payroll clinic = new Payroll(5);\n        clinic.hire(new SalariedEmployee(\"Dr. Okafor\", 104000.0));\n        clinic.hire(new HourlyEmployee(\"Marisol\", 22.5, 40));\n        clinic.hire(new ContractEmployee(\"Ivan (IT)\", 750.0));\n        clinic.hire(new HourlyEmployee(\"Theo\", 18.0, 25));\n\n        clinic.printPayStubs();\n        System.out.println(\"Total this week: $\" + clinic.totalWeeklyPay());\n    }\n}\n",
+    "expected_output": "Dr. Okafor: $2000.0\nMarisol: $900.0\nIvan (IT): $750.0\nTheo: $450.0\nTotal this week: $4100.0\n",
+    "predict": "Before you change anything, compile the starter with the test program and predict which line the compiler rejects first. After your fix, predict the pay stubs for Marisol (22.5 × 40) and Theo (18.0 × 25).",
+    "how_to_run": "Put `Payroll.java`, `Employee.java`, `SalariedEmployee.java`, `HourlyEmployee.java`, `ContractEmployee.java` and `TestPayroll.java` in the same folder, then run `javac *.java` and `java TestPayroll`. In an IDE, add all of them to one project and run `TestPayroll.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Someone suggests three arrays instead: one for salaried, one for hourly and one for contract staff. Give two reasons one `Employee[]` array is better here.",
+     "model_answer": "One array keeps everyone in hiring order, which the pay stubs need, and one loop handles every type. With three arrays, every new employee type means another array, another hire method and another loop."
+    },
+    {
+     "question": "The loop calls `staff[x].weeklyPay()` on an `Employee` reference. How does Java know to divide by 52 for Dr. Okafor but multiply hours for Marisol?",
+     "model_answer": "Each element refers to an object of a specific subclass, and Java runs that object's weeklyPay() at run time. Dr. Okafor's object is a SalariedEmployee and Marisol's is an HourlyEmployee."
+    }
+   ],
+   "extension": "Add `public String highestPaid()` that returns the name of the employee with the largest weekly pay. Then add an `InternEmployee` paid a $300.0 weekly stipend and hire one in the test, without changing `Payroll` at all.",
+   "worth_knowing": "Java arrays are covariant: a `SalariedEmployee[]` can be assigned to an `Employee[]` variable. But storing an `HourlyEmployee` through that variable then fails while the program runs, with an `ArrayStoreException`. Java checks every store into an object array to keep this from going unnoticed.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; Payroll mentions no specific employee subclass."
+    }
+   ]
+  },
+  {
+   "id": "9.11",
+   "title": "The conference that printed two badges for Priya",
+   "subtitle": "Override toString(), equals(Object) and hashCode() from the Object class",
+   "source": "Ch. 9, section 9.11 (pp. 364–370)",
+   "minutes": 30,
+   "objectives": [
+    "Override `toString()` so an object prints useful information",
+    "Tell an overloaded `equals(Attendee)` apart from an overriding `equals(Object)`, and write the override safely",
+    "Override `hashCode()` so equal objects have equal hash codes"
+   ],
+   "scenario": "At the Gulf Coast Dev Conference, Priya Nair registered twice, once as *priya.nair@example.com* and once as *Priya.Nair@Example.com*. `Attendee` has an `equals()` that compares emails ignoring case, and it says the two registrations are the same person. Yet the check-in desk let her in twice and printed two badges.\n\nThe desk is shared with the parking app, so `CheckInDesk` (read-only) stores `Object` references and compares them with `equals(Object)`. The attendee log is no help either: every line reads like **Attendee@1b6d3586**.\n\nMake `Attendee` print as `Name <email>`, override `equals()` so the desk uses it (and so a parking pass or `null` is never “equal” to an attendee), and keep `hashCode()` consistent with it. The test program then prints:\n\n```\nPriya Nair <priya.nair@example.com>\nSame person? true\nCheck in Priya: true\nCheck in Priya again: false\nCheck in Sam: true\nCheck in parking pass P-17: true\nEntries at the desk: 3\nEqual hash codes? true\nEqual to null? false\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Attendee` overrides `toString()`, marked `@Override`, returning the name, a space and the email in angle brackets."
+    },
+    {
+     "id": "R2",
+     "text": "`Attendee` overrides `equals(Object)` (and no longer has `equals(Attendee)`): it returns `false` for `null` or an object of another class, and otherwise compares emails ignoring case."
+    },
+    {
+     "id": "R3",
+     "text": "`Attendee` overrides `hashCode()` using the email, so two attendees that are equal have the same hash code."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Attendee.java",
+     "starter": "public class Attendee\n{\n    private String name;\n    private String email;\n\n    public Attendee(String fullName, String address)\n    {\n        name = fullName;\n        email = address;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public String getEmail()\n    {\n        return email;\n    }\n\n    // TODO (R1): printing an Attendee shows something like Attendee@1b6d3586.\n\n    // Two registrations are the same person when the emails match,\n    // ignoring capital letters.\n    // TODO (R2): this version overloads equals(); the check-in desk never calls it.\n    public boolean equals(Attendee other)\n    {\n        return email.equalsIgnoreCase(other.email);\n    }\n\n    // TODO (R3): equal attendees must have equal hash codes.\n}\n",
+     "solution": "public class Attendee\n{\n    private String name;\n    private String email;\n\n    public Attendee(String fullName, String address)\n    {\n        name = fullName;\n        email = address;\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public String getEmail()\n    {\n        return email;\n    }\n\n    @Override\n    public String toString()\n    {\n        return name + \" <\" + email + \">\";\n    }\n\n    // Two registrations are the same person when the emails match,\n    // ignoring capital letters.\n    @Override\n    public boolean equals(Object obj)\n    {\n        if (obj == this)\n            return true;\n        if (obj == null || obj.getClass() != getClass())\n            return false;\n        Attendee other = (Attendee) obj;\n        return email.equalsIgnoreCase(other.email);\n    }\n\n    @Override\n    public int hashCode()\n    {\n        return email.toLowerCase().hashCode();\n    }\n}\n"
+    },
+    {
+     "name": "CheckInDesk.java",
+     "starter": "// The venue's check-in desk is shared with the parking and vendor apps,\n// so it stores any kind of object.\npublic class CheckInDesk\n{\n    private Object[] arrived = new Object[200];\n    private int count;\n\n    // Returns false when an equal entry has already checked in.\n    public boolean checkIn(Object visitor)\n    {\n        for (int x = 0; x < count; ++x)\n        {\n            if (arrived[x].equals(visitor))\n                return false;\n        }\n        arrived[count] = visitor;\n        ++count;\n        return true;\n    }\n\n    public int getCount()\n    {\n        return count;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "Attendee.java",
+   "solution_notes": "Every class extends `Object` and inherits `toString()`, `equals()` and `hashCode()` (p. 364). The inherited `toString()` prints the class name, @ and a hash code (p. 365), so overriding it makes logs readable (pp. 365–366). `equals(Attendee)` has a different parameter list from `Object.equals(Object)`, so it overloads rather than overrides (p. 369); the desk calls `equals(Object)` and gets Object's version, which is true only for the same object (p. 367). The override follows the recommendations on pp. 369–370: true for the same object, false for `null` or a different class, cast only after those tests. Note that each early case must return before the cast: in Figure 9-54 as printed, an argument of another class still reaches the cast. Equal objects should have equal hash codes (p. 370); because `equals()` ignores case, `hashCode()` uses the lowercase email. `a instanceof Attendee` is an accepted alternative to the `getClass()` test.",
+   "warmup": [
+    {
+     "question": "`priya.equals(priyaAgain)` is true with the starter, yet the desk admits Priya twice. Which `equals()` does the desk's `arrived[x].equals(visitor)` call, and why?",
+     "model_answer": "It calls Object's equals(Object), because visitor is an Object reference and Attendee only has an overload that takes an Attendee. Object's version is true only for the very same object, so two registrations are never equal."
+    },
+    {
+     "question": "What should `equals()` return when an attendee is compared with the String \"P-17\", and what goes wrong if the method casts the argument to Attendee straight away?",
+     "model_answer": "It should return false. Casting a String to Attendee throws a ClassCastException, so the class must be checked before the cast."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Attendee.java",
+     "title": "toString() is overridden",
+     "require": "@Override\\s+public\\s+String\\s+toString\\s*\\(\\s*\\)",
+     "message": "Add `@Override public String toString()` returning `name + \" <\" + email + \">\"`. println() calls toString() automatically."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "Attendee.java",
+     "title": "equals() takes an Object",
+     "require": "\\bpublic\\s+boolean\\s+equals\\s*\\(\\s*Object\\s+\\w+\\s*\\)",
+     "forbid": "\\bequals\\s*\\(\\s*Attendee\\b",
+     "message": "Change the header to `public boolean equals(Object obj)` (with `@Override`). Only that exact signature overrides Object's version, which is the one the desk calls.",
+     "hint": "Compare your header with `boolean equals(Object obj)` in Table 9-2."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "Attendee.java",
+     "title": "equals() rules out null and other classes",
+     "within": "Attendee.equals",
+     "require": [
+      "^(?=[\\s\\S]*\\bnull\\b)(?=[\\s\\S]*\\bgetClass\\s*\\(\\s*\\))",
+      "\\binstanceof\\s+Attendee\\b"
+     ],
+     "message": "Before casting, return false when the argument is `null` or not an Attendee: `obj == null || obj.getClass() != getClass()`. Otherwise a parking pass crashes the desk with a ClassCastException."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "file": "Attendee.java",
+     "title": "hashCode() is based on the email",
+     "within": "Attendee.hashCode",
+     "require": "^(?=[\\s\\S]*\\bint\\s+hashCode\\s*\\(\\s*\\))(?=[\\s\\S]*\\bemail\\b)",
+     "message": "Add `@Override public int hashCode()` that returns `email.toLowerCase().hashCode()`. Equal attendees must produce equal hash codes, and equals() ignores case, so the hash must too."
+    }
+   ],
+   "hints": [
+    "Start with toString(): it's one return statement, and the first line of the output tells you whether it works.",
+    "Write equals() in the order the book recommends: the same object, then null, then a different class, and only then the cast `(Attendee) obj` and the email comparison.",
+    "Two emails that differ only in capital letters must give the same hash code, so lowercase the email before calling its hashCode()."
+   ],
+   "test_program": {
+    "file_name": "TestCheckIn.java",
+    "code": "public class TestCheckIn\n{\n    public static void main(String[] args)\n    {\n        Attendee priya = new Attendee(\"Priya Nair\", \"priya.nair@example.com\");\n        Attendee priyaAgain = new Attendee(\"Priya Nair\", \"Priya.Nair@Example.com\");\n        Attendee sam = new Attendee(\"Sam Ortiz\", \"sam.o@example.com\");\n\n        System.out.println(priya);\n        System.out.println(\"Same person? \" + priya.equals(priyaAgain));\n\n        CheckInDesk desk = new CheckInDesk();\n        System.out.println(\"Check in Priya: \" + desk.checkIn(priya));\n        System.out.println(\"Check in Priya again: \" + desk.checkIn(priyaAgain));\n        System.out.println(\"Check in Sam: \" + desk.checkIn(sam));\n        System.out.println(\"Check in parking pass P-17: \" + desk.checkIn(\"P-17\"));\n        System.out.println(\"Entries at the desk: \" + desk.getCount());\n\n        System.out.println(\"Equal hash codes? \" + (priya.hashCode() == priyaAgain.hashCode()));\n        System.out.println(\"Equal to null? \" + priya.equals(null));\n    }\n}\n",
+    "expected_output": "Priya Nair <priya.nair@example.com>\nSame person? true\nCheck in Priya: true\nCheck in Priya again: false\nCheck in Sam: true\nCheck in parking pass P-17: true\nEntries at the desk: 3\nEqual hash codes? true\nEqual to null? false\n",
+    "predict": "Before you change anything, predict what the starter prints for the first line and for “Check in Priya again”. Then predict what happens at the last line, `priya.equals(null)`.",
+    "how_to_run": "Put `Attendee.java`, `CheckInDesk.java` and `TestCheckIn.java` in the same folder, then run `javac *.java` and `java TestCheckIn`. In an IDE, add all of them to one project and run `TestCheckIn.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The starter's `equals(Attendee)` worked when you called it yourself but not at the desk. Explain the difference between overloading and overriding `equals()` using this bug.",
+     "model_answer": "The overload is only chosen when the argument's declared type is Attendee. The desk passes an Object, so Java uses Object's equals(Object). Only an override with the Object parameter replaces the version the desk calls."
+    },
+    {
+     "question": "Why must `hashCode()` change whenever `equals()` changes? What could go wrong if it didn't?",
+     "model_answer": "Equal objects must have equal hash codes. Hash-based collections look an object up by its hash code first, so two equal attendees with different hash codes could both be stored, giving duplicate badges again."
+    }
+   ],
+   "extension": "Replace `CheckInDesk`'s array with a `java.util.HashSet<Object>` and its `add()` method, which returns false for a duplicate. Run the test with and without your `hashCode()`: what changes, and why?",
+   "worth_knowing": "`HashSet` and `HashMap` find an object by its hash code first and only then call `equals()`. If two equal objects have different hash codes, a `HashSet` can store both “duplicates”. That is why Java's documentation requires equal objects to return equal hash codes.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; @Override on all three methods; no cast before the null and class checks."
+    }
+   ]
+  },
+  {
+   "id": "9.12",
+   "title": "The e-bike that couldn't be rented",
+   "subtitle": "A class has one superclass but can implement any number of interfaces",
+   "source": "Ch. 9, section 9.12 (pp. 371–377)",
+   "minutes": 30,
+   "objectives": [
+    "Explain why Java doesn't allow a class to extend two classes",
+    "Write an interface with abstract methods and a constant, and implement it with `implements`",
+    "Write a class header that both extends a class and implements an interface"
+   ],
+   "scenario": "Keys Rentals rents kayaks and, starting this season, electric bikes. The counter software prices anything that is `Rentable`. `Rentable` was written as an abstract class, which worked for `Kayak`, but `ElectricBike` already extends `Bicycle` to share the shop's bike code, and Java won't let it extend `Rentable` as well. So the counter can't quote a price for an e-bike at all.\n\n`Rentable` holds no data except a shared late fee, and no method bodies. That makes it a description of what a rentable item can do, which is exactly what an interface is.\n\n`Bicycle.java` and `RentalCounter.java` are read-only. Turn `Rentable` into an interface and make both items rentable. The test program then prints:\n\n```\nKayak, 14 ft: 3 days $105.0\nE-bike, 54 cm frame, 60 km range: 3 days $84.0\nE-bike back 2 days late: $94.0\nIs a Bicycle: true, is Rentable: true\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Rentable` is an `interface` that keeps the `LATE_FEE_PER_DAY` constant and the `dailyRate()` and `rentalTag()` methods."
+    },
+    {
+     "id": "R2",
+     "text": "`Kayak` implements `Rentable` and extends nothing."
+    },
+    {
+     "id": "R3",
+     "text": "`ElectricBike` extends `Bicycle` and implements `Rentable`, and its `rentalTag()` returns, for example, `E-bike, 54 cm frame, 60 km range` from its frame size and range."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Rentable.java",
+     "starter": "// TODO (R1): ElectricBike already extends Bicycle, and a Java class can\n// have only one superclass. Turn Rentable into something a class can\n// implement instead of extend.\npublic abstract class Rentable\n{\n    public static final double LATE_FEE_PER_DAY = 5.0;\n\n    public abstract double dailyRate();\n\n    public abstract String rentalTag();\n}\n",
+     "solution": "public interface Rentable\n{\n    public static final double LATE_FEE_PER_DAY = 5.0;\n\n    public abstract double dailyRate();\n\n    public abstract String rentalTag();\n}\n"
+    },
+    {
+     "name": "Kayak.java",
+     "starter": "// TODO (R2): Kayak needs no superclass; it only promises the Rentable methods.\npublic class Kayak extends Rentable\n{\n    private int lengthFeet;\n\n    public Kayak(int feet)\n    {\n        lengthFeet = feet;\n    }\n\n    @Override\n    public double dailyRate()\n    {\n        return 35.0;\n    }\n\n    @Override\n    public String rentalTag()\n    {\n        return \"Kayak, \" + lengthFeet + \" ft\";\n    }\n}\n",
+     "solution": "public class Kayak implements Rentable\n{\n    private int lengthFeet;\n\n    public Kayak(int feet)\n    {\n        lengthFeet = feet;\n    }\n\n    @Override\n    public double dailyRate()\n    {\n        return 35.0;\n    }\n\n    @Override\n    public String rentalTag()\n    {\n        return \"Kayak, \" + lengthFeet + \" ft\";\n    }\n}\n"
+    },
+    {
+     "name": "ElectricBike.java",
+     "starter": "// TODO (R3): an ElectricBike is a Bicycle AND it can be rented.\npublic class ElectricBike extends Bicycle\n{\n    private int rangeKm;\n\n    public ElectricBike(int frameSize, int range)\n    {\n        super(frameSize);\n        rangeKm = range;\n    }\n\n    public double dailyRate()\n    {\n        return 28.0;\n    }\n\n    // TODO (R3): the counter prints this tag on every receipt, for\n    // example: E-bike, 54 cm frame, 60 km range\n}\n",
+     "solution": "public class ElectricBike extends Bicycle implements Rentable\n{\n    private int rangeKm;\n\n    public ElectricBike(int frameSize, int range)\n    {\n        super(frameSize);\n        rangeKm = range;\n    }\n\n    @Override\n    public double dailyRate()\n    {\n        return 28.0;\n    }\n\n    @Override\n    public String rentalTag()\n    {\n        return \"E-bike, \" + getFrameCm() + \" cm frame, \" + rangeKm + \" km range\";\n    }\n}\n"
+    },
+    {
+     "name": "Bicycle.java",
+     "starter": "public class Bicycle\n{\n    private int frameCm;\n\n    public Bicycle(int frameSize)\n    {\n        frameCm = frameSize;\n    }\n\n    public int getFrameCm()\n    {\n        return frameCm;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "RentalCounter.java",
+     "starter": "public class RentalCounter\n{\n    // The daily rate for each day booked, plus the late fee for each\n    // day the item comes back late.\n    public static double quote(Rentable item, int days, int lateDays)\n    {\n        return item.dailyRate() * days + Rentable.LATE_FEE_PER_DAY * lateDays;\n    }\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "Rentable.java",
+   "solution_notes": "Java prohibits multiple inheritance: a class can't extend two classes (p. 371). An interface is the alternative: its methods are implicitly public and abstract and its data is implicitly public, static and final (p. 371), so the keywords in `Rentable` may be written or left out. A class uses it with `implements`, and must implement every method (p. 371). `ElectricBike extends Bicycle implements Rentable` follows the convention that `implements` comes after `extends` (p. 372), like `WorkingDog extends Dog implements Worker`. An interface constant is shared by every class that uses it without being redeclared (pp. 374–375), so `RentalCounter` reads `Rentable.LATE_FEE_PER_DAY`. Rentable has no data or method bodies to inherit, which fits the advice on p. 374 for choosing an interface over an abstract class. An array of interface references, `Rentable[]`, can hold any implementing objects.",
+   "warmup": [
+    {
+     "question": "Why can't the starter's ElectricBike be written as `extends Bicycle, Rentable` or given a second `extends`?",
+     "model_answer": "Java allows only one superclass per class. ElectricBike already extends Bicycle, so it can't also extend the abstract class Rentable."
+    },
+    {
+     "question": "Read the starter's `Rentable`. What does it contain that a subclass could inherit and reuse, besides the constant?",
+     "model_answer": "Nothing: both methods are abstract and there are no fields or method bodies. It only lists what a rentable item must be able to do, so it might as well be an interface."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Rentable.java",
+     "title": "Rentable is an interface",
+     "require": "\\bpublic\\s+interface\\s+Rentable\\b",
+     "forbid": "\\bclass\\b",
+     "message": "Write the header as `public interface Rentable`. Its methods are then automatically public and abstract, and the late fee automatically public, static and final."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "Kayak.java",
+     "title": "Kayak implements Rentable",
+     "require": "\\bclass\\s+Kayak\\s+implements\\s+Rentable\\b",
+     "forbid": "\\bextends\\b",
+     "message": "Change `extends Rentable` to `implements Rentable`. A class extends classes and implements interfaces."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "file": "ElectricBike.java",
+     "title": "ElectricBike is a Bicycle and Rentable",
+     "require": "\\bclass\\s+ElectricBike\\s+extends\\s+Bicycle\\s+implements\\s+Rentable\\b",
+     "message": "Write the header as `public class ElectricBike extends Bicycle implements Rentable`: the `extends` clause comes first, then `implements`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "file": "ElectricBike.java",
+     "title": "ElectricBike has a rentalTag()",
+     "within": "ElectricBike.rentalTag",
+     "require": "^(?=[\\s\\S]*\\bpublic\\s+String\\s+rentalTag\\s*\\(\\s*\\))(?=[\\s\\S]*\\bgetFrameCm\\s*\\(\\s*\\))(?=[\\s\\S]*\\brangeKm\\b)",
+     "message": "Add `public String rentalTag()` that builds the tag from `getFrameCm()` (inherited from Bicycle) and `rangeKm`. The method must be public, because interface methods are public."
+    }
+   ],
+   "hints": [
+    "Change Rentable's header first. In an interface, the `abstract` keywords become optional, and so does `public static final` on the constant.",
+    "A class implements an interface with `implements`. For ElectricBike, keep `extends Bicycle` and add the interface after it.",
+    "The frame size is private in Bicycle, so the tag gets it with `getFrameCm()`; the range is ElectricBike's own field."
+   ],
+   "test_program": {
+    "file_name": "TestRentals.java",
+    "code": "public class TestRentals\n{\n    public static void main(String[] args)\n    {\n        Kayak tandem = new Kayak(14);\n        ElectricBike city = new ElectricBike(54, 60);\n\n        Rentable[] fleet = new Rentable[2];\n        fleet[0] = tandem;\n        fleet[1] = city;\n        for (int x = 0; x < fleet.length; ++x)\n            System.out.println(fleet[x].rentalTag() + \": 3 days $\"\n                + RentalCounter.quote(fleet[x], 3, 0));\n\n        System.out.println(\"E-bike back 2 days late: $\" + RentalCounter.quote(city, 3, 2));\n        System.out.println(\"Is a Bicycle: \" + (city instanceof Bicycle)\n            + \", is Rentable: \" + (city instanceof Rentable));\n    }\n}\n",
+    "expected_output": "Kayak, 14 ft: 3 days $105.0\nE-bike, 54 cm frame, 60 km range: 3 days $84.0\nE-bike back 2 days late: $94.0\nIs a Bicycle: true, is Rentable: true\n",
+    "predict": "Before you change anything, compile the starter with the test program: which line fails, and why? After your fix, predict the late quote: 3 days at $28.0 plus 2 late days at the interface's fee.",
+    "how_to_run": "Put `Rentable.java`, `Kayak.java`, `ElectricBike.java`, `Bicycle.java`, `RentalCounter.java` and `TestRentals.java` in the same folder, then run `javac *.java` and `java TestRentals`. In an IDE, add all of them to one project and run `TestRentals.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "Why is an interface the right choice for Rentable here, while Bicycle stays a class?",
+     "model_answer": "Rentable only states which methods a rentable item must have and shares a constant, and unrelated items (kayaks, e-bikes) need it alongside their own superclass. Bicycle has real data and behaviour that subclasses reuse, so it stays a class."
+    },
+    {
+     "question": "`city instanceof Rentable` is true even though ElectricBike doesn't extend Rentable. What relationship does `implements` create?",
+     "model_answer": "Implementing an interface is an “is a” relationship too: an ElectricBike is a Bicycle and is a Rentable, so it can be stored in a Rentable variable or array and passed to quote()."
+    }
+   ],
+   "extension": "Add a `Chargeable` interface with `int chargeMinutes()` and make `ElectricBike` implement both interfaces, separated by a comma. Then add a `Paddleboard` that implements only `Rentable`. Which object can go in a `Chargeable[]` array?",
+   "worth_knowing": "The rule that every interface method is abstract describes interfaces as the book presents them. Since Java 8, an interface may also contain `default` methods with bodies. That is how Java added `forEach()` to its existing collection interfaces without breaking the thousands of classes that already implemented them.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; @Override on implemented methods; extends written before implements."
+    }
+   ]
+  },
+  {
+   "id": "9.13",
+   "title": "The beach heat alert that waits for 35 degrees",
+   "subtitle": "A record for fixed data, an anonymous inner class and a lambda for one-off rules",
+   "source": "Ch. 9, section 9.13 (pp. 377–381)",
+   "minutes": 30,
+   "objectives": [
+    "Replace a data-only class with a `record` and use its generated accessors, `equals()` and `toString()`",
+    "Implement an interface with an anonymous inner class that uses an effectively final variable",
+    "Implement a functional interface with a lambda expression"
+   ],
+   "scenario": "The county's coastal sensors send readings to `Monitor`, which counts how many trigger an alert. Three things are wrong:\n\n- `Reading` is a hand-written class that only holds a station name and a temperature, yet it prints as `Reading@...` and two identical readings are not `equals()`.\n- `heatRule(limit)` was supposed to use each station's limit. It returns a `HeatRule` written for one inland station that always uses 35.0, so the beach never alerts at 32.0.\n- `freezeRule()` returns `null`, and the program crashes the first time it is counted.\n\n`Rule.java` is read-only: an interface with one method. Make `Reading` a record, write the heat rule as an anonymous inner class and the freeze rule as a lambda. The test program then prints:\n\n```\nFirst reading: Reading[station=Pier 3, celsius=33.5]\nSame values, same reading? true\nAt or above 32.0 C: 2\nAt or above 35.0 C: 1\nBelow freezing: 1\nDunes low: -1.5 C at Dunes\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`Reading` is a `record` with the components `String station` and `double celsius`."
+    },
+    {
+     "id": "R2",
+     "text": "`heatRule(limit)` returns an anonymous inner class that implements `Rule` and triggers when the reading is at or above `limit`; the `HeatRule` class is removed."
+    },
+    {
+     "id": "R3",
+     "text": "`freezeRule()` returns a lambda expression that triggers when the reading is below 0.0."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects (records need Java 16 or later).",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Reading.java",
+     "starter": "// Twenty-odd lines to hold two values that never change, and printing\n// one still shows Reading@1b6d3586.\n// TODO (R1): replace the whole class with a record that has the same\n// two components, station and celsius.\npublic final class Reading\n{\n    private final String station;\n    private final double celsius;\n\n    public Reading(String station, double celsius)\n    {\n        this.station = station;\n        this.celsius = celsius;\n    }\n\n    public String station()\n    {\n        return station;\n    }\n\n    public double celsius()\n    {\n        return celsius;\n    }\n}\n",
+     "solution": "public record Reading(String station, double celsius)\n{\n}\n"
+    },
+    {
+     "name": "Monitor.java",
+     "starter": "public class Monitor\n{\n    // How many readings trigger the rule.\n    public static int count(Reading[] readings, Rule rule)\n    {\n        int total = 0;\n        for (int x = 0; x < readings.length; ++x)\n        {\n            if (rule.triggers(readings[x]))\n                ++total;\n        }\n        return total;\n    }\n\n    // A heat rule with each station's own limit: the beach uses 32.0,\n    // inland stations use 35.0.\n    public static Rule heatRule(double limit)\n    {\n        // TODO (R2): HeatRule ignores limit. Replace it with an anonymous\n        // inner class that implements Rule and compares with limit.\n        return new HeatRule();\n    }\n\n    // TODO (R3): a reading below 0.0 C triggers the freeze rule.\n    // Return a lambda expression.\n    public static Rule freezeRule()\n    {\n        return null;\n    }\n}\n\n// Written for one inland station; used nowhere else.\nclass HeatRule implements Rule\n{\n    public boolean triggers(Reading r)\n    {\n        return r.celsius() >= 35.0;\n    }\n}\n",
+     "solution": "public class Monitor\n{\n    // How many readings trigger the rule.\n    public static int count(Reading[] readings, Rule rule)\n    {\n        int total = 0;\n        for (int x = 0; x < readings.length; ++x)\n        {\n            if (rule.triggers(readings[x]))\n                ++total;\n        }\n        return total;\n    }\n\n    // A heat rule with each station's own limit: the beach uses 32.0,\n    // inland stations use 35.0.\n    public static Rule heatRule(double limit)\n    {\n        Rule rule = new Rule()\n        {\n            @Override\n            public boolean triggers(Reading r)\n            {\n                return r.celsius() >= limit;\n            }\n        };\n        return rule;\n    }\n\n    public static Rule freezeRule()\n    {\n        return r -> r.celsius() < 0.0;\n    }\n}\n"
+    },
+    {
+     "name": "Rule.java",
+     "starter": "// Decides whether a reading should raise an alert.\npublic interface Rule\n{\n    public abstract boolean triggers(Reading r);\n}\n",
+     "editable": false
+    }
+   ],
+   "main_file": "Monitor.java",
+   "solution_notes": "A record (Java 16 and later) declares a class that only holds unchanging data: you list the components and Java generates private final fields, a public constructor, an accessor named after each component (no `get` prefix), and `equals()`, `hashCode()` and `toString()` (pp. 378–379). That is why `today[0]` now prints its values and two readings with the same values are equal. An anonymous inner class is created and instantiated in one `new` expression, implements the interface without the word `implements`, and must end with a semicolon (pp. 379–380). It may use `limit` because the parameter is effectively final: assigned once (p. 380). `Rule` has one abstract method, so it is a functional interface and a lambda can implement it: `r -> r.celsius() < 0.0` (p. 380). A one-line body needs no braces (p. 380). Reading 0.0 is not below freezing, so the freeze count is 1.",
+   "warmup": [
+    {
+     "question": "With the starter, how many of today's readings does `heatRule(32.0)` count, and why is the 33.5 at Pier 3 missed?",
+     "model_answer": "It counts 1 (only 36.0). HeatRule ignores the limit parameter and always compares with 35.0, so 33.5 never triggers."
+    },
+    {
+     "question": "Rule has exactly one abstract method. Why does that matter for writing `freezeRule()`?",
+     "model_answer": "An interface with one abstract method is a functional interface, so a lambda expression can implement it; Java knows the lambda is the body of triggers()."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "Reading.java",
+     "title": "Reading is a record",
+     "require": "\\brecord\\s+Reading\\s*\\(\\s*String\\s+station\\s*,\\s*double\\s+celsius\\s*\\)",
+     "forbid": "\\bclass\\b",
+     "message": "Replace the class with `public record Reading(String station, double celsius) { }`. The constructor, the accessors station() and celsius(), equals() and toString() are generated for you."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "file": "Monitor.java",
+     "title": "heatRule() uses an anonymous inner class",
+     "within": "Monitor.heatRule",
+     "require": "^(?=[\\s\\S]*\\bnew\\s+Rule\\s*\\(\\s*\\)\\s*\\{)(?=[\\s\\S]*>=\\s*limit\\b)",
+     "forbid": "\\bHeatRule\\b",
+     "message": "Return `new Rule() { ... }` with a `triggers()` method that compares `r.celsius() >= limit`. The anonymous class can read `limit` because the parameter is never reassigned.",
+     "hint": "The class body follows `new Rule()` directly, and the whole expression ends with a semicolon."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "Monitor.java",
+     "title": "The HeatRule class is gone",
+     "require": "\\bclass\\s+Monitor\\b",
+     "forbid": "\\bclass\\s+HeatRule\\b",
+     "message": "Delete the `HeatRule` class at the bottom of Monitor.java. It was only ever used once, and it ignored the limit."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "file": "Monitor.java",
+     "title": "freezeRule() returns a lambda",
+     "within": "Monitor.freezeRule",
+     "require": "^(?=[\\s\\S]*->)(?=[\\s\\S]*\\bcelsius\\s*\\(\\s*\\)\\s*<\\s*0(?:\\.0+)?\\b)",
+     "forbid": "\\bnull\\b|\\bnew\\s+Rule\\b",
+     "message": "Return a lambda such as `r -> r.celsius() < 0.0`. The parameter `r` is the Reading that triggers() receives."
+    }
+   ],
+   "hints": [
+    "A record's whole declaration is its header plus empty braces. Keep the component names: Monitor and the test call `celsius()` and `station()`.",
+    "Model the anonymous class on Figure 9-69: `Rule rule = new Rule() { public boolean triggers(Reading r) { ... } };` then return it.",
+    "A lambda with one parameter can be written `r -> expression`; the expression is what triggers() returns."
+   ],
+   "test_program": {
+    "file_name": "TestMonitor.java",
+    "code": "public class TestMonitor\n{\n    public static void main(String[] args)\n    {\n        Reading[] today = new Reading[5];\n        today[0] = new Reading(\"Pier 3\", 33.5);\n        today[1] = new Reading(\"Pier 3\", 36.0);\n        today[2] = new Reading(\"Dunes\", -1.5);\n        today[3] = new Reading(\"Dunes\", 0.0);\n        today[4] = new Reading(\"Marina\", 31.0);\n\n        System.out.println(\"First reading: \" + today[0]);\n        Reading copy = new Reading(\"Pier 3\", 33.5);\n        System.out.println(\"Same values, same reading? \" + today[0].equals(copy));\n        Rule beach = Monitor.heatRule(32.0);\n        Rule inland = Monitor.heatRule(35.0);\n        System.out.println(\"At or above 32.0 C: \" + Monitor.count(today, beach));\n        System.out.println(\"At or above 35.0 C: \" + Monitor.count(today, inland));\n        System.out.println(\"Below freezing: \" + Monitor.count(today, Monitor.freezeRule()));\n        System.out.println(\"Dunes low: \" + today[2].celsius() + \" C at \" + today[2].station());\n    }\n}\n",
+    "expected_output": "First reading: Reading[station=Pier 3, celsius=33.5]\nSame values, same reading? true\nAt or above 32.0 C: 2\nAt or above 35.0 C: 1\nBelow freezing: 1\nDunes low: -1.5 C at Dunes\n",
+    "predict": "Before you change anything, predict the first two lines and the 32.0 count with the starter, and the line where it stops. Then predict the freeze count: is 0.0 below freezing?",
+    "how_to_run": "Put `Reading.java`, `Monitor.java`, `Rule.java` and `TestMonitor.java` in the same folder, then run `javac *.java` and `java TestMonitor`. In an IDE, add all of them to one project and run `TestMonitor.java`. You don't type anything: the test program supplies the data. Records need JDK 16 or later."
+   },
+   "reflection": [
+    {
+     "question": "Converting Reading to a record changed two lines of the output without any other code changing. Which two, and what did the record add that caused it?",
+     "model_answer": "The first line now shows the station and temperature, and “Same values” is true. The record generated toString() and equals() based on its components."
+    },
+    {
+     "question": "Both new rules implement `Rule`. Why could the heat rule use either an anonymous class or a lambda, while a separate named `HeatRule` class was the worst choice?",
+     "model_answer": "Rule is a functional interface, so either form works and both can use the limit. A named class needs its own file or declaration for code used once, and this one hard-coded 35.0 instead of receiving the limit."
+    }
+   ],
+   "extension": "Rewrite `heatRule()` as a lambda too, then add `public static Rule stationRule(String name)` that triggers for readings from one station (compare with `equals()`). Finally try adding `limit = limit + 1;` at the top of `heatRule()` and read the error: what does “effectively final” mean?",
+   "worth_knowing": "Lambdas arrived in Java 8, in 2014; records became standard in Java 16, in 2021. Before Java 8, every one-method rule like `Rule` needed an anonymous inner class like the one you wrote. Java's own library now takes lambdas in many places, for example `list.removeIf(r -> r.celsius() < 0)`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; the anonymous class ends with a semicolon; no leftover HeatRule."
+    }
+   ]
+  }
+ ]
+}

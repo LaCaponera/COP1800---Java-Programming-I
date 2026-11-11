@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The hotel suites that won&#x27;t compile</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.4</div>
+  <h1>The hotel suites that won&#x27;t compile</h1>
+<h2>Objectives</h2><ul><li>Predict the order in which parent and child constructors run</li><li>Call a parent constructor that requires arguments with <code>super(...)</code> as the first statement</li><li>Write a child constructor that passes a constant to its parent</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>Suite</code>&#x27;s constructor passes the room number and rate to <code>Room</code> with <code>super(...)</code> as its first statement, then sets <code>bedrooms</code> itself.</li><li><strong>R2</strong> <code>StaffRoom</code> has a constructor with one parameter, the room number, that calls <code>super(...)</code> with that number and a rate of <code>0.0</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Read <code>Room.java</code>. Can you write <code>new Room()</code> with no arguments? Why does that matter for <code>Suite</code>?</p><div class="answer"><p>No: Room&#x27;s only constructor requires a number and a rate, and writing it removed the automatic default constructor. Suite&#x27;s constructor implicitly calls Room() unless told otherwise, so it fails to compile.</p></div></li><li><p>When <code>new Suite(&quot;501&quot;, 349.0, 2)</code> runs, which constructor&#x27;s message prints first, Room&#x27;s or Suite&#x27;s?</p><div class="answer"><p>Room&#x27;s. The superclass constructor always runs before the subclass constructor&#x27;s own statements.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Room.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Room</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Every room must be created with a number and a nightly rate.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Room</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">roomNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">number</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">roomNumber</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">nightlyRate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Room "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" registered at $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" a night"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getNumber</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getNightlyRate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">nightlyRate</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Suite.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Suite</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Room</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bedrooms</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): Room has no constructor without arguments, so this</span>
+<span class="t-w">    </span><span class="t-c1">// constructor must hand Room the number and rate it needs, first.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Suite</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">roomNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">numBedrooms</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">bedrooms</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">numBedrooms</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  Suite "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" has "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">bedrooms</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" bedrooms"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getBedrooms</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">bedrooms</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">StaffRoom.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">StaffRoom</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Room</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R2): staff rooms are never rented, so they always cost $0.0</span>
+<span class="t-w">    </span><span class="t-c1">// a night. Write a constructor that takes only the room number.</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Suite.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Suite</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Room</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bedrooms</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Suite</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">roomNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">numBedrooms</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">roomNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">bedrooms</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">numBedrooms</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"  Suite "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" has "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">bedrooms</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" bedrooms"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getBedrooms</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">bedrooms</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">StaffRoom.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">StaffRoom</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Room</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">StaffRoom</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">roomNumber</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">roomNumber</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Creating a subclass object runs the superclass constructor first, then the subclass constructor (p. 339), which is why “Room 501 registered” prints before “Suite 501 has 2 bedrooms”. A constructor that doesn&#x27;t call <code>super(...)</code> gets an automatic call to the parent&#x27;s no-argument constructor; <code>Room</code> has none, so the starter fails to compile, like Figure 9-9 (p. 343). When a superclass has only constructors that require arguments, each subclass constructor must call one with <code>super(arguments)</code> as its first statement (pp. 340–341, Table 9-1). The child constructor need not match the parent&#x27;s parameters: <code>StaffRoom(String)</code> passes a constant <code>0.0</code>, like the <code>HourlyEmployee()</code> example on p. 341. Java does not allow <code>Room(...)</code> by name; you must write <code>super</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRooms.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRooms</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Room</span><span class="t-w"> </span><span class="t-n">standard</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Room</span><span class="t-p">(</span><span class="t-s">"101"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">129.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Suite</span><span class="t-w"> </span><span class="t-n">corner</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Suite</span><span class="t-p">(</span><span class="t-s">"501"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">349.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">StaffRoom</span><span class="t-w"> </span><span class="t-n">staff</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">StaffRoom</span><span class="t-p">(</span><span class="t-s">"B12"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Suite "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">corner</span><span class="t-p">.</span><span class="t-na">getNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">corner</span><span class="t-p">.</span><span class="t-na">getNightlyRate</span><span class="t-p">()</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">corner</span><span class="t-p">.</span><span class="t-na">getBedrooms</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" bedrooms"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Staff room "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">staff</span><span class="t-p">.</span><span class="t-na">getNumber</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">staff</span><span class="t-p">.</span><span class="t-na">getNightlyRate</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Room 101 registered at $129.0 a night
+Room 501 registered at $349.0 a night
+  Suite 501 has 2 bedrooms
+Room B12 registered at $0.0 a night
+Suite 501: $349.0, 2 bedrooms
+Staff room B12: $0.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Suite calls super(number, rate) first<div class="small">in <code>Suite.Suite</code> of <code>Suite.java</code></div></td><td><div><span class="tag">require</span> <code>\)\s*\{\s*super\s*\(\s*\w+\s*,\s*\w+\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>\bRoom\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>StaffRoom passes a $0.0 rate to Room<div class="small">in <code>StaffRoom</code> of <code>StaffRoom.java</code></div></td><td><div><span class="tag">require</span> <code>\bpublic\s+StaffRoom\s*\(\s*String\s+\w+\s*\)\s*\{\s*super\s*\(\s*\w+\s*,\s*0(?:\.0+)?\s*\)\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Suite calls super(number, rate) first</dt><dd><p>Make <code>super(roomNumber, rate);</code> the very first statement of the Suite constructor, before setting <code>bedrooms</code>. Java doesn&#x27;t let you call <code>Room(...)</code> by name; use <code>super</code>.</p><div class='small'><strong>Hint:</strong></div><p>Only comments may come before super(...) in a constructor.</p></dd><dt>C2 · StaffRoom passes a $0.0 rate to Room</dt><dd><p>Write <code>public StaffRoom(String roomNumber)</code> whose first statement is <code>super(roomNumber, 0.0);</code>. The child constructor&#x27;s parameters don&#x27;t have to match the parent&#x27;s; it only has to pass what Room needs.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compile the starter and read the first error: which constructor is Java looking for, and in which class?</p></li><li><p>In Suite, the parent&#x27;s two values are already parameters: <code>roomNumber</code> and <code>rate</code>. Hand them to <code>super(...)</code>.</p></li><li><p>StaffRoom takes one parameter but Room needs two. The second one is a constant you know.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why must the Room part of a Suite be built before the Suite part? Use <code>getNumber()</code> in the Suite constructor as your example.</p><div class="answer"><p>The Suite constructor calls getNumber(), which reads Room&#x27;s number field. That field only has a value once Room&#x27;s constructor has run, so the parent must be built first.</p></div></li><li><p>StaffRoom&#x27;s constructor has one parameter while Room&#x27;s has two. Why is that allowed?</p><div class="answer"><p>A child constructor only has to call super(...) with the arguments the parent needs. It can supply them from its own parameters or from constants, so StaffRoom passes its number plus 0.0.</p></div></li></ol>
+<h2>Extension</h2><p>Give <code>Room</code> a second constructor <code>Room(String roomNumber)</code> that calls <code>this(roomNumber, 99.0)</code>. Now which subclass constructors still need <code>super(...)</code>, according to Table 9-1? Then try putting <code>bedrooms = numBedrooms;</code> above <code>super(...)</code> and read the error.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; super(...) is the first statement; no fields duplicated from Room.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

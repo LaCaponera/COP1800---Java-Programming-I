@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The day pass that costs $25.0 per month</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.3</div>
+  <h1>The day pass that costs $25.0 per month</h1>
+<h2>Objectives</h2><ul><li>Override a parent method by writing a child method with the same name and parameter list</li><li>Tell overriding apart from overloading</li><li>Use the <code>@Override</code> annotation so the compiler catches a method that doesn&#x27;t override</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>DayPass</code> overrides <code>rateLabel()</code> (same name, same empty parameter list) and marks it <code>@Override</code>; its label ends in <code>per day</code>.</li><li><strong>R2</strong> <code>HourlyDesk</code> keeps its <code>rateLabel(int hours)</code> and also overrides <code>rateLabel()</code>, marked <code>@Override</code>, with a label ending in <code>per hour</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, which class&#x27;s <code>rateLabel()</code> runs for <code>day.rateLabel()</code>, and why doesn&#x27;t the DayPass method run?</p><div class="answer"><p>Plan&#x27;s version runs. DayPass&#x27;s method is named ratelabel with a lowercase l, so it is a different method that doesn&#x27;t override rateLabel().</p></div></li><li><p>HourlyDesk has <code>rateLabel(int hours)</code>. Does it override <code>Plan.rateLabel()</code>? What happens when the receipt calls <code>desk.rateLabel()</code>?</p><div class="answer"><p>No. Its parameter list is different, so it overloads the method. desk.rateLabel() with no arguments runs Plan&#x27;s version and prints per month.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Plan.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Plan</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getRate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">setRate</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">newRate</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">newRate</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Members on the standard plan pay by the month.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rateLabel</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rate</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per month"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">DayPass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DayPass</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Plan</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): the front desk still prints "per month" for day passes.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">ratelabel</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getRate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per day"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">HourlyDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">HourlyDesk</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Plan</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Price of a block of hours, for the booking screen.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rateLabel</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getRate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" for "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" hours"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R2): a hot desk is rented by the hour, so its label must say</span>
+<span class="t-w">    </span><span class="t-c1">// "per hour" wherever rateLabel() is called with no arguments.</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">DayPass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DayPass</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Plan</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rateLabel</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getRate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per day"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">HourlyDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">HourlyDesk</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Plan</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Price of a block of hours, for the booking screen.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rateLabel</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getRate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" for "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" hours"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rateLabel</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getRate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" per hour"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A child method overrides a parent method only when both the name and the parameter list match; with a child object, the child&#x27;s version then runs (p. 337). <code>ratelabel()</code> with a lowercase <em>l</em> is simply a new method, so <code>day.rateLabel()</code> runs the inherited <code>Plan</code> version. <code>rateLabel(int hours)</code> has a different parameter list, so it overloads the parent method and the object has both versions (p. 337). <code>@Override</code> asks the compiler to confirm the method overrides something; on <code>ratelabel()</code> it produces “method does not override or implement a method from a supertype” (pp. 337–339). Using one name, <code>rateLabel()</code>, for every kind of plan is subtype polymorphism (p. 337).</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestPlans.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestPlans</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Plan</span><span class="t-w"> </span><span class="t-n">monthly</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Plan</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">monthly</span><span class="t-p">.</span><span class="t-na">setRate</span><span class="t-p">(</span><span class="t-mf">250.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">DayPass</span><span class="t-w"> </span><span class="t-n">day</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">DayPass</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">day</span><span class="t-p">.</span><span class="t-na">setRate</span><span class="t-p">(</span><span class="t-mf">25.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">HourlyDesk</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">HourlyDesk</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">setRate</span><span class="t-p">(</span><span class="t-mf">6.5</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Monthly: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">monthly</span><span class="t-p">.</span><span class="t-na">rateLabel</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Day pass: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">day</span><span class="t-p">.</span><span class="t-na">rateLabel</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Hot desk: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">rateLabel</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Hot desk, 4 hours: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">rateLabel</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Monthly: $250.0 per month
+Day pass: $25.0 per day
+Hot desk: $6.5 per hour
+Hot desk, 4 hours: $26.0 for 4 hours
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>DayPass overrides rateLabel()<div class="small">whole file of <code>DayPass.java</code></div></td><td><div><span class="tag">require</span> <code>@Override\s+public\s+String\s+rateLabel\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\bratelabel\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>HourlyDesk overrides rateLabel() too<div class="small">whole file of <code>HourlyDesk.java</code></div></td><td><div><span class="tag">require</span> <code>@Override\s+public\s+String\s+rateLabel\s*\(\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The hot-desk label says per hour<div class="small">whole file of <code>HourlyDesk.java</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\&quot;\s*per hour\&quot;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · DayPass overrides rateLabel()</dt><dd><p>Name the method <code>rateLabel</code> exactly as in Plan (capital L, no parameters) and put <code>@Override</code> on the line above it. Java names are case-sensitive, so <code>ratelabel</code> is a different method.</p><div class='small'><strong>Hint:</strong></div><p>Compare the DayPass header with the one in Plan.java letter by letter.</p></dd><dt>C2 · HourlyDesk overrides rateLabel() too</dt><dd><p>Add a second method, <code>@Override public String rateLabel()</code> with no parameters. Keep <code>rateLabel(int hours)</code>: the booking screen still uses that overload.</p></dd><dt>C3 · The hot-desk label says per hour</dt><dd><p>The no-argument label should be built like Plan&#x27;s, ending in <code>&quot; per hour&quot;</code>, for example <code>&quot;$&quot; + getRate() + &quot; per hour&quot;</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Overriding needs two things to match the parent: the method name, letter for letter, and the parameter list.</p></li><li><p><code>@Override</code> goes on the line just above the method header. Put it on <code>ratelabel()</code> first and read the compiler&#x27;s message.</p></li><li><p>HourlyDesk ends up with two methods named <code>rateLabel</code>: one with an <code>int</code> parameter (overload) and one with none (override).</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The starter compiled and ran without a single error, yet two receipts were wrong. How would <code>@Override</code> have changed that?</p><div class="answer"><p>With @Override on ratelabel(), the compiler would have refused it because it overrides nothing. The typo would have been caught at compile time instead of on customers&#x27; receipts.</p></div></li><li><p>HourlyDesk now has two methods named <code>rateLabel</code>. Explain which one runs for <code>desk.rateLabel()</code> and for <code>desk.rateLabel(4)</code>, and why both may exist.</p><div class="answer"><p>desk.rateLabel() runs the override with no parameters; desk.rateLabel(4) runs the overload with an int. Methods may share a name when their parameter lists differ, and Java picks one by the arguments.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>MeetingRoom</code> plan billed per booking. Write its override first <em>without</em> <code>@Override</code> and with a deliberate typo, run the test, then add <code>@Override</code> and read the compiler message. Which version would you rather discover in production?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; @Override on every overriding method; the overload left intact.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

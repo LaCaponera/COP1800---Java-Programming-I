@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The e-bike that couldn&#x27;t be rented</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.12</div>
+  <h1>The e-bike that couldn&#x27;t be rented</h1>
+<h2>Objectives</h2><ul><li>Explain why Java doesn&#x27;t allow a class to extend two classes</li><li>Write an interface with abstract methods and a constant, and implement it with <code>implements</code></li><li>Write a class header that both extends a class and implements an interface</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>Rentable</code> is an <code>interface</code> that keeps the <code>LATE_FEE_PER_DAY</code> constant and the <code>dailyRate()</code> and <code>rentalTag()</code> methods.</li><li><strong>R2</strong> <code>Kayak</code> implements <code>Rentable</code> and extends nothing.</li><li><strong>R3</strong> <code>ElectricBike</code> extends <code>Bicycle</code> and implements <code>Rentable</code>, and its <code>rentalTag()</code> returns, for example, <code>E-bike, 54 cm frame, 60 km range</code> from its frame size and range.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Why can&#x27;t the starter&#x27;s ElectricBike be written as <code>extends Bicycle, Rentable</code> or given a second <code>extends</code>?</p><div class="answer"><p>Java allows only one superclass per class. ElectricBike already extends Bicycle, so it can&#x27;t also extend the abstract class Rentable.</p></div></li><li><p>Read the starter&#x27;s <code>Rentable</code>. What does it contain that a subclass could inherit and reuse, besides the constant?</p><div class="answer"><p>Nothing: both methods are abstract and there are no fields or method bodies. It only lists what a rentable item must be able to do, so it might as well be an interface.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Rentable.java</div><pre class="code-block"><code><span class="t-c1">// TODO (R1): ElectricBike already extends Bicycle, and a Java class can</span>
+<span class="t-c1">// have only one superclass. Turn Rentable into something a class can</span>
+<span class="t-c1">// implement instead of extend.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Rentable</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">LATE_FEE_PER_DAY</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">dailyRate</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rentalTag</span><span class="t-p">();</span>
+<span class="t-p">}</span></code></pre><div class="file">Kayak.java</div><pre class="code-block"><code><span class="t-c1">// TODO (R2): Kayak needs no superclass; it only promises the Rentable methods.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Kayak</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Rentable</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">lengthFeet</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Kayak</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">feet</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">lengthFeet</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">feet</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">dailyRate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">35.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rentalTag</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Kayak, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lengthFeet</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" ft"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">ElectricBike.java</div><pre class="code-block"><code><span class="t-c1">// TODO (R3): an ElectricBike is a Bicycle AND it can be rented.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ElectricBike</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Bicycle</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">rangeKm</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">ElectricBike</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">frameSize</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">range</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">frameSize</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">rangeKm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">range</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">dailyRate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">28.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R3): the counter prints this tag on every receipt, for</span>
+<span class="t-w">    </span><span class="t-c1">// example: E-bike, 54 cm frame, 60 km range</span>
+<span class="t-p">}</span></code></pre><div class="file">Bicycle.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Bicycle</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">frameCm</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Bicycle</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">frameSize</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">frameCm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">frameSize</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getFrameCm</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">frameCm</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">RentalCounter.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">RentalCounter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// The daily rate for each day booked, plus the late fee for each</span>
+<span class="t-w">    </span><span class="t-c1">// day the item comes back late.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">quote</span><span class="t-p">(</span><span class="t-n">Rentable</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">days</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">lateDays</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">item</span><span class="t-p">.</span><span class="t-na">dailyRate</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">days</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Rentable</span><span class="t-p">.</span><span class="t-na">LATE_FEE_PER_DAY</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">lateDays</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Rentable.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">interface</span> <span class="t-nc">Rentable</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">LATE_FEE_PER_DAY</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">dailyRate</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rentalTag</span><span class="t-p">();</span>
+<span class="t-p">}</span></code></pre><div class="file">Kayak.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Kayak</span><span class="t-w"> </span><span class="t-kd">implements</span><span class="t-w"> </span><span class="t-n">Rentable</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">lengthFeet</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Kayak</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">feet</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">lengthFeet</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">feet</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">dailyRate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">35.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rentalTag</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Kayak, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lengthFeet</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" ft"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">ElectricBike.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ElectricBike</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Bicycle</span><span class="t-w"> </span><span class="t-kd">implements</span><span class="t-w"> </span><span class="t-n">Rentable</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">rangeKm</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">ElectricBike</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">frameSize</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">range</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">frameSize</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">rangeKm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">range</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">dailyRate</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">28.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">rentalTag</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"E-bike, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getFrameCm</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cm frame, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">rangeKm</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" km range"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Java prohibits multiple inheritance: a class can&#x27;t extend two classes (p. 371). An interface is the alternative: its methods are implicitly public and abstract and its data is implicitly public, static and final (p. 371), so the keywords in <code>Rentable</code> may be written or left out. A class uses it with <code>implements</code>, and must implement every method (p. 371). <code>ElectricBike extends Bicycle implements Rentable</code> follows the convention that <code>implements</code> comes after <code>extends</code> (p. 372), like <code>WorkingDog extends Dog implements Worker</code>. An interface constant is shared by every class that uses it without being redeclared (pp. 374–375), so <code>RentalCounter</code> reads <code>Rentable.LATE_FEE_PER_DAY</code>. Rentable has no data or method bodies to inherit, which fits the advice on p. 374 for choosing an interface over an abstract class. An array of interface references, <code>Rentable[]</code>, can hold any implementing objects.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestRentals.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestRentals</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Kayak</span><span class="t-w"> </span><span class="t-n">tandem</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Kayak</span><span class="t-p">(</span><span class="t-mi">14</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">ElectricBike</span><span class="t-w"> </span><span class="t-n">city</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ElectricBike</span><span class="t-p">(</span><span class="t-mi">54</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Rentable</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">fleet</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rentable</span><span class="t-o">[</span><span class="t-mi">2</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">fleet</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">tandem</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">fleet</span><span class="t-o">[</span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">city</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">fleet</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">fleet</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">.</span><span class="t-na">rentalTag</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": 3 days $"</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">RentalCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-n">fleet</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"E-bike back 2 days late: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">RentalCounter</span><span class="t-p">.</span><span class="t-na">quote</span><span class="t-p">(</span><span class="t-n">city</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Is a Bicycle: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">city</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Bicycle</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", is Rentable: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">city</span><span class="t-w"> </span><span class="t-k">instanceof</span><span class="t-w"> </span><span class="t-n">Rentable</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Kayak, 14 ft: 3 days $105.0
+E-bike, 54 cm frame, 60 km range: 3 days $84.0
+E-bike back 2 days late: $94.0
+Is a Bicycle: true, is Rentable: true
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Rentable is an interface<div class="small">whole file of <code>Rentable.java</code></div></td><td><div><span class="tag">require</span> <code>\bpublic\s+interface\s+Rentable\b</code></div><div><span class="tag">forbid</span> <code>\bclass\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Kayak implements Rentable<div class="small">whole file of <code>Kayak.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+Kayak\s+implements\s+Rentable\b</code></div><div><span class="tag">forbid</span> <code>\bextends\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>ElectricBike is a Bicycle and Rentable<div class="small">whole file of <code>ElectricBike.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+ElectricBike\s+extends\s+Bicycle\s+implements\s+Rentable\b</code></div></td></tr><tr><td>C4</td><td>R3</td><td>ElectricBike has a rentalTag()<div class="small">in <code>ElectricBike.rentalTag</code> of <code>ElectricBike.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bpublic\s+String\s+rentalTag\s*\(\s*\))(?=[\s\S]*\bgetFrameCm\s*\(\s*\))(?=[\s\S]*\brangeKm\b)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Rentable is an interface</dt><dd><p>Write the header as <code>public interface Rentable</code>. Its methods are then automatically public and abstract, and the late fee automatically public, static and final.</p></dd><dt>C2 · Kayak implements Rentable</dt><dd><p>Change <code>extends Rentable</code> to <code>implements Rentable</code>. A class extends classes and implements interfaces.</p></dd><dt>C3 · ElectricBike is a Bicycle and Rentable</dt><dd><p>Write the header as <code>public class ElectricBike extends Bicycle implements Rentable</code>: the <code>extends</code> clause comes first, then <code>implements</code>.</p></dd><dt>C4 · ElectricBike has a rentalTag()</dt><dd><p>Add <code>public String rentalTag()</code> that builds the tag from <code>getFrameCm()</code> (inherited from Bicycle) and <code>rangeKm</code>. The method must be public, because interface methods are public.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Change Rentable&#x27;s header first. In an interface, the <code>abstract</code> keywords become optional, and so does <code>public static final</code> on the constant.</p></li><li><p>A class implements an interface with <code>implements</code>. For ElectricBike, keep <code>extends Bicycle</code> and add the interface after it.</p></li><li><p>The frame size is private in Bicycle, so the tag gets it with <code>getFrameCm()</code>; the range is ElectricBike&#x27;s own field.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is an interface the right choice for Rentable here, while Bicycle stays a class?</p><div class="answer"><p>Rentable only states which methods a rentable item must have and shares a constant, and unrelated items (kayaks, e-bikes) need it alongside their own superclass. Bicycle has real data and behaviour that subclasses reuse, so it stays a class.</p></div></li><li><p><code>city instanceof Rentable</code> is true even though ElectricBike doesn&#x27;t extend Rentable. What relationship does <code>implements</code> create?</p><div class="answer"><p>Implementing an interface is an “is a” relationship too: an ElectricBike is a Bicycle and is a Rentable, so it can be stored in a Rentable variable or array and passed to quote().</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>Chargeable</code> interface with <code>int chargeMinutes()</code> and make <code>ElectricBike</code> implement both interfaces, separated by a comma. Then add a <code>Paddleboard</code> that implements only <code>Rentable</code>. Which object can go in a <code>Chargeable[]</code> array?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; @Override on implemented methods; extends written before implements.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The insured parcel that never finishes printing</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.5</div>
+  <h1>The insured parcel that never finishes printing</h1>
+<h2>Objectives</h2><ul><li>Call an overridden parent method from the child with <code>super.methodName()</code></li><li>Explain the difference between <code>label()</code>, <code>this.label()</code> and <code>super.label()</code> inside an override</li><li>Extend a parent&#x27;s result instead of copying its formula</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>InsuredShipment.totalCost()</code> returns the parent&#x27;s <code>totalCost()</code> plus <code>insuranceFee()</code>; it repeats no rates or formulas from Shipment.</li><li><strong>R2</strong> <code>InsuredShipment.label()</code> returns the parent&#x27;s <code>label()</code> followed by <code>, insured for $</code> and the insured value.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Inside <code>InsuredShipment.label()</code>, the starter calls <code>label()</code>. Which class&#x27;s <code>label()</code> is that, and what happens next?</p><div class="answer"><p>It is InsuredShipment&#x27;s own label(), the method that is running. It calls itself, which calls itself again, forever, until Java throws a StackOverflowError.</p></div></li><li><p>For a 2.0 kg parcel insured for $500.0, what does the starter&#x27;s <code>totalCost()</code> return, and what should it return?</p><div class="answer"><p>The starter returns 5.0 + 8.0 + 10.0 = 23.0. It should return Shipment&#x27;s 5.0 + 9.0 = 14.0 plus the 10.0 fee, which is 24.0.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Shipment.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Shipment</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">trackingNumber</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">city</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Shipment</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">destination</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">kg</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">trackingNumber</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">city</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">destination</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">kg</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getWeightKg</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Base fee plus a rate per kilogram (the per-kg rate rose to 4.5 in March).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">totalCost</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mf">4.5</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">label</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Shipment #"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">trackingNumber</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" to "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">city</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">weightKg</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" kg"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">InsuredShipment.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">InsuredShipment</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Shipment</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">insuredValue</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">InsuredShipment</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">destination</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">kg</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">number</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">destination</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">kg</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">insuredValue</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Insurance costs 2% of the declared value.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">insuranceFee</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">insuredValue</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mf">0.02</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">totalCost</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): copied from Shipment last winter. Reuse the parent's</span>
+<span class="t-w">        </span><span class="t-c1">// shipping cost instead, then add the insurance fee.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">5.0</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">getWeightKg</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mf">4.0</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">insuranceFee</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">label</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): meant to reuse Shipment's label and add the insurance.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">label</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", insured for $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">insuredValue</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">InsuredShipment.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">InsuredShipment</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Shipment</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">insuredValue</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">InsuredShipment</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">number</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">destination</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">kg</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">number</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">destination</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">kg</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">insuredValue</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Insurance costs 2% of the declared value.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">insuranceFee</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">insuredValue</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mf">0.02</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">totalCost</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kd">super</span><span class="t-p">.</span><span class="t-na">totalCost</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">insuranceFee</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">label</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kd">super</span><span class="t-p">.</span><span class="t-na">label</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", insured for $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">insuredValue</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>When a child overrides a method but still needs the parent&#x27;s version, it calls <code>super.methodName()</code> (p. 344), as <code>PreferredCustomer.display()</code> calls <code>super.display()</code> in Figure 9-11. Inside the override, plain <code>label()</code> and <code>this.label()</code> both mean the child&#x27;s own version (p. 345), so the starter&#x27;s <code>label()</code> calls itself again and again until the call stack runs out: a <code>StackOverflowError</code>. <code>super.totalCost()</code> reuses Shipment&#x27;s current formula, so the March price change reaches insured parcels too. Unlike a <code>super(...)</code> constructor call, <code>super.method()</code> does not have to be the first statement (p. 344); here it is part of the <code>return</code> expression.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestShipments.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestShipments</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Shipment</span><span class="t-w"> </span><span class="t-n">plain</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Shipment</span><span class="t-p">(</span><span class="t-mi">1001</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Miami"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">2.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">InsuredShipment</span><span class="t-w"> </span><span class="t-n">camera</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">InsuredShipment</span><span class="t-p">(</span><span class="t-mi">1002</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Denver"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">2.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">500.0</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">plain</span><span class="t-p">.</span><span class="t-na">label</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">plain</span><span class="t-p">.</span><span class="t-na">totalCost</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">camera</span><span class="t-p">.</span><span class="t-na">label</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Insurance fee: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">camera</span><span class="t-p">.</span><span class="t-na">insuranceFee</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Total: $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">camera</span><span class="t-p">.</span><span class="t-na">totalCost</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Shipment #1001 to Miami, 2.0 kg
+Total: $14.0
+Shipment #1002 to Denver, 2.0 kg, insured for $500.0
+Insurance fee: $10.0
+Total: $24.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>totalCost() builds on the parent&#x27;s cost<div class="small">in <code>InsuredShipment.totalCost</code> of <code>InsuredShipment.java</code></div></td><td><div><span class="tag">require</span> <code>\bsuper\s*\.\s*totalCost\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\bgetWeightKg\b|\b4\.[05]\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>label() calls the parent&#x27;s label()<div class="small">in <code>InsuredShipment.label</code> of <code>InsuredShipment.java</code></div></td><td><div><span class="tag">require</span> <code>\bsuper\s*\.\s*label\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\breturn\s+label\s*\(|\bthis\s*\.\s*label\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · totalCost() builds on the parent&#x27;s cost</dt><dd><p>Return <code>super.totalCost() + insuranceFee()</code>. Copying Shipment&#x27;s formula means every future price change has to be made twice, and this copy already missed one.</p></dd><dt>C2 · label() calls the parent&#x27;s label()</dt><dd><p>Write <code>super.label()</code> to get Shipment&#x27;s text. Without <code>super</code>, <code>label()</code> means this same method, so it calls itself until the program crashes.</p><div class='small'><strong>Hint:</strong></div><p>Which keyword means “my parent&#x27;s version”?</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Both overrides need the same move: get the parent&#x27;s result first, then add the part that is new.</p></li><li><p>Shipment&#x27;s fields are private, so you can&#x27;t rebuild its label yourself. Ask the parent class for it.</p></li><li><p>The keyword <code>super</code>, then a dot, then the method name calls the parent&#x27;s version of an overridden method.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain why <code>return label() + ...</code> inside <code>label()</code> crashes, but <code>return super.label() + ...</code> works.</p><div class="answer"><p>Inside the override, label() refers to the child&#x27;s own method, so it calls itself endlessly and fills the call stack. super.label() runs Shipment&#x27;s version, which returns a string and ends.</p></div></li><li><p>Shipping prices will change again next year. Why is <code>super.totalCost()</code> safer than writing the formula into InsuredShipment?</p><div class="answer"><p>The formula then lives only in Shipment. When it changes, insured parcels automatically use the new price; a copy would have to be found and changed by hand, which is how the $4.0 rate survived.</p></div></li></ol>
+<h2>Extension</h2><p>Add an <code>ExpressShipment</code> that extends <code>InsuredShipment</code> and charges $15.0 extra. Its <code>totalCost()</code> calls <code>super.totalCost()</code>: which class&#x27;s version is that, and does the express price include the insurance? Check by printing it.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; no rates or formulas copied from Shipment.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+POSTING CHECKLIST
+=================
+
+  Lab 9.1: The audiobook that never got the label fix
+    students : 9.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.1_guide.html
+
+  Lab 9.2: The VIP who was sent to the general line
+    students : 9.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.2_guide.html
+
+  Lab 9.3: The day pass that costs $25.0 per month
+    students : 9.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.3_guide.html
+
+  Lab 9.4: The hotel suites that won't compile
+    students : 9.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.4_guide.html
+
+  Lab 9.5: The insured parcel that never finishes printing
+    students : 9.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.5_guide.html
+
+  Lab 9.6: The gift card that holds $505.0 on a $500.0 limit
+    students : 9.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.6_guide.html
+
+  Lab 9.7: The promo loan that rewrote the legal notice
+    students : 9.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.7_guide.html
+
+  Lab 9.8: The drone deliveries billed at $0.0
+    students : 9.8.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.8_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.8_guide.html
+
+  Lab 9.9: The water alert that skipped the phone app
+    students : 9.9.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.9_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.9_guide.html
+
+  Lab 9.10: The clinic payroll that only pays doctors
+    students : 9.10.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.10_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.10_guide.html
+
+  Lab 9.11: The conference that printed two badges for Priya
+    students : 9.11.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.11_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.11_guide.html
+
+  Lab 9.12: The e-bike that couldn't be rented
+    students : 9.12.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.12_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.12_guide.html
+
+  Lab 9.13: The beach heat alert that waits for 35 degrees
+    students : 9.13.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/9.13_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/9.13_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

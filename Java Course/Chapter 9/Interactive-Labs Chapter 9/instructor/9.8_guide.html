@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The drone deliveries billed at $0.0</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.8</div>
+  <h1>The drone deliveries billed at $0.0</h1>
+<h2>Objectives</h2><ul><li>Declare an abstract class that exists only to be extended</li><li>Declare an abstract method with no body that every concrete subclass must implement</li><li>Avoid overloading an abstract method by mistake instead of overriding it</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>Delivery</code> is an <code>abstract</code> class, and <code>fee()</code> is an <code>abstract</code> method with no body (the header ends with a semicolon).</li><li><strong>R2</strong> <code>DroneDelivery</code> overrides <code>fee()</code> with no parameters, marked <code>@Override</code>, using the distance from <code>getKm()</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, <code>drone.receipt()</code> calls <code>fee()</code>. Which <code>fee()</code> runs, and why doesn&#x27;t the drone&#x27;s own method run?</p><div class="answer"><p>Delivery&#x27;s placeholder runs and returns 0.0. The drone&#x27;s method has a double parameter, so it is a different method (an overload) that receipt() never calls.</p></div></li><li><p>A placeholder that returns 0.0 compiled fine. What should happen instead when someone forgets a subclass&#x27;s fee?</p><div class="answer"><p>The compiler should refuse the subclass. An abstract fee() in Delivery forces every concrete subclass to implement fee(), so a missing or misspelled one becomes a compile error.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Delivery.java</div><pre class="code-block"><code><span class="t-c1">// TODO (R1): there is no such thing as a plain Delivery. Make the class</span>
+<span class="t-c1">// abstract so no one can create one.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Delivery</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">orderId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">km</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Delivery</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">orderId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">km</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getOrderId</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">orderId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getKm</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">km</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Placeholder so the class compiles.</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): every kind of delivery prices itself. Make fee() a method</span>
+<span class="t-w">    </span><span class="t-c1">// that each subclass is forced to write.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">fee</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">receipt</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Order "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">orderId</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">km</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" km, fee $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">fee</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">BikeDelivery.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BikeDelivery</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Delivery</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">BikeDelivery</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// $2.5 to start plus $0.75 per km.</span>
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">fee</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">2.5</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mf">0.75</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">getKm</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">DroneDelivery.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DroneDelivery</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Delivery</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">DroneDelivery</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// $6.0 to launch plus $1.25 per km.</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R2): receipts show a $0.0 fee for every drone order.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">fee</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">distance</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">6.0</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mf">1.25</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">distance</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Delivery.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Delivery</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">orderId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">km</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Delivery</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">orderId</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">km</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getOrderId</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">orderId</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getKm</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">km</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">fee</span><span class="t-p">();</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">receipt</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Order "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">orderId</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">km</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" km, fee $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">fee</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">DroneDelivery.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DroneDelivery</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Delivery</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">DroneDelivery</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">id</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">distanceKm</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// $6.0 to launch plus $1.25 per km.</span>
+<span class="t-w">    </span><span class="t-nd">@Override</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">fee</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">6.0</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mf">1.25</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">getKm</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A class you create only to extend is an abstract class, declared with <code>abstract</code>; no objects of it can be created (p. 352). An abstract method has the keyword <code>abstract</code>, a header and a semicolon, with no braces and no statements (p. 353), and a concrete subclass must implement every inherited abstract method (p. 353). With the placeholder gone, the starter&#x27;s <code>DroneDelivery</code> doesn&#x27;t compile, because <code>fee(double)</code> overloads instead of overriding: “Don&#x27;t mistakenly overload an abstract method instead of overriding it” (p. 381). An abstract class may still have fields, a constructor and ordinary methods such as <code>receipt()</code>, like the abstract <code>Vehicle</code> in the You Do It section (pp. 355–356). When <code>receipt()</code> calls <code>fee()</code>, the subclass&#x27;s version runs, the same idea as <code>speak()</code> in Figure 9-33 (p. 354).</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestDeliveries.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestDeliveries</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">BikeDelivery</span><span class="t-w"> </span><span class="t-n">bike</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">BikeDelivery</span><span class="t-p">(</span><span class="t-s">"A-104"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">4.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">DroneDelivery</span><span class="t-w"> </span><span class="t-n">drone</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">DroneDelivery</span><span class="t-p">(</span><span class="t-s">"A-105"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">4.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">DroneDelivery</span><span class="t-w"> </span><span class="t-n">farm</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">DroneDelivery</span><span class="t-p">(</span><span class="t-s">"A-106"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">8.0</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">bike</span><span class="t-p">.</span><span class="t-na">receipt</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">drone</span><span class="t-p">.</span><span class="t-na">receipt</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">farm</span><span class="t-p">.</span><span class="t-na">receipt</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Order A-104: 4.0 km, fee $5.5
+Order A-105: 4.0 km, fee $11.0
+Order A-106: 8.0 km, fee $16.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Delivery is abstract<div class="small">whole file of <code>Delivery.java</code></div></td><td><div><span class="tag">require</span> <code>\b(?:public\s+abstract|abstract\s+public)\s+class\s+Delivery\b</code></div></td></tr><tr><td>C2</td><td>R1</td><td>fee() is abstract, with no body<div class="small">whole file of <code>Delivery.java</code></div></td><td><div><span class="tag">require</span> <code>\babstract\s+double\s+fee\s*\(\s*\)\s*;</code></div><div><span class="tag">forbid</span> <code>\bdouble\s+fee\s*\(\s*\)\s*\{</code></div></td></tr><tr><td>C3</td><td>R2</td><td>DroneDelivery overrides fee()<div class="small">whole file of <code>DroneDelivery.java</code></div></td><td><div><span class="tag">require</span> <code>@Override\s+public\s+double\s+fee\s*\(\s*\)</code></div><div><span class="tag">forbid</span> <code>\bfee\s*\(\s*double\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>The drone fee uses getKm()<div class="small">in <code>DroneDelivery.fee</code> of <code>DroneDelivery.java</code></div></td><td><div><span class="tag">require</span> <code>\bgetKm\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Delivery is abstract</dt><dd><p>Write the header as <code>public abstract class Delivery</code>. There is no such thing as a plain delivery, so nobody should be able to write <code>new Delivery(...)</code>.</p></dd><dt>C2 · fee() is abstract, with no body</dt><dd><p>Replace the placeholder with <code>public abstract double fee();</code>: a header and a semicolon, no braces. Each subclass must then write its own fee.</p><div class='small'><strong>Hint:</strong></div><p>An abstract method ends where its header ends.</p></dd><dt>C3 · DroneDelivery overrides fee()</dt><dd><p>Give the drone&#x27;s method the same header as the abstract one, <code>public double fee()</code> with no parameters, and mark it <code>@Override</code>. With a parameter, it is an overload that nothing calls.</p></dd><dt>C4 · The drone fee uses getKm()</dt><dd><p>Get the distance from <code>getKm()</code>: without the parameter, the inherited getter is where the delivery&#x27;s kilometres come from.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Make Delivery and its fee() abstract first, then compile. The error names the class that doesn&#x27;t implement fee().</p></li><li><p>Compare the drone&#x27;s fee header with Delivery&#x27;s abstract one. What is different?</p></li><li><p>The kilometres are already stored in every Delivery; the subclass reads them with the inherited getter.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is a compile error better than a placeholder method that returns 0.0? Use the two weeks of free drone orders in your answer.</p><div class="answer"><p>The placeholder let the wrong code run silently, so free orders went out for two weeks. With an abstract fee(), the drone class couldn&#x27;t have compiled until it had a correct fee(), so the mistake would have been caught before release.</p></div></li><li><p>Delivery is abstract, yet it has a constructor and a <code>receipt()</code> method with a body. Why keep them in the abstract class?</p><div class="answer"><p>Every kind of delivery has an order ID and a distance and prints the same receipt, so that code is written once and inherited. Only the fee differs, so only fee() is abstract.</p></div></li></ol>
+<h2>Extension</h2><p>Add a <code>CarDelivery</code> with a $4.0 base fee, $1.0 per km and a $3.0 surcharge over 10 km. Before writing its <code>fee()</code>, compile it with only a constructor: what does the compiler tell you? Then try <code>Delivery d = new Delivery(&quot;X&quot;, 1.0);</code> in the test and read the error.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; @Override on the drone&#x27;s fee(); no placeholder bodies left in Delivery.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

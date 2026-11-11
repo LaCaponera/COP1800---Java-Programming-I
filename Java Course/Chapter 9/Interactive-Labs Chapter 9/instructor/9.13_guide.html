@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The beach heat alert that waits for 35 degrees</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.13</div>
+  <h1>The beach heat alert that waits for 35 degrees</h1>
+<h2>Objectives</h2><ul><li>Replace a data-only class with a <code>record</code> and use its generated accessors, <code>equals()</code> and <code>toString()</code></li><li>Implement an interface with an anonymous inner class that uses an effectively final variable</li><li>Implement a functional interface with a lambda expression</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>Reading</code> is a <code>record</code> with the components <code>String station</code> and <code>double celsius</code>.</li><li><strong>R2</strong> <code>heatRule(limit)</code> returns an anonymous inner class that implements <code>Rule</code> and triggers when the reading is at or above <code>limit</code>; the <code>HeatRule</code> class is removed.</li><li><strong>R3</strong> <code>freezeRule()</code> returns a lambda expression that triggers when the reading is below 0.0.</li><li><strong>R4</strong> Running the test program prints exactly what it expects (records need Java 16 or later). <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, how many of today&#x27;s readings does <code>heatRule(32.0)</code> count, and why is the 33.5 at Pier 3 missed?</p><div class="answer"><p>It counts 1 (only 36.0). HeatRule ignores the limit parameter and always compares with 35.0, so 33.5 never triggers.</p></div></li><li><p>Rule has exactly one abstract method. Why does that matter for writing <code>freezeRule()</code>?</p><div class="answer"><p>An interface with one abstract method is a functional interface, so a lambda expression can implement it; Java knows the lambda is the body of triggers().</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Reading.java</div><pre class="code-block"><code><span class="t-c1">// Twenty-odd lines to hold two values that never change, and printing</span>
+<span class="t-c1">// one still shows Reading@1b6d3586.</span>
+<span class="t-c1">// TODO (R1): replace the whole class with a record that has the same</span>
+<span class="t-c1">// two components, station and celsius.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Reading</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">station</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">celsius</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">Reading</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">station</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">celsius</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">station</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">station</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">this</span><span class="t-p">.</span><span class="t-na">celsius</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">celsius</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">station</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">station</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">celsius</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">celsius</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Monitor.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Monitor</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// How many readings trigger the rule.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">count</span><span class="t-p">(</span><span class="t-n">Reading</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-n">rule</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">rule</span><span class="t-p">.</span><span class="t-na">triggers</span><span class="t-p">(</span><span class="t-n">readings</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">))</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">total</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// A heat rule with each station's own limit: the beach uses 32.0,</span>
+<span class="t-w">    </span><span class="t-c1">// inland stations use 35.0.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-nf">heatRule</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">limit</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): HeatRule ignores limit. Replace it with an anonymous</span>
+<span class="t-w">        </span><span class="t-c1">// inner class that implements Rule and compares with limit.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">HeatRule</span><span class="t-p">();</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R3): a reading below 0.0 C triggers the freeze rule.</span>
+<span class="t-w">    </span><span class="t-c1">// Return a lambda expression.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-nf">freezeRule</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">null</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span>
+
+<span class="t-c1">// Written for one inland station; used nowhere else.</span>
+<span class="t-kd">class</span> <span class="t-nc">HeatRule</span><span class="t-w"> </span><span class="t-kd">implements</span><span class="t-w"> </span><span class="t-n">Rule</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">triggers</span><span class="t-p">(</span><span class="t-n">Reading</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-p">.</span><span class="t-na">celsius</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mf">35.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Rule.java (read-only for students)</div><pre class="code-block"><code><span class="t-c1">// Decides whether a reading should raise an alert.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">interface</span> <span class="t-nc">Rule</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">abstract</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">triggers</span><span class="t-p">(</span><span class="t-n">Reading</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-p">);</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Reading.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">record</span> <span class="t-nc">Reading</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">station</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">celsius</span><span class="t-p">)</span>
+<span class="t-p">{</span>
+<span class="t-p">}</span></code></pre><div class="file">Monitor.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Monitor</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// How many readings trigger the rule.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">count</span><span class="t-p">(</span><span class="t-n">Reading</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-n">rule</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">readings</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">rule</span><span class="t-p">.</span><span class="t-na">triggers</span><span class="t-p">(</span><span class="t-n">readings</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">))</span>
+<span class="t-w">                </span><span class="t-o">++</span><span class="t-n">total</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// A heat rule with each station's own limit: the beach uses 32.0,</span>
+<span class="t-w">    </span><span class="t-c1">// inland stations use 35.0.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-nf">heatRule</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">limit</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-n">rule</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-p">()</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-nd">@Override</span>
+<span class="t-w">            </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">triggers</span><span class="t-p">(</span><span class="t-n">Reading</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-p">.</span><span class="t-na">celsius</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-n">limit</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">rule</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-nf">freezeRule</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-w"> </span><span class="t-o">-&gt;</span><span class="t-w"> </span><span class="t-n">r</span><span class="t-p">.</span><span class="t-na">celsius</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>A record (Java 16 and later) declares a class that only holds unchanging data: you list the components and Java generates private final fields, a public constructor, an accessor named after each component (no <code>get</code> prefix), and <code>equals()</code>, <code>hashCode()</code> and <code>toString()</code> (pp. 378–379). That is why <code>today[0]</code> now prints its values and two readings with the same values are equal. An anonymous inner class is created and instantiated in one <code>new</code> expression, implements the interface without the word <code>implements</code>, and must end with a semicolon (pp. 379–380). It may use <code>limit</code> because the parameter is effectively final: assigned once (p. 380). <code>Rule</code> has one abstract method, so it is a functional interface and a lambda can implement it: <code>r -&gt; r.celsius() &lt; 0.0</code> (p. 380). A one-line body needs no braces (p. 380). Reading 0.0 is not below freezing, so the freeze count is 1.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestMonitor.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestMonitor</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Reading</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">today</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-o">[</span><span class="t-mi">5</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-p">(</span><span class="t-s">"Pier 3"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">33.5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-p">(</span><span class="t-s">"Pier 3"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">36.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">2</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-p">(</span><span class="t-s">"Dunes"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mf">1.5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">3</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-p">(</span><span class="t-s">"Dunes"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">4</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-p">(</span><span class="t-s">"Marina"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">31.0</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"First reading: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Reading</span><span class="t-w"> </span><span class="t-n">copy</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Reading</span><span class="t-p">(</span><span class="t-s">"Pier 3"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">33.5</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Same values, same reading? "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">.</span><span class="t-na">equals</span><span class="t-p">(</span><span class="t-n">copy</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-n">beach</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Monitor</span><span class="t-p">.</span><span class="t-na">heatRule</span><span class="t-p">(</span><span class="t-mf">32.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">Rule</span><span class="t-w"> </span><span class="t-n">inland</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Monitor</span><span class="t-p">.</span><span class="t-na">heatRule</span><span class="t-p">(</span><span class="t-mf">35.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"At or above 32.0 C: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Monitor</span><span class="t-p">.</span><span class="t-na">count</span><span class="t-p">(</span><span class="t-n">today</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">beach</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"At or above 35.0 C: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Monitor</span><span class="t-p">.</span><span class="t-na">count</span><span class="t-p">(</span><span class="t-n">today</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">inland</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Below freezing: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Monitor</span><span class="t-p">.</span><span class="t-na">count</span><span class="t-p">(</span><span class="t-n">today</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">Monitor</span><span class="t-p">.</span><span class="t-na">freezeRule</span><span class="t-p">()));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Dunes low: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">2</span><span class="t-o">]</span><span class="t-p">.</span><span class="t-na">celsius</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" C at "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">today</span><span class="t-o">[</span><span class="t-mi">2</span><span class="t-o">]</span><span class="t-p">.</span><span class="t-na">station</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">First reading: Reading[station=Pier 3, celsius=33.5]
+Same values, same reading? true
+At or above 32.0 C: 2
+At or above 35.0 C: 1
+Below freezing: 1
+Dunes low: -1.5 C at Dunes
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Reading is a record<div class="small">whole file of <code>Reading.java</code></div></td><td><div><span class="tag">require</span> <code>\brecord\s+Reading\s*\(\s*String\s+station\s*,\s*double\s+celsius\s*\)</code></div><div><span class="tag">forbid</span> <code>\bclass\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>heatRule() uses an anonymous inner class<div class="small">in <code>Monitor.heatRule</code> of <code>Monitor.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bnew\s+Rule\s*\(\s*\)\s*\{)(?=[\s\S]*&gt;=\s*limit\b)</code></div><div><span class="tag">forbid</span> <code>\bHeatRule\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The HeatRule class is gone<div class="small">whole file of <code>Monitor.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+Monitor\b</code></div><div><span class="tag">forbid</span> <code>\bclass\s+HeatRule\b</code></div></td></tr><tr><td>C4</td><td>R3</td><td>freezeRule() returns a lambda<div class="small">in <code>Monitor.freezeRule</code> of <code>Monitor.java</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*-&gt;)(?=[\s\S]*\bcelsius\s*\(\s*\)\s*&lt;\s*0(?:\.0+)?\b)</code></div><div><span class="tag">forbid</span> <code>\bnull\b|\bnew\s+Rule\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Reading is a record</dt><dd><p>Replace the class with <code>public record Reading(String station, double celsius) { }</code>. The constructor, the accessors station() and celsius(), equals() and toString() are generated for you.</p></dd><dt>C2 · heatRule() uses an anonymous inner class</dt><dd><p>Return <code>new Rule() { ... }</code> with a <code>triggers()</code> method that compares <code>r.celsius() &gt;= limit</code>. The anonymous class can read <code>limit</code> because the parameter is never reassigned.</p><div class='small'><strong>Hint:</strong></div><p>The class body follows <code>new Rule()</code> directly, and the whole expression ends with a semicolon.</p></dd><dt>C3 · The HeatRule class is gone</dt><dd><p>Delete the <code>HeatRule</code> class at the bottom of Monitor.java. It was only ever used once, and it ignored the limit.</p></dd><dt>C4 · freezeRule() returns a lambda</dt><dd><p>Return a lambda such as <code>r -&gt; r.celsius() &lt; 0.0</code>. The parameter <code>r</code> is the Reading that triggers() receives.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>A record&#x27;s whole declaration is its header plus empty braces. Keep the component names: Monitor and the test call <code>celsius()</code> and <code>station()</code>.</p></li><li><p>Model the anonymous class on Figure 9-69: <code>Rule rule = new Rule() { public boolean triggers(Reading r) { ... } };</code> then return it.</p></li><li><p>A lambda with one parameter can be written <code>r -&gt; expression</code>; the expression is what triggers() returns.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Converting Reading to a record changed two lines of the output without any other code changing. Which two, and what did the record add that caused it?</p><div class="answer"><p>The first line now shows the station and temperature, and “Same values” is true. The record generated toString() and equals() based on its components.</p></div></li><li><p>Both new rules implement <code>Rule</code>. Why could the heat rule use either an anonymous class or a lambda, while a separate named <code>HeatRule</code> class was the worst choice?</p><div class="answer"><p>Rule is a functional interface, so either form works and both can use the limit. A named class needs its own file or declaration for code used once, and this one hard-coded 35.0 instead of receiving the limit.</p></div></li></ol>
+<h2>Extension</h2><p>Rewrite <code>heatRule()</code> as a lambda too, then add <code>public static Rule stationRule(String name)</code> that triggers for readings from one station (compare with <code>equals()</code>). Finally try adding <code>limit = limit + 1;</code> at the top of <code>heatRule()</code> and read the error: what does “effectively final” mean?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; the anonymous class ends with a semicolon; no leftover HeatRule.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

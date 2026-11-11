@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The gift card that holds $505.0 on a $500.0 limit</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 9.6</div>
+  <h1>The gift card that holds $505.0 on a $500.0 limit</h1>
+<h2>Objectives</h2><ul><li>Explain why information hiding keeps a class&#x27;s rules in force</li><li>Decide between <code>private</code> and <code>protected</code> for a field a subclass wants to change</li><li>Change inherited data through the parent&#x27;s public methods</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>GiftCard.balance</code> is <code>private</code>: not <code>public</code>, and not <code>protected</code> either.</li><li><strong>R2</strong> <code>PromoGiftCard.loadWithBonus()</code> adds the $10.0 bonus by calling <code>load()</code>, so the $500.0 limit applies to it; it never touches <code>balance</code> directly.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter for <code>loadWithBonus(495.0)</code> on a new card. What is the balance afterwards, and which line broke the rule?</p><div class="answer"><p>load(495.0) succeeds and the balance is 495.0; then <code>balance = balance + 10.0</code> makes it 505.0. That line changes the field directly and skips load()&#x27;s limit check.</p></div></li><li><p>Besides PromoGiftCard, what else could change <code>balance</code> while it is public?</p><div class="answer"><p>Any class at all, for example a test program or a register app writing card.balance = 1000.0 or a negative value, without any of GiftCard&#x27;s checks.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">GiftCard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">GiftCard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MAX_BALANCE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">500.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-c1">// TODO (R1): any class can change this, skipping every rule below.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getBalance</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Adds money unless the amount is not positive or the card would</span>
+<span class="t-w">    </span><span class="t-c1">// go over MAX_BALANCE. Returns whether the money was added.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">load</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">MAX_BALANCE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Takes money off unless the card doesn't have enough.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">spend</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">-=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">PromoGiftCard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">PromoGiftCard</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">GiftCard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Holiday promo: every load of $50.0 or more earns a $10.0 bonus.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">loadWithBonus</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">load</span><span class="t-p">(</span><span class="t-n">amount</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mf">50.0</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-c1">// TODO (R2): this skips the $500.0 limit that load() enforces.</span>
+<span class="t-w">            </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mf">10.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">GiftCard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">GiftCard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">MAX_BALANCE</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mf">500.0</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">getBalance</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Adds money unless the amount is not positive or the card would</span>
+<span class="t-w">    </span><span class="t-c1">// go over MAX_BALANCE. Returns whether the money was added.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">load</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">MAX_BALANCE</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Takes money off unless the card doesn't have enough.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">spend</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">||</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&gt;</span><span class="t-w"> </span><span class="t-n">balance</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">balance</span><span class="t-w"> </span><span class="t-o">-=</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">PromoGiftCard.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">PromoGiftCard</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">GiftCard</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Holiday promo: every load of $50.0 or more earns a $10.0 bonus.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">loadWithBonus</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">load</span><span class="t-p">(</span><span class="t-n">amount</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">loaded</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">amount</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mf">50.0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">load</span><span class="t-p">(</span><span class="t-mf">10.0</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">loaded</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Keeping data private (information hiding) means it can be changed only by the methods you choose and only in ways you control (p. 347), which is how <code>load()</code> guarantees the limit. A subclass can&#x27;t use its parent&#x27;s private fields directly (p. 347), so once <code>balance</code> is private, <code>PromoGiftCard</code> must go through <code>load(10.0)</code> like any other class. <code>protected</code> would compile, but it would let the subclass skip the limit again: protected access is meant to be used sparingly, and classes that use their parent&#x27;s fields directly are “fragile” (p. 347). A child seldom needs protected fields because it can use the parent&#x27;s public methods (p. 347). The bonus that would exceed the limit is refused by <code>load()</code>; <code>loadWithBonus()</code> still reports <code>true</code> because the customer&#x27;s own money was loaded.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestGiftCards.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestGiftCards</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">PromoGiftCard</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">PromoGiftCard</span><span class="t-p">();</span>
+
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Load $495.0: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">loadWithBonus</span><span class="t-p">(</span><span class="t-mf">495.0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", balance $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">getBalance</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Load $15.0: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">loadWithBonus</span><span class="t-p">(</span><span class="t-mf">15.0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", balance $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">getBalance</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Spend $200.0: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">spend</span><span class="t-p">(</span><span class="t-mf">200.0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", balance $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">getBalance</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Load $60.0: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">loadWithBonus</span><span class="t-p">(</span><span class="t-mf">60.0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", balance $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">card</span><span class="t-p">.</span><span class="t-na">getBalance</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Load $495.0: true, balance $495.0
+Load $15.0: false, balance $495.0
+Spend $200.0: true, balance $295.0
+Load $60.0: true, balance $365.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The balance is private<div class="small">whole file of <code>GiftCard.java</code></div></td><td><div><span class="tag">require</span> <code>\bprivate\s+double\s+balance\b</code></div><div><span class="tag">forbid</span> <code>\b(?:public|protected)\s+double\s+balance\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The bonus goes through load()<div class="small">in <code>PromoGiftCard.loadWithBonus</code> of <code>PromoGiftCard.java</code></div></td><td><div><span class="tag">require</span> <code>\bload\s*\(\s*(?:10(?:\.0+)?|[A-Z_]+)\s*\)</code></div><div><span class="tag">forbid</span> <code>\bbalance\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The balance is private</dt><dd><p>Declare <code>private double balance;</code>. <code>protected</code> would still let PromoGiftCard (and any future subclass) skip the $500.0 limit, which is exactly what went wrong.</p><div class='small'><strong>Hint:</strong></div><p>Which access level lets only GiftCard&#x27;s own methods touch the field?</p></dd><dt>C2 · The bonus goes through load()</dt><dd><p>Add the bonus with <code>load(10.0)</code> instead of changing <code>balance</code>. load() applies the same $500.0 rule to the bonus as to any other money.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Change the access specifier of <code>balance</code> first and compile: the error in PromoGiftCard shows exactly which line breaks the rule.</p></li><li><p>PromoGiftCard already calls one parent method that adds money and checks the limit.</p></li><li><p>The bonus line becomes a call: <code>load(10.0);</code>. You don&#x27;t need to know whether it succeeded.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Making <code>balance</code> <code>protected</code> would also let PromoGiftCard compile. Why is <code>private</code> the better choice here?</p><div class="answer"><p>With protected, the subclass could still change balance without the limit check, so the bug could come back in this or any future subclass. Private forces every change through load() and spend(), which enforce the rules.</p></div></li><li><p>The customer who loads $495.0 doesn&#x27;t get the $10.0 bonus. Is that the right behaviour? Who decides?</p><div class="answer"><p>Yes: the processor rejects cards over $500.0, so a bonus that breaks the limit can&#x27;t be honoured. That rule belongs to GiftCard; the promo class shouldn&#x27;t be able to override it.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>public boolean refund(double amount)</code> to GiftCard for returned purchases. Should a refund that would push the card over $500.0 be refused, or capped? Write it, then decide whether <code>spend()</code> and <code>refund()</code> should share a private helper method.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; every change to the balance goes through load() or spend().</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
