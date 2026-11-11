@@ -1,0 +1,1338 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 11: File Input and Output",
+ "collection_intro": "Short, ungraded practice checks, one for each section of Chapter 11 of *Java Programming*, 10th edition. Rate your confidence, answer, and read the feedback: the review at the end points you to exactly what to re-read.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "11.1",
+   "title": "Understanding Computer Files",
+   "subtitle": "Volatile and nonvolatile storage, text and binary files, and what a file's path is",
+   "source": "Ch. 11, section 11.1 (pp. 441–443)",
+   "intro": "Your program is totaling a day's sales when the laptop battery dies at 4:59 p.m. Four questions on what survives and where it is stored.",
+   "takeaways": [
+    "Volatile storage (RAM, where variables live) loses its contents when the power goes; nonvolatile storage keeps them. *Temporary* and *permanent* name that difference, not a length of time.",
+    "Text versus binary describes how a file is encoded; data versus program describes what it holds. A `.java` file is a text program file, and a `.class` file is a binary one.",
+    "A complete path is the drive, then every folder from the top down, then the file name, joined by the system's delimiter (`\\` on Windows, `/` on UNIX)."
+   ],
+   "questions": [
+    {
+     "id": "volatile-power-loss",
+     "concept": "Volatile versus nonvolatile storage",
+     "level": "apply",
+     "stem": "A program keeps the day's sales total in a `double` variable and also writes each sale to `Sales.txt` on the hard drive as it happens. The laptop loses power mid-run. What is still there after a restart?",
+     "options": [
+      {
+       "text": "The sales already stored in `Sales.txt`, but not the variable's total",
+       "feedback": "The variable lived in RAM, which is volatile, so its value vanished with the power. The file is on a nonvolatile device, so the sales stored there persist.",
+       "correct": true
+      },
+      {
+       "text": "The variable's total, but nothing in the file, since it was still open",
+       "feedback": "An open file's stored contents don't disappear, and RAM never holds values without power. Volatility, not whether the file is open, decides what survives."
+      },
+      {
+       "text": "Both, because modern computers keep memory and disk through power loss",
+       "feedback": "That's the statement the book marks as false. RAM is volatile storage; only devices such as disks and USB drives are nonvolatile."
+      },
+      {
+       "text": "Neither, because all of a program's data stays in RAM until it ends",
+       "feedback": "Writing to a file sends data to the storage device. Once it is stored there, losing power doesn't erase it."
+      }
+     ],
+     "hint": "Which of the two places is volatile storage?",
+     "explanation": "Volatile storage, such as the RAM that holds variables, loses its contents when the computer loses power; nonvolatile storage, such as a disk, keeps them. To keep data beyond a program's run, the program must save it to a file on a nonvolatile device.",
+     "ref": "Ch. 11.1, Understanding Computer Files (pp. 441–442)"
+    },
+    {
+     "id": "temporary-means-volatile",
+     "concept": "Temporary and permanent refer to volatility",
+     "level": "understand",
+     "stem": "A teammate says: \"That variable has existed for six hours, so it's permanent storage. The scratch file I deleted after five seconds was temporary.\" What is wrong with this reasoning?",
+     "options": [
+      {
+       "text": "*Temporary* and *permanent* describe volatility, not how long data lasts",
+       "feedback": "The six-hour variable is still in RAM and would vanish at a power loss; the five-second file sat on a nonvolatile device. The labels are about what survives losing power.",
+       "correct": true
+      },
+      {
+       "text": "Nothing: storage is classified by how long the data actually exists",
+       "feedback": "That's the everyday meaning of the words. In computing they refer to volatility, so a long-lived variable is still temporary storage."
+      },
+      {
+       "text": "A variable can't exist for six hours, because the program would end first",
+       "feedback": "A large program, or one the user forgets to close, can keep a variable alive for hours. Duration isn't what makes it temporary."
+      },
+      {
+       "text": "A deleted file never counted as storage, so the second claim doesn't apply",
+       "feedback": "The file was nonvolatile storage while it existed; deleting it doesn't change that. This is why some programmers say *persistent* rather than *permanent*."
+      }
+     ],
+     "hint": "What would happen to each piece of data if the power went out?",
+     "explanation": "In storage terms, *temporary* means volatile (lost when power is lost) and *permanent* means nonvolatile. Because data can be erased from files, many programmers prefer *persistent*: the data persists through a power loss, however long it is kept.",
+     "ref": "Ch. 11.1, Note on volatility (pp. 441–442)"
+    },
+    {
+     "id": "text-vs-binary",
+     "concept": "Text/binary is independent of data/program",
+     "level": "analyze",
+     "stem": "A classmate claims: \"Program files are binary, and data files are text.\" Which file is a counterexample to this claim?",
+     "options": [
+      {
+       "text": "`PathDemo.java`, a program file you can read in a text editor",
+       "feedback": "Java source files are program files, yet they are encoded as text (ASCII or Unicode). A text program file is exactly what the claim says can't exist.",
+       "correct": true
+      },
+      {
+       "text": "`PathDemo.class`, a program file a text editor shows as gibberish",
+       "feedback": "This one fits the claim: a compiled `.class` file is a program file stored in binary. It can't disprove anything."
+      },
+      {
+       "text": "`Employees.txt`, a payroll data file encoded as Unicode text",
+       "feedback": "A data file stored as text is what the claim predicts, so it supports the claim rather than refuting it."
+      }
+     ],
+     "hint": "A counterexample has to break the pattern the claim describes. Which file's category and encoding don't match the claim?",
+     "explanation": "Text versus binary describes how a file's contents are encoded; data versus program describes what the file holds. The two are independent: `.java` source is a text program file, `.class` bytecode is a binary program file, and images and music are binary.",
+     "aside": "Every compiled `.class` file starts with the same four bytes, `CAFEBABE` in hexadecimal. The JVM checks this \"magic number\" before loading a class, and it's the first thing you see if you open a `.class` file in a hex viewer.",
+     "ref": "Ch. 11.1, text and binary files (p. 442)"
+    },
+    {
+     "id": "complete-path",
+     "concept": "A path lists drive, folders, then file",
+     "level": "apply",
+     "stem": "`Data.txt` is saved on the C drive, in a folder named `Chapter.11` that is inside a folder named `Java`. What is the file's complete path on Windows?",
+     "options": [
+      {
+       "text": "`C:\\Java\\Chapter.11\\Data.txt`",
+       "feedback": "The path starts at the drive and lists each folder from the outermost inward, then the file name, separated by backslashes.",
+       "correct": true
+      },
+      {
+       "text": "`C:\\Chapter.11\\Java\\Data.txt`",
+       "feedback": "This reverses the nesting. `Java` is the outer folder, so it comes right after the drive."
+      },
+      {
+       "text": "`C:\\Java\\Data.txt`",
+       "feedback": "This skips the `Chapter.11` folder. Every folder in the hierarchy, from the top down to the file, belongs in the path."
+      },
+      {
+       "text": "`Java\\Chapter.11\\Data.txt`",
+       "feedback": "Without the drive, this path depends on where the program is running. A complete path needs no other information."
+      }
+     ],
+     "hint": "A complete path needs the drive, every folder from the top down, and the file name.",
+     "explanation": "A file's path is its disk drive plus the hierarchy of directories that contain it, from the top level down, followed by the file name. On Windows the parts are separated by the backslash (`\\`), the path delimiter; UNIX systems use a forward slash (`/`).",
+     "aside": "Windows uses `\\` because of MS-DOS. Version 1.0 already used `/` to mark command options, as in `dir /w`, so when DOS 2.0 added folders in 1983 the backslash became the path separator instead.",
+     "ref": "Ch. 11.1, Figure 11-1 (p. 442)"
+    }
+   ]
+  },
+  {
+   "id": "11.2",
+   "title": "Using the Path and Files Classes",
+   "subtitle": "Creating and examining paths, absolute and relative paths, checking access, deleting files and comparing file times",
+   "source": "Ch. 11, section 11.2 (pp. 443–450)",
+   "intro": "A grading tool must find `Data.txt`, confirm it can read it, and clean up afterward without crashing. Six questions on the `Path` and `Files` classes.",
+   "takeaways": [
+    "A `Path` only names a file or folder; building and examining one works whether or not the file exists. `Files` methods such as `delete()` and `readAttributes()` act on the file itself and throw exceptions when they can't.",
+    "A relative path is resolved against the current directory, and `toAbsolutePath()` makes that explicit. In a string literal, write each Windows delimiter as `\\\\`.",
+    "File operations report problems by throwing exceptions, so put them in `try` blocks and catch specific exceptions such as `DirectoryNotEmptyException` before the general `IOException`."
+   ],
+   "questions": [
+    {
+     "id": "path-elements",
+     "concept": "Path name elements are indexed from 0",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "// in main(); Java on Windows also accepts / as a separator\nPath filePath = Paths.get(\"Java/Chapter.11/Data.txt\");\nint count = filePath.getNameCount();\nSystem.out.println(count + \" \" + filePath.getName(0) +\n    \" \" + filePath.getName(count - 1));",
+      "verify": {
+       "expect": "output",
+       "program": "import java.nio.file.*;\n\npublic class PathNames\n{\n    public static void main(String[] args) throws Exception\n    {\n        Path filePath = Paths.get(\"Java/Chapter.11/Data.txt\");\n        int count = filePath.getNameCount();\n        System.out.println(count + \" \" + filePath.getName(0) +\n            \" \" + filePath.getName(count - 1));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 Java Data.txt`",
+       "feedback": "The path has three name elements. Index 0 is the top-level folder, `Java`, and index `count - 1` is the last element, the file name.",
+       "correct": true
+      },
+      {
+       "text": "`3 Data.txt Java`",
+       "feedback": "This treats index 0 as the lowest element. Indexing starts at the top of the hierarchy, so index 0 is `Java`."
+      },
+      {
+       "text": "`2 Java Data.txt`",
+       "feedback": "`getNameCount()` counts every name element, the file name included, not just the folders."
+      }
+     ],
+     "hint": "Which end of the path is index 0: the top-level folder or the file?",
+     "explanation": "A `Path`'s name elements are indexed like an array: index 0 is the top-level element, and the last element, usually the file name, is at `getNameCount() - 1`. `getFileName()` returns that last element too.",
+     "ref": "Ch. 11.2, Retrieving Information About a Path (pp. 444–445)"
+    },
+    {
+     "id": "relative-to-absolute",
+     "concept": "Relative paths resolve against the current directory",
+     "level": "apply",
+     "stem": "A program running in the folder `C:\\Java` executes `Paths.get(\"Data.txt\").toAbsolutePath()`. No file named `Data.txt` exists yet. What is the result?",
+     "options": [
+      {
+       "text": "The path `C:\\Java\\Data.txt`",
+       "feedback": "A relative path is resolved against the current directory, here `C:\\Java`. Converting a path is just working with names; it doesn't check whether the file exists.",
+       "correct": true
+      },
+      {
+       "text": "The path `Data.txt`, unchanged",
+       "feedback": "`toAbsolutePath()` leaves a path alone only when it is already absolute. `Data.txt` is relative, so the current directory is added in front."
+      },
+      {
+       "text": "The path `C:\\Data.txt`, at the drive's root",
+       "feedback": "A path containing only a file name is assumed to be in the same folder as the running program, not at the top of the drive."
+      },
+      {
+       "text": "A `NoSuchFileException`, because the file is missing",
+       "feedback": "Creating or converting a `Path` doesn't touch the file. Exceptions like `NoSuchFileException` come from operations that act on it, such as `Files.delete()`."
+      }
+     ],
+     "hint": "Where does Java assume a file is when its path contains only a name?",
+     "explanation": "An absolute path is complete on its own; a relative path depends on the current directory. `toAbsolutePath()` returns an absolute path unchanged and resolves a relative one against the current directory, without checking that the file exists.",
+     "ref": "Ch. 11.2, Converting a Relative Path to an Absolute One (pp. 444–446)"
+    },
+    {
+     "id": "escape-backslash",
+     "concept": "Backslashes in a path string must be doubled",
+     "level": "apply",
+     "stem": "Which statement correctly creates a `Path` for `C:\\Java\\Chapter.11\\Data.txt`?",
+     "options": [
+      {
+       "text": "`Path p = Paths.get(\"C:\\\\Java\\\\Chapter.11\\\\Data.txt\");`",
+       "feedback": "In a string literal a backslash starts an escape sequence, so each path delimiter is typed as `\\\\`, which stores a single backslash.",
+       "correct": true
+      },
+      {
+       "text": "`Path p = Paths.get(\"C:\\Java\\Chapter.11\\Data.txt\");`",
+       "feedback": "Here `\\J`, `\\C` and `\\D` are read as escape sequences. They aren't legal ones, so the line doesn't compile."
+      },
+      {
+       "text": "`Path p = FileSystems.getPath(\"C:\\\\Java\\\\Chapter.11\\\\Data.txt\");`",
+       "feedback": "`FileSystems`, with an *s*, is the factory class. `getPath()` belongs to a `FileSystem` object, such as the one `FileSystems.getDefault()` returns."
+      },
+      {
+       "text": "`Path p = Paths.get('C:\\\\Java\\\\Chapter.11\\\\Data.txt');`",
+       "feedback": "Single quotes make a `char` literal, which holds exactly one character. A path is a `String`, written in double quotes."
+      }
+     ],
+     "hint": "What does a single backslash mean inside a Java string literal?",
+     "explanation": "Because the backslash begins escape sequences such as `\\n`, a Windows path inside a string literal needs `\\\\` for each delimiter. `Paths.get()` is a shortcut that asks the default file system for the path; the long way is to call `getPath()` on `FileSystems.getDefault()`.",
+     "aside": "Java 11 added `Path.of(...)`, which does exactly what `Paths.get(...)` does. You'll see both in newer code.",
+     "ref": "Ch. 11.2, Creating a Path (pp. 443–444) and Don't Do It (p. 479)"
+    },
+    {
+     "id": "check-access",
+     "concept": "checkAccess() throws when any mode fails",
+     "level": "apply",
+     "stem": "`PathDemo3` calls `checkAccess(filePath, READ, EXECUTE)` inside a `try` block. The file exists and can be read, but this program isn't allowed to execute it. What does the program display after the path?",
+     "options": [
+      {
+       "text": "File cannot be used for this application",
+       "feedback": "Every listed mode must be allowed. Because `EXECUTE` fails, `checkAccess()` throws an `IOException`, and the `catch` block prints this message.",
+       "correct": true
+      },
+      {
+       "text": "File can be read and executed",
+       "feedback": "This line runs only if `checkAccess()` returns normally, which requires every listed permission, `EXECUTE` included."
+      },
+      {
+       "text": "Nothing more, because `checkAccess()` just returns `false`",
+       "feedback": "`checkAccess()` doesn't return a `boolean`. It reports failure by throwing an `IOException`, which is why the call sits in a `try` block."
+      },
+      {
+       "text": "Nothing, because the program doesn't compile without `AccessMode.READ`",
+       "feedback": "The `import static java.nio.file.AccessMode.*;` statement is what lets the program write `READ` and `EXECUTE` without the class name."
+      }
+     ],
+     "hint": "How does `checkAccess()` report that a file can't be used, and which part of the program handles that report?",
+     "explanation": "`checkAccess()` verifies that a file exists and allows every access mode you pass (none, `READ`, `WRITE`, `EXECUTE`). If any check fails it throws an `IOException`, so the success message belongs in the `try` block and the failure message in the `catch` block.",
+     "aside": "A passing check can go stale: another program might delete or lock the file between the check and its use. Security researchers call this a TOCTTOU bug (*time of check to time of use*), and attackers deliberately exploit that gap.",
+     "ref": "Ch. 11.2, Checking File Accessibility (pp. 446–447)"
+    },
+    {
+     "id": "delete-nonempty",
+     "concept": "Files.delete() won't remove a non-empty folder",
+     "level": "apply",
+     "stem": "The folder `Reports` exists and still contains `Q1.txt`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Path filePath = Paths.get(\"Reports\");\ntry\n{\n    Files.delete(filePath);\n    System.out.println(\"File or directory is deleted\");\n}\ncatch(NoSuchFileException e)\n{\n    System.out.println(\"No such file or directory\");\n}\ncatch(DirectoryNotEmptyException e)\n{\n    System.out.println(\"Directory is not empty\");\n}\ncatch(IOException e)\n{\n    System.out.println(\"IO exception\");\n}",
+      "verify": {
+       "expect": "output",
+       "program": "import java.nio.file.*;\nimport java.io.IOException;\n\npublic class DeleteDemo\n{\n    public static void main(String[] args) throws Exception\n    {\n        Files.createDirectories(Paths.get(\"Reports\"));\n        Files.write(Paths.get(\"Reports\", \"Q1.txt\"), \"Q1\".getBytes());\n        Path filePath = Paths.get(\"Reports\");\n        try\n        {\n            Files.delete(filePath);\n            System.out.println(\"File or directory is deleted\");\n        }\n        catch(NoSuchFileException e)\n        {\n            System.out.println(\"No such file or directory\");\n        }\n        catch(DirectoryNotEmptyException e)\n        {\n            System.out.println(\"Directory is not empty\");\n        }\n        catch(IOException e)\n        {\n            System.out.println(\"IO exception\");\n        }\n        Files.deleteIfExists(Paths.get(\"Reports\", \"Q1.txt\"));\n        Files.deleteIfExists(Paths.get(\"Reports\"));\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Directory is not empty`",
+       "feedback": "A directory can be deleted only when it is empty, so `delete()` throws `DirectoryNotEmptyException`, and its own `catch` block handles it.",
+       "correct": true
+      },
+      {
+       "text": "`File or directory is deleted`",
+       "feedback": "`Files.delete()` removes only the last element of the path. It never deletes a folder's contents for you, so a folder with files in it stays."
+      },
+      {
+       "text": "`IO exception`",
+       "feedback": "`DirectoryNotEmptyException` is a kind of `IOException`, but Java uses the first `catch` block that matches, and the more specific one comes first."
+      },
+      {
+       "text": "`No such file or directory`",
+       "feedback": "`NoSuchFileException` is for a path that names nothing. `Reports` exists, files and all, so a different problem stops the delete."
+      }
+     ],
+     "hint": "What must be true of a folder before `delete()` can remove it? Then check which `catch` block matches first.",
+     "explanation": "`Files.delete()` deletes the last element of a path or throws an exception: `NoSuchFileException` if it doesn't exist, `DirectoryNotEmptyException` for a folder that still holds files, `SecurityException` without permission. Catch the specific exceptions before `IOException` so each case gets its own message. `deleteIfExists()` doesn't throw for a missing file.",
+     "ref": "Ch. 11.2, Deleting a Path (p. 447)"
+    },
+    {
+     "id": "filetime-compare",
+     "concept": "FileTime.compareTo() signs",
+     "level": "understand",
+     "stem": "In `PathDemo6`, `time1` is the creation time of `Data.txt` and `time2` is the creation time of `Data2.txt`. If `time1.compareTo(time2)` returns a negative number, what do you know?",
+     "options": [
+      {
+       "text": "`Data.txt` was created before `Data2.txt`",
+       "feedback": "`compareTo()` returns less than 0 when the calling object's time comes before the argument's. The earlier time means the earlier creation.",
+       "correct": true
+      },
+      {
+       "text": "`Data.txt` was created after `Data2.txt`",
+       "feedback": "That's the positive case. A negative result means the first `FileTime` comes *before* the argument's."
+      },
+      {
+       "text": "`Data.txt` is smaller than `Data2.txt`",
+       "feedback": "The comparison uses `FileTime` values, which are dates and times. A file's size comes from the separate `size()` method."
+      },
+      {
+       "text": "One of the two files couldn't be found",
+       "feedback": "A missing file would make `readAttributes()` throw an `IOException` before any comparison ran."
+      }
+     ],
+     "hint": "Think of `compareTo()` as asking whether the first time comes before or after the second.",
+     "explanation": "`FileTime.compareTo()` follows Java's usual convention: a negative result if the calling object comes first, positive if it comes later, and 0 if they are equal. Comparing creation or last-modified times this way tells you which file is newer without reading the dates yourself.",
+     "ref": "Ch. 11.2, Determining File Attributes (pp. 448–449)"
+    }
+   ]
+  },
+  {
+   "id": "11.3",
+   "title": "File Organization, Streams, and Buffers",
+   "subtitle": "The data hierarchy, sequential access, streams, and why buffered output must be flushed or closed",
+   "source": "Ch. 11, section 11.3 (pp. 450–452)",
+   "intro": "A payroll program writes every record, ends without an error, and the file is still empty. Five questions on how data is organized and how it travels to a file.",
+   "takeaways": [
+    "Data is organized as characters, fields, records and files. In a CSV file, each line is typically one record and commas separate its fields.",
+    "Java sees a file only as bytes flowing through one-directional streams; records and fields are the meaning your code gives those bytes.",
+    "Output usually waits in a memory buffer. Until it is flushed, by `flush()`, by `close()` or by a full buffer, it isn't in the file, so close every output file."
+   ],
+   "questions": [
+    {
+     "id": "data-hierarchy",
+     "concept": "Character, field, record, file",
+     "level": "apply",
+     "stem": "`Employees.txt` holds one line per employee, such as `786,Brown,12.95`. Which description uses the data hierarchy correctly?",
+     "options": [
+      {
+       "text": "Each line is a record, and `Brown` is one of its fields",
+       "feedback": "A field is a group of characters with a meaning, such as a last name. A record collects the fields about one entity, here one employee, and the file collects the records.",
+       "correct": true
+      },
+      {
+       "text": "Each line is a field, and `Brown` is one of its records",
+       "feedback": "This reverses the levels. Fields are the smaller pieces, and a record groups the fields that describe one employee."
+      },
+      {
+       "text": "Each line is a file, and `Brown` is one of its records",
+       "feedback": "The whole of `Employees.txt` is the file. One line describes one employee, which makes it a record."
+      },
+      {
+       "text": "Each line is a field, and `Brown` is one of its characters",
+       "feedback": "`B`, `r`, `o`, `w` and `n` are the characters. Grouped into a meaningful last name, they form a field."
+      }
+     ],
+     "hint": "Order the levels from smallest to largest: character, field, record, file. Where does a last name fit?",
+     "explanation": "Businesses organize data as a hierarchy: characters form fields, the fields about one entity form a record, and related records form a file. In a CSV file each line is usually one record, with commas separating its fields.",
+     "ref": "Ch. 11.3, Figure 11-13 Data hierarchy (pp. 450–451)"
+    },
+    {
+     "id": "sequential-meaning",
+     "concept": "What sequential access means",
+     "level": "understand",
+     "stem": "When is a data file being used as a *sequential access* file?",
+     "options": [
+      {
+       "text": "When its records are accessed one after another, in the order they were stored",
+       "feedback": "Sequential access processes records in stored order from the beginning, and records are often stored in order by a field such as an ID number.",
+       "correct": true
+      },
+      {
+       "text": "When each record's first field is stored first, then each record's second field",
+       "feedback": "Records are stored whole; a file doesn't group all the first fields together. *Sequential* describes the order of records, not the layout of fields."
+      },
+      {
+       "text": "When a program jumps straight to the record it needs, using the record's position",
+       "feedback": "Going directly to a record is random access, which the chapter covers later."
+      },
+      {
+       "text": "When the values within each record are separated from one another by commas",
+       "feedback": "Commas describe the CSV format of each record. A CSV file can be used sequentially or randomly."
+      }
+     ],
+     "hint": "*Sequential* describes the order in which records are reached.",
+     "explanation": "A file is used for sequential access when its records are processed one after another in stored order, often sorted by a field such as an ID. When records are reached out of sequence, the file is being used for random access.",
+     "ref": "Ch. 11.3, File Organization, Streams, and Buffers (p. 451)"
+    },
+    {
+     "id": "buffer-flush",
+     "concept": "Buffered output reaches the file only when flushed",
+     "level": "analyze",
+     "stem": "`Grades.txt` doesn't exist yet. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Path file = Paths.get(\"Grades.txt\");\nOutputStream output = new\n    BufferedOutputStream(Files.newOutputStream(file, CREATE));\noutput.write(\"ABCDF\".getBytes());\nSystem.out.println(Files.size(file));\noutput.close();\nSystem.out.println(Files.size(file));",
+      "verify": {
+       "expect": "output",
+       "output": "0 5",
+       "program": "import java.nio.file.*;\nimport java.io.*;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class BufferDemo\n{\n    public static void main(String[] args) throws Exception\n    {\n        Files.deleteIfExists(Paths.get(\"Grades.txt\"));\n        Path file = Paths.get(\"Grades.txt\");\n        OutputStream output = new\n            BufferedOutputStream(Files.newOutputStream(file, CREATE));\n        output.write(\"ABCDF\".getBytes());\n        System.out.println(Files.size(file));\n        output.close();\n        System.out.println(Files.size(file));\n        Files.deleteIfExists(file);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`0`, then `5`",
+       "feedback": "`write()` only fills the buffer in memory, so the file is still empty. `close()` flushes the buffer to the file first, and then the file holds 5 bytes.",
+       "correct": true
+      },
+      {
+       "text": "`5`, then `5`",
+       "feedback": "That would be true with no buffer. A `BufferedOutputStream` keeps bytes in memory until its buffer fills or until `flush()` or `close()` sends them on."
+      },
+      {
+       "text": "`0`, then `0`",
+       "feedback": "Closing a buffered stream flushes it first, so the bytes reach the file before the stream closes."
+      },
+      {
+       "text": "It throws an `IOException` when it measures the open file",
+       "feedback": "Java can report a file's size while a stream has it open. The surprise here is what that size is."
+      }
+     ],
+     "hint": "Right after `write()` returns, are the five bytes in the file, or somewhere else?",
+     "explanation": "A buffer is a block of memory that collects output before the slow, actual write to the device. Until the buffer is flushed, by `flush()`, by `close()` or by filling up, the bytes aren't in the file. That's why failing to close an output file can lose data.",
+     "aside": "A `BufferedOutputStream` holds 8,192 bytes by default. A program that writes less than that and never flushes or closes the stream can end with nothing at all in its file.",
+     "ref": "Ch. 11.3, buffers and flushing (p. 451)"
+    },
+    {
+     "id": "count-streams",
+     "concept": "Streams flow in one direction",
+     "level": "apply",
+     "stem": "A program reads a file of records and writes the valid ones to one file and the invalid ones to another. How many streams does it need?",
+     "options": [
+      {
+       "text": "Three: one input stream and two output streams",
+       "feedback": "Data arrives through one input stream, and each destination file gets its own output stream. Most streams flow in only one direction.",
+       "correct": true
+      },
+      {
+       "text": "Two: one stream for each file that the program creates",
+       "feedback": "The file being read needs a stream too. Data can't enter the program without an input stream."
+      },
+      {
+       "text": "One: a single stream can carry data in both directions",
+       "feedback": "Most streams flow one way, either in or out. Random access files, later in the chapter, are the exception."
+      },
+      {
+       "text": "Six: every file needs both an input and an output stream",
+       "feedback": "A file needs only the streams the program actually uses with it. The source is only read, and the two destinations are only written."
+      }
+     ],
+     "hint": "Count the files, then decide which way data flows for each one.",
+     "explanation": "A stream is an object that carries bytes either into a program (input) or out of it (output). An application opens one stream for each file and direction it needs, and it can have several open at once.",
+     "ref": "Ch. 11.3, Figure 11-14 File streams (p. 451)"
+    },
+    {
+     "id": "java-sees-bytes",
+     "concept": "Java views a file as a series of bytes",
+     "level": "understand",
+     "stem": "A program opens `Employees.txt`, which holds one comma-separated employee record per line. How does Java itself view the file?",
+     "options": [
+      {
+       "text": "As a series of bytes; the program's code decides what a record is",
+       "feedback": "Java attaches no meaning to a file's contents. Records and fields exist because your program reads the bytes and interprets them, for example by splitting at commas.",
+       "correct": true
+      },
+      {
+       "text": "As a list of records, one for each line of text in the file",
+       "feedback": "People see records, but Java doesn't. Even line breaks are just bytes until a method such as `readLine()` interprets them."
+      },
+      {
+       "text": "As a table of fields, split automatically wherever a comma appears",
+       "feedback": "Nothing splits the data for you; later in the chapter the program calls `split()` itself."
+      },
+      {
+       "text": "As an array of `String`s, with one element for each line of text",
+       "feedback": "You can build such an array, but only by reading the bytes yourself. The file arrives as a stream of bytes."
+      }
+     ],
+     "hint": "Who supplies the meaning: Java, or the code you write?",
+     "explanation": "People view a file as records made of fields, but Java views any file as a series of bytes flowing through a stream. The structure exists only in how your program reads, groups and converts those bytes.",
+     "ref": "Ch. 11.3, File Organization, Streams, and Buffers (p. 451)"
+    }
+   ]
+  },
+  {
+   "id": "11.4",
+   "title": "Using Java's IO Classes",
+   "subtitle": "The stream class hierarchy, System.out and System.err, StandardOpenOption, and reading with BufferedReader",
+   "source": "Ch. 11, section 11.4 (pp. 452–456)",
+   "intro": "`ScreenOut` prints `ABCDF` to the screen; change one assignment and the same code writes a file. Five questions on Java's input and output classes.",
+   "takeaways": [
+    "`InputStream`, `OutputStream` and `Reader` are abstract. Declare variables with these types and assign concrete streams, so switching from screen to file changes one assignment, not the logic.",
+    "`newOutputStream()` with no options replaces an existing file. `CREATE` alone overwrites from the start without truncating, `APPEND` adds to the end, and `CREATE_NEW` refuses an existing file.",
+    "`readLine()` returns `null` at the end of a file. Read once before the loop and again at the end of its body, or write `while((s = reader.readLine()) != null)` with the inner parentheses."
+   ],
+   "questions": [
+    {
+     "id": "abstract-streams",
+     "concept": "Abstract IO classes can't be instantiated",
+     "level": "understand",
+     "stem": "`InputStream`, `OutputStream` and `Reader` are abstract classes. What does that mean for the code you write?",
+     "options": [
+      {
+       "text": "You can't create one with `new`; you use an object of a concrete child class",
+       "feedback": "An abstract class can't be instantiated, but a variable of its type can refer to any child object, such as `System.out` or the stream `Files.newInputStream()` returns.",
+       "correct": true
+      },
+      {
+       "text": "They contain no methods, so you must write `read()` and `write()` yourself",
+       "feedback": "Abstract classes can contain plenty of methods; Table 11-3 lists `close()`, `flush()` and `write()` for `OutputStream`. You just can't create objects of them directly."
+      },
+      {
+       "text": "They work with the keyboard and the screen, but never with disk files",
+       "feedback": "Their child classes cover both. `FileInputStream` reads disk files, and `System.out` is a `PrintStream` aimed at the screen."
+      },
+      {
+       "text": "Every stream variable must be declared with a child type such as `FileInputStream`",
+       "feedback": "The book does the opposite: `ReadFile` declares `InputStream input` and assigns it a concrete stream. That flexibility is the point."
+      }
+     ],
+     "hint": "What can you still do with an abstract class's *type*, even though you can't build an object of it?",
+     "explanation": "Abstract classes such as `InputStream`, `OutputStream` and `Reader` define what every stream of that kind can do, but they can't be instantiated. Declaring variables with these general types and assigning concrete child objects lets the same code work with different sources and destinations.",
+     "ref": "Ch. 11.4, Figure 11-15 and Table 11-2 (pp. 452–453)"
+    },
+    {
+     "id": "swap-destination",
+     "concept": "Changing the output device changes one assignment",
+     "level": "analyze",
+     "stem": "`ScreenOut` writes `ABCDF` to the screen through `OutputStream output = System.out;`. To write the same bytes to `Grades.txt` instead, what must change?",
+     "options": [
+      {
+       "text": "Only the object assigned to `output`; the `write()`, `flush()` and `close()` calls stay",
+       "feedback": "`System.out` and a `BufferedOutputStream` are both `OutputStream`s, so the same calls work on either. `FileOut` assigns a file stream and keeps the rest of the logic.",
+       "correct": true
+      },
+      {
+       "text": "Every `write()` call, because writing to a disk file needs a file-specific method",
+       "feedback": "`OutputStream` defines `write()` for all of its child classes. A file stream's `write()` is called exactly like the screen's."
+      },
+      {
+       "text": "Nothing at all, because `System.out` already sends a copy of its output to a file",
+       "feedback": "`System.out` goes to the command line by default. A file receives data only through a stream opened on that file."
+      },
+      {
+       "text": "The byte array, because files hold `String` objects rather than bytes",
+       "feedback": "Streams carry bytes whether the destination is a screen or a file, so the array from `getBytes()` works for both."
+      }
+     ],
+     "hint": "What type is `output`, and which objects can it refer to?",
+     "explanation": "Because screen output and file output are both `OutputStream`s, you can change an application's output device by assigning a different object to the stream reference. The rest of the logic stays the same.",
+     "aside": "Command shells use the same idea from the outside: `java ScreenOut > out.txt` sends a program's `System.out` to a file without changing any code, and `2>` redirects `System.err` separately.",
+     "ref": "Ch. 11.4, Writing to a File (pp. 453–455)"
+    },
+    {
+     "id": "create-no-truncate",
+     "concept": "CREATE alone doesn't truncate an existing file",
+     "level": "analyze",
+     "stem": "`Grades.txt` already contains `ABCDF`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "Path file = Paths.get(\"Grades.txt\");\nOutputStream output = new\n    BufferedOutputStream(Files.newOutputStream(file, CREATE));\noutput.write(\"XY\".getBytes());\noutput.close();\nBufferedReader reader = new BufferedReader(\n    new InputStreamReader(Files.newInputStream(file)));\nSystem.out.println(reader.readLine());\nreader.close();",
+      "verify": {
+       "expect": "output",
+       "program": "import java.nio.file.*;\nimport java.io.*;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class CreateOption\n{\n    public static void main(String[] args) throws Exception\n    {\n        Files.write(Paths.get(\"Grades.txt\"), \"ABCDF\".getBytes());\n        Path file = Paths.get(\"Grades.txt\");\n        OutputStream output = new\n            BufferedOutputStream(Files.newOutputStream(file, CREATE));\n        output.write(\"XY\".getBytes());\n        output.close();\n        BufferedReader reader = new BufferedReader(\n            new InputStreamReader(Files.newInputStream(file)));\n        System.out.println(reader.readLine());\n        reader.close();\n        Files.deleteIfExists(file);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`XYCDF`",
+       "feedback": "`CREATE` opens the existing file without emptying it, and writing starts at the first byte. `XY` replaces the first two bytes and `CDF` is left behind.",
+       "correct": true
+      },
+      {
+       "text": "`XY`",
+       "feedback": "That's the result with no option at all, which acts like `CREATE` plus `TRUNCATE_EXISTING`. With `CREATE` alone, old bytes stay unless they are overwritten."
+      },
+      {
+       "text": "`ABCDFXY`",
+       "feedback": "Adding to the end requires the `APPEND` option. Without it, writing starts at the beginning of the file."
+      },
+      {
+       "text": "A `FileAlreadyExistsException`",
+       "feedback": "Only `CREATE_NEW` refuses a file that already exists. `CREATE` opens it."
+      }
+     ],
+     "hint": "`CREATE` opens a file that already exists. Does anything empty it first, and where does writing begin?",
+     "explanation": "With no options, `newOutputStream()` acts as if `CREATE` and `TRUNCATE_EXISTING` were given, so old contents are replaced. Passing `CREATE` alone opens an existing file *without* truncating it: new bytes overwrite from the start, and any longer old data remains. Use `APPEND` to add to the end and `CREATE_NEW` to refuse an existing file.",
+     "ref": "Ch. 11.4, Table 11-4 StandardOpenOption constants (p. 454)"
+    },
+    {
+     "id": "readline-precedence",
+     "concept": "Parenthesize an assignment inside a loop condition",
+     "level": "analyze",
+     "stem": "To print every line of a file, a student writes this loop. What happens when it is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String s;\nwhile(s = reader.readLine() != null)\n    System.out.println(s);",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "incompatible types"
+       ],
+       "program": "import java.io.*;\n\npublic class PrintLines\n{\n    public static void printAll(BufferedReader reader) throws IOException\n    {\n        String s;\n        while(s = reader.readLine() != null)\n            System.out.println(s);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error: `!=` is evaluated first, so a `boolean` is assigned to `s`",
+       "feedback": "`!=` has higher precedence than `=`, so Java computes `reader.readLine() != null` and tries to store that `boolean` in the `String` `s`. The fix is `while((s = reader.readLine()) != null)`.",
+       "correct": true
+      },
+      {
+       "text": "It compiles and prints every line until `readLine()` returns `null`",
+       "feedback": "That's the intent, but it needs parentheses: `(s = reader.readLine()) != null`. As written, the comparison happens before the assignment."
+      },
+      {
+       "text": "It compiles, but prints `true` once for each line in the file",
+       "feedback": "That would require `s` to hold a `boolean`. Java won't store a `boolean` in a `String` variable, so the code never runs."
+      },
+      {
+       "text": "It compiles, but prints the first line of the file forever",
+       "feedback": "Each `readLine()` call does move on to the next line. The problem is that this code doesn't compile at all."
+      }
+     ],
+     "hint": "Which operator does Java apply first, `=` or `!=`?",
+     "explanation": "Assignment has the lowest precedence of Java's operators, so an assignment inside a condition must be wrapped in parentheses: `while((s = reader.readLine()) != null)` reads a line, stores it, then tests it. `readLine()` returns `null` when no more data is available.",
+     "aside": "This exact typo appears in the Note on p. 455 of the textbook. It's an easy mistake even for professionals, which is one reason many programmers prefer a read before the loop and another at the end of its body, as in `ReadEmployeeFile`.",
+     "ref": "Ch. 11.4, Reading from a File (pp. 454–456)"
+    },
+    {
+     "id": "system-err",
+     "concept": "System.err is a separate output stream",
+     "level": "understand",
+     "stem": "A program prints results with `System.out` and problem reports with `System.err`. Where does the `System.err` output go by default?",
+     "options": [
+      {
+       "text": "To the command line, like `System.out`, though either one can be redirected",
+       "feedback": "Both are `PrintStream` objects aimed at the command line by default. Keeping errors on `System.err` lets you send them elsewhere, such as a log, while normal output goes to a file.",
+       "correct": true
+      },
+      {
+       "text": "To an error log file that Java creates automatically in the program's folder",
+       "feedback": "Java creates no log file for you. `System.err` goes to the screen unless you redirect it."
+      },
+      {
+       "text": "Nowhere, unless the program ends by crashing with an exception",
+       "feedback": "`System.err` prints whenever you call it, just like `System.out`. It's simply reserved for error messages."
+      },
+      {
+       "text": "Back into the program, because `System.err` is an input stream",
+       "feedback": "`System.err` is a `PrintStream`, an output stream. Keyboard input arrives through `System.in`."
+      }
+     ],
+     "hint": "What class is `System.err`, and what class is `System.out`?",
+     "explanation": "The `System` class defines two `PrintStream` objects: `System.out` for valid output and `System.err` for error messages. Both go to the command line by default, but because they are separate streams, each can be directed somewhere different, such as a file or a printer.",
+     "ref": "Ch. 11.4, Using Java's IO Classes (p. 452)"
+    }
+   ]
+  },
+  {
+   "id": "11.5",
+   "title": "Creating and Using Sequential Data Files",
+   "subtitle": "Writing delimited records with BufferedWriter, reading them back, and splitting and converting fields",
+   "source": "Ch. 11, section 11.5 (pp. 457–461)",
+   "intro": "HR wants each employee's weekly gross pay from a file of comma-separated records. Five questions on writing and reading sequential data files.",
+   "takeaways": [
+    "A sequential data file is typically written one delimited record per line: build the `String`, `write()` it, then call `newLine()` for the platform's line separator.",
+    "To use a record, `split()` it into `String` fields, then convert numeric fields with `Integer.parseInt()` or `Double.parseDouble()`. Text never becomes a number on its own.",
+    "A read loop needs a priming `readLine()` before the loop and another at the end of its body; `null` signals that the file has no more data."
+   ],
+   "questions": [
+    {
+     "id": "split-parse",
+     "concept": "split() returns String fields indexed from 0",
+     "level": "apply",
+     "stem": "A line read from `Employees.txt` is stored in `s` and holds `786,Brown,12.95`. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String[] array = s.split(\",\");\ndouble payRate = Double.parseDouble(array[2]);\ndouble gross = payRate * 40;\nSystem.out.println(array[1] + \" $\" + gross);",
+      "verify": {
+       "expect": "output",
+       "program": "\n\npublic class SplitDemo\n{\n    public static void main(String[] args)\n    {\n        String s = \"786,Brown,12.95\";\n        String[] array = s.split(\",\");\n        double payRate = Double.parseDouble(array[2]);\n        double gross = payRate * 40;\n        System.out.println(array[1] + \" $\" + gross);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Brown $518.0`",
+       "feedback": "`split()` returns `786`, `Brown` and `12.95` as three `String`s. Index 1 is the name, and index 2 parsed as a `double`, times 40, is 518.0.",
+       "correct": true
+      },
+      {
+       "text": "`786 $518.0`",
+       "feedback": "Array indexes start at 0, so `array[0]` is the ID and `array[1]`, the second field, is the name."
+      },
+      {
+       "text": "`Brown $518`",
+       "feedback": "`gross` is a `double`, and Java displays a `double` with at least one decimal digit, so 518 prints as `518.0`."
+      },
+      {
+       "text": "A `NumberFormatException`",
+       "feedback": "`parseDouble()` accepts decimal text such as `12.95`. Only `Integer.parseInt()` would reject it."
+      }
+     ],
+     "hint": "Write out the three strings `split()` produces, with their indexes.",
+     "explanation": "`split()` breaks a record at each delimiter and returns an array of `String` fields, indexed from 0. Fields that represent numbers must be converted with methods such as `Integer.parseInt()` or `Double.parseDouble()` before you calculate with them.",
+     "ref": "Ch. 11.5, Figure 11-26 ReadEmployeeFile2 (pp. 459–460)"
+    },
+    {
+     "id": "no-auto-convert",
+     "concept": "Split fields must be parsed before arithmetic",
+     "level": "analyze",
+     "stem": "A student skips the parsing step. What happens when this code is compiled?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "String[] array = s.split(\",\");\ndouble gross = array[2] * 40;",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "bad operand types"
+       ],
+       "program": "public class NoParse\n{\n    public static double gross(String s)\n    {\n        String[] array = s.split(\",\");\n        double gross = array[2] * 40;\n        return gross;\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "A compile error, because `array[2]` is a `String` and `*` can't use a `String`",
+       "feedback": "`split()` only divides the text; every element is still a `String`. Java has no `*` for strings, so call `Double.parseDouble(array[2])` first.",
+       "correct": true
+      },
+      {
+       "text": "It compiles, and Java turns the text into a number for the multiplication",
+       "feedback": "Java never converts text to a number by itself. The one automatic conversion goes the other way: `+` with a `String` builds a longer `String`."
+      },
+      {
+       "text": "It compiles, but a `NumberFormatException` is thrown when it runs",
+       "feedback": "A `NumberFormatException` comes from a parse method given text that isn't a number. This code never parses, and the compiler stops it before it can run."
+      },
+      {
+       "text": "A compile error, because `split()` returns one `String`, not an array",
+       "feedback": "`split()` does return a `String[]`, so the first line is fine. The problem is the multiplication."
+      }
+     ],
+     "hint": "What type is each element of the array that `split()` returns?",
+     "explanation": "Every element of the array returned by `split()` is a `String`, even when it looks like a number. Convert numeric fields with `Integer.parseInt()` or `Double.parseDouble()`; the compiler rejects arithmetic on the raw strings.",
+     "ref": "Ch. 11.5, Two Truths & a Lie (p. 461)"
+    },
+    {
+     "id": "newline-portable",
+     "concept": "newLine() writes the platform's line separator",
+     "level": "understand",
+     "stem": "`WriteEmployeeFile` ends each record with `writer.newLine()` instead of writing the character `'\\n'`. Why?",
+     "options": [
+      {
+       "text": "`newLine()` writes the current system's line separator, which isn't `\\n` on every platform",
+       "feedback": "Windows ends lines with `\\r\\n`, for example. `newLine()` uses the same value as `System.getProperty(\"line.separator\")`, so the file suits the system it's written on.",
+       "correct": true
+      },
+      {
+       "text": "A data file must have a newline after each record, or it can't be read back later",
+       "feedback": "Records could be separated by commas or any other unique character. The newline just makes the file easier for a person to read."
+      },
+      {
+       "text": "`newLine()` also flushes the buffer, so each record reaches the file right away",
+       "feedback": "Flushing is the job of `flush()` and `close()`. `newLine()` only writes a line separator."
+      },
+      {
+       "text": "`write()` can't accept the `'\\n'` character, so a separate method is needed for it",
+       "feedback": "`write(int c)` writes any single character, `'\\n'` included. The issue is portability, not ability."
+      }
+     ],
+     "hint": "Does every operating system end a line with the same characters?",
+     "explanation": "Line separators differ by platform: `\\r\\n` on Windows, `\\n` on UNIX-like systems. `BufferedWriter.newLine()` writes the current system's separator, the same value `System.getProperty(\"line.separator\")` returns. A data file doesn't require a newline after each record, but one makes the file readable to people.",
+     "aside": "The two characters come from typewriters and teleprinters: a *carriage return* (`\\r`) moved the print head back to the left margin, and a *line feed* (`\\n`) advanced the paper one line. Windows kept both; UNIX kept only the line feed.",
+     "ref": "Ch. 11.5, Table 11-6 BufferedWriter methods (p. 458)"
+    },
+    {
+     "id": "nextline-trap",
+     "concept": "The newline left behind by nextInt()",
+     "level": "analyze",
+     "stem": "This input code leaves out the extra `input.nextLine()` that `WriteEmployeeFile` uses. The user types `145`, Enter, `Lee`, Enter, `12.95`, Enter. What happens?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "id = input.nextInt();\nname = input.nextLine();\npayRate = input.nextDouble();\ns = id + delimiter + name + delimiter + payRate;\nSystem.out.println(s);",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "InputMismatchException"
+       ],
+       "stdin": "145\nLee\n12.95\n",
+       "program": "import java.util.Scanner;\n\npublic class NextLineTrap\n{\n    public static void main(String[] args)\n    {\n        Scanner input = new Scanner(System.in);\n        String delimiter = \",\";\n        int id;\n        String name;\n        double payRate;\n        String s;\n        id = input.nextInt();\n        name = input.nextLine();\n        payRate = input.nextDouble();\n        s = id + delimiter + name + delimiter + payRate;\n        System.out.println(s);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "An `InputMismatchException` is thrown when the pay rate is read",
+       "feedback": "`nextInt()` leaves the Enter key in the input buffer, so `nextLine()` returns an empty name at once. `nextDouble()` then meets `Lee`, which isn't a number, and throws.",
+       "correct": true
+      },
+      {
+       "text": "It prints `145,Lee,12.95`, the same as the original program",
+       "feedback": "That requires the leftover newline to be consumed first, which is exactly what the missing `nextLine()` call did."
+      },
+      {
+       "text": "It prints `145,,12.95`, with an empty name between the commas",
+       "feedback": "The name is empty, but the input doesn't fall back into place: `nextDouble()` now reads `Lee` and throws before anything prints."
+      },
+      {
+       "text": "It stops and waits for the user to type the name a second time",
+       "feedback": "`nextLine()` doesn't wait: the newline left by `nextInt()` already ends a line, so it returns an empty string immediately."
+      }
+     ],
+     "hint": "After `nextInt()` reads `145`, what is still waiting in the input buffer?",
+     "explanation": "`nextInt()` and `nextDouble()` read a number but leave the newline behind. A following `nextLine()` consumes only that leftover and returns an empty string, so every later read is out of step. Call `nextLine()` once after reading the number to absorb it, as `WriteEmployeeFile` does.",
+     "ref": "Ch. 11.5, Figure 11-21 and the Note on p. 458"
+    },
+    {
+     "id": "priming-read",
+     "concept": "A read loop must read again each pass",
+     "level": "apply",
+     "stem": "The read at the bottom of `ReadEmployeeFile`'s loop has been deleted. `Employees.txt` holds three records. What happens when the program runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "s = reader.readLine();\nwhile(s != null)\n{\n    System.out.println(s);\n}",
+      "verify": {
+       "expect": "skip",
+       "reason": "The point of the question is that this loop never ends, so it cannot be run to completion."
+      }
+     },
+     "options": [
+      {
+       "text": "It prints the first record again and again, without ever stopping",
+       "feedback": "The priming read gets the first record, and nothing in the loop reads again, so `s` never becomes `null` and the condition stays true.",
+       "correct": true
+      },
+      {
+       "text": "It prints every record once, because `println()` moves to the next line",
+       "feedback": "`println()` moves the *screen* to a new line. Only `readLine()` moves through the file."
+      },
+      {
+       "text": "It prints the first record once, and then the loop ends",
+       "feedback": "The loop ends only when `s` becomes `null`, and with no read inside the loop, `s` never changes."
+      },
+      {
+       "text": "It doesn't compile, because `s` never changes inside the loop",
+       "feedback": "Java doesn't check whether a loop condition can change. This compiles and runs forever."
+      }
+     ],
+     "hint": "Which statement is the only one that could ever make `s` equal `null`?",
+     "explanation": "A sequential read loop needs a priming read before the loop and another read at the end of each pass, so every iteration handles one record and then moves to the next. When `readLine()` returns `null`, the file has no more data and the loop ends.",
+     "ref": "Ch. 11.5, Figure 11-24 ReadEmployeeFile (p. 459)"
+    }
+   ]
+  },
+  {
+   "id": "11.6",
+   "title": "Learning About Random Access Files",
+   "subtitle": "Batch versus real-time processing, seekable FileChannels, and writing with ByteBuffers",
+   "source": "Ch. 11, section 11.6 (pp. 461–463)",
+   "intro": "A customer calls about one bill, and the store has tens of thousands of accounts. Four questions on files you can jump around in.",
+   "takeaways": [
+    "Sequential access suits batch processing, where every record gets the same treatment; real-time, interactive programs need random (direct) access to reach one record immediately.",
+    "A `FileChannel` is seekable: `position(n)` sets the byte, counted from 0, where the next `read()` or `write()` starts.",
+    "`ByteBuffer.wrap()` shares the array rather than copying it, and writing uses the buffer up. Call `rewind()` before writing the same buffer again."
+   ],
+   "questions": [
+    {
+     "id": "batch-vs-realtime",
+     "concept": "Batch processing suits sequential access",
+     "level": "apply",
+     "stem": "Which task is the best fit for *sequential* access rather than random access?",
+     "options": [
+      {
+       "text": "Calculating and printing every customer's monthly bill in one run",
+       "feedback": "Every record gets the same processing, one after another, and the order doesn't matter. That's batch processing, which suits sequential access.",
+       "correct": true
+      },
+      {
+       "text": "Showing a customer's account while the customer waits on the phone",
+       "feedback": "Someone is waiting for one record. Reading tens of thousands of records to reach it would take too long, so this real-time task needs random access."
+      },
+      {
+       "text": "Changing one passenger's seat the moment the passenger asks for it",
+       "feedback": "Updating one record on request is interactive, real-time work. Random access lets the program go straight to that seat's record."
+      }
+     ],
+     "hint": "Does the task touch every record in turn, or one record that someone is waiting for?",
+     "explanation": "Batch processing performs the same task on many records, one after another, so sequential access is efficient. Real-time, interactive applications need one particular record immediately, so they use random access files, also called direct or instant access files.",
+     "ref": "Ch. 11.6, Learning About Random Access Files (p. 461)"
+    },
+    {
+     "id": "seekable-channel",
+     "concept": "A FileChannel is seekable",
+     "level": "understand",
+     "stem": "Which ability makes a `FileChannel` suitable for random access when a `BufferedReader` isn't?",
+     "options": [
+      {
+       "text": "It is seekable: `position()` lets the next read or write start anywhere",
+       "feedback": "A seekable channel can move to any byte position, so a program can read or write one record without passing through the records before it.",
+       "correct": true
+      },
+      {
+       "text": "It buffers bytes in memory, which makes every read much faster",
+       "feedback": "Buffering speeds up input and output, but `BufferedReader` buffers too. Buffering doesn't let you jump to a position."
+      },
+      {
+       "text": "It reads one complete line of text each time it's called",
+       "feedback": "That describes `BufferedReader.readLine()`, which can only move forward from where the last read stopped."
+      },
+      {
+       "text": "It writes `String`s directly, without converting them to bytes",
+       "feedback": "A `FileChannel` works with a `ByteBuffer` of bytes, so a `String` is converted with `getBytes()` first."
+      }
+     ],
+     "hint": "What does random access need to do that reading forward can't?",
+     "explanation": "A `FileChannel` is an avenue for reading and writing a file, and it is *seekable*: `position(long)` sets where the next operation starts, and `read()` and `write()` move bytes between the channel and a `ByteBuffer`. That ability to start anywhere is what random access needs.",
+     "aside": "On a spinning hard drive, jumping to a new position means physically moving the read/write head to another track. Drive makers call that delay *seek time*; it's typically several milliseconds, an eternity for a processor.",
+     "ref": "Ch. 11.6, Table 11-7 FileChannel methods (p. 461)"
+    },
+    {
+     "id": "missing-rewind",
+     "concept": "A written ByteBuffer is used up until rewound",
+     "level": "analyze",
+     "stem": "`Numbers.txt` holds `0123456789012345`. The programmer forgot to call `out.rewind()` between the two writes. What does the file hold afterward?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "ByteBuffer out = ByteBuffer.wrap(\"XYZ\".getBytes());\nFileChannel fc =\n    (FileChannel)Files.newByteChannel(file, READ, WRITE);\nfc.position(0);\nwhile(out.hasRemaining())\n    fc.write(out);\nfc.position(10);\nwhile(out.hasRemaining())\n    fc.write(out);\nfc.close();",
+      "verify": {
+       "expect": "output",
+       "program": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.channels.FileChannel;\nimport java.nio.ByteBuffer;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class NoRewind\n{\n    public static void main(String[] args) throws Exception\n    {\n        Path file = Paths.get(\"Numbers.txt\");\n        Files.write(file, \"0123456789012345\".getBytes());\n        ByteBuffer out = ByteBuffer.wrap(\"XYZ\".getBytes());\n        FileChannel fc =\n            (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        fc.position(0);\n        while(out.hasRemaining())\n            fc.write(out);\n        fc.position(10);\n        while(out.hasRemaining())\n            fc.write(out);\n        fc.close();\n        System.out.println(Files.readAllLines(file).get(0));\n        Files.deleteIfExists(file);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`XYZ3456789012345`",
+       "feedback": "The first loop uses up the buffer, so `hasRemaining()` is `false` and the second loop never writes. Only the bytes at position 0 change.",
+       "correct": true
+      },
+      {
+       "text": "`XYZ3456789XYZ345`",
+       "feedback": "That's the result *with* `out.rewind()` before the second write. Without it, the buffer has nothing left to give."
+      },
+      {
+       "text": "A `BufferUnderflowException` on the second write",
+       "feedback": "No second write is even attempted: `hasRemaining()` is `false`, so the body of the second `while` loop never runs."
+      }
+     ],
+     "hint": "After the first loop ends, what does `out.hasRemaining()` return?",
+     "explanation": "A `ByteBuffer` keeps track of how much of it has been used, and writing it to a channel uses it up. Call `rewind()` to reposition the buffer at its beginning before writing the same bytes again. `fc.position(n)` sets where the next write starts, counting bytes from 0.",
+     "ref": "Ch. 11.6, Figure 11-28 RandomAccessTest (pp. 462–463)"
+    },
+    {
+     "id": "wrap-shares",
+     "concept": "wrap() shares the array instead of copying it",
+     "level": "analyze",
+     "stem": "`Numbers.txt` holds `0000000`. The program changes the array after wrapping it. What does the file hold after this code runs?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "byte[] data = \"XYZ\".getBytes();\nByteBuffer out = ByteBuffer.wrap(data);\ndata[0] = (byte)'Q';\nFileChannel fc =\n    (FileChannel)Files.newByteChannel(file, READ, WRITE);\nfc.write(out);\nfc.close();",
+      "verify": {
+       "expect": "output",
+       "program": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.channels.FileChannel;\nimport java.nio.ByteBuffer;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class WrapShares\n{\n    public static void main(String[] args) throws Exception\n    {\n        Path file = Paths.get(\"Numbers.txt\");\n        Files.write(file, \"0000000\".getBytes());\n        byte[] data = \"XYZ\".getBytes();\n        ByteBuffer out = ByteBuffer.wrap(data);\n        data[0] = (byte)'Q';\n        FileChannel fc =\n            (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        fc.write(out);\n        fc.close();\n        System.out.println(Files.readAllLines(file).get(0));\n        Files.deleteIfExists(file);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`QYZ0000`",
+       "feedback": "Wrapping doesn't copy the array; the buffer and `data` share the same bytes. Changing `data[0]` changes what the buffer writes.",
+       "correct": true
+      },
+      {
+       "text": "`XYZ0000`",
+       "feedback": "That assumes `wrap()` took a snapshot of the array. It didn't: changes to the array change the buffer, and the reverse is true too."
+      },
+      {
+       "text": "`QYZ`",
+       "feedback": "A channel opened with `READ, WRITE` overwrites bytes where it writes and leaves the rest of the file in place."
+      }
+     ],
+     "hint": "Does `ByteBuffer.wrap(data)` copy the array, or use it?",
+     "explanation": "`ByteBuffer.wrap()` encompasses an existing byte array instead of copying it, so changes to the array show up in the buffer and changes to the buffer show up in the array. Writing through a `FileChannel` opened with `READ, WRITE` replaces only the bytes at the current position.",
+     "ref": "Ch. 11.6, ByteBuffer and wrap() (p. 462)"
+    }
+   ]
+  },
+  {
+   "id": "11.7",
+   "title": "Writing Records to a Random Access Data File",
+   "subtitle": "Key fields, computing a record's position, record size, and fixed-width fields",
+   "source": "Ch. 11, section 11.7 (pp. 463–468)",
+   "intro": "Employee 087 must land in the same spot in the file every time, whatever order people are entered in. Five questions on placing records by key.",
+   "takeaways": [
+    "With fixed-size records, a record's byte position is its number times the record size: `fc.position(id * RECSIZE)`. Use a unique key field as that number.",
+    "Every byte counts toward the record size, including delimiters and the line separator (`\\r\\n`, two bytes, on Windows). Compute `RECSIZE` from a sample record instead of hard-coding it.",
+    "Pad or truncate fields to a fixed width and pre-fill the file with recognizable default records, so every slot exists and records never overlap."
+   ],
+   "questions": [
+    {
+     "id": "record-position",
+     "concept": "Position = key × record size",
+     "level": "apply",
+     "stem": "Each record in `RandomEmployees.txt` is 19 bytes, and each record is written at `id * RECSIZE`. At which byte position does employee `087`'s record start?",
+     "options": [
+      {
+       "text": "`1653`",
+       "feedback": "87 × 19 = 1653. IDs start at `000`, so employee `000` is at byte 0 and employee *n* starts *n* records in.",
+       "correct": true
+      },
+      {
+       "text": "`1634`",
+       "feedback": "Subtracting 1, as in the book's `(n - 1) * 50`, fits counting records from 1. These IDs start at `000`, so the position is `id * RECSIZE`."
+      },
+      {
+       "text": "`87`",
+       "feedback": "Positions count bytes, not records. Each earlier record takes 19 bytes, so multiply."
+      },
+      {
+       "text": "`1672`",
+       "feedback": "That's 88 × 19, where employee `088` starts. It skips one record too many."
+      }
+     ],
+     "hint": "Where does employee `000`'s record start, and how many bytes does each earlier record take up?",
+     "explanation": "When every record is the same size, a record's byte position is its record number times the record size. Using a key field as that number, as in `fc.position(id * RECSIZE)`, puts each record in a predictable place whatever order records are entered in.",
+     "ref": "Ch. 11.7, Writing Records to a Random Access Data File (pp. 463–467)"
+    },
+    {
+     "id": "recsize-separator",
+     "concept": "The line separator counts toward record size",
+     "level": "understand",
+     "stem": "In `CreateOneRandomAccessRecord`, `s` is `\"002,Newmann,22.25\"` plus `System.getProperty(\"line.separator\")`. The visible text is 17 characters, yet on Windows `RECSIZE` is 19. Where do the other 2 come from?",
+     "options": [
+      {
+       "text": "The Windows line separator is two characters, `\\r\\n`",
+       "feedback": "On Windows, `line.separator` is a carriage return and a line feed. The 17 visible characters plus those 2 make 19.",
+       "correct": true
+      },
+      {
+       "text": "`length()` also counts the two quotation marks around the text",
+       "feedback": "The quotation marks only show where the literal starts and ends in source code. They aren't part of the `String`."
+      },
+      {
+       "text": "Each comma is stored in the file as two bytes instead of one",
+       "feedback": "Commas are ordinary characters, one byte each here, and they're already among the 17."
+      },
+      {
+       "text": "Java adds a 2-byte header to each record to help locate it",
+       "feedback": "Java adds nothing to a record. The program finds records by arithmetic alone, which is why every record must be exactly the same size."
+      }
+     ],
+     "hint": "Which part of `s` is invisible when you look at the text?",
+     "explanation": "A record's size includes every character in it, delimiters and the line separator included. Computing `RECSIZE` with `s.length()` from a sample record, rather than typing 19, keeps the position arithmetic right on any system.",
+     "aside": "On macOS and Linux the separator is just `\\n`, so the same program computes a `RECSIZE` of 18. Reading a file written on Windows with that size would drift one more byte off with every record, which is why real file formats spell out their record layout exactly.",
+     "ref": "Ch. 11.7, Figure 11-32 CreateOneRandomAccessRecord (p. 465)"
+    },
+    {
+     "id": "key-field",
+     "concept": "A key field makes each record unique",
+     "level": "apply",
+     "stem": "A random access employee file will place each record according to one of its fields. Which field should that be?",
+     "options": [
+      {
+       "text": "Employee ID, because no two employees share one",
+       "feedback": "A key field makes each record unique, so it can map each record to its own position with no collisions.",
+       "correct": true
+      },
+      {
+       "text": "Last name, because people look employees up by name",
+       "feedback": "Many employees can share a last name, and two records can't occupy the same position."
+      },
+      {
+       "text": "Pay rate, because it holds the most sensitive data",
+       "feedback": "A key field is about uniqueness, not sensitivity, and several employees can earn the same rate."
+      },
+      {
+       "text": "Hire date, because it shows the order people joined",
+       "feedback": "Two people can be hired on the same day, and hire order describes a sequence, which isn't what direct placement needs."
+      }
+     ],
+     "hint": "If two records had the same value in this field, where would each one go?",
+     "explanation": "A key field is the field that makes a record unique from all others, such as an ID number. Because it is unique, arithmetic on it gives each record its own position in a random access file.",
+     "ref": "Ch. 11.7 (p. 463) and Two Truths & a Lie (p. 468)"
+    },
+    {
+     "id": "uniform-size",
+     "concept": "Records must all be the same size",
+     "level": "analyze",
+     "stem": "`CreateEmployeesRandomFile` assumes every name is 7 characters long. A user enters employee `001` with the 10-character name `Washington`. What happens?",
+     "options": [
+      {
+       "text": "Its last 3 bytes overwrite the start of employee `002`'s record",
+       "feedback": "`fc.write()` writes every byte it's given, starting at `id * RECSIZE`. The 3 extra bytes overwrite the start of the next record.",
+       "correct": true
+      },
+      {
+       "text": "Java trims the name to 7 characters so the record fits its slot",
+       "feedback": "Nothing trims automatically. The You Do It program adds that step itself with `StringBuilder.setLength()`."
+      },
+      {
+       "text": "The program throws an exception because the record is too long",
+       "feedback": "A `FileChannel` writes any number of bytes; it has no idea how long a record is supposed to be."
+      },
+      {
+       "text": "The later records shift to make room, so the file stays correct",
+       "feedback": "Writing through a channel overwrites bytes in place. It never inserts space or moves existing data."
+      }
+     ],
+     "hint": "Does a `FileChannel` know where one record ends and the next one begins?",
+     "explanation": "A record's position can be calculated arithmetically only when every record is exactly the same size. Real programs pad short fields and truncate long ones before writing, so every record matches `RECSIZE`.",
+     "ref": "Ch. 11.7, assumptions of CreateEmployeesRandomFile (p. 466)"
+    },
+    {
+     "id": "setlength-truncates",
+     "concept": "setLength() forces a fixed field width",
+     "level": "apply",
+     "stem": "The You Do It program forces each customer name to a fixed length. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "final int NAME_LENGTH = 10;\nString name = \"Montgomery-Smith\";\nStringBuilder sb = new StringBuilder(name);\nsb.setLength(NAME_LENGTH);\nname = sb.toString();\nSystem.out.println(\"[\" + name + \"]\");",
+      "verify": {
+       "expect": "output",
+       "program": "\n\npublic class FixedWidth\n{\n    public static void main(String[] args)\n    {\n        final int NAME_LENGTH = 10;\n        String name = \"Montgomery-Smith\";\n        StringBuilder sb = new StringBuilder(name);\n        sb.setLength(NAME_LENGTH);\n        name = sb.toString();\n        System.out.println(\"[\" + name + \"]\");\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`[Montgomery]`",
+       "feedback": "`setLength(10)` keeps the first 10 characters and drops the rest, so every name ends up exactly the field's width.",
+       "correct": true
+      },
+      {
+       "text": "`[Montgomery-Smith]`",
+       "feedback": "`setLength()` changes the length of the contents, not just the capacity. Characters past index 9 are discarded."
+      },
+      {
+       "text": "`[mery-Smith]`",
+       "feedback": "Truncating keeps the beginning of the text. Characters are dropped from the end."
+      },
+      {
+       "text": "A `StringIndexOutOfBoundsException`",
+       "feedback": "Shortening a `StringBuilder` is always allowed; only a negative length throws an exception."
+      }
+     ],
+     "hint": "Which end of the text does a shorter length cut off?",
+     "explanation": "`StringBuilder.setLength(n)` truncates longer contents to `n` characters and pads shorter ones, giving every name the same width. Fixed-width fields keep every record the same size, which the position arithmetic depends on.",
+     "aside": "When `setLength()` pads, it adds the null character `\\u0000`, not spaces. Notepad may show those as blanks or small boxes; a program that wants real spaces can use `String.format(\"%-10s\", name)` instead.",
+     "ref": "Ch. 11, You Do It: Adding Data-Entry Capability to the Program (p. 474)"
+    }
+   ]
+  },
+  {
+   "id": "11.8",
+   "title": "Reading Records from a Random Access Data File",
+   "subtitle": "Reading a random access file sequentially and directly, and when random access is worth it",
+   "source": "Ch. 11, section 11.8 (pp. 468–471)",
+   "intro": "Four of 1,000 slots hold real employees, and a manager wants employee 002's record right now. Five questions on reading a random access file both ways.",
+   "takeaways": [
+    "A file created for random access can be read sequentially or randomly. A sequential read must skip the default records, and it meets the real records in key order.",
+    "To read one record directly, compute `id * RECSIZE`, set the channel's position, and `read()` into a buffer exactly one record long. Reset the buffer before every read.",
+    "Random access earns its cost by retrieving one record directly. For a report in key order alone, a sorted sequential file is enough."
+   ],
+   "questions": [
+    {
+     "id": "skip-defaults",
+     "concept": "Sequential reads skip default records",
+     "level": "apply",
+     "stem": "`ReadEmployeesSequentially` reads all 1,000 records of `RandomEmployees.txt` with a `BufferedReader`, but it prints a record only `if(id != 0)`. Why?",
+     "options": [
+      {
+       "text": "To skip the default records that never received real employee data",
+       "feedback": "The file was pre-filled with `000, ,00.00` records. A non-zero ID means a real employee's record replaced the default in that slot.",
+       "correct": true
+      },
+      {
+       "text": "To avoid dividing by zero when the employee's gross pay is computed",
+       "feedback": "Nothing is divided here; gross pay is `payRate * HRS_IN_WEEK`."
+      },
+      {
+       "text": "Because `Integer.parseInt()` throws an exception when it reads `000`",
+       "feedback": "`parseInt(\"000\")` returns 0 without complaint. The `if` test then decides what to do with that 0."
+      },
+      {
+       "text": "Because the first record in the file is a header holding field names",
+       "feedback": "This file has no header line. Slot 0 holds employee `000`'s record, which is a default record unless someone entered that ID."
+      }
+     ],
+     "hint": "What does every slot in the file contain before any employee is written?",
+     "explanation": "A file created for random access can still be read sequentially, line by line. Because unused slots hold recognizable default records, the program filters them out; if `000` were a valid ID, it would test for a blank name or a zero pay rate instead.",
+     "ref": "Ch. 11.8, Accessing a Random Access File Sequentially (pp. 468–469)"
+    },
+    {
+     "id": "key-order",
+     "concept": "A sequential read meets records in key order",
+     "level": "apply",
+     "stem": "Employees were entered in the order `145`, `002`, `087`, `023`. In what order does `ReadEmployeesSequentially` print them?",
+     "options": [
+      {
+       "text": "`002`, `023`, `087`, `145`",
+       "feedback": "Each record sits at `id * RECSIZE`, so a read from the start of the file meets them in ID order, with no sorting needed.",
+       "correct": true
+      },
+      {
+       "text": "`145`, `002`, `087`, `023`",
+       "feedback": "Entry order is lost as soon as each record is written to its key's position. The file doesn't remember who was entered first."
+      },
+      {
+       "text": "`145`, `087`, `023`, `002`",
+       "feedback": "Lower IDs sit at lower byte positions, so a front-to-back read meets them in ascending order."
+      },
+      {
+       "text": "No predictable order, since placement is random",
+       "feedback": "*Random access* means any record can be reached directly, not that records are placed at random. Each position is calculated from the key."
+      }
+     ],
+     "hint": "Where in the file does each record sit, and which way does a sequential read move?",
+     "explanation": "In a random access file positioned by key, records sit in key order, so reading the file sequentially lists them in key order. That's a side effect rather than the main benefit, which is reaching any one record directly.",
+     "ref": "Ch. 11.8, Figure 11-38 (pp. 468–470)"
+    },
+    {
+     "id": "direct-read",
+     "concept": "Reading one record directly",
+     "level": "apply",
+     "stem": "`Staff.txt` holds four fixed-size records, each stored at `id * RECSIZE`: a default record for `000`, then `001,Alvarez,18.50`, `002,Newmann,22.25` and `003,Johnson,19.75`. `data` is a byte array exactly one record long. What does this code print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "int id = 2;\nbuffer = ByteBuffer.wrap(data);\nfc.position(id * RECSIZE);\nfc.read(buffer);\ns = new String(data);\nSystem.out.println(s.trim());",
+      "verify": {
+       "expect": "output",
+       "program": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.channels.FileChannel;\nimport java.nio.ByteBuffer;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class ReadOne\n{\n    public static void main(String[] args) throws Exception\n    {\n        Path file = Paths.get(\"Staff.txt\");\n        String sep = System.getProperty(\"line.separator\");\n        String recs = \"000,       ,00.00\" + sep + \"001,Alvarez,18.50\" + sep +\n            \"002,Newmann,22.25\" + sep + \"003,Johnson,19.75\" + sep;\n        Files.write(file, recs.getBytes());\n        String s = \"000,       ,00.00\" + sep;\n        final int RECSIZE = s.length();\n        byte[] data = s.getBytes();\n        ByteBuffer buffer = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        int id = 2;\n        buffer = ByteBuffer.wrap(data);\n        fc.position(id * RECSIZE);\n        fc.read(buffer);\n        s = new String(data);\n        System.out.println(s.trim());\n        fc.close();\n        Files.deleteIfExists(file);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`002,Newmann,22.25`",
+       "feedback": "`position(2 * RECSIZE)` jumps past records `000` and `001`, and `read()` fills `data`, through the shared buffer, with exactly one record: employee `002`'s.",
+       "correct": true
+      },
+      {
+       "text": "`001,Alvarez,18.50`",
+       "feedback": "Subtracting 1 would be right if numbering started at 1. Here record `000` occupies the first slot, so ID 2 starts at `2 * RECSIZE`."
+      },
+      {
+       "text": "`003,Johnson,19.75`",
+       "feedback": "Position `2 * RECSIZE` is where record `002` *begins*, not where it ends, so the read starts with `002`'s bytes."
+      }
+     ],
+     "hint": "Which records occupy the bytes from 0 up to `2 * RECSIZE - 1`?",
+     "explanation": "To read a record directly, compute its position from the key, set the channel's position, and `read()` into a `ByteBuffer` that wraps a byte array one record long. Because the buffer shares the array, `new String(data)` then holds the record, and none of the earlier records had to be read.",
+     "ref": "Ch. 11.8, Figure 11-39 ReadEmployeesRandomly (pp. 470–471)"
+    },
+    {
+     "id": "rewrap-buffer",
+     "concept": "Reset the buffer before each read",
+     "level": "analyze",
+     "stem": "`Staff.txt` holds four fixed-size records, each stored at `id * RECSIZE`: a default record for `000`, then `001,Alvarez,18.50`, `002,Newmann,22.25` and `003,Johnson,19.75`. `data` is a byte array exactly one record long. Unlike `ReadEmployeesRandomly`, this loop wraps the buffer only once. What does it print?",
+     "code": {
+      "language": "java",
+      "label": "Java",
+      "text": "buffer = ByteBuffer.wrap(data);\nint[] ids = {1, 3};\nfor(int id : ids)\n{\n    fc.position(id * RECSIZE);\n    fc.read(buffer);\n    s = new String(data);\n    System.out.println(s.trim());\n}",
+      "verify": {
+       "expect": "output",
+       "output": "001,Alvarez,18.50 001,Alvarez,18.50",
+       "program": "import java.nio.file.*;\nimport java.io.*;\nimport java.nio.channels.FileChannel;\nimport java.nio.ByteBuffer;\nimport static java.nio.file.StandardOpenOption.*;\n\npublic class NoRewrap\n{\n    public static void main(String[] args) throws Exception\n    {\n        Path file = Paths.get(\"Staff.txt\");\n        String sep = System.getProperty(\"line.separator\");\n        String recs = \"000,       ,00.00\" + sep + \"001,Alvarez,18.50\" + sep +\n            \"002,Newmann,22.25\" + sep + \"003,Johnson,19.75\" + sep;\n        Files.write(file, recs.getBytes());\n        String s = \"000,       ,00.00\" + sep;\n        final int RECSIZE = s.length();\n        byte[] data = s.getBytes();\n        ByteBuffer buffer = ByteBuffer.wrap(data);\n        FileChannel fc = (FileChannel)Files.newByteChannel(file, READ, WRITE);\n        buffer = ByteBuffer.wrap(data);\n        int[] ids = {1, 3};\n        for(int id : ids)\n        {\n            fc.position(id * RECSIZE);\n            fc.read(buffer);\n            s = new String(data);\n            System.out.println(s.trim());\n        }\n        fc.close();\n        Files.deleteIfExists(file);\n    }\n}\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`001,Alvarez,18.50` twice",
+       "feedback": "The first `read()` fills the buffer, leaving no room. The second `read()` transfers nothing, so `data` still holds record `001`, and it prints again.",
+       "correct": true
+      },
+      {
+       "text": "`001,Alvarez,18.50`, then `003,Johnson,19.75`",
+       "feedback": "That's what `ReadEmployeesRandomly` gets by calling `ByteBuffer.wrap(data)` inside the loop, which resets the buffer before every read."
+      },
+      {
+       "text": "`001,Alvarez,18.50`, then a blank line",
+       "feedback": "A read with no room doesn't change `data` at all; it doesn't clear it either. The old record's bytes are still there."
+      },
+      {
+       "text": "A `BufferOverflowException` on the second read",
+       "feedback": "Reading into a full buffer simply transfers 0 bytes. It doesn't throw an exception."
+      }
+     ],
+     "hint": "After the first `read()`, how much room does `buffer` have left?",
+     "explanation": "Reading into a `ByteBuffer` uses up its space, just as writing uses up its contents. Before each new read, reset the buffer, by wrapping the array again as `ReadEmployeesRandomly` does or with `rewind()`; otherwise the read quietly transfers nothing.",
+     "ref": "Ch. 11.8, Figure 11-39 ReadEmployeesRandomly (pp. 470–471)"
+    },
+    {
+     "id": "when-random",
+     "concept": "When a random access file is worth it",
+     "level": "evaluate",
+     "stem": "A manager needs only a monthly report listing all employees in ID order. A developer proposes a 1,000-slot random access file for it. Which assessment is best?",
+     "options": [
+      {
+       "text": "Unnecessary: sorting the records in a sequential file gives the same report with less storage",
+       "feedback": "A random access file earns its unused default slots by retrieving single records directly. A monthly report in order is batch work, so a sorted sequential file is enough.",
+       "correct": true
+      },
+      {
+       "text": "Necessary: only a random access file can produce a listing of the records in ID order",
+       "feedback": "Sorting a sequential file also produces ID order. Ordered output is a side effect of random placement, not its purpose."
+      },
+      {
+       "text": "Necessary: a random access file can only be read randomly, and random reads are faster",
+       "feedback": "A file created for random access can be read sequentially or randomly; how you read it is your choice."
+      },
+      {
+       "text": "Unnecessary: a random access file can't be read from front to back, so the report is impossible",
+       "feedback": "It can be: `ReadEmployeesSequentially` reads one from front to back. The reason to skip it here is cost, not ability."
+      }
+     ],
+     "hint": "What can a random access file do that a sorted sequential file can't, and does this report need it?",
+     "explanation": "The benefit of a random access file is retrieving a specific record directly, without reading through the others. If a task only needs records in key order, sorting a sequential file does the job without wasting space on default records.",
+     "ref": "Ch. 11.8, Accessing a Random Access File Randomly (p. 470)"
+    }
+   ]
+  }
+ ]
+}
