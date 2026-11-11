@@ -1,0 +1,1290 @@
+{
+ "course": "COP1800 · Java Programming I",
+ "collection_title": "Chapter 10: Exception Handling",
+ "collection_intro": "Hands-on labs for sections 10.1 to 10.10 of *Java Programming*, 10th edition. Each lab takes 20 to 30 minutes: read the code and predict what it does, fix or write it, check its structure, run the test program in your IDE and compare the output, then explain your choices. Several starters don't compile on purpose; reading the compiler's message is part of the lab. Submit the lab report to Blackboard.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "java",
+ "labs": [
+  {
+   "id": "10.1",
+   "title": "The driver dashboard that crashed on a day off",
+   "subtitle": "Read the exception, then prevent it with a decision",
+   "source": "Ch. 10, section 10.1 (pp. 393–397)",
+   "minutes": 20,
+   "objectives": [
+    "Read an exception message and its stack trace: the type, the method, the file and the line",
+    "Tell an Exception (a program can recover) from an Error (it usually can't)",
+    "Prevent a runtime exception with a decision, the traditional technique on pp. 396–397"
+   ],
+   "scenario": "A ride-share company shows each driver a dashboard with two numbers: the average fare per trip (in cents) and the average driving speed. On Sunday, a driver who took the day off opened the app and it closed on its own. The log shows the two Monday lines, then `Exception in thread \"main\" java.lang.ArithmeticException: / by zero` followed by this stack trace (indented in the real log):\n\n```\nat DriverStats.averageFareCents(DriverStats.java:7)\nat TestDriverStats.main(TestDriverStats.java:10)\n```\n\nThere is a second, quieter problem. The speed is a `double`, and dividing a `double` by 0 doesn't crash. A GPS glitch that records 12.5 miles in 0 hours shows the driver a speed of `Infinity`, and a day off shows `NaN`.\n\nMake both methods return 0 when there is nothing to divide by. With your fix, the test program prints:\n\n```\nMonday fare: 1400 cents\nMonday speed: 24.0 mph\nSunday fare: 0 cents\nSunday speed: 0.0 mph\nGPS glitch speed: 0.0 mph\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`averageFareCents()` returns 0 when `trips` is 0. Test `trips` before you divide."
+    },
+    {
+     "id": "R2",
+     "text": "`averageSpeed()` returns 0.0 when `hours` is 0, instead of `Infinity` or `NaN`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "DriverStats.java",
+     "starter": "public class DriverStats\n{\n    // Average fare per trip, in cents (integer division).\n    public static int averageFareCents(int totalCents, int trips)\n    {\n        // TODO (R1): a driver with 0 trips should see 0, not a crash.\n        return totalCents / trips;\n    }\n\n    // Average speed in miles per hour.\n    public static double averageSpeed(double miles, double hours)\n    {\n        // TODO (R2): with 0 hours this \"works\", but the answer is nonsense.\n        return miles / hours;\n    }\n}\n",
+     "solution": "public class DriverStats\n{\n    // Average fare per trip, in cents (integer division).\n    public static int averageFareCents(int totalCents, int trips)\n    {\n        if (trips == 0)\n            return 0;\n        return totalCents / trips;\n    }\n\n    // Average speed in miles per hour.\n    public static double averageSpeed(double miles, double hours)\n    {\n        if (hours <= 0)\n            return 0.0;\n        return miles / hours;\n    }\n}\n"
+    }
+   ],
+   "main_file": "DriverStats.java",
+   "solution_notes": "Integer division by 0 has no answer, so Java throws an `ArithmeticException` with the message `/ by zero` (p. 395). The trace says where: `DriverStats.averageFareCents`, line 7 of DriverStats.java, called from line 10 of the test program. It is an `Exception`, not an `Error`, so the program can recover (p. 394); here the simplest recovery is to never divide, using a decision as `Division2` does (Figure 10-5, p. 397). Floating-point division by 0 is allowed and gives `Infinity` (p. 395), and 0.0 / 0.0 gives `NaN`, so the speed method throws nothing and a `catch` block would never run: only a decision can catch that mistake. `hours <= 0` also rejects a negative time from a bad clock; `hours == 0` passes the test as well.",
+   "warmup": [
+    {
+     "question": "Read the support log in the brief. What type of exception is it, in which method and on which line of which file was it thrown, and which line of the test program made that call?",
+     "model_answer": "An ArithmeticException with the message / by zero, thrown in DriverStats.averageFareCents at line 7 of DriverStats.java. It was called from line 10 of TestDriverStats.java, in main()."
+    },
+    {
+     "question": "With the starter, predict `averageSpeed(0.0, 0.0)` and `averageSpeed(12.5, 0.0)`. Will either one crash?",
+     "model_answer": "Neither crashes. Dividing a double by 0 is allowed: 12.5 / 0.0 is Infinity and 0.0 / 0.0 is NaN (not a number)."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "averageFareCents() tests trips before dividing",
+     "within": "DriverStats.averageFareCents",
+     "require": [
+      "\\btrips\\s*(?:==|<=|<|!=|>)\\s*0\\b",
+      "\\b0\\s*(?:==|>=|>|!=|<)\\s*trips\\b",
+      "\\bcatch\\s*\\(\\s*(?:ArithmeticException|Exception)\\s+\\w+\\s*\\)"
+     ],
+     "message": "Before `totalCents / trips`, test whether `trips` is 0 and return 0 in that case. The trace shows the crash comes from exactly that division.",
+     "hint": "Figure 10-5 (p. 397) prevents the same crash with one `if`."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "averageSpeed() tests hours before dividing",
+     "within": "DriverStats.averageSpeed",
+     "require": [
+      "\\bhours\\s*(?:==|<=|<|!=|>)\\s*0(?:\\.0)?\\b",
+      "\\b0(?:\\.0)?\\s*(?:==|>=|>|!=|<)\\s*hours\\b"
+     ],
+     "message": "Test `hours` before dividing and return 0.0 when it is 0. A double divided by 0 gives Infinity or NaN instead of throwing, so only a decision notices the problem."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "No catch block waiting for a crash that never comes",
+     "within": "DriverStats.averageSpeed",
+     "forbid": "\\bcatch\\b",
+     "starter_passes": true,
+     "message": "Remove the `catch` from `averageSpeed()`. Dividing a double by 0 never throws, so the catch block can't run; the decision is what protects this method."
+    }
+   ],
+   "hints": [
+    "Start with the trace: the top `at` line names the method and line that divided by 0. What should a driver with zero trips see there?",
+    "`Division2` on p. 397 asks one question before it divides. Ask the same question about `trips` and return 0 early.",
+    "Doubles behave differently: p. 395 says dividing a double by 0 is allowed. The speed method needs its own test of `hours`, because nothing will be thrown."
+   ],
+   "test_program": {
+    "file_name": "TestDriverStats.java",
+    "code": "public class TestDriverStats\n{\n    public static void main(String[] args)\n    {\n        System.out.println(\"Monday fare: \"\n            + DriverStats.averageFareCents(8400, 6) + \" cents\");\n        System.out.println(\"Monday speed: \"\n            + DriverStats.averageSpeed(96.0, 4.0) + \" mph\");\n        System.out.println(\"Sunday fare: \"\n            + DriverStats.averageFareCents(0, 0) + \" cents\");\n        System.out.println(\"Sunday speed: \"\n            + DriverStats.averageSpeed(0.0, 0.0) + \" mph\");\n        System.out.println(\"GPS glitch speed: \"\n            + DriverStats.averageSpeed(12.5, 0.0) + \" mph\");\n    }\n}\n",
+    "expected_output": "Monday fare: 1400 cents\nMonday speed: 24.0 mph\nSunday fare: 0 cents\nSunday speed: 0.0 mph\nGPS glitch speed: 0.0 mph\n",
+    "predict": "Before you fix anything, predict the starter's output line by line. How many lines appear before the program stops, and would the two speed lines show anything if it hadn't stopped?",
+    "how_to_run": "Put `DriverStats.java` and `TestDriverStats.java` in the same folder, then run `javac *.java` and `java TestDriverStats`. In an IDE, add both files to one project and run `TestDriverStats.java`. You don't type anything: the test program supplies the data."
+   },
+   "reflection": [
+    {
+     "question": "The fare method crashed, but the speed method quietly returned Infinity. Which failure is more dangerous for a driver dashboard, and why?",
+     "model_answer": "The quiet one. The crash is noticed and reported at once, with a trace that points to the line. Infinity or NaN flows into charts and weekly reports with no warning, so nobody knows the numbers are wrong."
+    },
+    {
+     "question": "The trace had two `at` lines. What does the top one tell you, and what does the bottom one add?",
+     "model_answer": "The top line is where the exception was thrown (the division in averageFareCents, line 7). The bottom line is the call that passed 0 trips (main in the test program), which tells you which caller supplied the data that caused it."
+    }
+   ],
+   "extension": "Add `fuelEconomy(double miles, double gallons)` and decide what it should return for 0 gallons. Then think ahead: Division2's `if` can't help when a user types `six` instead of 6, because `nextInt()` throws before your code gets the value. Section 10.2 handles that case.",
+   "worth_knowing": "Java's `double` follows the IEEE 754 standard from 1985, which defines Infinity and NaN so long calculations can keep going instead of stopping. NaN is the only value that isn't equal to itself: `Double.NaN == Double.NaN` is false, which is why Java provides `Double.isNaN()`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces and indentation kept; each test sits right before the division it protects."
+    }
+   ]
+  },
+  {
+   "id": "10.2",
+   "title": "The thermostat log that gave up after one typo",
+   "subtitle": "try, catch, and clearing the bad entry",
+   "source": "Ch. 10, section 10.2 (pp. 397–404)",
+   "minutes": 25,
+   "objectives": [
+    "Place a statement that might fail in a `try` block and handle the failure in a `catch` block",
+    "Use the `catch` block to repair the data so the program continues with a valid value",
+    "Clear the rest of a bad input line with `nextLine()` so later entries can still be read"
+   ],
+   "scenario": "The facilities team at a community college types the morning temperature of each room into a log, one reading per line. The program that reads the log stops completely when someone types a word such as `seventy`, and the report for the whole building is lost.\n\nMake `readTemperatures()` survive a bad line:\n\n- Print `Reading N skipped: not a whole number` (N counts from 1).\n- Store a usable value instead: repeat the previous reading. If the very first reading is bad, use `SET_POINT`, the building's thermostat setting (70).\n- Throw away the rest of the line after every reading, good or bad. Someone typed `70 F` on one line, and that `F` must not spoil the next reading.\n\nWith your fix, the test program prints:\n\n```\nReading 3 skipped: not a whole number\nLobby: 68 71 71 72 70 69\nLobby average: 70.2\nReading 1 skipped: not a whole number\nGym: 70 66\nGym average: 68.0\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The call to `nextInt()` is inside a `try` block, and a `catch` block that catches `InputMismatchException` (or `Exception`) prints `Reading N skipped: not a whole number`."
+    },
+    {
+     "id": "R2",
+     "text": "The `catch` block stores a usable value in `temps[x]`: the previous reading, or `SET_POINT` when the first reading is bad."
+    },
+    {
+     "id": "R3",
+     "text": "After each reading, good or bad, `nextLine()` discards the rest of the line."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ReadingLog.java",
+     "starter": "import java.util.Scanner;\n\npublic class ReadingLog\n{\n    public static final int SET_POINT = 70;\n\n    // Reads `count` temperatures, one per line, and returns them.\n    public static int[] readTemperatures(Scanner input, int count)\n    {\n        int[] temps = new int[count];\n        for (int x = 0; x < count; ++x)\n        {\n            // TODO (R1, R2): one typed word here ends the whole program.\n            temps[x] = input.nextInt();\n            // TODO (R3): whatever else was typed on this line is still waiting.\n        }\n        return temps;\n    }\n\n    public static double average(int[] temps)\n    {\n        int total = 0;\n        for (int x = 0; x < temps.length; ++x)\n            total += temps[x];\n        return (double) total / temps.length;\n    }\n}\n",
+     "solution": "import java.util.InputMismatchException;\nimport java.util.Scanner;\n\npublic class ReadingLog\n{\n    public static final int SET_POINT = 70;\n\n    // Reads `count` temperatures, one per line, and returns them.\n    public static int[] readTemperatures(Scanner input, int count)\n    {\n        int[] temps = new int[count];\n        for (int x = 0; x < count; ++x)\n        {\n            try\n            {\n                temps[x] = input.nextInt();\n            }\n            catch (InputMismatchException e)\n            {\n                System.out.println(\"Reading \" + (x + 1) + \" skipped: not a whole number\");\n                if (x == 0)\n                    temps[x] = SET_POINT;\n                else\n                    temps[x] = temps[x - 1];\n            }\n            input.nextLine();\n        }\n        return temps;\n    }\n\n    public static double average(int[] temps)\n    {\n        int total = 0;\n        for (int x = 0; x < temps.length; ++x)\n            total += temps[x];\n        return (double) total / temps.length;\n    }\n}\n"
+    }
+   ],
+   "main_file": "ReadingLog.java",
+   "solution_notes": "`nextInt()` throws an `InputMismatchException` when the next token isn't an int, so it goes in the `try` block and the `catch` block reports the problem (pp. 397–399). The catch block also repairs the data, the idea in Figure 10-11 (p. 400): after the try...catch pair, `temps[x]` is guaranteed to hold a usable value. When `nextInt()` fails, the Scanner does not consume the bad token, so without `nextLine()` every later call fails on the same word (Figures 10-12 to 10-14, p. 401). Calling `nextLine()` after the try...catch pair, not only in the catch block, also clears `70 F`: `nextInt()` succeeds on 70, but the `F` is still on the line. `catch (Exception e)` passes too (the book uses it in Figure 10-12); the specific type documents what you expect and needs `import java.util.InputMismatchException;` or `java.util.*`.",
+   "warmup": [
+    {
+     "question": "Suppose you put `nextInt()` in a try block and a catch block that only prints the message, but no `nextLine()`. The log is `68`, `71`, `seventy`, `72`, ... Predict which readings get skipped, and why.",
+     "model_answer": "Readings 3, 4, 5 and 6 are all skipped. nextInt() leaves the word seventy in the input when it fails, so every later nextInt() call meets the same word and fails again (Figure 10-13)."
+    },
+    {
+     "question": "A classmate writes `int t = input.nextInt();` inside the try block and `temps[x] = t;` after the catch block. What does the compiler say, and why?",
+     "model_answer": "cannot find symbol t. A variable declared inside a try block is local to that block, so it is out of scope after the block ends (p. 402)."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "nextInt() is tried",
+     "within": "ReadingLog.readTemperatures",
+     "require": "\\btry\\s*\\{[^}]*\\bnextInt\\s*\\(\\s*\\)",
+     "message": "Put the `nextInt()` call inside a `try { ... }` block. It is the statement that throws when the line holds a word."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "A catch block handles the bad entry",
+     "within": "ReadingLog.readTemperatures",
+     "require": "\\bcatch\\s*\\(\\s*(?:(?:java\\.util\\.)?InputMismatchException|NoSuchElementException|Exception)\\s+\\w+\\s*\\)",
+     "message": "Follow the try block with `catch (InputMismatchException e)` (or `catch (Exception e)`). Without a matching catch block the exception still ends the program.",
+     "hint": "InputMismatchException is in `java.util`, like Scanner: import it, or import `java.util.*`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The catch block stores a usable reading",
+     "within": "ReadingLog.readTemperatures",
+     "require": "^(?=[\\s\\S]*\\bcatch\\s*\\([^)]*\\)\\s*\\{[\\s\\S]*?\\btemps\\s*\\[\\s*x\\s*\\]\\s*=)(?=[\\s\\S]*\\bSET_POINT\\b)",
+     "message": "In the catch block, assign `temps[x]`: the previous reading, or `SET_POINT` when `x` is 0. Otherwise the slot keeps 0 and drags the average down."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "The rest of the line is discarded",
+     "within": "ReadingLog.readTemperatures",
+     "require": "\\bnextLine\\s*\\(\\s*\\)",
+     "message": "Call `input.nextLine()` after each reading to throw away what is left of the line. When `nextInt()` fails, the bad word stays in the input until something reads it."
+    }
+   ],
+   "hints": [
+    "Wrap only the risky statement: the one that converts the typed text into an int.",
+    "In the catch block you know `x`, so you know which reading failed and whether there is a previous one to copy.",
+    "Look at the line `70 F`: `nextInt()` succeeds there, yet something is left behind. Where must the line-clearing call go so it runs after a good reading too?"
+   ],
+   "test_program": {
+    "file_name": "TestReadingLog.java",
+    "code": "import java.util.Locale;\nimport java.util.Scanner;\n\npublic class TestReadingLog\n{\n    public static void main(String[] args)\n    {\n        Scanner lobby = new Scanner(\"68\\n71\\nseventy\\n72\\n70 F\\n69\\n\");\n        show(\"Lobby\", ReadingLog.readTemperatures(lobby, 6));\n\n        Scanner gym = new Scanner(\"cold\\n66\\n\");\n        show(\"Gym\", ReadingLog.readTemperatures(gym, 2));\n    }\n\n    private static void show(String room, int[] temps)\n    {\n        System.out.print(room + \":\");\n        for (int t : temps)\n            System.out.print(\" \" + t);\n        System.out.println();\n        System.out.println(room + \" average: \"\n            + String.format(Locale.US, \"%.1f\", ReadingLog.average(temps)));\n    }\n}\n",
+    "expected_output": "Reading 3 skipped: not a whole number\nLobby: 68 71 71 72 70 69\nLobby average: 70.2\nReading 1 skipped: not a whole number\nGym: 70 66\nGym average: 68.0\n",
+    "predict": "Predict the Lobby line twice: once if `nextLine()` is called only inside the catch block, and once if it is called after the try...catch pair. Which reading differs, and why?",
+    "how_to_run": "Put `ReadingLog.java` and `TestReadingLog.java` in the same folder, then run `javac *.java` and `java TestReadingLog`. In an IDE, add both files to one project and run `TestReadingLog.java`. You don't type anything: the test program reads its log from a String, the same way a Scanner reads the keyboard."
+   },
+   "reflection": [
+    {
+     "question": "Why is copying the previous reading better for this report than leaving 0 in the array after a bad line?",
+     "model_answer": "A 0 is a real-looking temperature that pulls the average far down (the lobby would average about 58 instead of 70). Repeating the previous reading keeps the average close to reality, and the printed message still tells staff that a value was estimated."
+    },
+    {
+     "question": "When `nextInt()` fails on `seventy`, which statements of the try block run, and which statement runs next?",
+     "model_answer": "The try block is abandoned at the failing nextInt() call, so the assignment to temps[x] never happens. Control jumps to the matching catch block, and after it the statement following the try...catch pair (nextLine()) runs."
+    }
+   ],
+   "extension": "Readings above 110 or below 32 are almost certainly typos too, but `nextInt()` accepts them. Should those be handled with an exception or with a decision? Add the check you choose and print `Reading N skipped: out of range`.",
+   "worth_knowing": "The Scanner documentation states the rule you just met: when a `next` method throws `InputMismatchException`, the scanner does not pass the token that caused it, so your program can read it some other way or skip it. That is why `nextLine()` is the cure, and why the same word kept failing in Figure 10-13.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the try block holds only the risky statement; the line-clearing call sits after the try...catch pair."
+    }
+   ]
+  },
+  {
+   "id": "10.3",
+   "title": "The bill splitter that won't compile",
+   "subtitle": "Several catch blocks, the smallest basket first",
+   "source": "Ch. 10, section 10.3 (pp. 404–408)",
+   "minutes": 25,
+   "objectives": [
+    "Follow one try block with several catch blocks, each with its own response",
+    "Order catch blocks from specific to general so none of them is unreachable",
+    "Explain why only the first failing statement in a try block throws"
+   ],
+   "scenario": "A restaurant app lets a table split the bill: the server types the total (whole dollars) and the number of people. Whatever goes wrong, the app says *Something went wrong*, so servers can't tell a typo from a missing party size. A developer started adding a specific catch block, and now the file doesn't compile. For line 21, `catch (ArithmeticException e)`, javac reports: `error: exception ArithmeticException has already been caught`.\n\nGive each problem its own message, and keep a general safety net at the end:\n\n- A party of 0: `Enter at least 1 person`\n- A total or party size that isn't a whole number: `Use whole numbers, like 84`\n- Anything else: `Something went wrong`\n\nWith your fix, the test program prints:\n\n```\n$21 each, $0 left for the tip jar\n$21 each, $1 left for the tip jar\nEnter at least 1 person\nUse whole numbers, like 84\nUse whole numbers, like 84\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "A `catch (ArithmeticException ...)` block sets the result to `Enter at least 1 person`."
+    },
+    {
+     "id": "R2",
+     "text": "A `catch (NumberFormatException ...)` block sets the result to `Use whole numbers, like 84`."
+    },
+    {
+     "id": "R3",
+     "text": "The general `catch (Exception ...)` block stays, as the last catch block, so the file compiles."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "BillSplitter.java",
+     "starter": "public class BillSplitter\n{\n    // Splits a bill typed into the app. Amounts are whole dollars.\n    public static String split(String billText, String peopleText)\n    {\n        String result;\n        try\n        {\n            int bill = Integer.parseInt(billText);\n            int people = Integer.parseInt(peopleText);\n            int each = bill / people;\n            int left = bill % people;\n            result = \"$\" + each + \" each, $\" + left + \" left for the tip jar\";\n        }\n        // TODO (R1, R2, R3): this catch-all stands in front of the\n        // specific catch block, so the file doesn't compile.\n        catch (Exception e)\n        {\n            result = \"Something went wrong\";\n        }\n        catch (ArithmeticException e)\n        {\n            result = \"Something went wrong\";\n        }\n        return result;\n    }\n}\n",
+     "solution": "public class BillSplitter\n{\n    // Splits a bill typed into the app. Amounts are whole dollars.\n    public static String split(String billText, String peopleText)\n    {\n        String result;\n        try\n        {\n            int bill = Integer.parseInt(billText);\n            int people = Integer.parseInt(peopleText);\n            int each = bill / people;\n            int left = bill % people;\n            result = \"$\" + each + \" each, $\" + left + \" left for the tip jar\";\n        }\n        catch (ArithmeticException e)\n        {\n            result = \"Enter at least 1 person\";\n        }\n        catch (NumberFormatException e)\n        {\n            result = \"Use whole numbers, like 84\";\n        }\n        catch (Exception e)\n        {\n            result = \"Something went wrong\";\n        }\n        return result;\n    }\n}\n"
+    }
+   ],
+   "main_file": "BillSplitter.java",
+   "solution_notes": "Catch blocks are examined in order, and the first one whose type matches runs (p. 404). `Exception` matches every exception here, so a block for it placed first makes every later block unreachable, and the compiler rejects the file with “has already been caught” (p. 406). Put the “smaller baskets” first: `ArithmeticException` and `NumberFormatException` are unrelated (neither extends the other), so their order doesn't matter, but `Exception` must come last. For `split(\"ten\", \"0\")` only `parseInt(\"ten\")` throws: the try block is abandoned before the division, so the message is about whole numbers (p. 404). Note for instructors: the multi-catch on p. 407 is printed with a comma; Java (since Java 7) writes it `catch (ArithmeticException | InputMismatchException e)`.",
+   "warmup": [
+    {
+     "question": "Read the compiler error in the brief. Why does Java refuse a catch block for ArithmeticException after a catch block for Exception?",
+     "model_answer": "An ArithmeticException is an Exception, so the first block would always catch it. The second block can never run; it is unreachable, and Java treats unreachable code as an error (p. 406)."
+    },
+    {
+     "question": "Once it compiles, what will `split(\"ten\", \"0\")` return: the message about people or the one about whole numbers? Why?",
+     "model_answer": "The whole-numbers message. parseInt(\"ten\") throws first, the rest of the try block is abandoned, and the division by 0 never happens."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "A catch block for ArithmeticException",
+     "within": "BillSplitter.split",
+     "require": "\\bcatch\\s*\\(\\s*ArithmeticException\\s+\\w+\\s*\\)\\s*\\{[^}]*\\bresult\\s*=\\s*\\\"Enter at least 1 person\\\"",
+     "strings": true,
+     "message": "Keep a `catch (ArithmeticException e)` block and give it its own message for a party of 0. Dividing by 0 people is the only thing that throws this type here."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "A catch block for NumberFormatException",
+     "within": "BillSplitter.split",
+     "require": "\\bcatch\\s*\\(\\s*NumberFormatException\\s+\\w+\\s*\\)",
+     "message": "Add a `catch (NumberFormatException e)` block. `Integer.parseInt()` throws it when the text isn't a whole number, such as `84.50` or `ten`.",
+     "hint": "Which statements in the try block convert text to numbers?"
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The general catch block comes last",
+     "within": "BillSplitter.split",
+     "require": "^(?=[\\s\\S]*\\bcatch\\s*\\(\\s*ArithmeticException\\b[\\s\\S]*\\bcatch\\s*\\(\\s*Exception\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bcatch\\s*\\(\\s*NumberFormatException\\b[\\s\\S]*\\bcatch\\s*\\(\\s*Exception\\s+\\w+\\s*\\))",
+     "forbid": "\\bcatch\\s*\\(\\s*Exception\\s+\\w+\\s*\\)[\\s\\S]*\\bcatch\\s*\\(",
+     "message": "Keep `catch (Exception e)` as the safety net, but move it below the specific blocks. A general block in front of a specific one makes the specific one unreachable, and the file won't compile."
+    }
+   ],
+   "hints": [
+    "Read the error again: which block is in the way of which?",
+    "Two different statements can fail with two different types: the conversions and the division. Each type gets its own block.",
+    "Think of the blocks as baskets from the smallest to the biggest (p. 406): an exception falls past the ones that don't fit until one holds it. The biggest basket goes at the bottom."
+   ],
+   "test_program": {
+    "file_name": "TestBillSplitter.java",
+    "code": "public class TestBillSplitter\n{\n    public static void main(String[] args)\n    {\n        System.out.println(BillSplitter.split(\"84\", \"4\"));\n        System.out.println(BillSplitter.split(\"85\", \"4\"));\n        System.out.println(BillSplitter.split(\"84\", \"0\"));\n        System.out.println(BillSplitter.split(\"84.50\", \"3\"));\n        System.out.println(BillSplitter.split(\"ten\", \"0\"));\n    }\n}\n",
+    "expected_output": "$21 each, $0 left for the tip jar\n$21 each, $1 left for the tip jar\nEnter at least 1 person\nUse whole numbers, like 84\nUse whole numbers, like 84\n",
+    "predict": "Predict the last line before you run it. `split(\"ten\", \"0\")` contains two problems: which one does the app report?",
+    "how_to_run": "Put `BillSplitter.java` and `TestBillSplitter.java` in the same folder, then run `javac *.java` and `java TestBillSplitter`. In an IDE, add both files to one project and run `TestBillSplitter.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Does it matter whether the ArithmeticException block or the NumberFormatException block comes first? Explain using the class hierarchy.",
+     "model_answer": "No. Neither class extends the other (ArithmeticException and NumberFormatException are separate RuntimeExceptions), so neither can catch the other's exceptions. Order only matters between a class and its own ancestors, such as Exception."
+    },
+    {
+     "question": "With specific blocks in place, is the `catch (Exception e)` block still worth keeping? Give a reason for or against.",
+     "model_answer": "For: it keeps the app running if a later change adds a statement that throws something unexpected. Against: it hides bugs behind a vague message, so it should at least log what it caught. Either answer is fine with a reason."
+    }
+   ],
+   "extension": "Servers asked for one message, *Check the amounts*, for both kinds of input problem. Replace the two specific blocks with one multi-catch, `catch (ArithmeticException | NumberFormatException e)`. Then try adding `Exception` to that list and read the compiler error.",
+   "worth_knowing": "Multi-catch arrived in Java 7 (2011) and uses `|`, not a comma. Its alternatives may not be related by inheritance, and the parameter is implicitly final, so a multi-catch block can't assign a new object to `e`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; catch blocks ordered from specific to general; each message matches its cause."
+    }
+   ]
+  },
+  {
+   "id": "10.4",
+   "title": "The laser cutter that stayed locked all afternoon",
+   "subtitle": "Cleanup that runs no matter what: the finally block",
+   "source": "Ch. 10, section 10.4 (pp. 408–410)",
+   "minutes": 20,
+   "objectives": [
+    "Use a `finally` block for cleanup that must happen whether or not an exception occurs",
+    "Explain why code after a try...catch pair might never run",
+    "Replace repeated cleanup code with a single `finally` block"
+   ],
+   "scenario": "A makerspace shares one laser cutter. `runJob()` locks the cutter, runs a member's job and unlocks it, so two jobs never run at once. The method catches a job with no sheets loaded, but a job with an unknown material code throws an `ArrayIndexOutOfBoundsException` that `runJob()` doesn't catch; the front desk catches it instead. That error skips both `unlock()` calls, and the cutter stayed locked for the rest of the afternoon.\n\nUnlock the cutter in exactly one place that runs on every path. Leave the bad material code for the front desk to report. With your fix, the test program prints:\n\n```\nAna locks the cutter\n  3 sheets of acrylic, 10 min each\n  cutter unlocked\nBen locks the cutter\n  no sheets loaded\n  cutter unlocked\nChi locks the cutter\n  cutter unlocked\nFront desk: Chi's job has an unknown material code\nDev locks the cutter\n  4 sheets of cardboard, 3 min each\n  cutter unlocked\nLocked at closing: false\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`runJob()` calls `unlock()` exactly once, in a `finally` block after the try...catch pair."
+    },
+    {
+     "id": "R2",
+     "text": "`runJob()` still catches only `ArithmeticException`. The bad material code reaches the front desk."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "LaserCutter.java",
+     "starter": "public class LaserCutter\n{\n    private static final String[] MATERIALS = {\"acrylic\", \"plywood\", \"cardboard\"};\n    private boolean locked = false;\n\n    public boolean isLocked()\n    {\n        return locked;\n    }\n\n    private void unlock()\n    {\n        locked = false;\n        System.out.println(\"  cutter unlocked\");\n    }\n\n    public void runJob(String member, int materialCode, int minutes, int sheets)\n    {\n        if (locked)\n        {\n            System.out.println(member + \" refused: cutter is locked\");\n            return;\n        }\n        locked = true;\n        System.out.println(member + \" locks the cutter\");\n        try\n        {\n            String material = MATERIALS[materialCode];\n            int perSheet = minutes / sheets;\n            System.out.println(\"  \" + sheets + \" sheets of \" + material + \", \"\n                + perSheet + \" min each\");\n            unlock();\n        }\n        catch (ArithmeticException e)\n        {\n            System.out.println(\"  no sheets loaded\");\n            unlock();\n        }\n        // TODO (R1): an exception this method doesn't catch skips\n        // both unlock() calls, and the cutter stays locked.\n    }\n}\n",
+     "solution": "public class LaserCutter\n{\n    private static final String[] MATERIALS = {\"acrylic\", \"plywood\", \"cardboard\"};\n    private boolean locked = false;\n\n    public boolean isLocked()\n    {\n        return locked;\n    }\n\n    private void unlock()\n    {\n        locked = false;\n        System.out.println(\"  cutter unlocked\");\n    }\n\n    public void runJob(String member, int materialCode, int minutes, int sheets)\n    {\n        if (locked)\n        {\n            System.out.println(member + \" refused: cutter is locked\");\n            return;\n        }\n        locked = true;\n        System.out.println(member + \" locks the cutter\");\n        try\n        {\n            String material = MATERIALS[materialCode];\n            int perSheet = minutes / sheets;\n            System.out.println(\"  \" + sheets + \" sheets of \" + material + \", \"\n                + perSheet + \" min each\");\n        }\n        catch (ArithmeticException e)\n        {\n            System.out.println(\"  no sheets loaded\");\n        }\n        finally\n        {\n            unlock();\n        }\n    }\n}\n"
+    }
+   ],
+   "main_file": "LaserCutter.java",
+   "solution_notes": "Statements after a try...catch pair don't always run: an exception with no matching catch block abandons the method at once (p. 409). The `finally` block runs on all three paths the book lists: the try ends normally, the catch executes, or an uncaught exception leaves the method early (p. 409). That is why Chi's output shows `cutter unlocked` before the front desk's message: the finally block runs on the way out, then the exception continues to the caller. One `unlock()` in `finally` also replaces the two copies, which the book calls clearer and less prone to error (p. 410). The `return` for a locked cutter comes before the try block, so that path correctly unlocks nothing.",
+   "warmup": [
+    {
+     "question": "With the starter, follow Chi's job (material code 7). Which statement throws, which of the two `unlock()` calls runs, and what happens to Dev's job?",
+     "model_answer": "MATERIALS[7] throws an ArrayIndexOutOfBoundsException. There is no matching catch block, so neither unlock() runs and the method is abandoned. The cutter stays locked, so Dev is refused."
+    },
+    {
+     "question": "If the cutter were unlocked in a statement written after the catch block (no finally), would Chi's job unlock it? Why or why not?",
+     "model_answer": "No. An uncaught exception abandons the method immediately, so statements after the try...catch pair never run (p. 409). Only a finally block is guaranteed to run."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "unlock() is called in a finally block",
+     "within": "LaserCutter.runJob",
+     "require": "\\bfinally\\s*\\{[^}]*\\bunlock\\s*\\(\\s*\\)",
+     "message": "Add `finally { unlock(); }` after the catch block. A finally block runs whether the job worked, was caught, or threw something this method doesn't catch."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "unlock() appears only once",
+     "within": "LaserCutter.runJob",
+     "require": "\\bunlock\\s*\\(\\s*\\)",
+     "forbid": "\\bunlock\\s*\\(\\s*\\)[\\s\\S]*\\bunlock\\s*\\(\\s*\\)",
+     "message": "Delete the `unlock()` calls from the try and catch blocks. With the finally block they would unlock twice and print `cutter unlocked` twice."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "The bad material code still reaches the front desk",
+     "within": "LaserCutter.runJob",
+     "require": "\\bcatch\\s*\\(\\s*ArithmeticException\\s+\\w+\\s*\\)",
+     "forbid": "\\bcatch\\s*\\(\\s*(?:ArrayIndexOutOfBoundsException|IndexOutOfBoundsException|RuntimeException|Exception|Throwable)\\b",
+     "starter_passes": true,
+     "message": "Keep `catch (ArithmeticException e)` and don't catch the bad material code here. The front desk decides what to tell Chi; `finally` already makes sure the cutter is unlocked."
+    }
+   ],
+   "hints": [
+    "Count the paths out of `runJob()` after the cutter is locked: normal, caught, and uncaught. Which of them reach an `unlock()` call?",
+    "Figure 10-24 (p. 408) shows where the third kind of block goes: right after the last catch block.",
+    "Once the cleanup lives in that block, the copies in the try and catch blocks are extra. Keep one."
+   ],
+   "test_program": {
+    "file_name": "TestLaserCutter.java",
+    "code": "public class TestLaserCutter\n{\n    public static void main(String[] args)\n    {\n        LaserCutter cutter = new LaserCutter();\n        cutter.runJob(\"Ana\", 0, 30, 3);\n        cutter.runJob(\"Ben\", 1, 20, 0);\n        try\n        {\n            cutter.runJob(\"Chi\", 7, 15, 1);\n        }\n        catch (ArrayIndexOutOfBoundsException e)\n        {\n            System.out.println(\"Front desk: Chi's job has an unknown material code\");\n        }\n        cutter.runJob(\"Dev\", 2, 12, 4);\n        System.out.println(\"Locked at closing: \" + cutter.isLocked());\n    }\n}\n",
+    "expected_output": "Ana locks the cutter\n  3 sheets of acrylic, 10 min each\n  cutter unlocked\nBen locks the cutter\n  no sheets loaded\n  cutter unlocked\nChi locks the cutter\n  cutter unlocked\nFront desk: Chi's job has an unknown material code\nDev locks the cutter\n  4 sheets of cardboard, 3 min each\n  cutter unlocked\nLocked at closing: false\n",
+    "predict": "With your fix, which line prints first for Chi's job: `cutter unlocked` or the front desk's message? Predict, then run it.",
+    "how_to_run": "Put `LaserCutter.java` and `TestLaserCutter.java` in the same folder, then run `javac *.java` and `java TestLaserCutter`. In an IDE, add both files to one project and run `TestLaserCutter.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Explain the order of the two lines printed for Chi's job: why does the finally block run before the front desk's catch block?",
+     "model_answer": "The exception leaves runJob() without a matching catch there. Before the method is abandoned, its finally block runs and unlocks the cutter; only then does the exception travel back to main, where the front desk's catch block runs."
+    },
+    {
+     "question": "Name another real situation where cleanup must happen no matter how a task ends, and say what would go wrong without a finally block.",
+     "model_answer": "Example: closing a data file after reading it (p. 409). Without finally, an unexpected exception leaves the file open, so other programs can't use it or data isn't saved. Any answer with a resource that must be released fits."
+    }
+   ],
+   "extension": "Add a job counter that increases only when a job finishes normally, and an `incidents` counter that increases for a caught or uncaught failure. Which counter belongs in the try block, which in catch, and can the finally block tell the paths apart?",
+   "worth_knowing": "A finally block runs even when the try block executes `return`. Only a few things skip it, such as `System.exit()` or the JVM itself crashing. Java 7 added try-with-resources, `try (Scanner in = ...)`, which closes files and scanners automatically when the block ends.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; one unlock() call, in the finally block; no extra catch blocks."
+    }
+   ]
+  },
+  {
+   "id": "10.5",
+   "title": "The group order that reported the wrong mistake",
+   "subtitle": "Business as usual in one place, the exceptions out of the way",
+   "source": "Ch. 10, section 10.5 (pp. 410–412)",
+   "minutes": 25,
+   "objectives": [
+    "Rewrite nested error-checking `if` statements as one try block followed by catch blocks",
+    "Explain how grouping the normal steps together makes logic easier to follow and harder to get wrong",
+    "Use methods that throw exceptions without handling them, and decide how the caller responds"
+   ],
+   "scenario": "A campus café has a group-order screen: pick an item, type a quantity, enter how many people share the bill. `OrderDesk.summary()` was written in the old style of Figure 10-26: check before every step, nest the next step inside, and set an error message in each `else`. Customers who typed `two` as the quantity were told the item code was unknown, and customers with a bad item code were told to type a whole number. Two `else` branches were matched to the wrong tests, and in the nesting nobody noticed.\n\n`Store.java` is read-only. Its comments say what each method throws. Rewrite `summary()` the way Figure 10-27 does: all the normal steps together in one try block, then one catch block per problem.\n\nWith your fix, the test program prints:\n\n```\nTotal $38.97, $12.99 each\nTotal $9.00, $2.25 each\nError: unknown item code\nError: quantity must be a whole number\nError: party size can't be 0\nError: unknown item code\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`summary()` calls `priceOf()`, `parseQuantity()` and `shareOf()` in one try block, together with the line that builds the total, and no longer uses the pre-checks (`isItemCode()`, `isWholeNumber()`, `people != 0`)."
+    },
+    {
+     "id": "R2",
+     "text": "Catch blocks return `Error: unknown item code` for `ArrayIndexOutOfBoundsException`, `Error: quantity must be a whole number` for `NumberFormatException`, and `Error: party size can't be 0` for `ArithmeticException`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Store.java",
+     "starter": "public class Store\n{\n    private static final int[] PRICES = {450, 1299, 2500};   // cents, by item code\n\n    // Throws ArrayIndexOutOfBoundsException for an unknown item code.\n    public static int priceOf(int itemCode)\n    {\n        return PRICES[itemCode];\n    }\n\n    // Throws NumberFormatException when the text isn't a whole number.\n    public static int parseQuantity(String text)\n    {\n        return Integer.parseInt(text);\n    }\n\n    // Throws ArithmeticException when people is 0.\n    public static int shareOf(int totalCents, int people)\n    {\n        return totalCents / people;\n    }\n\n    // Pre-checks used by the old order screen.\n    public static boolean isItemCode(int itemCode)\n    {\n        return itemCode >= 0 && itemCode < PRICES.length;\n    }\n\n    public static boolean isWholeNumber(String text)\n    {\n        if (text.length() == 0)\n            return false;\n        for (int x = 0; x < text.length(); ++x)\n            if (!Character.isDigit(text.charAt(x)))\n                return false;\n        return true;\n    }\n\n    // 3897 -> \"$38.97\"\n    public static String money(int cents)\n    {\n        String pennies = \"\" + cents % 100;\n        if (cents % 100 < 10)\n            pennies = \"0\" + pennies;\n        return \"$\" + cents / 100 + \".\" + pennies;\n    }\n}\n",
+     "editable": false
+    },
+    {
+     "name": "OrderDesk.java",
+     "starter": "public class OrderDesk\n{\n    // One line for the group-order screen: the total and each share, or an error.\n    public static String summary(int itemCode, String qtyText, int people)\n    {\n        // TODO (R1, R2): rewrite with one try block and three catch blocks.\n        // The normal steps are buried, and two messages are on the wrong branches.\n        String result;\n        if (Store.isItemCode(itemCode))\n        {\n            int price = Store.priceOf(itemCode);\n            if (Store.isWholeNumber(qtyText))\n            {\n                int total = price * Store.parseQuantity(qtyText);\n                if (people != 0)\n                {\n                    int share = Store.shareOf(total, people);\n                    result = \"Total \" + Store.money(total) + \", \" + Store.money(share) + \" each\";\n                }\n                else\n                    result = \"Error: party size can't be 0\";\n            }\n            else\n                result = \"Error: unknown item code\";\n        }\n        else\n            result = \"Error: quantity must be a whole number\";\n        return result;\n    }\n}\n",
+     "solution": "public class OrderDesk\n{\n    // One line for the group-order screen: the total and each share, or an error.\n    public static String summary(int itemCode, String qtyText, int people)\n    {\n        String result;\n        try\n        {\n            int price = Store.priceOf(itemCode);\n            int total = price * Store.parseQuantity(qtyText);\n            int share = Store.shareOf(total, people);\n            result = \"Total \" + Store.money(total) + \", \" + Store.money(share) + \" each\";\n        }\n        catch (ArrayIndexOutOfBoundsException e)\n        {\n            result = \"Error: unknown item code\";\n        }\n        catch (NumberFormatException e)\n        {\n            result = \"Error: quantity must be a whole number\";\n        }\n        catch (ArithmeticException e)\n        {\n            result = \"Error: party size can't be 0\";\n        }\n        return result;\n    }\n}\n"
+    }
+   ],
+   "main_file": "OrderDesk.java",
+   "solution_notes": "This is Figure 10-26 versus Figure 10-27 (pp. 410–411). In the nested version the purpose of the method, building the summary, is lost in a maze of `if` statements, and the starter shows the risk the book names: with three levels of nesting, two `else` branches carry each other's messages. In the try version the business-as-usual steps read top to bottom, and each problem is handled in its own catch block. The methods in `Store` detect the errors but don't handle them; the caller decides what to do, which is the flexibility the book describes on p. 411. Because the try block is abandoned at the first failure, the steps still happen in the right order: `(9, \"two\", 0)` reports the unknown item. `IndexOutOfBoundsException` (the parent class) is accepted for the first catch block.",
+   "warmup": [
+    {
+     "question": "Trace the starter for `summary(5, \"2\", 2)`. Which test fails first, which `else` runs, and what message does the customer see?",
+     "model_answer": "isItemCode(5) is false, so the outermost else runs and returns Error: quantity must be a whole number, although the real problem is the item code. That else holds the wrong message."
+    },
+    {
+     "question": "In the rewrite, `summary(9, \"two\", 0)` has three problems. Which message will it show, and why only that one?",
+     "model_answer": "Error: unknown item code. priceOf(9) is the first statement to throw; the rest of the try block is abandoned, so the quantity and party size are never examined."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The normal steps are together in one try block",
+     "within": "OrderDesk.summary",
+     "require": "\\btry\\s*\\{(?=[^}]*\\bpriceOf\\s*\\()(?=[^}]*\\bparseQuantity\\s*\\()(?=[^}]*\\bshareOf\\s*\\()",
+     "message": "Put the three `Store` calls in a single `try { ... }` block, in order, together with the statement that builds the summary. The normal path should read top to bottom without nesting."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The old pre-checks are gone",
+     "within": "OrderDesk.summary",
+     "require": "\\btry\\b",
+     "forbid": "\\bisItemCode\\b|\\bisWholeNumber\\b|\\bpeople\\s*(?:!=|==)\\s*0\\b",
+     "message": "Delete the `isItemCode()`, `isWholeNumber()` and `people != 0` tests. The `Store` methods already detect those problems and throw; your catch blocks handle them."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "One catch block per problem",
+     "within": "OrderDesk.summary",
+     "require": "^(?=[\\s\\S]*\\bcatch\\s*\\(\\s*(?:ArrayIndexOutOfBoundsException|IndexOutOfBoundsException)\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bcatch\\s*\\(\\s*NumberFormatException\\s+\\w+\\s*\\))(?=[\\s\\S]*\\bcatch\\s*\\(\\s*ArithmeticException\\s+\\w+\\s*\\))",
+     "message": "Add three catch blocks after the try block: `ArrayIndexOutOfBoundsException` (unknown item code), `NumberFormatException` (quantity) and `ArithmeticException` (party size), each setting its own message. The comments in Store.java say which method throws which."
+    }
+   ],
+   "hints": [
+    "Ignore the error handling for a moment. Write the four normal steps one after another, with no `if` at all.",
+    "Now wrap those steps in a try block. Store.java's comments list the three exception types you can expect.",
+    "Each catch block sets `result` to one message. Check each message against the cause it describes; that mix-up was the original bug."
+   ],
+   "test_program": {
+    "file_name": "TestOrderDesk.java",
+    "code": "public class TestOrderDesk\n{\n    public static void main(String[] args)\n    {\n        System.out.println(OrderDesk.summary(1, \"3\", 3));\n        System.out.println(OrderDesk.summary(0, \"2\", 4));\n        System.out.println(OrderDesk.summary(5, \"2\", 2));\n        System.out.println(OrderDesk.summary(2, \"two\", 2));\n        System.out.println(OrderDesk.summary(2, \"4\", 0));\n        System.out.println(OrderDesk.summary(9, \"two\", 0));\n    }\n}\n",
+    "expected_output": "Total $38.97, $12.99 each\nTotal $9.00, $2.25 each\nError: unknown item code\nError: quantity must be a whole number\nError: party size can't be 0\nError: unknown item code\n",
+    "predict": "Run the starter in your head first: which two of the six lines does it get wrong?",
+    "how_to_run": "Put `Store.java`, `OrderDesk.java` and `TestOrderDesk.java` in the same folder, then run `javac *.java` and `java TestOrderDesk`. In an IDE, add all three to one project and run `TestOrderDesk.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Compare the two versions of `summary()`. Why was the message mix-up easy to make in the nested version and hard to make in yours?",
+     "model_answer": "In the nested version each else is far from the test it belongs to, so it is easy to attach a message to the wrong branch. In the try version each catch block names the exception type right next to its message, so cause and message sit together."
+    },
+    {
+     "question": "`Store` throws but never catches. Describe a different program (a kiosk, a phone app, a nightly report) that should respond to one of these exceptions differently, and how.",
+     "model_answer": "Example: a nightly sales report could skip an order with an unknown item code and log it instead of showing an error line to a customer. Because Store only throws, each caller chooses its own response (p. 411)."
+    }
+   ],
+   "extension": "Store adds a fourth method, `applyCoupon(String code, int totalCents)`, that throws `IllegalArgumentException` for an expired coupon. Add the call to your try block and a fourth catch block. How many lines of the old nested version would the same change have touched?",
+   "worth_knowing": "Not every language took this path. Go, released by Google in 2009, has no try or catch: a function returns an error value next to its result, and callers check it with `if err != nil`. Its designers argue that makes failures visible; Java's designers chose to keep the normal path clean.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the try block reads as the normal path; one catch block per exception type with the matching message."
+    }
+   ]
+  },
+  {
+   "id": "10.6",
+   "title": "The greenhouse dashboard that won't compile",
+   "subtitle": "Checked exceptions: catch it, or say so in the header",
+   "source": "Ch. 10, section 10.6 (pp. 412–415)",
+   "minutes": 25,
+   "objectives": [
+    "Tell checked exceptions from unchecked ones and apply the catch-or-specify requirement",
+    "Declare an exception with a `throws` clause when the caller should decide what to do",
+    "Choose, method by method, whether to catch an exception or pass it on"
+   ],
+   "scenario": "A college greenhouse reads four wireless temperature sensors with `GreenhouseSensor.readTemperature()`, which is read-only. Its header says `throws IOException`, because a sensor can drop off the network; today the sensor in bed 3 is offline. Two pieces of software use the sensors, and they need different behaviour:\n\n- The **dashboard** shows one line per bed. One dead sensor must not take the whole screen down, so `statusLine()` should show `Bed 3: sensor offline` and carry on.\n- The **climate controller** opens and closes the vents from the average. A made-up average is dangerous, so `averageTemperature()` must not hide the problem: it passes the exception to the controller, which decides.\n\nRight now neither method compiles: `unreported exception IOException; must be caught or declared to be thrown`. With your fix, the test program prints:\n\n```\nBed 1: 21.5 C\nBed 2: 23.0 C\nBed 3: sensor offline\nBed 4: 22.5 C\nEast average: 22.25 C\nController: Sensor 3 is offline; vents unchanged\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`statusLine()` catches the `IOException` and returns `Bed N: sensor offline`. Its header has no `throws` clause."
+    },
+    {
+     "id": "R2",
+     "text": "`averageTemperature()` declares `throws IOException` in its header and does not catch the exception."
+    },
+    {
+     "id": "R3",
+     "text": "`Greenhouse.java` imports `java.io.IOException`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "GreenhouseSensor.java",
+     "editable": false,
+     "starter": "import java.io.IOException;\n\npublic class GreenhouseSensor\n{\n    private static final double[] READINGS = {21.5, 23.0, 0.0, 22.5};\n\n    // Reads the wireless sensor in a bed (1 to 4).\n    // Today the sensor in bed 3 is offline.\n    public static double readTemperature(int bed) throws IOException\n    {\n        if (bed == 3)\n            throw new IOException(\"Sensor \" + bed + \" is offline\");\n        return READINGS[bed - 1];\n    }\n}\n"
+    },
+    {
+     "name": "Greenhouse.java",
+     "starter": "public class Greenhouse\n{\n    // Dashboard: one line per bed. A dead sensor must not stop the dashboard.\n    public static String statusLine(int bed)\n    {\n        // TODO (R1): readTemperature() can throw a checked IOException.\n        return \"Bed \" + bed + \": \" + GreenhouseSensor.readTemperature(bed) + \" C\";\n    }\n\n    // Climate controller: the average of the given beds.\n    // The controller must know when a reading failed, so don't hide it here.\n    public static double averageTemperature(int[] beds)\n    {\n        // TODO (R2): pass the IOException on to the caller.\n        double total = 0;\n        for (int x = 0; x < beds.length; ++x)\n            total += GreenhouseSensor.readTemperature(beds[x]);\n        return total / beds.length;\n    }\n}\n",
+     "solution": "import java.io.IOException;\n\npublic class Greenhouse\n{\n    // Dashboard: one line per bed. A dead sensor must not stop the dashboard.\n    public static String statusLine(int bed)\n    {\n        try\n        {\n            return \"Bed \" + bed + \": \" + GreenhouseSensor.readTemperature(bed) + \" C\";\n        }\n        catch (IOException e)\n        {\n            return \"Bed \" + bed + \": sensor offline\";\n        }\n    }\n\n    // Climate controller: the average of the given beds.\n    // The controller must know when a reading failed, so don't hide it here.\n    public static double averageTemperature(int[] beds) throws IOException\n    {\n        double total = 0;\n        for (int x = 0; x < beds.length; ++x)\n            total += GreenhouseSensor.readTemperature(beds[x]);\n        return total / beds.length;\n    }\n}\n"
+    }
+   ],
+   "main_file": "Greenhouse.java",
+   "solution_notes": "`IOException` descends from `Exception` but not from `RuntimeException`, so it is a checked exception and subject to the catch or specify requirement: a method that can receive it must catch it or list it in a `throws` clause, or the code won't compile (pp. 413–414). Both choices are legitimate, and this lab needs one of each. The dashboard can recover, so `statusLine()` catches. The average has no honest value when a sensor is missing, so `averageTemperature()` specifies the exception and the controller, like the two `PriceList` applications (pp. 412–413), decides for itself. The test program's `catch (IOException e)` only compiles because the header says the method can throw it; if a student catches inside `averageTemperature()` instead, javac reports that the exception is never thrown in the body of the try. `READINGS[bed - 1]` could throw an `ArrayIndexOutOfBoundsException`, but that is unchecked, so nothing has to be declared for it.",
+   "warmup": [
+    {
+     "question": "`READINGS[bed - 1]` could also throw an exception, yet the compiler only complains about `readTemperature()`. What is the difference between the two exceptions?",
+     "model_answer": "ArrayIndexOutOfBoundsException is unchecked (it descends from RuntimeException), so Java doesn't require catching or declaring it. IOException is checked, so every method that can receive it must catch it or specify it in a throws clause (pp. 413–414)."
+    },
+    {
+     "question": "Both methods read the same sensor. Why should one catch the exception and the other pass it on?",
+     "model_answer": "The dashboard can recover by showing “sensor offline” for one bed. averageTemperature() can't produce a true average without bed 3, and the controller is the one that knows what to do with the vents, so the decision belongs to it."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "statusLine() catches the IOException",
+     "within": "Greenhouse.statusLine",
+     "require": "\\btry\\s*\\{[^}]*\\breadTemperature\\s*\\([^}]*\\}\\s*catch\\s*\\(\\s*(?:java\\.io\\.)?IOException\\s+\\w+\\s*\\)",
+     "message": "Call `readTemperature()` inside a try block and follow it with `catch (IOException e)` that returns `\"Bed \" + bed + \": sensor offline\"`. The dashboard can recover, so it handles the problem itself."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "statusLine() doesn't pass the problem on",
+     "require": "\\bstatusLine\\s*\\(\\s*int\\s+\\w+\\s*\\)\\s*\\{",
+     "forbid": "\\bstatusLine\\s*\\([^)]*\\)\\s*throws\\b",
+     "starter_passes": true,
+     "message": "Remove the `throws` clause from `statusLine()`. Once it catches the exception, nothing is left to declare, and the dashboard shouldn't have to deal with it."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "averageTemperature() specifies the IOException",
+     "require": "\\baverageTemperature\\s*\\([^)]*\\)\\s*throws\\s+(?:java\\.io\\.)?IOException\\b",
+     "message": "End the header with `throws IOException`: `public static double averageTemperature(int[] beds) throws IOException`. That tells every caller it must catch or pass on the failure.",
+     "hint": "Be specific: `throws Exception` would compile here but hides which failure to expect (p. 415)."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "averageTemperature() doesn't hide the failure",
+     "within": "Greenhouse.averageTemperature",
+     "require": "\\breadTemperature\\s*\\(",
+     "forbid": "\\bcatch\\b",
+     "starter_passes": true,
+     "message": "Don't catch the exception in `averageTemperature()`. Any average it returned would be made up; let the controller decide."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "IOException is imported",
+     "require": "\\bimport\\s+java\\.io\\.(?:IOException|\\*)\\s*;",
+     "message": "Add `import java.io.IOException;` at the top. Unlike `ArithmeticException`, IOException is in the `java.io` package, which isn't imported automatically."
+    }
+   ],
+   "hints": [
+    "The compiler message offers exactly two choices: “caught” or “declared to be thrown”. Pick one for each method using the brief.",
+    "For the dashboard, a try block around the reading and a catch block that returns a different line is enough.",
+    "For the controller, the change is in the method header, not in its body. Look at how `readTemperature()` announces its exception."
+   ],
+   "test_program": {
+    "file_name": "TestGreenhouse.java",
+    "code": "import java.io.IOException;\n\npublic class TestGreenhouse\n{\n    public static void main(String[] args)\n    {\n        for (int bed = 1; bed <= 4; ++bed)\n            System.out.println(Greenhouse.statusLine(bed));\n\n        int[] east = {1, 2};\n        int[] all = {1, 2, 3, 4};\n        try\n        {\n            System.out.println(\"East average: \"\n                + Greenhouse.averageTemperature(east) + \" C\");\n            System.out.println(\"Full average: \"\n                + Greenhouse.averageTemperature(all) + \" C\");\n        }\n        catch (IOException e)\n        {\n            System.out.println(\"Controller: \" + e.getMessage() + \"; vents unchanged\");\n        }\n    }\n}\n",
+    "expected_output": "Bed 1: 21.5 C\nBed 2: 23.0 C\nBed 3: sensor offline\nBed 4: 22.5 C\nEast average: 22.25 C\nController: Sensor 3 is offline; vents unchanged\n",
+    "predict": "The test program catches `IOException` around both averages. Predict: does `Full average` ever print? And what would happen to this test program if `averageTemperature()` caught the exception itself?",
+    "how_to_run": "Put `GreenhouseSensor.java`, `Greenhouse.java` and `TestGreenhouse.java` in the same folder, then run `javac *.java` and `java TestGreenhouse`. In an IDE, add all three to one project and run `TestGreenhouse.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Some programmers call checked exceptions “syntactic salt” (p. 414). Using this lab, explain what the salt protected you from.",
+     "model_answer": "The compiler refused to build until each caller of readTemperature() made a decision. Without that rule, the dashboard and controller could have ignored the offline sensor until it crashed in the greenhouse; the salt forced the failure to be planned for."
+    },
+    {
+     "question": "Why is `throws IOException` better than `throws Exception` in the header of `averageTemperature()`?",
+     "model_answer": "IOException tells callers exactly which failure to expect and lets them catch just that. throws Exception hides the information and forces callers to deal with every possible exception (p. 415)."
+    }
+   ],
+   "extension": "Add `public static double warmestBed(int[] beds)` for a phone app that should skip offline beds and return the highest reading it can get. Should it catch or specify? Write it, and add lines to the test program that call it with all four beds.",
+   "worth_knowing": "Java is unusual here. C#, designed a few years later, deliberately left checked exceptions out; its lead designer, Anders Hejlsberg, argued in a 2003 interview that programmers end up writing `throws Exception` everywhere. Kotlin, which runs on the Java Virtual Machine, has no checked exceptions either.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; one method catches, the other declares; the specific IOException type is used throughout."
+    }
+   ]
+  },
+  {
+   "id": "10.7",
+   "title": "The playlist import that died three methods deep",
+   "subtitle": "Follow the exception up the call stack, then catch it where you can decide",
+   "source": "Ch. 10, section 10.7 (pp. 415–418)",
+   "minutes": 25,
+   "objectives": [
+    "Read a stack trace from the method that threw back to `main()`",
+    "Explain how an uncaught exception travels up the call stack to the calling method",
+    "Choose the method where catching an exception makes sense, and leave the others alone"
+   ],
+   "scenario": "A music app imports road-trip playlists that friends type as text, one track per line: `Title|m:ss`. `importPlaylist()` calls `parseTrack()` for each line, and `parseTrack()` calls `parseDuration()`. One friend typed `3:4x`, and the whole import failed with `java.lang.NumberFormatException: For input string: \"4x\"`. After three `at java.base/...` lines from inside `Integer.parseInt()`, the stack trace continues with the program's own methods:\n\n```\nat Playlist.parseDuration(Playlist.java:25)\nat Playlist.parseTrack(Playlist.java:18)\nat Playlist.importPlaylist(Playlist.java:10)\nat TestPlaylist.main(TestPlaylist.java:11)\n```\n\nOne bad line shouldn't cost the other tracks. Catch the problem where the program can still decide what to do with that one line: skip it, print `Skipped line N: <the line>`, and keep importing. `parseTrack()` and `parseDuration()` stay as they are: they can't know whether a bad duration should be skipped, fixed or reported. With your fix, the test program prints:\n\n```\nSkipped line 3: Night Drive|3:4x\nImported 10 min 30 s\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Inside the loop of `importPlaylist()`, the call to `parseTrack()` is in a try block. A catch block for `NumberFormatException` prints `Skipped line N: <line>` (N counts from 1) and the loop continues."
+    },
+    {
+     "id": "R2",
+     "text": "`parseTrack()` and `parseDuration()` contain no try or catch. The exception travels up to `importPlaylist()`."
+    },
+    {
+     "id": "R3",
+     "text": "No `printStackTrace()` is left in the finished code."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "Playlist.java",
+     "starter": "public class Playlist\n{\n    // Each line looks like \"Title|m:ss\". Returns the total length in seconds.\n    public static int importPlaylist(String[] lines)\n    {\n        int total = 0;\n        for (int x = 0; x < lines.length; ++x)\n        {\n            // TODO (R1): one bad line shouldn't cancel the whole import.\n            total += parseTrack(lines[x]);\n        }\n        return total;\n    }\n\n    public static int parseTrack(String line)\n    {\n        int bar = line.indexOf('|');\n        return parseDuration(line.substring(bar + 1));\n    }\n\n    public static int parseDuration(String time)\n    {\n        int colon = time.indexOf(':');\n        int minutes = Integer.parseInt(time.substring(0, colon));\n        int seconds = Integer.parseInt(time.substring(colon + 1));\n        return minutes * 60 + seconds;\n    }\n}\n",
+     "solution": "public class Playlist\n{\n    // Each line looks like \"Title|m:ss\". Returns the total length in seconds.\n    public static int importPlaylist(String[] lines)\n    {\n        int total = 0;\n        for (int x = 0; x < lines.length; ++x)\n        {\n            try\n            {\n                total += parseTrack(lines[x]);\n            }\n            catch (NumberFormatException e)\n            {\n                System.out.println(\"Skipped line \" + (x + 1) + \": \" + lines[x]);\n            }\n        }\n        return total;\n    }\n\n    public static int parseTrack(String line)\n    {\n        int bar = line.indexOf('|');\n        return parseDuration(line.substring(bar + 1));\n    }\n\n    public static int parseDuration(String time)\n    {\n        int colon = time.indexOf(':');\n        int minutes = Integer.parseInt(time.substring(0, colon));\n        int seconds = Integer.parseInt(time.substring(colon + 1));\n        return minutes * 60 + seconds;\n    }\n}\n"
+    }
+   ],
+   "main_file": "Playlist.java",
+   "solution_notes": "`Integer.parseInt(\"4x\")` throws a `NumberFormatException` in `parseDuration()`. No method catches it, so it travels up the call stack: to `parseTrack()`, then `importPlaylist()`, then `main()`, then the JVM, which prints the trace and stops (pp. 415–417). The trace lists those calls from the top (where it was thrown) to the bottom (where it started), with a line number for each. Catching in `parseDuration()` would force it to invent a value such as 0, which hides the error; catching in `main()` would stop the import at the bad line. `importPlaylist()` knows the line and its number, so it can skip just that track. The try block must be inside the loop: a try block around the whole loop ends the import at line 3 and loses Home Stretch (the total becomes 7 min 35 s). `printStackTrace()` is useful while debugging but doesn't belong in a finished program (p. 417). Catching `IllegalArgumentException`, the parent of `NumberFormatException`, also passes.",
+   "warmup": [
+    {
+     "question": "Read the trace in the brief from the top `at Playlist...` line down. Which method threw the exception, and in what order were the methods called?",
+     "model_answer": "parseDuration() threw it (line 25, parseInt on \"4x\"). main() called importPlaylist() (TestPlaylist.java line 11), which called parseTrack() at line 10, which called parseDuration() at line 18. The trace lists them in reverse: the most recent call is on top, and the java.base lines above them are inside parseInt()."
+    },
+    {
+     "question": "If you wrapped the whole `for` loop in a try block instead of just the call, what total would the import report? Why?",
+     "model_answer": "7 min 35 s: only the first two tracks (210 + 245 = 455 seconds). The exception at line 3 abandons the try block, and the loop is inside it, so Home Stretch is never read."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The call is tried inside the loop",
+     "within": "Playlist.importPlaylist",
+     "require": "\\bfor\\s*\\([^)]*\\)\\s*\\{\\s*try\\s*\\{[^}]*\\bparseTrack\\s*\\(",
+     "message": "Put the try block inside the `for` loop, around `total += parseTrack(lines[x]);`. Then a bad line abandons only its own iteration and the loop moves to the next track."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "A catch block skips the bad line",
+     "within": "Playlist.importPlaylist",
+     "require": "\\bcatch\\s*\\(\\s*(?:NumberFormatException|IllegalArgumentException)\\s+\\w+\\s*\\)",
+     "message": "Add `catch (NumberFormatException e)` after the try block and print `Skipped line N: ` followed by the line. `Integer.parseInt()` throws that type for `4x`."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "parseDuration() lets the exception travel up",
+     "within": "Playlist.parseDuration",
+     "require": "\\bparseInt\\s*\\(",
+     "forbid": "\\btry\\b|\\bcatch\\b",
+     "starter_passes": true,
+     "message": "Leave `parseDuration()` without try or catch. It can't know whether a bad duration should be skipped, fixed or reported, so it lets the exception go to the method that called it."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "parseTrack() lets the exception travel up",
+     "within": "Playlist.parseTrack",
+     "require": "\\bparseDuration\\s*\\(",
+     "forbid": "\\btry\\b|\\bcatch\\b",
+     "starter_passes": true,
+     "message": "Leave `parseTrack()` without try or catch, too. The exception should pass through it to `importPlaylist()`, which knows the line number."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "No stack trace in the finished program",
+     "require": "\\bclass\\s+Playlist\\b",
+     "forbid": "\\bprintStackTrace\\s*\\(",
+     "starter_passes": true,
+     "message": "Remove `printStackTrace()`. It is a good tool while you develop (p. 417), but a user importing a playlist only needs to know which line was skipped."
+    }
+   ],
+   "hints": [
+    "Use the trace: list the methods it passes through and ask, for each one, “does this method know enough to skip one track?”",
+    "The method that knows the line number is the one with the loop.",
+    "Where the try block starts matters. It has to restart for each line, so it belongs inside the loop's braces."
+   ],
+   "test_program": {
+    "file_name": "TestPlaylist.java",
+    "code": "public class TestPlaylist\n{\n    public static void main(String[] args)\n    {\n        String[] roadTrip = {\n            \"Golden Hour|3:30\",\n            \"Low Tide|4:05\",\n            \"Night Drive|3:4x\",\n            \"Home Stretch|2:55\"\n        };\n        int seconds = Playlist.importPlaylist(roadTrip);\n        System.out.println(\"Imported \" + (seconds / 60) + \" min \" + (seconds % 60) + \" s\");\n    }\n}\n",
+    "expected_output": "Skipped line 3: Night Drive|3:4x\nImported 10 min 30 s\n",
+    "predict": "Predict the total the fixed import reports. Which tracks count, and how many seconds is that?",
+    "how_to_run": "Put `Playlist.java` and `TestPlaylist.java` in the same folder, then run `javac *.java` and `java TestPlaylist`. In an IDE, add both files to one project and run `TestPlaylist.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "Why is `parseDuration()` the wrong place to catch the exception, even though that is where it happens?",
+     "model_answer": "parseDuration() only sees \"3:4x\". To catch there it would have to return some number, such as 0, which silently adds a wrong track length. It doesn't know the line or what the user wants, so it should let the exception travel up."
+    },
+    {
+     "question": "The book says cycling through the stack has an advantage and a disadvantage (p. 417). Name both, using this program.",
+     "model_answer": "Advantage: each exception can be handled wherever it makes most sense, here in importPlaylist(). Disadvantage: in a larger program the place where an exception is caught can be far from where it started, so you need the trace to find the real source (parseDuration)."
+    }
+   ],
+   "extension": "A friend types a line with no time at all: `Intro`. Run it. Which exception appears now, and in which method? Decide whether `importPlaylist()` should skip that line too, and handle it.",
+   "worth_knowing": "Stack traces keep improving. Since Java 15, a `NullPointerException` message names exactly what was null, for example `Cannot invoke \"String.indexOf(int)\" because \"line\" is null`, instead of only giving a line number. The feature is called helpful NullPointerExceptions (JEP 358).",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the try block sits inside the loop; the helper methods are unchanged."
+    }
+   ]
+  },
+  {
+   "id": "10.8",
+   "title": "The climbing class that said “Class full” to nobody",
+   "subtitle": "Your own Exception class, thrown and caught",
+   "source": "Ch. 10, section 10.8 (pp. 419–421)",
+   "minutes": 30,
+   "objectives": [
+    "Create an Exception subclass whose constructor passes a message to `super()`",
+    "Throw your exception from a method and declare it in that method's header",
+    "Catch your exception in the caller and respond to it with `getMessage()`"
+   ],
+   "scenario": "A climbing gym's `ClimbingClass` keeps a roster with a fixed number of places. When a class is full, `enroll()` prints `Class full` and returns. The front-desk program doesn't know anything happened, so it tells the member they are in, and the phone app has no way to suggest another session.\n\nJava has no built-in exception for “this climbing class is full”, so make one:\n\n- `ClassFullException` is a checked exception. Its constructor takes the class name and passes `<name> is full` to its parent's constructor.\n- `enroll()` throws it instead of printing.\n- The front desk catches it and puts the member on the waitlist.\n\nWith your fix, the test program prints:\n\n```\nMaya is in Bouldering 101\nJonas is in Bouldering 101\nBouldering 101 is full; Priya is #1 on the waitlist\nBouldering 101 is full; Leo is #2 on the waitlist\nBouldering 101: 2 enrolled, 2 waiting\nApp: Bouldering 101 is full; try tomorrow\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`ClassFullException` extends `Exception`. Its constructor takes a `String` class name and passes `<name> is full` to `super()`."
+    },
+    {
+     "id": "R2",
+     "text": "`enroll()` declares `throws ClassFullException` and throws a new `ClassFullException` when the roster is full, instead of printing."
+    },
+    {
+     "id": "R3",
+     "text": "`FrontDesk.signUp()` catches the `ClassFullException`, adds the member to the waitlist, and prints `<message>; <member> is #N on the waitlist`."
+    },
+    {
+     "id": "R4",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ClassFullException.java",
+     "starter": "// TODO (R1): make this a checked exception. Its constructor takes the\n// class name and passes a message such as \"Bouldering 101 is full\" up.\npublic class ClassFullException\n{\n}\n",
+     "solution": "public class ClassFullException extends Exception\n{\n    public ClassFullException(String className)\n    {\n        super(className + \" is full\");\n    }\n}\n"
+    },
+    {
+     "name": "ClimbingClass.java",
+     "starter": "public class ClimbingClass\n{\n    private String name;\n    private String[] roster;\n    private int count;\n\n    public ClimbingClass(String className, int places)\n    {\n        name = className;\n        roster = new String[places];\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public int getCount()\n    {\n        return count;\n    }\n\n    // TODO (R2): printing tells the caller nothing. Throw a\n    // ClassFullException instead, and say so in the header.\n    public void enroll(String member)\n    {\n        if (count == roster.length)\n        {\n            System.out.println(\"Class full\");\n            return;\n        }\n        roster[count] = member;\n        ++count;\n    }\n}\n",
+     "solution": "public class ClimbingClass\n{\n    private String name;\n    private String[] roster;\n    private int count;\n\n    public ClimbingClass(String className, int places)\n    {\n        name = className;\n        roster = new String[places];\n    }\n\n    public String getName()\n    {\n        return name;\n    }\n\n    public int getCount()\n    {\n        return count;\n    }\n\n    public void enroll(String member) throws ClassFullException\n    {\n        if (count == roster.length)\n            throw new ClassFullException(name);\n        roster[count] = member;\n        ++count;\n    }\n}\n"
+    },
+    {
+     "name": "FrontDesk.java",
+     "starter": "public class FrontDesk\n{\n    private String[] waitlist = new String[10];\n    private int waiting;\n\n    // Signs a member up. When the class is full, the member goes on the waitlist.\n    public void signUp(ClimbingClass session, String member)\n    {\n        // TODO (R3): catch the ClassFullException and use the waitlist.\n        session.enroll(member);\n        System.out.println(member + \" is in \" + session.getName());\n    }\n\n    public int getWaiting()\n    {\n        return waiting;\n    }\n}\n",
+     "solution": "public class FrontDesk\n{\n    private String[] waitlist = new String[10];\n    private int waiting;\n\n    // Signs a member up. When the class is full, the member goes on the waitlist.\n    public void signUp(ClimbingClass session, String member)\n    {\n        try\n        {\n            session.enroll(member);\n            System.out.println(member + \" is in \" + session.getName());\n        }\n        catch (ClassFullException e)\n        {\n            waitlist[waiting] = member;\n            ++waiting;\n            System.out.println(e.getMessage() + \"; \" + member + \" is #\" + waiting\n                + \" on the waitlist\");\n        }\n    }\n\n    public int getWaiting()\n    {\n        return waiting;\n    }\n}\n"
+    }
+   ],
+   "main_file": "ClassFullException.java",
+   "solution_notes": "To be throwable, a class must extend a subclass of `Throwable`; for recoverable situations it extends `Exception`, and by convention its name ends in `Exception` (p. 419). Passing the text to `super(message)` uses the `Exception(String message)` constructor, so `getMessage()` returns it later (p. 419, Figure 10-37). Because `ClassFullException` extends `Exception` and not `RuntimeException`, it is checked: `enroll()` must declare it, and every caller must catch or declare it (section 10.6). `throw new ClassFullException(name)` creates the object only when it is needed, as in Figure 10-38 (pp. 419–420). The front desk and the app react differently to the same exception, which is the point of throwing it rather than printing (p. 421). Keep the success message inside the try block: if `enroll()` throws, it must not print that the member is in.",
+   "warmup": [
+    {
+     "question": "With the starter, what does the front desk print when Priya signs up for a full class? Why is that worse than a crash?",
+     "model_answer": "Class full, then Priya is in Bouldering 101. enroll() returns normally, so signUp() can't tell anything went wrong and confirms a place Priya doesn't have. A crash would at least be noticed."
+    },
+    {
+     "question": "Why should `ClassFullException` extend `Exception` rather than `Error`, and what does that choice force on every caller of `enroll()`?",
+     "model_answer": "Error is for serious problems a program can't recover from; a full class is recoverable (waitlist, another session). Extending Exception (not RuntimeException) makes it checked, so every caller must catch it or declare it."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "file": "ClassFullException.java",
+     "title": "ClassFullException is a checked exception",
+     "require": "\\bclass\\s+ClassFullException\\s+extends\\s+Exception\\b",
+     "message": "Write the header as `public class ClassFullException extends Exception`. Extending `Exception` (not `RuntimeException`) makes it a checked exception, so callers can't ignore it."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "file": "ClassFullException.java",
+     "title": "The constructor passes the message to super()",
+     "within": "ClassFullException.ClassFullException",
+     "require": "\\bsuper\\s*\\(\\s*\\w+\\s*\\+",
+     "message": "Give the class a constructor `public ClassFullException(String className)` whose first statement is `super(className + \" is full\");`. The parent stores the text, and `getMessage()` returns it.",
+     "hint": "Figure 10-37 (p. 419) passes a fixed String to `super()`; yours builds it from the parameter."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "file": "ClimbingClass.java",
+     "title": "enroll() declares the exception",
+     "require": "\\benroll\\s*\\(\\s*String\\s+\\w+\\s*\\)\\s*throws\\s+ClassFullException\\b",
+     "message": "Add `throws ClassFullException` to the end of the `enroll()` header. It is a checked exception, so a method that throws it without catching it must say so."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "file": "ClimbingClass.java",
+     "title": "enroll() throws instead of printing",
+     "within": "ClimbingClass.enroll",
+     "require": "\\bthrow\\s*\\(?\\s*new\\s+ClassFullException\\s*\\(\\s*(?:this\\s*\\.\\s*)?name\\s*\\)",
+     "forbid": "\\bSystem\\s*\\.\\s*out\\b",
+     "message": "Replace the print and the `return` with `throw new ClassFullException(name);`. Throwing hands the problem to the caller, and the caller decides what to say."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "file": "FrontDesk.java",
+     "title": "The front desk catches the exception",
+     "within": "FrontDesk.signUp",
+     "require": "\\btry\\s*\\{[^}]*\\benroll\\s*\\([^}]*\\}\\s*catch\\s*\\(\\s*ClassFullException\\s+\\w+\\s*\\)",
+     "message": "Put `session.enroll(member);` and the success message in a try block, followed by `catch (ClassFullException e)`. In the catch block, add the member to `waitlist` and print the message."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "file": "FrontDesk.java",
+     "title": "The waitlist message uses getMessage()",
+     "within": "FrontDesk.signUp",
+     "require": "\\bgetMessage\\s*\\(\\s*\\)",
+     "message": "Start the waitlist line with `e.getMessage()`, so the wording lives in one place: the exception class."
+    }
+   ],
+   "hints": [
+    "Start with ClassFullException.java: compare it with HighBalanceException in Figure 10-37 (p. 419). What changes when the message depends on the class name?",
+    "In `enroll()`, the `if` stays; only what happens inside it changes. Remember the header, too: the compiler checks it.",
+    "In `signUp()`, the line that says the member is in must only run if `enroll()` succeeded. Which block guarantees that?"
+   ],
+   "test_program": {
+    "file_name": "TestClimbingClass.java",
+    "code": "public class TestClimbingClass\n{\n    public static void main(String[] args)\n    {\n        ClimbingClass intro = new ClimbingClass(\"Bouldering 101\", 2);\n        FrontDesk desk = new FrontDesk();\n        desk.signUp(intro, \"Maya\");\n        desk.signUp(intro, \"Jonas\");\n        desk.signUp(intro, \"Priya\");\n        desk.signUp(intro, \"Leo\");\n        System.out.println(intro.getName() + \": \" + intro.getCount() + \" enrolled, \"\n            + desk.getWaiting() + \" waiting\");\n\n        // The phone app calls enroll() directly and reacts in its own way.\n        try\n        {\n            intro.enroll(\"Sam\");\n        }\n        catch (ClassFullException e)\n        {\n            System.out.println(\"App: \" + e.getMessage() + \"; try tomorrow\");\n        }\n    }\n}\n",
+    "expected_output": "Maya is in Bouldering 101\nJonas is in Bouldering 101\nBouldering 101 is full; Priya is #1 on the waitlist\nBouldering 101 is full; Leo is #2 on the waitlist\nBouldering 101: 2 enrolled, 2 waiting\nApp: Bouldering 101 is full; try tomorrow\n",
+    "predict": "The front desk and the phone app receive the same exception from the same method. Predict both lines they print for it. Where does the shared wording `Bouldering 101 is full` come from?",
+    "how_to_run": "Put `ClassFullException.java`, `ClimbingClass.java`, `FrontDesk.java` and `TestClimbingClass.java` in the same folder, then run `javac *.java` and `java TestClimbingClass`. In an IDE, add all four to one project and run `TestClimbingClass.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "The front desk and the app handle the full class differently. Why is that only possible because `enroll()` throws instead of printing?",
+     "model_answer": "Printing decides the response inside enroll(), once for everyone, and the caller never learns about it. Throwing reports the problem to whoever called, so each caller can choose: the desk uses the waitlist, the app suggests tomorrow's sessions."
+    },
+    {
+     "question": "The book warns against creating too many Exception types (p. 421). Was a new class justified here, or would a built-in exception have done? Explain.",
+     "model_answer": "Justified: no built-in exception means “class full”, and catching something general like IllegalStateException could also catch unrelated bugs. A named type documents the situation and lets callers catch exactly it. (A well-argued no is acceptable too.)"
+    }
+   ],
+   "extension": "Add `ClassCancelledException` for a session the gym cancels, thrown by `enroll()` when a `cancelled` flag is true. Should the front desk handle it in the same catch block or a separate one? Write the catch block(s) and a test line.",
+   "worth_knowing": "Java's own libraries follow the naming rule you just used: `FileNotFoundException`, `DateTimeException`, `UnknownHostException`. Since Java 1.4, an exception can also carry a cause, `new Exception(message, cause)`, so a high-level error such as “class full” can wrap the low-level problem behind it. That is called exception chaining.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the exception class is small and named ...Exception; the success message prints only after a successful enroll()."
+    }
+   ]
+  },
+  {
+   "id": "10.9",
+   "title": "The night bus that left at 00:0-15",
+   "subtitle": "State what must be true with assert, then fix the logic",
+   "source": "Ch. 10, section 10.9 (pp. 421–424)",
+   "minutes": 25,
+   "objectives": [
+    "Tell a logic error that produces wrong output from one that stops the program",
+    "Write an `assert` statement with a Boolean expression and an error message",
+    "Use an assertion's message to find and fix a negative-remainder bug"
+   ],
+   "scenario": "A transit agency's schedule stores departure times as minutes after midnight of the service day. Times can be negative (a bus that leaves before midnight) or larger than a day (after midnight, on the next calendar day). `ShiftClock.toClock()` turns them into a 24-hour `HH:MM` time for the signs at the stops. Nothing crashes, but the late-night sign showed **00:0-15**, and another one showed **0-1:00**.\n\nFirst add an assertion that states what must be true after the remainder is taken: the minute of the day is from 0 to 1439. Run the test program with your assertion before you fix anything, and read its message. Then fix the calculation so negative offsets wrap back into the previous day. With your fix, the test program prints:\n\n```\n75 -> 01:15\n1439 -> 23:59\n1470 -> 00:30\n-15 -> 23:45\n-1500 -> 23:00\n```\n\nThe test program switches assertions on for `ShiftClock`, the same as running it with `java -ea`.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`toClock()` contains an `assert` statement, with a message after the colon, stating that the minute of the day is at least 0 and less than `MINUTES_PER_DAY`."
+    },
+    {
+     "id": "R2",
+     "text": "Negative offsets wrap correctly: -15 becomes `23:45`."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ShiftClock.java",
+     "starter": "public class ShiftClock\n{\n    public static final int MINUTES_PER_DAY = 1440;\n\n    // Turns minutes after midnight into a 24-hour \"HH:MM\" time.\n    // Offsets can be negative (before midnight) or more than one day.\n    public static String toClock(int minutes)\n    {\n        int dayMinute = minutes % MINUTES_PER_DAY;\n        // TODO (R1): assert what must be true about dayMinute here.\n        // TODO (R2): then fix the calculation for negative offsets.\n        int hour = dayMinute / 60;\n        int minute = dayMinute % 60;\n        return twoDigits(hour) + \":\" + twoDigits(minute);\n    }\n\n    private static String twoDigits(int value)\n    {\n        if (value < 10)\n            return \"0\" + value;\n        return \"\" + value;\n    }\n}\n",
+     "solution": "public class ShiftClock\n{\n    public static final int MINUTES_PER_DAY = 1440;\n\n    // Turns minutes after midnight into a 24-hour \"HH:MM\" time.\n    // Offsets can be negative (before midnight) or more than one day.\n    public static String toClock(int minutes)\n    {\n        int dayMinute = minutes % MINUTES_PER_DAY;\n        if (dayMinute < 0)\n            dayMinute += MINUTES_PER_DAY;\n        assert dayMinute >= 0 && dayMinute < MINUTES_PER_DAY\n            : minutes + \" gave minute of day \" + dayMinute;\n        int hour = dayMinute / 60;\n        int minute = dayMinute % 60;\n        return twoDigits(hour) + \":\" + twoDigits(minute);\n    }\n\n    private static String twoDigits(int value)\n    {\n        if (value < 10)\n            return \"0\" + value;\n        return \"\" + value;\n    }\n}\n"
+    }
+   ],
+   "main_file": "ShiftClock.java",
+   "solution_notes": "This is the EvenOdd bug from pp. 422–423 in a new place: the remainder operator gives a negative result when its left operand is negative, so -15 % 1440 is -15, and the hour and minute come out as 0 and -15. No exception is thrown, so it is a logic error that only produces wrong output. `assert booleanExpression : message` states a condition that must be true; when it is false and assertions are enabled, Java throws an `AssertionError` showing the message (p. 422), here `-15 gave minute of day -15`. The test program enables assertions for ShiftClock with `ClassLoader.getSystemClassLoader().setClassAssertionStatus(\"ShiftClock\", true)`, which has the same effect as `java -ea` (p. 423) and must run before the class is first used. Adding `MINUTES_PER_DAY` to a negative remainder fixes it; `Math.floorMod(minutes, MINUTES_PER_DAY)` (Java 8) does the same in one call. The book's other fix, `Math.abs()`, worked for even/odd but is wrong here: it turns -15 into 00:15 instead of 23:45. The assertion stays in the finished code and costs nothing when assertions are off (p. 424).",
+   "warmup": [
+    {
+     "question": "With the starter, work out `toClock(-15)` by hand: the values of `dayMinute`, `hour` and `minute`, and the final String.",
+     "model_answer": "dayMinute = -15 % 1440 = -15, hour = -15 / 60 = 0, minute = -15 % 60 = -15. twoDigits(0) is \"00\" and twoDigits(-15) is \"0-15\" (since -15 < 10), so the sign shows 00:0-15."
+    },
+    {
+     "question": "The program never stopped. Is this a syntax error, a runtime error, or another kind of logic error? How did anyone notice it?",
+     "model_answer": "A logic error that doesn't end the program: it compiles and runs but produces incorrect output (p. 421). Someone noticed only because the sign looked wrong."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "toClock() asserts the range of the minute of the day",
+     "within": "ShiftClock.toClock",
+     "require": "\\bassert\\s+(?=[^;:]*(?:>=\\s*0\\b|\\b0\\s*<=|>\\s*-\\s*1\\b))(?=[^;:]*(?:<\\s*(?:MINUTES_PER_DAY|1440)\\b|<=\\s*1439\\b|(?:MINUTES_PER_DAY|1440)\\s*>))[^;:]+:[^;]+;",
+     "message": "Add `assert dayMinute >= 0 && dayMinute < MINUTES_PER_DAY : <a message>;` after `dayMinute` is computed. Include the values in the message, as Figure 10-43 does, so the error tells you what went wrong.",
+     "hint": "The syntax is `assert booleanExpression : optionalErrorMessage` (p. 422); this lab asks for the message."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Negative remainders wrap into the day",
+     "within": "ShiftClock.toClock",
+     "require": [
+      "\\bMath\\s*\\.\\s*floorMod\\s*\\(",
+      "\\+=\\s*(?:MINUTES_PER_DAY|1440)\\b",
+      "\\+\\s*(?:MINUTES_PER_DAY|1440)\\s*\\)\\s*%",
+      "\\bdayMinute\\s*=\\s*(?:MINUTES_PER_DAY|1440)\\s*\\+",
+      "\\bdayMinute\\s*=\\s*dayMinute\\s*\\+\\s*(?:MINUTES_PER_DAY|1440)\\b"
+     ],
+     "forbid": "\\bMath\\s*\\.\\s*abs\\s*\\(",
+     "message": "When the remainder is negative, add `MINUTES_PER_DAY` to it (or use `Math.floorMod(minutes, MINUTES_PER_DAY)`). `Math.abs()` fixed the book's even/odd test but turns -15 into 00:15, the wrong side of midnight."
+    }
+   ],
+   "hints": [
+    "Write the assertion first and run the test program before fixing anything. The AssertionError's message tells you which value broke your assumption.",
+    "The book met the same surprise on p. 423: a negative left operand gives a negative remainder. How far is -15 from the start of the day it belongs to?",
+    "A minute of the day of -15 means 15 minutes before midnight. Adding one whole day of minutes moves it to the same moment on the previous day."
+   ],
+   "test_program": {
+    "file_name": "TestShiftClock.java",
+    "code": "public class TestShiftClock\n{\n    public static void main(String[] args)\n    {\n        // Same as running with java -ea, for ShiftClock only.\n        ClassLoader.getSystemClassLoader().setClassAssertionStatus(\"ShiftClock\", true);\n\n        int[] departures = {75, 1439, 1470, -15, -1500};\n        for (int x = 0; x < departures.length; ++x)\n            System.out.println(departures[x] + \" -> \" + ShiftClock.toClock(departures[x]));\n    }\n}\n",
+    "expected_output": "75 -> 01:15\n1439 -> 23:59\n1470 -> 00:30\n-15 -> 23:45\n-1500 -> 23:00\n",
+    "predict": "Add only your assertion, then predict: how many lines print before the program stops, and what does the AssertionError message say?",
+    "how_to_run": "Put `ShiftClock.java` and `TestShiftClock.java` in the same folder, then run `javac *.java` and `java TestShiftClock` (the test program switches assertions on for ShiftClock; `java -ea TestShiftClock` works too). In an IDE, add both files to one project and run `TestShiftClock.java`. You don't type anything."
+   },
+   "reflection": [
+    {
+     "question": "With only the assertion added, what did the AssertionError tell you that the wrong sign `00:0-15` did not?",
+     "model_answer": "It stopped at the first bad value and named it: -15 gave minute of day -15. That shows the problem is the remainder (it is negative), not the hour/minute split or twoDigits()."
+    },
+    {
+     "question": "Why is an assertion the right tool here, but the wrong tool for checking that a dispatcher typed a number?",
+     "model_answer": "The assertion checks the programmer's own assumption, which should always be true when the code is right, and it is switched off for users. Typed input can be wrong at any time in production, so it needs exception handling or a decision the program always performs (p. 424)."
+    }
+   ],
+   "extension": "Add `toClock12(int minutes)` that returns `11:45 PM` style times, and assert what must be true about the hour you display (1 to 12). Which offsets would you add to the test program to try to break your assertion?",
+   "worth_knowing": "`assert` became a Java keyword in Java 1.4 (2002). Older programs that used `assert` as a method or variable name, common in testing code at the time, stopped compiling, which is one reason assertions are off by default and switched on with `-ea`.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; the assertion follows the calculation it checks and its message includes the values."
+    }
+   ]
+  },
+  {
+   "id": "10.10",
+   "title": "The check-in kiosk that wouldn't compile on a Mac",
+   "subtitle": "Calling a library method that throws: Runtime.exec() and IOException",
+   "source": "Ch. 10, section 10.10 (pp. 430–432)",
+   "minutes": 20,
+   "objectives": [
+    "Call a method written by others that throws a checked `IOException`",
+    "Decide between catching the exception and adding `throws IOException` to a header",
+    "Keep a program running, at a reduced level, when an optional tool can't start"
+   ],
+   "scenario": "A clinic's check-in kiosk opens the Windows on-screen keyboard for patients who prefer to tap, then asks for their name. `KeyboardLauncher.openTool()` starts a helper program with `Runtime.getRuntime().exec()`, but it doesn't compile: `exec()` throws a checked `IOException`.\n\nA developer suggested adding `throws IOException` to every header up to `main()`, as the note on p. 431 describes. The clinic said no: some kiosks are Macs, where the keyboard program doesn't exist, and check-in must still work there. So `openTool()` handles the failure itself:\n\n- If the program starts, return `true`.\n- If `exec()` throws, print `Could not start <program>` (the first word of the command) and return `false`.\n\nThe test program asks for a tool that doesn't exist on any computer, so its output is the same everywhere:\n\n```\nCould not start no-such-keyboard-app\nKeyboard opened: false\nTip: type with the physical keyboard\nEnter name >> Hello, Rosa!\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The `exec()` call is in a try block, followed by `catch (IOException ...)` that prints `Could not start <command[0]>` and returns `false`."
+    },
+    {
+     "id": "R2",
+     "text": "`openTool()` returns `true` when `exec()` succeeds, and its header has no `throws` clause."
+    },
+    {
+     "id": "R3",
+     "text": "Running the test program prints exactly what it expects.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "KeyboardLauncher.java",
+     "starter": "import java.io.IOException;\n\npublic class KeyboardLauncher\n{\n    // Starts a helper program, such as the Windows on-screen keyboard.\n    // command[0] is the program; any other elements are its arguments.\n    // Returns true if the program started.\n    public static boolean openTool(String[] command)\n    {\n        // TODO (R1, R2): exec() throws a checked IOException, so this doesn't compile.\n        Process proc = Runtime.getRuntime().exec(command);\n        return true;\n    }\n}\n",
+     "solution": "import java.io.IOException;\n\npublic class KeyboardLauncher\n{\n    // Starts a helper program, such as the Windows on-screen keyboard.\n    // command[0] is the program; any other elements are its arguments.\n    // Returns true if the program started.\n    public static boolean openTool(String[] command)\n    {\n        try\n        {\n            Process proc = Runtime.getRuntime().exec(command);\n            return true;\n        }\n        catch (IOException e)\n        {\n            System.out.println(\"Could not start \" + command[0]);\n            return false;\n        }\n    }\n}\n"
+    },
+    {
+     "name": "CheckInKiosk.java",
+     "editable": false,
+     "starter": "import java.util.Scanner;\n\n// The real kiosk. Run it on Windows to see the on-screen keyboard (p. 431).\npublic class CheckInKiosk\n{\n    public static void main(String[] args)\n    {\n        String[] keyboard = {\"cmd\", \"/c\", \"C:\\\\Windows\\\\System32\\\\osk.exe\"};\n        if (!KeyboardLauncher.openTool(keyboard))\n            System.out.println(\"Tip: type with the physical keyboard\");\n\n        Scanner input = new Scanner(System.in);\n        System.out.print(\"Enter name >> \");\n        String name = input.nextLine();\n        System.out.println(\"Hello, \" + name + \"!\");\n    }\n}\n"
+    }
+   ],
+   "main_file": "KeyboardLauncher.java",
+   "solution_notes": "`exec()` declares `throws IOException`, a checked exception, so a method that calls it must catch it or specify it (p. 430; section 10.6). Specifying it all the way up to `main()`, the alternative in the note on p. 431, would end the program when the keyboard can't start, so the kiosk catches it in `openTool()` and continues without the on-screen keyboard: the program stays fault tolerant (p. 396). The book's Figure 10-48 passes one String, `exec(\"cmd /c ...\")`; this lab uses the `String[]` form because `exec(String)` has been deprecated since JDK 18, so newer compilers warn about it. On Windows, `CheckInKiosk` really opens the keyboard. Running a command that doesn't exist is the reliable way to make `exec()` throw on every operating system, which is why the test program asks for `no-such-keyboard-app`. The unused `proc` variable mirrors Figure 10-48; `Runtime.getRuntime().exec(command);` alone is fine too.",
+   "warmup": [
+    {
+     "question": "The starter's only new statement is the call to `exec()`. Why does that one statement stop the whole file from compiling, when `nextLine()` in the kiosk compiles without any try block?",
+     "model_answer": "exec() declares a checked IOException, so the compiler requires openTool() to catch it or declare it. nextLine() can only throw unchecked exceptions, which don't need to be caught or declared."
+    },
+    {
+     "question": "If `openTool()` declared `throws IOException` (and so did `main()`), what would happen on a kiosk where the keyboard program can't start?",
+     "model_answer": "The IOException would travel up to main() and out to the JVM, and the program would end with a stack trace before asking for the patient's name. Check-in would stop."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "exec() is tried and the IOException caught",
+     "within": "KeyboardLauncher.openTool",
+     "require": "\\btry\\s*\\{[^}]*\\bexec\\s*\\([^}]*\\}\\s*catch\\s*\\(\\s*(?:java\\.io\\.)?IOException\\s+\\w+\\s*\\)",
+     "message": "Put the `exec()` call in a try block and follow it with `catch (IOException e)`. That handles the failure here, so the kiosk can carry on without the on-screen keyboard."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "The catch block reports and returns false",
+     "within": "KeyboardLauncher.openTool",
+     "require": "\\bcatch\\s*\\([^)]*\\)\\s*\\{[^}]*\\breturn\\s+false\\s*;",
+     "message": "In the catch block, print `\"Could not start \" + command[0]` and `return false;`, so the caller knows to show the tip."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "Success returns true and nothing is passed on",
+     "require": "\\bboolean\\s+openTool\\s*\\(\\s*String\\s*\\[\\s*\\]\\s*\\w+\\s*\\)\\s*\\{",
+     "forbid": "\\bopenTool\\s*\\([^)]*\\)\\s*throws\\b",
+     "starter_passes": true,
+     "message": "Keep the header as `public static boolean openTool(String[] command)`, with no `throws` clause. The clinic wants the kiosk to survive a missing keyboard, so this method handles the exception."
+    }
+   ],
+   "hints": [
+    "Read the compiler message: it gives you the two choices from section 10.6. The brief tells you which one the clinic wants.",
+    "Two outcomes, two return values: one at the end of the try block, one in the catch block.",
+    "The program name is the first element of the array the caller passed in."
+   ],
+   "test_program": {
+    "file_name": "TestKeyboardLauncher.java",
+    "code": "import java.util.Scanner;\n\npublic class TestKeyboardLauncher\n{\n    public static void main(String[] args)\n    {\n        String[] missing = {\"no-such-keyboard-app\"};\n        boolean opened = KeyboardLauncher.openTool(missing);\n        System.out.println(\"Keyboard opened: \" + opened);\n        if (!opened)\n            System.out.println(\"Tip: type with the physical keyboard\");\n\n        Scanner input = new Scanner(\"Rosa\\n\");\n        System.out.print(\"Enter name >> \");\n        String name = input.nextLine();\n        System.out.println(\"Hello, \" + name + \"!\");\n    }\n}\n",
+    "expected_output": "Could not start no-such-keyboard-app\nKeyboard opened: false\nTip: type with the physical keyboard\nEnter name >> Hello, Rosa!\n",
+    "predict": "Predict the first line of output. Which statement prints it, and does the name prompt still appear after the failure?",
+    "how_to_run": "Put `KeyboardLauncher.java`, `CheckInKiosk.java` and `TestKeyboardLauncher.java` in the same folder, then run `javac *.java` and `java TestKeyboardLauncher`. In an IDE, add all three to one project and run `TestKeyboardLauncher.java`. You don't type anything. On Windows, also run `CheckInKiosk` to see the on-screen keyboard appear."
+   },
+   "reflection": [
+    {
+     "question": "The note on p. 431 says many programmers would simply add `throws IOException` to `main()`. When is that reasonable, and why wasn't it here?",
+     "model_answer": "It is reasonable in a small demo where failing to open the keyboard can just end the program. Here the keyboard is optional and check-in is essential, so the failure must be handled where it happens and the program must continue."
+    },
+    {
+     "question": "Fault-tolerant programs keep working “possibly at a reduced level” when something fails (p. 396). What is the reduced level for this kiosk?",
+     "model_answer": "Patients can still check in, but only with the physical keyboard: the on-screen keyboard isn't available, and the kiosk shows a tip instead of crashing."
+    }
+   ],
+   "extension": "On Windows, change the test program to open the calculator with `{\"cmd\", \"/c\", \"C:\\\\Windows\\\\System32\\\\calc.exe\"}` (the You Do It on p. 432). Then write a second version of `openTool()` that uses `ProcessBuilder` instead of `Runtime.exec()` and compare the two.",
+   "worth_knowing": "Java 5 (2004) added `ProcessBuilder`, now the preferred way to start programs. JDK 18 deprecated `Runtime.exec(String)` because it splits the command at spaces, which breaks paths such as `C:\\Program Files\\...`. Passing a `String[]` avoids the splitting.",
+   "rubric": [
+    {
+     "criterion": "Requirements met",
+     "points": 5,
+     "evidence": "All structure checks pass and the test program's output matches (see the lab report)."
+    },
+    {
+     "criterion": "Reasoning",
+     "points": 3,
+     "evidence": "Warm-up and reflection answers are specific to this code, in the student's own words."
+    },
+    {
+     "criterion": "Style",
+     "points": 2,
+     "evidence": "Allman braces kept; openTool() has one try block, one catch block and a return value on each path."
+    }
+   ]
+  }
+ ]
+}

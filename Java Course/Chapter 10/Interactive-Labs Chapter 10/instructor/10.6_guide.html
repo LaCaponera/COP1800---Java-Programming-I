@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The greenhouse dashboard that won&#x27;t compile</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.6</div>
+  <h1>The greenhouse dashboard that won&#x27;t compile</h1>
+<h2>Objectives</h2><ul><li>Tell checked exceptions from unchecked ones and apply the catch-or-specify requirement</li><li>Declare an exception with a <code>throws</code> clause when the caller should decide what to do</li><li>Choose, method by method, whether to catch an exception or pass it on</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>statusLine()</code> catches the <code>IOException</code> and returns <code>Bed N: sensor offline</code>. Its header has no <code>throws</code> clause.</li><li><strong>R2</strong> <code>averageTemperature()</code> declares <code>throws IOException</code> in its header and does not catch the exception.</li><li><strong>R3</strong> <code>Greenhouse.java</code> imports <code>java.io.IOException</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>READINGS[bed - 1]</code> could also throw an exception, yet the compiler only complains about <code>readTemperature()</code>. What is the difference between the two exceptions?</p><div class="answer"><p>ArrayIndexOutOfBoundsException is unchecked (it descends from RuntimeException), so Java doesn&#x27;t require catching or declaring it. IOException is checked, so every method that can receive it must catch it or specify it in a throws clause (pp. 413–414).</p></div></li><li><p>Both methods read the same sensor. Why should one catch the exception and the other pass it on?</p><div class="answer"><p>The dashboard can recover by showing “sensor offline” for one bed. averageTemperature() can&#x27;t produce a true average without bed 3, and the controller is the one that knows what to do with the vents, so the decision belongs to it.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">GreenhouseSensor.java (read-only for students)</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">GreenhouseSensor</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">READINGS</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mf">21.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">23.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">22.5</span><span class="t-p">};</span>
+
+<span class="t-w">    </span><span class="t-c1">// Reads the wireless sensor in a bed (1 to 4).</span>
+<span class="t-w">    </span><span class="t-c1">// Today the sensor in bed 3 is offline.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">readTemperature</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">throw</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">IOException</span><span class="t-p">(</span><span class="t-s">"Sensor "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is offline"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">READINGS</span><span class="t-o">[</span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">Greenhouse.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Greenhouse</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Dashboard: one line per bed. A dead sensor must not stop the dashboard.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">statusLine</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1): readTemperature() can throw a checked IOException.</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Bed "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">GreenhouseSensor</span><span class="t-p">.</span><span class="t-na">readTemperature</span><span class="t-p">(</span><span class="t-n">bed</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" C"</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Climate controller: the average of the given beds.</span>
+<span class="t-w">    </span><span class="t-c1">// The controller must know when a reading failed, so don't hide it here.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">averageTemperature</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">beds</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R2): pass the IOException on to the caller.</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">beds</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">GreenhouseSensor</span><span class="t-p">.</span><span class="t-na">readTemperature</span><span class="t-p">(</span><span class="t-n">beds</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">beds</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">Greenhouse.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Greenhouse</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Dashboard: one line per bed. A dead sensor must not stop the dashboard.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">statusLine</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Bed "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">GreenhouseSensor</span><span class="t-p">.</span><span class="t-na">readTemperature</span><span class="t-p">(</span><span class="t-n">bed</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" C"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">IOException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"Bed "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": sensor offline"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Climate controller: the average of the given beds.</span>
+<span class="t-w">    </span><span class="t-c1">// The controller must know when a reading failed, so don't hide it here.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">averageTemperature</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">beds</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">IOException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">beds</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">GreenhouseSensor</span><span class="t-p">.</span><span class="t-na">readTemperature</span><span class="t-p">(</span><span class="t-n">beds</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">beds</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>IOException</code> descends from <code>Exception</code> but not from <code>RuntimeException</code>, so it is a checked exception and subject to the catch or specify requirement: a method that can receive it must catch it or list it in a <code>throws</code> clause, or the code won&#x27;t compile (pp. 413–414). Both choices are legitimate, and this lab needs one of each. The dashboard can recover, so <code>statusLine()</code> catches. The average has no honest value when a sensor is missing, so <code>averageTemperature()</code> specifies the exception and the controller, like the two <code>PriceList</code> applications (pp. 412–413), decides for itself. The test program&#x27;s <code>catch (IOException e)</code> only compiles because the header says the method can throw it; if a student catches inside <code>averageTemperature()</code> instead, javac reports that the exception is never thrown in the body of the try. <code>READINGS[bed - 1]</code> could throw an <code>ArrayIndexOutOfBoundsException</code>, but that is unchecked, so nothing has to be declared for it.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestGreenhouse.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestGreenhouse</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">bed</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">bed</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">Greenhouse</span><span class="t-p">.</span><span class="t-na">statusLine</span><span class="t-p">(</span><span class="t-n">bed</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">east</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">all</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"East average: "</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Greenhouse</span><span class="t-p">.</span><span class="t-na">averageTemperature</span><span class="t-p">(</span><span class="t-n">east</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" C"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Full average: "</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Greenhouse</span><span class="t-p">.</span><span class="t-na">averageTemperature</span><span class="t-p">(</span><span class="t-n">all</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" C"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">IOException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Controller: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">.</span><span class="t-na">getMessage</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"; vents unchanged"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Bed 1: 21.5 C
+Bed 2: 23.0 C
+Bed 3: sensor offline
+Bed 4: 22.5 C
+East average: 22.25 C
+Controller: Sensor 3 is offline; vents unchanged
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>statusLine() catches the IOException<div class="small">in <code>Greenhouse.statusLine</code></div></td><td><div><span class="tag">require</span> <code>\btry\s*\{[^}]*\breadTemperature\s*\([^}]*\}\s*catch\s*\(\s*(?:java\.io\.)?IOException\s+\w+\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>statusLine() doesn&#x27;t pass the problem on<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bstatusLine\s*\(\s*int\s+\w+\s*\)\s*\{</code></div><div><span class="tag">forbid</span> <code>\bstatusLine\s*\([^)]*\)\s*throws\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>averageTemperature() specifies the IOException<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\baverageTemperature\s*\([^)]*\)\s*throws\s+(?:java\.io\.)?IOException\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>averageTemperature() doesn&#x27;t hide the failure<div class="small">in <code>Greenhouse.averageTemperature</code></div></td><td><div><span class="tag">require</span> <code>\breadTemperature\s*\(</code></div><div><span class="tag">forbid</span> <code>\bcatch\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>IOException is imported<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bimport\s+java\.io\.(?:IOException|\*)\s*;</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · statusLine() catches the IOException</dt><dd><p>Call <code>readTemperature()</code> inside a try block and follow it with <code>catch (IOException e)</code> that returns <code>&quot;Bed &quot; + bed + &quot;: sensor offline&quot;</code>. The dashboard can recover, so it handles the problem itself.</p></dd><dt>C2 · statusLine() doesn&#x27;t pass the problem on</dt><dd><p>Remove the <code>throws</code> clause from <code>statusLine()</code>. Once it catches the exception, nothing is left to declare, and the dashboard shouldn&#x27;t have to deal with it.</p></dd><dt>C3 · averageTemperature() specifies the IOException</dt><dd><p>End the header with <code>throws IOException</code>: <code>public static double averageTemperature(int[] beds) throws IOException</code>. That tells every caller it must catch or pass on the failure.</p><div class='small'><strong>Hint:</strong></div><p>Be specific: <code>throws Exception</code> would compile here but hides which failure to expect (p. 415).</p></dd><dt>C4 · averageTemperature() doesn&#x27;t hide the failure</dt><dd><p>Don&#x27;t catch the exception in <code>averageTemperature()</code>. Any average it returned would be made up; let the controller decide.</p></dd><dt>C5 · IOException is imported</dt><dd><p>Add <code>import java.io.IOException;</code> at the top. Unlike <code>ArithmeticException</code>, IOException is in the <code>java.io</code> package, which isn&#x27;t imported automatically.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>The compiler message offers exactly two choices: “caught” or “declared to be thrown”. Pick one for each method using the brief.</p></li><li><p>For the dashboard, a try block around the reading and a catch block that returns a different line is enough.</p></li><li><p>For the controller, the change is in the method header, not in its body. Look at how <code>readTemperature()</code> announces its exception.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Some programmers call checked exceptions “syntactic salt” (p. 414). Using this lab, explain what the salt protected you from.</p><div class="answer"><p>The compiler refused to build until each caller of readTemperature() made a decision. Without that rule, the dashboard and controller could have ignored the offline sensor until it crashed in the greenhouse; the salt forced the failure to be planned for.</p></div></li><li><p>Why is <code>throws IOException</code> better than <code>throws Exception</code> in the header of <code>averageTemperature()</code>?</p><div class="answer"><p>IOException tells callers exactly which failure to expect and lets them catch just that. throws Exception hides the information and forces callers to deal with every possible exception (p. 415).</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>public static double warmestBed(int[] beds)</code> for a phone app that should skip offline beds and return the highest reading it can get. Should it catch or specify? Write it, and add lines to the test program that call it with all four beds.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; one method catches, the other declares; the specific IOException type is used throughout.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

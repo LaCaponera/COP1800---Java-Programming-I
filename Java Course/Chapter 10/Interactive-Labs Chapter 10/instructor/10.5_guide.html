@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The group order that reported the wrong mistake</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.5</div>
+  <h1>The group order that reported the wrong mistake</h1>
+<h2>Objectives</h2><ul><li>Rewrite nested error-checking <code>if</code> statements as one try block followed by catch blocks</li><li>Explain how grouping the normal steps together makes logic easier to follow and harder to get wrong</li><li>Use methods that throw exceptions without handling them, and decide how the caller responds</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>summary()</code> calls <code>priceOf()</code>, <code>parseQuantity()</code> and <code>shareOf()</code> in one try block, together with the line that builds the total, and no longer uses the pre-checks (<code>isItemCode()</code>, <code>isWholeNumber()</code>, <code>people != 0</code>).</li><li><strong>R2</strong> Catch blocks return <code>Error: unknown item code</code> for <code>ArrayIndexOutOfBoundsException</code>, <code>Error: quantity must be a whole number</code> for <code>NumberFormatException</code>, and <code>Error: party size can&#x27;t be 0</code> for <code>ArithmeticException</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter for <code>summary(5, &quot;2&quot;, 2)</code>. Which test fails first, which <code>else</code> runs, and what message does the customer see?</p><div class="answer"><p>isItemCode(5) is false, so the outermost else runs and returns Error: quantity must be a whole number, although the real problem is the item code. That else holds the wrong message.</p></div></li><li><p>In the rewrite, <code>summary(9, &quot;two&quot;, 0)</code> has three problems. Which message will it show, and why only that one?</p><div class="answer"><p>Error: unknown item code. priceOf(9) is the first statement to throw; the rest of the try block is abandoned, so the quantity and party size are never examined.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">Store.java (read-only for students)</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Store</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">PRICES</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">450</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1299</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2500</span><span class="t-p">};</span><span class="t-w">   </span><span class="t-c1">// cents, by item code</span>
+
+<span class="t-w">    </span><span class="t-c1">// Throws ArrayIndexOutOfBoundsException for an unknown item code.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">priceOf</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">itemCode</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">PRICES</span><span class="t-o">[</span><span class="t-n">itemCode</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Throws NumberFormatException when the text isn't a whole number.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">parseQuantity</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Throws ArithmeticException when people is 0.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">shareOf</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">totalCents</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">totalCents</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Pre-checks used by the old order screen.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isItemCode</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">itemCode</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">itemCode</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">itemCode</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">PRICES</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">isWholeNumber</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">text</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">();</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-o">!</span><span class="t-n">Character</span><span class="t-p">.</span><span class="t-na">isDigit</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">.</span><span class="t-na">charAt</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">)))</span>
+<span class="t-w">                </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// 3897 -&gt; "$38.97"</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">money</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">cents</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">pennies</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">cents</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">100</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">cents</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">100</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">pennies</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"0"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pennies</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">cents</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mi">100</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"."</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">pennies</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">OrderDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">OrderDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// One line for the group-order screen: the total and each share, or an error.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">summary</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">itemCode</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">qtyText</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1, R2): rewrite with one try block and three catch blocks.</span>
+<span class="t-w">        </span><span class="t-c1">// The normal steps are buried, and two messages are on the wrong branches.</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">isItemCode</span><span class="t-p">(</span><span class="t-n">itemCode</span><span class="t-p">))</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">priceOf</span><span class="t-p">(</span><span class="t-n">itemCode</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">isWholeNumber</span><span class="t-p">(</span><span class="t-n">qtyText</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">parseQuantity</span><span class="t-p">(</span><span class="t-n">qtyText</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">people</span><span class="t-w"> </span><span class="t-o">!=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">                </span><span class="t-p">{</span>
+<span class="t-w">                    </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">share</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">shareOf</span><span class="t-p">(</span><span class="t-n">total</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">);</span>
+<span class="t-w">                    </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Total "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">money</span><span class="t-p">(</span><span class="t-n">total</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">money</span><span class="t-p">(</span><span class="t-n">share</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" each"</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-p">}</span>
+<span class="t-w">                </span><span class="t-k">else</span>
+<span class="t-w">                    </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Error: party size can't be 0"</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-k">else</span>
+<span class="t-w">                </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Error: unknown item code"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">else</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Error: quantity must be a whole number"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">OrderDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">OrderDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// One line for the group-order screen: the total and each share, or an error.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">summary</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">itemCode</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">qtyText</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">priceOf</span><span class="t-p">(</span><span class="t-n">itemCode</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">price</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">parseQuantity</span><span class="t-p">(</span><span class="t-n">qtyText</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">share</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">shareOf</span><span class="t-p">(</span><span class="t-n">total</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Total "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">money</span><span class="t-p">(</span><span class="t-n">total</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">", "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">Store</span><span class="t-p">.</span><span class="t-na">money</span><span class="t-p">(</span><span class="t-n">share</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" each"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">ArrayIndexOutOfBoundsException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Error: unknown item code"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">NumberFormatException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Error: quantity must be a whole number"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">ArithmeticException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Error: party size can't be 0"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>This is Figure 10-26 versus Figure 10-27 (pp. 410–411). In the nested version the purpose of the method, building the summary, is lost in a maze of <code>if</code> statements, and the starter shows the risk the book names: with three levels of nesting, two <code>else</code> branches carry each other&#x27;s messages. In the try version the business-as-usual steps read top to bottom, and each problem is handled in its own catch block. The methods in <code>Store</code> detect the errors but don&#x27;t handle them; the caller decides what to do, which is the flexibility the book describes on p. 411. Because the try block is abandoned at the first failure, the steps still happen in the right order: <code>(9, &quot;two&quot;, 0)</code> reports the unknown item. <code>IndexOutOfBoundsException</code> (the parent class) is accepted for the first catch block.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestOrderDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestOrderDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">summary</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"3"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">3</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">summary</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"2"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">4</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">summary</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"2"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">summary</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"two"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">summary</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"4"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">OrderDesk</span><span class="t-p">.</span><span class="t-na">summary</span><span class="t-p">(</span><span class="t-mi">9</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"two"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Total $38.97, $12.99 each
+Total $9.00, $2.25 each
+Error: unknown item code
+Error: quantity must be a whole number
+Error: party size can&#x27;t be 0
+Error: unknown item code
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The normal steps are together in one try block<div class="small">in <code>OrderDesk.summary</code></div></td><td><div><span class="tag">require</span> <code>\btry\s*\{(?=[^}]*\bpriceOf\s*\()(?=[^}]*\bparseQuantity\s*\()(?=[^}]*\bshareOf\s*\()</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The old pre-checks are gone<div class="small">in <code>OrderDesk.summary</code></div></td><td><div><span class="tag">require</span> <code>\btry\b</code></div><div><span class="tag">forbid</span> <code>\bisItemCode\b|\bisWholeNumber\b|\bpeople\s*(?:!=|==)\s*0\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>One catch block per problem<div class="small">in <code>OrderDesk.summary</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bcatch\s*\(\s*(?:ArrayIndexOutOfBoundsException|IndexOutOfBoundsException)\s+\w+\s*\))(?=[\s\S]*\bcatch\s*\(\s*NumberFormatException\s+\w+\s*\))(?=[\s\S]*\bcatch\s*\(\s*ArithmeticException\s+\w+\s*\))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The normal steps are together in one try block</dt><dd><p>Put the three <code>Store</code> calls in a single <code>try { ... }</code> block, in order, together with the statement that builds the summary. The normal path should read top to bottom without nesting.</p></dd><dt>C2 · The old pre-checks are gone</dt><dd><p>Delete the <code>isItemCode()</code>, <code>isWholeNumber()</code> and <code>people != 0</code> tests. The <code>Store</code> methods already detect those problems and throw; your catch blocks handle them.</p></dd><dt>C3 · One catch block per problem</dt><dd><p>Add three catch blocks after the try block: <code>ArrayIndexOutOfBoundsException</code> (unknown item code), <code>NumberFormatException</code> (quantity) and <code>ArithmeticException</code> (party size), each setting its own message. The comments in Store.java say which method throws which.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Ignore the error handling for a moment. Write the four normal steps one after another, with no <code>if</code> at all.</p></li><li><p>Now wrap those steps in a try block. Store.java&#x27;s comments list the three exception types you can expect.</p></li><li><p>Each catch block sets <code>result</code> to one message. Check each message against the cause it describes; that mix-up was the original bug.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Compare the two versions of <code>summary()</code>. Why was the message mix-up easy to make in the nested version and hard to make in yours?</p><div class="answer"><p>In the nested version each else is far from the test it belongs to, so it is easy to attach a message to the wrong branch. In the try version each catch block names the exception type right next to its message, so cause and message sit together.</p></div></li><li><p><code>Store</code> throws but never catches. Describe a different program (a kiosk, a phone app, a nightly report) that should respond to one of these exceptions differently, and how.</p><div class="answer"><p>Example: a nightly sales report could skip an order with an unknown item code and log it instead of showing an error line to a customer. Because Store only throws, each caller chooses its own response (p. 411).</p></div></li></ol>
+<h2>Extension</h2><p>Store adds a fourth method, <code>applyCoupon(String code, int totalCents)</code>, that throws <code>IllegalArgumentException</code> for an expired coupon. Add the call to your try block and a fourth catch block. How many lines of the old nested version would the same change have touched?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; the try block reads as the normal path; one catch block per exception type with the matching message.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

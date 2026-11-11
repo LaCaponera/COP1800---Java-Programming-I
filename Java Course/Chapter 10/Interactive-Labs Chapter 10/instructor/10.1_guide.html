@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The driver dashboard that crashed on a day off</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.1</div>
+  <h1>The driver dashboard that crashed on a day off</h1>
+<h2>Objectives</h2><ul><li>Read an exception message and its stack trace: the type, the method, the file and the line</li><li>Tell an Exception (a program can recover) from an Error (it usually can&#x27;t)</li><li>Prevent a runtime exception with a decision, the traditional technique on pp. 396–397</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>averageFareCents()</code> returns 0 when <code>trips</code> is 0. Test <code>trips</code> before you divide.</li><li><strong>R2</strong> <code>averageSpeed()</code> returns 0.0 when <code>hours</code> is 0, instead of <code>Infinity</code> or <code>NaN</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Read the support log in the brief. What type of exception is it, in which method and on which line of which file was it thrown, and which line of the test program made that call?</p><div class="answer"><p>An ArithmeticException with the message / by zero, thrown in DriverStats.averageFareCents at line 7 of DriverStats.java. It was called from line 10 of TestDriverStats.java, in main().</p></div></li><li><p>With the starter, predict <code>averageSpeed(0.0, 0.0)</code> and <code>averageSpeed(12.5, 0.0)</code>. Will either one crash?</p><div class="answer"><p>Neither crashes. Dividing a double by 0 is allowed: 12.5 / 0.0 is Infinity and 0.0 / 0.0 is NaN (not a number).</p></div></li></ol>
+<h2>Solution</h2><div class="file">DriverStats.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">DriverStats</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Average fare per trip, in cents (integer division).</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">averageFareCents</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">totalCents</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">trips</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">trips</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">totalCents</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">trips</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// Average speed in miles per hour.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">averageSpeed</span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">miles</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-w"> </span><span class="t-o">&lt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">miles</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">hours</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Integer division by 0 has no answer, so Java throws an <code>ArithmeticException</code> with the message <code>/ by zero</code> (p. 395). The trace says where: <code>DriverStats.averageFareCents</code>, line 7 of DriverStats.java, called from line 10 of the test program. It is an <code>Exception</code>, not an <code>Error</code>, so the program can recover (p. 394); here the simplest recovery is to never divide, using a decision as <code>Division2</code> does (Figure 10-5, p. 397). Floating-point division by 0 is allowed and gives <code>Infinity</code> (p. 395), and 0.0 / 0.0 gives <code>NaN</code>, so the speed method throws nothing and a <code>catch</code> block would never run: only a decision can catch that mistake. <code>hours &lt;= 0</code> also rejects a negative time from a bad clock; <code>hours == 0</code> passes the test as well.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestDriverStats.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestDriverStats</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Monday fare: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DriverStats</span><span class="t-p">.</span><span class="t-na">averageFareCents</span><span class="t-p">(</span><span class="t-mi">8400</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">6</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cents"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Monday speed: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DriverStats</span><span class="t-p">.</span><span class="t-na">averageSpeed</span><span class="t-p">(</span><span class="t-mf">96.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">4.0</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" mph"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sunday fare: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DriverStats</span><span class="t-p">.</span><span class="t-na">averageFareCents</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" cents"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Sunday speed: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DriverStats</span><span class="t-p">.</span><span class="t-na">averageSpeed</span><span class="t-p">(</span><span class="t-mf">0.0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" mph"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"GPS glitch speed: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">DriverStats</span><span class="t-p">.</span><span class="t-na">averageSpeed</span><span class="t-p">(</span><span class="t-mf">12.5</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mf">0.0</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" mph"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Monday fare: 1400 cents
+Monday speed: 24.0 mph
+Sunday fare: 0 cents
+Sunday speed: 0.0 mph
+GPS glitch speed: 0.0 mph
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>averageFareCents() tests trips before dividing<div class="small">in <code>DriverStats.averageFareCents</code></div></td><td><div><span class="tag">require</span> <code>\btrips\s*(?:==|&lt;=|&lt;|!=|&gt;)\s*0\b</code></div><div><span class="tag">require</span> <code>\b0\s*(?:==|&gt;=|&gt;|!=|&lt;)\s*trips\b</code></div><div><span class="tag">require</span> <code>\bcatch\s*\(\s*(?:ArithmeticException|Exception)\s+\w+\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>averageSpeed() tests hours before dividing<div class="small">in <code>DriverStats.averageSpeed</code></div></td><td><div><span class="tag">require</span> <code>\bhours\s*(?:==|&lt;=|&lt;|!=|&gt;)\s*0(?:\.0)?\b</code></div><div><span class="tag">require</span> <code>\b0(?:\.0)?\s*(?:==|&gt;=|&gt;|!=|&lt;)\s*hours\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>No catch block waiting for a crash that never comes<div class="small">in <code>DriverStats.averageSpeed</code></div></td><td><div><span class="tag">forbid</span> <code>\bcatch\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · averageFareCents() tests trips before dividing</dt><dd><p>Before <code>totalCents / trips</code>, test whether <code>trips</code> is 0 and return 0 in that case. The trace shows the crash comes from exactly that division.</p><div class='small'><strong>Hint:</strong></div><p>Figure 10-5 (p. 397) prevents the same crash with one <code>if</code>.</p></dd><dt>C2 · averageSpeed() tests hours before dividing</dt><dd><p>Test <code>hours</code> before dividing and return 0.0 when it is 0. A double divided by 0 gives Infinity or NaN instead of throwing, so only a decision notices the problem.</p></dd><dt>C3 · No catch block waiting for a crash that never comes</dt><dd><p>Remove the <code>catch</code> from <code>averageSpeed()</code>. Dividing a double by 0 never throws, so the catch block can&#x27;t run; the decision is what protects this method.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start with the trace: the top <code>at</code> line names the method and line that divided by 0. What should a driver with zero trips see there?</p></li><li><p><code>Division2</code> on p. 397 asks one question before it divides. Ask the same question about <code>trips</code> and return 0 early.</p></li><li><p>Doubles behave differently: p. 395 says dividing a double by 0 is allowed. The speed method needs its own test of <code>hours</code>, because nothing will be thrown.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The fare method crashed, but the speed method quietly returned Infinity. Which failure is more dangerous for a driver dashboard, and why?</p><div class="answer"><p>The quiet one. The crash is noticed and reported at once, with a trace that points to the line. Infinity or NaN flows into charts and weekly reports with no warning, so nobody knows the numbers are wrong.</p></div></li><li><p>The trace had two <code>at</code> lines. What does the top one tell you, and what does the bottom one add?</p><div class="answer"><p>The top line is where the exception was thrown (the division in averageFareCents, line 7). The bottom line is the call that passed 0 trips (main in the test program), which tells you which caller supplied the data that caused it.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>fuelEconomy(double miles, double gallons)</code> and decide what it should return for 0 gallons. Then think ahead: Division2&#x27;s <code>if</code> can&#x27;t help when a user types <code>six</code> instead of 6, because <code>nextInt()</code> throws before your code gets the value. Section 10.2 handles that case.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces and indentation kept; each test sits right before the division it protects.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

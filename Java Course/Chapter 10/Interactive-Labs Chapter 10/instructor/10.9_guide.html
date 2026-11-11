@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The night bus that left at 00:0-15</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.9</div>
+  <h1>The night bus that left at 00:0-15</h1>
+<h2>Objectives</h2><ul><li>Tell a logic error that produces wrong output from one that stops the program</li><li>Write an <code>assert</code> statement with a Boolean expression and an error message</li><li>Use an assertion&#x27;s message to find and fix a negative-remainder bug</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>toClock()</code> contains an <code>assert</code> statement, with a message after the colon, stating that the minute of the day is at least 0 and less than <code>MINUTES_PER_DAY</code>.</li><li><strong>R2</strong> Negative offsets wrap correctly: -15 becomes <code>23:45</code>.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, work out <code>toClock(-15)</code> by hand: the values of <code>dayMinute</code>, <code>hour</code> and <code>minute</code>, and the final String.</p><div class="answer"><p>dayMinute = -15 % 1440 = -15, hour = -15 / 60 = 0, minute = -15 % 60 = -15. twoDigits(0) is &quot;00&quot; and twoDigits(-15) is &quot;0-15&quot; (since -15 &lt; 10), so the sign shows 00:0-15.</p></div></li><li><p>The program never stopped. Is this a syntax error, a runtime error, or another kind of logic error? How did anyone notice it?</p><div class="answer"><p>A logic error that doesn&#x27;t end the program: it compiles and runs but produces incorrect output (p. 421). Someone noticed only because the sign looked wrong.</p></div></li></ol>
+<h2>Solution</h2><div class="file">ShiftClock.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ShiftClock</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">MINUTES_PER_DAY</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">1440</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Turns minutes after midnight into a 24-hour "HH:MM" time.</span>
+<span class="t-w">    </span><span class="t-c1">// Offsets can be negative (before midnight) or more than one day.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">toClock</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-n">MINUTES_PER_DAY</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">MINUTES_PER_DAY</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">assert</span><span class="t-w"> </span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">&gt;=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-w"> </span><span class="t-o">&amp;&amp;</span><span class="t-w"> </span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">MINUTES_PER_DAY</span>
+<span class="t-w">            </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" gave minute of day "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">dayMinute</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">hour</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minute</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">dayMinute</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">twoDigits</span><span class="t-p">(</span><span class="t-n">hour</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">twoDigits</span><span class="t-p">(</span><span class="t-n">minute</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">twoDigits</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">value</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-mi">10</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">"0"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-s">""</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">value</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>This is the EvenOdd bug from pp. 422–423 in a new place: the remainder operator gives a negative result when its left operand is negative, so -15 % 1440 is -15, and the hour and minute come out as 0 and -15. No exception is thrown, so it is a logic error that only produces wrong output. <code>assert booleanExpression : message</code> states a condition that must be true; when it is false and assertions are enabled, Java throws an <code>AssertionError</code> showing the message (p. 422), here <code>-15 gave minute of day -15</code>. The test program enables assertions for ShiftClock with <code>ClassLoader.getSystemClassLoader().setClassAssertionStatus(&quot;ShiftClock&quot;, true)</code>, which has the same effect as <code>java -ea</code> (p. 423) and must run before the class is first used. Adding <code>MINUTES_PER_DAY</code> to a negative remainder fixes it; <code>Math.floorMod(minutes, MINUTES_PER_DAY)</code> (Java 8) does the same in one call. The book&#x27;s other fix, <code>Math.abs()</code>, worked for even/odd but is wrong here: it turns -15 into 00:15 instead of 23:45. The assertion stays in the finished code and costs nothing when assertions are off (p. 424).</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestShiftClock.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestShiftClock</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// Same as running with java -ea, for ShiftClock only.</span>
+<span class="t-w">        </span><span class="t-n">ClassLoader</span><span class="t-p">.</span><span class="t-na">getSystemClassLoader</span><span class="t-p">().</span><span class="t-na">setClassAssertionStatus</span><span class="t-p">(</span><span class="t-s">"ShiftClock"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">departures</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-mi">75</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1439</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">1470</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">15</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-mi">1500</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">departures</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">departures</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" -&gt; "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">ShiftClock</span><span class="t-p">.</span><span class="t-na">toClock</span><span class="t-p">(</span><span class="t-n">departures</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">75 -&gt; 01:15
+1439 -&gt; 23:59
+1470 -&gt; 00:30
+-15 -&gt; 23:45
+-1500 -&gt; 23:00
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>toClock() asserts the range of the minute of the day<div class="small">in <code>ShiftClock.toClock</code></div></td><td><div><span class="tag">require</span> <code>\bassert\s+(?=[^;:]*(?:&gt;=\s*0\b|\b0\s*&lt;=|&gt;\s*-\s*1\b))(?=[^;:]*(?:&lt;\s*(?:MINUTES_PER_DAY|1440)\b|&lt;=\s*1439\b|(?:MINUTES_PER_DAY|1440)\s*&gt;))[^;:]+:[^;]+;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Negative remainders wrap into the day<div class="small">in <code>ShiftClock.toClock</code></div></td><td><div><span class="tag">require</span> <code>\bMath\s*\.\s*floorMod\s*\(</code></div><div><span class="tag">require</span> <code>\+=\s*(?:MINUTES_PER_DAY|1440)\b</code></div><div><span class="tag">require</span> <code>\+\s*(?:MINUTES_PER_DAY|1440)\s*\)\s*%</code></div><div><span class="tag">require</span> <code>\bdayMinute\s*=\s*(?:MINUTES_PER_DAY|1440)\s*\+</code></div><div><span class="tag">require</span> <code>\bdayMinute\s*=\s*dayMinute\s*\+\s*(?:MINUTES_PER_DAY|1440)\b</code></div><div><span class="tag">forbid</span> <code>\bMath\s*\.\s*abs\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · toClock() asserts the range of the minute of the day</dt><dd><p>Add <code>assert dayMinute &gt;= 0 &amp;&amp; dayMinute &lt; MINUTES_PER_DAY : &lt;a message&gt;;</code> after <code>dayMinute</code> is computed. Include the values in the message, as Figure 10-43 does, so the error tells you what went wrong.</p><div class='small'><strong>Hint:</strong></div><p>The syntax is <code>assert booleanExpression : optionalErrorMessage</code> (p. 422); this lab asks for the message.</p></dd><dt>C2 · Negative remainders wrap into the day</dt><dd><p>When the remainder is negative, add <code>MINUTES_PER_DAY</code> to it (or use <code>Math.floorMod(minutes, MINUTES_PER_DAY)</code>). <code>Math.abs()</code> fixed the book&#x27;s even/odd test but turns -15 into 00:15, the wrong side of midnight.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Write the assertion first and run the test program before fixing anything. The AssertionError&#x27;s message tells you which value broke your assumption.</p></li><li><p>The book met the same surprise on p. 423: a negative left operand gives a negative remainder. How far is -15 from the start of the day it belongs to?</p></li><li><p>A minute of the day of -15 means 15 minutes before midnight. Adding one whole day of minutes moves it to the same moment on the previous day.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>With only the assertion added, what did the AssertionError tell you that the wrong sign <code>00:0-15</code> did not?</p><div class="answer"><p>It stopped at the first bad value and named it: -15 gave minute of day -15. That shows the problem is the remainder (it is negative), not the hour/minute split or twoDigits().</p></div></li><li><p>Why is an assertion the right tool here, but the wrong tool for checking that a dispatcher typed a number?</p><div class="answer"><p>The assertion checks the programmer&#x27;s own assumption, which should always be true when the code is right, and it is switched off for users. Typed input can be wrong at any time in production, so it needs exception handling or a decision the program always performs (p. 424).</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>toClock12(int minutes)</code> that returns <code>11:45 PM</code> style times, and assert what must be true about the hour you display (1 to 12). Which offsets would you add to the test program to try to break your assertion?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; the assertion follows the calculation it checks and its message includes the values.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

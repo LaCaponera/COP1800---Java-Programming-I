@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The thermostat log that gave up after one typo</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.2</div>
+  <h1>The thermostat log that gave up after one typo</h1>
+<h2>Objectives</h2><ul><li>Place a statement that might fail in a <code>try</code> block and handle the failure in a <code>catch</code> block</li><li>Use the <code>catch</code> block to repair the data so the program continues with a valid value</li><li>Clear the rest of a bad input line with <code>nextLine()</code> so later entries can still be read</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The call to <code>nextInt()</code> is inside a <code>try</code> block, and a <code>catch</code> block that catches <code>InputMismatchException</code> (or <code>Exception</code>) prints <code>Reading N skipped: not a whole number</code>.</li><li><strong>R2</strong> The <code>catch</code> block stores a usable value in <code>temps[x]</code>: the previous reading, or <code>SET_POINT</code> when the first reading is bad.</li><li><strong>R3</strong> After each reading, good or bad, <code>nextLine()</code> discards the rest of the line.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Suppose you put <code>nextInt()</code> in a try block and a catch block that only prints the message, but no <code>nextLine()</code>. The log is <code>68</code>, <code>71</code>, <code>seventy</code>, <code>72</code>, ... Predict which readings get skipped, and why.</p><div class="answer"><p>Readings 3, 4, 5 and 6 are all skipped. nextInt() leaves the word seventy in the input when it fails, so every later nextInt() call meets the same word and fails again (Figure 10-13).</p></div></li><li><p>A classmate writes <code>int t = input.nextInt();</code> inside the try block and <code>temps[x] = t;</code> after the catch block. What does the compiler say, and why?</p><div class="answer"><p>cannot find symbol t. A variable declared inside a try block is local to that block, so it is out of scope after the block ends (p. 402).</p></div></li></ol>
+<h2>Solution</h2><div class="file">ReadingLog.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.InputMismatchException</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ReadingLog</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kd">final</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">SET_POINT</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">70</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Reads `count` temperatures, one per line, and returns them.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-nf">readTemperatures</span><span class="t-p">(</span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[</span><span class="t-n">count</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">try</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">temps</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextInt</span><span class="t-p">();</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">InputMismatchException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Reading "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" skipped: not a whole number"</span><span class="t-p">);</span>
+<span class="t-w">                </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">)</span>
+<span class="t-w">                    </span><span class="t-n">temps</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">SET_POINT</span><span class="t-p">;</span>
+<span class="t-w">                </span><span class="t-k">else</span>
+<span class="t-w">                    </span><span class="t-n">temps</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">-</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">double</span><span class="t-w"> </span><span class="t-nf">average</span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">double</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>nextInt()</code> throws an <code>InputMismatchException</code> when the next token isn&#x27;t an int, so it goes in the <code>try</code> block and the <code>catch</code> block reports the problem (pp. 397–399). The catch block also repairs the data, the idea in Figure 10-11 (p. 400): after the try...catch pair, <code>temps[x]</code> is guaranteed to hold a usable value. When <code>nextInt()</code> fails, the Scanner does not consume the bad token, so without <code>nextLine()</code> every later call fails on the same word (Figures 10-12 to 10-14, p. 401). Calling <code>nextLine()</code> after the try...catch pair, not only in the catch block, also clears <code>70 F</code>: <code>nextInt()</code> succeeds on 70, but the <code>F</code> is still on the line. <code>catch (Exception e)</code> passes too (the book uses it in Figure 10-12); the specific type documents what you expect and needs <code>import java.util.InputMismatchException;</code> or <code>java.util.*</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestReadingLog.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Locale</span><span class="t-p">;</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestReadingLog</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">lobby</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-s">"68\n71\nseventy\n72\n70 F\n69\n"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Lobby"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">ReadingLog</span><span class="t-p">.</span><span class="t-na">readTemperatures</span><span class="t-p">(</span><span class="t-n">lobby</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">6</span><span class="t-p">));</span>
+
+<span class="t-w">        </span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">gym</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-s">"cold\n66\n"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">show</span><span class="t-p">(</span><span class="t-s">"Gym"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">ReadingLog</span><span class="t-p">.</span><span class="t-na">readTemperatures</span><span class="t-p">(</span><span class="t-n">gym</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">show</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">room</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-n">room</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">":"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">t</span><span class="t-w"> </span><span class="t-p">:</span><span class="t-w"> </span><span class="t-n">temps</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">" "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">t</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">room</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" average: "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-p">.</span><span class="t-na">format</span><span class="t-p">(</span><span class="t-n">Locale</span><span class="t-p">.</span><span class="t-na">US</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"%.1f"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">ReadingLog</span><span class="t-p">.</span><span class="t-na">average</span><span class="t-p">(</span><span class="t-n">temps</span><span class="t-p">)));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Reading 3 skipped: not a whole number
+Lobby: 68 71 71 72 70 69
+Lobby average: 70.2
+Reading 1 skipped: not a whole number
+Gym: 70 66
+Gym average: 68.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>nextInt() is tried<div class="small">in <code>ReadingLog.readTemperatures</code></div></td><td><div><span class="tag">require</span> <code>\btry\s*\{[^}]*\bnextInt\s*\(\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>A catch block handles the bad entry<div class="small">in <code>ReadingLog.readTemperatures</code></div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\(\s*(?:(?:java\.util\.)?InputMismatchException|NoSuchElementException|Exception)\s+\w+\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>The catch block stores a usable reading<div class="small">in <code>ReadingLog.readTemperatures</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bcatch\s*\([^)]*\)\s*\{[\s\S]*?\btemps\s*\[\s*x\s*\]\s*=)(?=[\s\S]*\bSET_POINT\b)</code></div></td></tr><tr><td>C4</td><td>R3</td><td>The rest of the line is discarded<div class="small">in <code>ReadingLog.readTemperatures</code></div></td><td><div><span class="tag">require</span> <code>\bnextLine\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · nextInt() is tried</dt><dd><p>Put the <code>nextInt()</code> call inside a <code>try { ... }</code> block. It is the statement that throws when the line holds a word.</p></dd><dt>C2 · A catch block handles the bad entry</dt><dd><p>Follow the try block with <code>catch (InputMismatchException e)</code> (or <code>catch (Exception e)</code>). Without a matching catch block the exception still ends the program.</p><div class='small'><strong>Hint:</strong></div><p>InputMismatchException is in <code>java.util</code>, like Scanner: import it, or import <code>java.util.*</code>.</p></dd><dt>C3 · The catch block stores a usable reading</dt><dd><p>In the catch block, assign <code>temps[x]</code>: the previous reading, or <code>SET_POINT</code> when <code>x</code> is 0. Otherwise the slot keeps 0 and drags the average down.</p></dd><dt>C4 · The rest of the line is discarded</dt><dd><p>Call <code>input.nextLine()</code> after each reading to throw away what is left of the line. When <code>nextInt()</code> fails, the bad word stays in the input until something reads it.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Wrap only the risky statement: the one that converts the typed text into an int.</p></li><li><p>In the catch block you know <code>x</code>, so you know which reading failed and whether there is a previous one to copy.</p></li><li><p>Look at the line <code>70 F</code>: <code>nextInt()</code> succeeds there, yet something is left behind. Where must the line-clearing call go so it runs after a good reading too?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is copying the previous reading better for this report than leaving 0 in the array after a bad line?</p><div class="answer"><p>A 0 is a real-looking temperature that pulls the average far down (the lobby would average about 58 instead of 70). Repeating the previous reading keeps the average close to reality, and the printed message still tells staff that a value was estimated.</p></div></li><li><p>When <code>nextInt()</code> fails on <code>seventy</code>, which statements of the try block run, and which statement runs next?</p><div class="answer"><p>The try block is abandoned at the failing nextInt() call, so the assignment to temps[x] never happens. Control jumps to the matching catch block, and after it the statement following the try...catch pair (nextLine()) runs.</p></div></li></ol>
+<h2>Extension</h2><p>Readings above 110 or below 32 are almost certainly typos too, but <code>nextInt()</code> accepts them. Should those be handled with an exception or with a decision? Add the check you choose and print <code>Reading N skipped: out of range</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; the try block holds only the risky statement; the line-clearing call sits after the try...catch pair.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

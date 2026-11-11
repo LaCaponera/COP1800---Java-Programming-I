@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The playlist import that died three methods deep</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.7</div>
+  <h1>The playlist import that died three methods deep</h1>
+<h2>Objectives</h2><ul><li>Read a stack trace from the method that threw back to <code>main()</code></li><li>Explain how an uncaught exception travels up the call stack to the calling method</li><li>Choose the method where catching an exception makes sense, and leave the others alone</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Inside the loop of <code>importPlaylist()</code>, the call to <code>parseTrack()</code> is in a try block. A catch block for <code>NumberFormatException</code> prints <code>Skipped line N: &lt;line&gt;</code> (N counts from 1) and the loop continues.</li><li><strong>R2</strong> <code>parseTrack()</code> and <code>parseDuration()</code> contain no try or catch. The exception travels up to <code>importPlaylist()</code>.</li><li><strong>R3</strong> No <code>printStackTrace()</code> is left in the finished code.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Read the trace in the brief from the top <code>at Playlist...</code> line down. Which method threw the exception, and in what order were the methods called?</p><div class="answer"><p>parseDuration() threw it (line 25, parseInt on &quot;4x&quot;). main() called importPlaylist() (TestPlaylist.java line 11), which called parseTrack() at line 10, which called parseDuration() at line 18. The trace lists them in reverse: the most recent call is on top, and the java.base lines above them are inside parseInt().</p></div></li><li><p>If you wrapped the whole <code>for</code> loop in a try block instead of just the call, what total would the import report? Why?</p><div class="answer"><p>7 min 35 s: only the first two tracks (210 + 245 = 455 seconds). The exception at line 3 abandons the try block, and the loop is inside it, so Home Stretch is never read.</p></div></li></ol>
+<h2>Solution</h2><div class="file">Playlist.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">Playlist</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Each line looks like "Title|m:ss". Returns the total length in seconds.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">importPlaylist</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">for</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-mi">0</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">&lt;</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">;</span><span class="t-w"> </span><span class="t-o">++</span><span class="t-n">x</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-k">try</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">total</span><span class="t-w"> </span><span class="t-o">+=</span><span class="t-w"> </span><span class="t-n">parseTrack</span><span class="t-p">(</span><span class="t-n">lines</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">            </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">NumberFormatException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-p">{</span>
+<span class="t-w">                </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Skipped line "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">x</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">lines</span><span class="t-o">[</span><span class="t-n">x</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">total</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">parseTrack</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">line</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bar</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">line</span><span class="t-p">.</span><span class="t-na">indexOf</span><span class="t-p">(</span><span class="t-sc">'|'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">parseDuration</span><span class="t-p">(</span><span class="t-n">line</span><span class="t-p">.</span><span class="t-na">substring</span><span class="t-p">(</span><span class="t-n">bar</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">parseDuration</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">colon</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">time</span><span class="t-p">.</span><span class="t-na">indexOf</span><span class="t-p">(</span><span class="t-sc">':'</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">time</span><span class="t-p">.</span><span class="t-na">substring</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">colon</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">time</span><span class="t-p">.</span><span class="t-na">substring</span><span class="t-p">(</span><span class="t-n">colon</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-mi">1</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">minutes</span><span class="t-w"> </span><span class="t-o">*</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">seconds</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>Integer.parseInt(&quot;4x&quot;)</code> throws a <code>NumberFormatException</code> in <code>parseDuration()</code>. No method catches it, so it travels up the call stack: to <code>parseTrack()</code>, then <code>importPlaylist()</code>, then <code>main()</code>, then the JVM, which prints the trace and stops (pp. 415–417). The trace lists those calls from the top (where it was thrown) to the bottom (where it started), with a line number for each. Catching in <code>parseDuration()</code> would force it to invent a value such as 0, which hides the error; catching in <code>main()</code> would stop the import at the bad line. <code>importPlaylist()</code> knows the line and its number, so it can skip just that track. The try block must be inside the loop: a try block around the whole loop ends the import at line 3 and loses Home Stretch (the total becomes 7 min 35 s). <code>printStackTrace()</code> is useful while debugging but doesn&#x27;t belong in a finished program (p. 417). Catching <code>IllegalArgumentException</code>, the parent of <code>NumberFormatException</code>, also passes.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestPlaylist.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestPlaylist</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">roadTrip</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-s">"Golden Hour|3:30"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Low Tide|4:05"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Night Drive|3:4x"</span><span class="t-p">,</span>
+<span class="t-w">            </span><span class="t-s">"Home Stretch|2:55"</span>
+<span class="t-w">        </span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Playlist</span><span class="t-p">.</span><span class="t-na">importPlaylist</span><span class="t-p">(</span><span class="t-n">roadTrip</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Imported "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" min "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">seconds</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-mi">60</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" s"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Skipped line 3: Night Drive|3:4x
+Imported 10 min 30 s
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The call is tried inside the loop<div class="small">in <code>Playlist.importPlaylist</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s*\([^)]*\)\s*\{\s*try\s*\{[^}]*\bparseTrack\s*\(</code></div></td></tr><tr><td>C2</td><td>R1</td><td>A catch block skips the bad line<div class="small">in <code>Playlist.importPlaylist</code></div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\(\s*(?:NumberFormatException|IllegalArgumentException)\s+\w+\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>parseDuration() lets the exception travel up<div class="small">in <code>Playlist.parseDuration</code></div></td><td><div><span class="tag">require</span> <code>\bparseInt\s*\(</code></div><div><span class="tag">forbid</span> <code>\btry\b|\bcatch\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>parseTrack() lets the exception travel up<div class="small">in <code>Playlist.parseTrack</code></div></td><td><div><span class="tag">require</span> <code>\bparseDuration\s*\(</code></div><div><span class="tag">forbid</span> <code>\btry\b|\bcatch\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>No stack trace in the finished program<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bclass\s+Playlist\b</code></div><div><span class="tag">forbid</span> <code>\bprintStackTrace\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The call is tried inside the loop</dt><dd><p>Put the try block inside the <code>for</code> loop, around <code>total += parseTrack(lines[x]);</code>. Then a bad line abandons only its own iteration and the loop moves to the next track.</p></dd><dt>C2 · A catch block skips the bad line</dt><dd><p>Add <code>catch (NumberFormatException e)</code> after the try block and print <code>Skipped line N: </code> followed by the line. <code>Integer.parseInt()</code> throws that type for <code>4x</code>.</p></dd><dt>C3 · parseDuration() lets the exception travel up</dt><dd><p>Leave <code>parseDuration()</code> without try or catch. It can&#x27;t know whether a bad duration should be skipped, fixed or reported, so it lets the exception go to the method that called it.</p></dd><dt>C4 · parseTrack() lets the exception travel up</dt><dd><p>Leave <code>parseTrack()</code> without try or catch, too. The exception should pass through it to <code>importPlaylist()</code>, which knows the line number.</p></dd><dt>C5 · No stack trace in the finished program</dt><dd><p>Remove <code>printStackTrace()</code>. It is a good tool while you develop (p. 417), but a user importing a playlist only needs to know which line was skipped.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Use the trace: list the methods it passes through and ask, for each one, “does this method know enough to skip one track?”</p></li><li><p>The method that knows the line number is the one with the loop.</p></li><li><p>Where the try block starts matters. It has to restart for each line, so it belongs inside the loop&#x27;s braces.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is <code>parseDuration()</code> the wrong place to catch the exception, even though that is where it happens?</p><div class="answer"><p>parseDuration() only sees &quot;3:4x&quot;. To catch there it would have to return some number, such as 0, which silently adds a wrong track length. It doesn&#x27;t know the line or what the user wants, so it should let the exception travel up.</p></div></li><li><p>The book says cycling through the stack has an advantage and a disadvantage (p. 417). Name both, using this program.</p><div class="answer"><p>Advantage: each exception can be handled wherever it makes most sense, here in importPlaylist(). Disadvantage: in a larger program the place where an exception is caught can be far from where it started, so you need the trace to find the real source (parseDuration).</p></div></li></ol>
+<h2>Extension</h2><p>A friend types a line with no time at all: <code>Intro</code>. Run it. Which exception appears now, and in which method? Decide whether <code>importPlaylist()</code> should skip that line too, and handle it.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; the try block sits inside the loop; the helper methods are unchanged.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

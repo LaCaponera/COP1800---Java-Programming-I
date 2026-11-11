@@ -1,0 +1,61 @@
+POSTING CHECKLIST
+=================
+
+  Lab 10.1: The driver dashboard that crashed on a day off
+    students : 10.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.1_guide.html
+
+  Lab 10.2: The thermostat log that gave up after one typo
+    students : 10.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.2_guide.html
+
+  Lab 10.3: The bill splitter that won't compile
+    students : 10.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.3_guide.html
+
+  Lab 10.4: The laser cutter that stayed locked all afternoon
+    students : 10.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.4_guide.html
+
+  Lab 10.5: The group order that reported the wrong mistake
+    students : 10.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.5_guide.html
+
+  Lab 10.6: The greenhouse dashboard that won't compile
+    students : 10.6.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.6_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.6_guide.html
+
+  Lab 10.7: The playlist import that died three methods deep
+    students : 10.7.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.7_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.7_guide.html
+
+  Lab 10.8: The climbing class that said “Class full” to nobody
+    students : 10.8.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.8_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.8_guide.html
+
+  Lab 10.9: The night bus that left at 00:0-15
+    students : 10.9.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.9_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.9_guide.html
+
+  Lab 10.10: The check-in kiosk that wouldn't compile on a Mac
+    students : 10.10.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/10.10_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/10.10_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.

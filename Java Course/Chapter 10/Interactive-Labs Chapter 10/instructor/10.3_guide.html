@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The bill splitter that won&#x27;t compile</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.3</div>
+  <h1>The bill splitter that won&#x27;t compile</h1>
+<h2>Objectives</h2><ul><li>Follow one try block with several catch blocks, each with its own response</li><li>Order catch blocks from specific to general so none of them is unreachable</li><li>Explain why only the first failing statement in a try block throws</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> A <code>catch (ArithmeticException ...)</code> block sets the result to <code>Enter at least 1 person</code>.</li><li><strong>R2</strong> A <code>catch (NumberFormatException ...)</code> block sets the result to <code>Use whole numbers, like 84</code>.</li><li><strong>R3</strong> The general <code>catch (Exception ...)</code> block stays, as the last catch block, so the file compiles.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Read the compiler error in the brief. Why does Java refuse a catch block for ArithmeticException after a catch block for Exception?</p><div class="answer"><p>An ArithmeticException is an Exception, so the first block would always catch it. The second block can never run; it is unreachable, and Java treats unreachable code as an error (p. 406).</p></div></li><li><p>Once it compiles, what will <code>split(&quot;ten&quot;, &quot;0&quot;)</code> return: the message about people or the one about whole numbers? Why?</p><div class="answer"><p>The whole-numbers message. parseInt(&quot;ten&quot;) throws first, the rest of the try block is abandoned, and the division by 0 never happens.</p></div></li></ol>
+<h2>Solution</h2><div class="file">BillSplitter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">BillSplitter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Splits a bill typed into the app. Amounts are whole dollars.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">split</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">billText</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">peopleText</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">bill</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">billText</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Integer</span><span class="t-p">.</span><span class="t-na">parseInt</span><span class="t-p">(</span><span class="t-n">peopleText</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">each</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bill</span><span class="t-w"> </span><span class="t-o">/</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">left</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">bill</span><span class="t-w"> </span><span class="t-o">%</span><span class="t-w"> </span><span class="t-n">people</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"$"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">each</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" each, $"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">left</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" left for the tip jar"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">ArithmeticException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Enter at least 1 person"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">NumberFormatException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Use whole numbers, like 84"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">Exception</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">result</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-s">"Something went wrong"</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">result</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>Catch blocks are examined in order, and the first one whose type matches runs (p. 404). <code>Exception</code> matches every exception here, so a block for it placed first makes every later block unreachable, and the compiler rejects the file with “has already been caught” (p. 406). Put the “smaller baskets” first: <code>ArithmeticException</code> and <code>NumberFormatException</code> are unrelated (neither extends the other), so their order doesn&#x27;t matter, but <code>Exception</code> must come last. For <code>split(&quot;ten&quot;, &quot;0&quot;)</code> only <code>parseInt(&quot;ten&quot;)</code> throws: the try block is abandoned before the division, so the message is about whole numbers (p. 404). Note for instructors: the multi-catch on p. 407 is printed with a comma; Java (since Java 7) writes it <code>catch (ArithmeticException | InputMismatchException e)</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestBillSplitter.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestBillSplitter</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">BillSplitter</span><span class="t-p">.</span><span class="t-na">split</span><span class="t-p">(</span><span class="t-s">"84"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"4"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">BillSplitter</span><span class="t-p">.</span><span class="t-na">split</span><span class="t-p">(</span><span class="t-s">"85"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"4"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">BillSplitter</span><span class="t-p">.</span><span class="t-na">split</span><span class="t-p">(</span><span class="t-s">"84"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"0"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">BillSplitter</span><span class="t-p">.</span><span class="t-na">split</span><span class="t-p">(</span><span class="t-s">"84.50"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"3"</span><span class="t-p">));</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">BillSplitter</span><span class="t-p">.</span><span class="t-na">split</span><span class="t-p">(</span><span class="t-s">"ten"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"0"</span><span class="t-p">));</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">$21 each, $0 left for the tip jar
+$21 each, $1 left for the tip jar
+Enter at least 1 person
+Use whole numbers, like 84
+Use whole numbers, like 84
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>A catch block for ArithmeticException<div class="small">in <code>BillSplitter.split</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\(\s*ArithmeticException\s+\w+\s*\)\s*\{[^}]*\bresult\s*=\s*\&quot;Enter at least 1 person\&quot;</code></div></td></tr><tr><td>C2</td><td>R2</td><td>A catch block for NumberFormatException<div class="small">in <code>BillSplitter.split</code></div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\(\s*NumberFormatException\s+\w+\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The general catch block comes last<div class="small">in <code>BillSplitter.split</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bcatch\s*\(\s*ArithmeticException\b[\s\S]*\bcatch\s*\(\s*Exception\s+\w+\s*\))(?=[\s\S]*\bcatch\s*\(\s*NumberFormatException\b[\s\S]*\bcatch\s*\(\s*Exception\s+\w+\s*\))</code></div><div><span class="tag">forbid</span> <code>\bcatch\s*\(\s*Exception\s+\w+\s*\)[\s\S]*\bcatch\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · A catch block for ArithmeticException</dt><dd><p>Keep a <code>catch (ArithmeticException e)</code> block and give it its own message for a party of 0. Dividing by 0 people is the only thing that throws this type here.</p></dd><dt>C2 · A catch block for NumberFormatException</dt><dd><p>Add a <code>catch (NumberFormatException e)</code> block. <code>Integer.parseInt()</code> throws it when the text isn&#x27;t a whole number, such as <code>84.50</code> or <code>ten</code>.</p><div class='small'><strong>Hint:</strong></div><p>Which statements in the try block convert text to numbers?</p></dd><dt>C3 · The general catch block comes last</dt><dd><p>Keep <code>catch (Exception e)</code> as the safety net, but move it below the specific blocks. A general block in front of a specific one makes the specific one unreachable, and the file won&#x27;t compile.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Read the error again: which block is in the way of which?</p></li><li><p>Two different statements can fail with two different types: the conversions and the division. Each type gets its own block.</p></li><li><p>Think of the blocks as baskets from the smallest to the biggest (p. 406): an exception falls past the ones that don&#x27;t fit until one holds it. The biggest basket goes at the bottom.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Does it matter whether the ArithmeticException block or the NumberFormatException block comes first? Explain using the class hierarchy.</p><div class="answer"><p>No. Neither class extends the other (ArithmeticException and NumberFormatException are separate RuntimeExceptions), so neither can catch the other&#x27;s exceptions. Order only matters between a class and its own ancestors, such as Exception.</p></div></li><li><p>With specific blocks in place, is the <code>catch (Exception e)</code> block still worth keeping? Give a reason for or against.</p><div class="answer"><p>For: it keeps the app running if a later change adds a statement that throws something unexpected. Against: it hides bugs behind a vague message, so it should at least log what it caught. Either answer is fine with a reason.</p></div></li></ol>
+<h2>Extension</h2><p>Servers asked for one message, <em>Check the amounts</em>, for both kinds of input problem. Replace the two specific blocks with one multi-catch, <code>catch (ArithmeticException | NumberFormatException e)</code>. Then try adding <code>Exception</code> to that list and read the compiler error.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; catch blocks ordered from specific to general; each message matches its cause.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

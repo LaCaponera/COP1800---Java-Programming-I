@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The check-in kiosk that wouldn&#x27;t compile on a Mac</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.10</div>
+  <h1>The check-in kiosk that wouldn&#x27;t compile on a Mac</h1>
+<h2>Objectives</h2><ul><li>Call a method written by others that throws a checked <code>IOException</code></li><li>Decide between catching the exception and adding <code>throws IOException</code> to a header</li><li>Keep a program running, at a reduced level, when an optional tool can&#x27;t start</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The <code>exec()</code> call is in a try block, followed by <code>catch (IOException ...)</code> that prints <code>Could not start &lt;command[0]&gt;</code> and returns <code>false</code>.</li><li><strong>R2</strong> <code>openTool()</code> returns <code>true</code> when <code>exec()</code> succeeds, and its header has no <code>throws</code> clause.</li><li><strong>R3</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s only new statement is the call to <code>exec()</code>. Why does that one statement stop the whole file from compiling, when <code>nextLine()</code> in the kiosk compiles without any try block?</p><div class="answer"><p>exec() declares a checked IOException, so the compiler requires openTool() to catch it or declare it. nextLine() can only throw unchecked exceptions, which don&#x27;t need to be caught or declared.</p></div></li><li><p>If <code>openTool()</code> declared <code>throws IOException</code> (and so did <code>main()</code>), what would happen on a kiosk where the keyboard program can&#x27;t start?</p><div class="answer"><p>The IOException would travel up to main() and out to the JVM, and the program would end with a stack trace before asking for the patient&#x27;s name. Check-in would stop.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">KeyboardLauncher.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">KeyboardLauncher</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Starts a helper program, such as the Windows on-screen keyboard.</span>
+<span class="t-w">    </span><span class="t-c1">// command[0] is the program; any other elements are its arguments.</span>
+<span class="t-w">    </span><span class="t-c1">// Returns true if the program started.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">openTool</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">command</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R1, R2): exec() throws a checked IOException, so this doesn't compile.</span>
+<span class="t-w">        </span><span class="t-n">Process</span><span class="t-w"> </span><span class="t-n">proc</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Runtime</span><span class="t-p">.</span><span class="t-na">getRuntime</span><span class="t-p">().</span><span class="t-na">exec</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">CheckInKiosk.java (read-only for students)</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-c1">// The real kiosk. Run it on Windows to see the on-screen keyboard (p. 431).</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">CheckInKiosk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">keyboard</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"cmd"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"/c"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"C:\\Windows\\System32\\osk.exe"</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-o">!</span><span class="t-n">KeyboardLauncher</span><span class="t-p">.</span><span class="t-na">openTool</span><span class="t-p">(</span><span class="t-n">keyboard</span><span class="t-p">))</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tip: type with the physical keyboard"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">in</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Enter name &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Hello, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"!"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">KeyboardLauncher.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.io.IOException</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">KeyboardLauncher</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-c1">// Starts a helper program, such as the Windows on-screen keyboard.</span>
+<span class="t-w">    </span><span class="t-c1">// command[0] is the program; any other elements are its arguments.</span>
+<span class="t-w">    </span><span class="t-c1">// Returns true if the program started.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-nf">openTool</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">command</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">Process</span><span class="t-w"> </span><span class="t-n">proc</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">Runtime</span><span class="t-p">.</span><span class="t-na">getRuntime</span><span class="t-p">().</span><span class="t-na">exec</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">true</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">IOException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Could not start "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">command</span><span class="t-o">[</span><span class="t-mi">0</span><span class="t-o">]</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-kc">false</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p><code>exec()</code> declares <code>throws IOException</code>, a checked exception, so a method that calls it must catch it or specify it (p. 430; section 10.6). Specifying it all the way up to <code>main()</code>, the alternative in the note on p. 431, would end the program when the keyboard can&#x27;t start, so the kiosk catches it in <code>openTool()</code> and continues without the on-screen keyboard: the program stays fault tolerant (p. 396). The book&#x27;s Figure 10-48 passes one String, <code>exec(&quot;cmd /c ...&quot;)</code>; this lab uses the <code>String[]</code> form because <code>exec(String)</code> has been deprecated since JDK 18, so newer compilers warn about it. On Windows, <code>CheckInKiosk</code> really opens the keyboard. Running a command that doesn&#x27;t exist is the reliable way to make <code>exec()</code> throw on every operating system, which is why the test program asks for <code>no-such-keyboard-app</code>. The unused <code>proc</code> variable mirrors Figure 10-48; <code>Runtime.getRuntime().exec(command);</code> alone is fine too.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestKeyboardLauncher.java</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">java.util.Scanner</span><span class="t-p">;</span>
+
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestKeyboardLauncher</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">missing</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-p">{</span><span class="t-s">"no-such-keyboard-app"</span><span class="t-p">};</span>
+<span class="t-w">        </span><span class="t-kt">boolean</span><span class="t-w"> </span><span class="t-n">opened</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">KeyboardLauncher</span><span class="t-p">.</span><span class="t-na">openTool</span><span class="t-p">(</span><span class="t-n">missing</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Keyboard opened: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">opened</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-o">!</span><span class="t-n">opened</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Tip: type with the physical keyboard"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-n">Scanner</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">Scanner</span><span class="t-p">(</span><span class="t-s">"Rosa\n"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">print</span><span class="t-p">(</span><span class="t-s">"Enter name &gt;&gt; "</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">input</span><span class="t-p">.</span><span class="t-na">nextLine</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Hello, "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"!"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Could not start no-such-keyboard-app
+Keyboard opened: false
+Tip: type with the physical keyboard
+Enter name &gt;&gt; Hello, Rosa!
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>exec() is tried and the IOException caught<div class="small">in <code>KeyboardLauncher.openTool</code></div></td><td><div><span class="tag">require</span> <code>\btry\s*\{[^}]*\bexec\s*\([^}]*\}\s*catch\s*\(\s*(?:java\.io\.)?IOException\s+\w+\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The catch block reports and returns false<div class="small">in <code>KeyboardLauncher.openTool</code></div></td><td><div><span class="tag">require</span> <code>\bcatch\s*\([^)]*\)\s*\{[^}]*\breturn\s+false\s*;</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Success returns true and nothing is passed on<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bboolean\s+openTool\s*\(\s*String\s*\[\s*\]\s*\w+\s*\)\s*\{</code></div><div><span class="tag">forbid</span> <code>\bopenTool\s*\([^)]*\)\s*throws\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · exec() is tried and the IOException caught</dt><dd><p>Put the <code>exec()</code> call in a try block and follow it with <code>catch (IOException e)</code>. That handles the failure here, so the kiosk can carry on without the on-screen keyboard.</p></dd><dt>C2 · The catch block reports and returns false</dt><dd><p>In the catch block, print <code>&quot;Could not start &quot; + command[0]</code> and <code>return false;</code>, so the caller knows to show the tip.</p></dd><dt>C3 · Success returns true and nothing is passed on</dt><dd><p>Keep the header as <code>public static boolean openTool(String[] command)</code>, with no <code>throws</code> clause. The clinic wants the kiosk to survive a missing keyboard, so this method handles the exception.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Read the compiler message: it gives you the two choices from section 10.6. The brief tells you which one the clinic wants.</p></li><li><p>Two outcomes, two return values: one at the end of the try block, one in the catch block.</p></li><li><p>The program name is the first element of the array the caller passed in.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The note on p. 431 says many programmers would simply add <code>throws IOException</code> to <code>main()</code>. When is that reasonable, and why wasn&#x27;t it here?</p><div class="answer"><p>It is reasonable in a small demo where failing to open the keyboard can just end the program. Here the keyboard is optional and check-in is essential, so the failure must be handled where it happens and the program must continue.</p></div></li><li><p>Fault-tolerant programs keep working “possibly at a reduced level” when something fails (p. 396). What is the reduced level for this kiosk?</p><div class="answer"><p>Patients can still check in, but only with the physical keyboard: the on-screen keyboard isn&#x27;t available, and the kiosk shows a tip instead of crashing.</p></div></li></ol>
+<h2>Extension</h2><p>On Windows, change the test program to open the calculator with <code>{&quot;cmd&quot;, &quot;/c&quot;, &quot;C:\\Windows\\System32\\calc.exe&quot;}</code> (the You Do It on p. 432). Then write a second version of <code>openTool()</code> that uses <code>ProcessBuilder</code> instead of <code>Runtime.exec()</code> and compare the two.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; openTool() has one try block, one catch block and a return value on each path.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

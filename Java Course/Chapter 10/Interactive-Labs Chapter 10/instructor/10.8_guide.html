@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The climbing class that said “Class full” to nobody</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1800 · Java Programming I · Lab 10.8</div>
+  <h1>The climbing class that said “Class full” to nobody</h1>
+<h2>Objectives</h2><ul><li>Create an Exception subclass whose constructor passes a message to <code>super()</code></li><li>Throw your exception from a method and declare it in that method&#x27;s header</li><li>Catch your exception in the caller and respond to it with <code>getMessage()</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>ClassFullException</code> extends <code>Exception</code>. Its constructor takes a <code>String</code> class name and passes <code>&lt;name&gt; is full</code> to <code>super()</code>.</li><li><strong>R2</strong> <code>enroll()</code> declares <code>throws ClassFullException</code> and throws a new <code>ClassFullException</code> when the roster is full, instead of printing.</li><li><strong>R3</strong> <code>FrontDesk.signUp()</code> catches the <code>ClassFullException</code>, adds the member to the waitlist, and prints <code>&lt;message&gt;; &lt;member&gt; is #N on the waitlist</code>.</li><li><strong>R4</strong> Running the test program prints exactly what it expects. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, what does the front desk print when Priya signs up for a full class? Why is that worse than a crash?</p><div class="answer"><p>Class full, then Priya is in Bouldering 101. enroll() returns normally, so signUp() can&#x27;t tell anything went wrong and confirms a place Priya doesn&#x27;t have. A crash would at least be noticed.</p></div></li><li><p>Why should <code>ClassFullException</code> extend <code>Exception</code> rather than <code>Error</code>, and what does that choice force on every caller of <code>enroll()</code>?</p><div class="answer"><p>Error is for serious problems a program can&#x27;t recover from; a full class is recoverable (waitlist, another session). Extending Exception (not RuntimeException) makes it checked, so every caller must catch it or declare it.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">ClassFullException.java</div><pre class="code-block"><code><span class="t-c1">// TODO (R1): make this a checked exception. Its constructor takes the</span>
+<span class="t-c1">// class name and passes a message such as "Bouldering 101 is full" up.</span>
+<span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ClassFullException</span>
+<span class="t-p">{</span>
+<span class="t-p">}</span></code></pre><div class="file">ClimbingClass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ClimbingClass</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">roster</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">ClimbingClass</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">className</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">places</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">className</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">roster</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-n">places</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getCount</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-c1">// TODO (R2): printing tells the caller nothing. Throw a</span>
+<span class="t-w">    </span><span class="t-c1">// ClassFullException instead, and say so in the header.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">enroll</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">roster</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"Class full"</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-k">return</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-n">roster</span><span class="t-o">[</span><span class="t-n">count</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">FrontDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">FrontDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">waitlist</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">10</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">waiting</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Signs a member up. When the class is full, the member goes on the waitlist.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">signUp</span><span class="t-p">(</span><span class="t-n">ClimbingClass</span><span class="t-w"> </span><span class="t-n">session</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-c1">// TODO (R3): catch the ClassFullException and use the waitlist.</span>
+<span class="t-w">        </span><span class="t-n">session</span><span class="t-p">.</span><span class="t-na">enroll</span><span class="t-p">(</span><span class="t-n">member</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">member</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is in "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">session</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">());</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getWaiting</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">waiting</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h2>Solution</h2><div class="file">ClassFullException.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ClassFullException</span><span class="t-w"> </span><span class="t-kd">extends</span><span class="t-w"> </span><span class="t-n">Exception</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">ClassFullException</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">className</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-kd">super</span><span class="t-p">(</span><span class="t-n">className</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is full"</span><span class="t-p">);</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">ClimbingClass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">ClimbingClass</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">roster</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-nf">ClimbingClass</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">className</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">places</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">name</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">className</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-n">roster</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-n">places</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-nf">getName</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">name</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getCount</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">enroll</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">)</span><span class="t-w"> </span><span class="t-kd">throws</span><span class="t-w"> </span><span class="t-n">ClassFullException</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">if</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">count</span><span class="t-w"> </span><span class="t-o">==</span><span class="t-w"> </span><span class="t-n">roster</span><span class="t-p">.</span><span class="t-na">length</span><span class="t-p">)</span>
+<span class="t-w">            </span><span class="t-k">throw</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ClassFullException</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">roster</span><span class="t-o">[</span><span class="t-n">count</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">;</span>
+<span class="t-w">        </span><span class="t-o">++</span><span class="t-n">count</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><div class="file">FrontDesk.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">FrontDesk</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">waitlist</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-o">[</span><span class="t-mi">10</span><span class="t-o">]</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-kd">private</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-n">waiting</span><span class="t-p">;</span>
+
+<span class="t-w">    </span><span class="t-c1">// Signs a member up. When the class is full, the member goes on the waitlist.</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">signUp</span><span class="t-p">(</span><span class="t-n">ClimbingClass</span><span class="t-w"> </span><span class="t-n">session</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-n">String</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">session</span><span class="t-p">.</span><span class="t-na">enroll</span><span class="t-p">(</span><span class="t-n">member</span><span class="t-p">);</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">member</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is in "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">session</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">());</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">ClassFullException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">waitlist</span><span class="t-o">[</span><span class="t-n">waiting</span><span class="t-o">]</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-o">++</span><span class="t-n">waiting</span><span class="t-p">;</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">e</span><span class="t-p">.</span><span class="t-na">getMessage</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"; "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">member</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" is #"</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">waiting</span>
+<span class="t-w">                </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" on the waitlist"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kt">int</span><span class="t-w"> </span><span class="t-nf">getWaiting</span><span class="t-p">()</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-k">return</span><span class="t-w"> </span><span class="t-n">waiting</span><span class="t-p">;</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+<h3>Walkthrough</h3><p>To be throwable, a class must extend a subclass of <code>Throwable</code>; for recoverable situations it extends <code>Exception</code>, and by convention its name ends in <code>Exception</code> (p. 419). Passing the text to <code>super(message)</code> uses the <code>Exception(String message)</code> constructor, so <code>getMessage()</code> returns it later (p. 419, Figure 10-37). Because <code>ClassFullException</code> extends <code>Exception</code> and not <code>RuntimeException</code>, it is checked: <code>enroll()</code> must declare it, and every caller must catch or declare it (section 10.6). <code>throw new ClassFullException(name)</code> creates the object only when it is needed, as in Figure 10-38 (pp. 419–420). The front desk and the app react differently to the same exception, which is the point of throwing it rather than printing (p. 421). Keep the success message inside the try block: if <code>enroll()</code> throws, it must not print that the member is in.</p>
+<h2>Test program</h2><p class="small">Students run it in an IDE and paste the output into the page.</p><div class="file">TestClimbingClass.java</div><pre class="code-block"><code><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">class</span> <span class="t-nc">TestClimbingClass</span>
+<span class="t-p">{</span>
+<span class="t-w">    </span><span class="t-kd">public</span><span class="t-w"> </span><span class="t-kd">static</span><span class="t-w"> </span><span class="t-kt">void</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">(</span><span class="t-n">String</span><span class="t-o">[]</span><span class="t-w"> </span><span class="t-n">args</span><span class="t-p">)</span>
+<span class="t-w">    </span><span class="t-p">{</span>
+<span class="t-w">        </span><span class="t-n">ClimbingClass</span><span class="t-w"> </span><span class="t-n">intro</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">ClimbingClass</span><span class="t-p">(</span><span class="t-s">"Bouldering 101"</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-mi">2</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">FrontDesk</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-w"> </span><span class="t-o">=</span><span class="t-w"> </span><span class="t-k">new</span><span class="t-w"> </span><span class="t-n">FrontDesk</span><span class="t-p">();</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">signUp</span><span class="t-p">(</span><span class="t-n">intro</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Maya"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">signUp</span><span class="t-p">(</span><span class="t-n">intro</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Jonas"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">signUp</span><span class="t-p">(</span><span class="t-n">intro</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Priya"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">signUp</span><span class="t-p">(</span><span class="t-n">intro</span><span class="t-p">,</span><span class="t-w"> </span><span class="t-s">"Leo"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-n">intro</span><span class="t-p">.</span><span class="t-na">getName</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">": "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">intro</span><span class="t-p">.</span><span class="t-na">getCount</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" enrolled, "</span>
+<span class="t-w">            </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">desk</span><span class="t-p">.</span><span class="t-na">getWaiting</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">" waiting"</span><span class="t-p">);</span>
+
+<span class="t-w">        </span><span class="t-c1">// The phone app calls enroll() directly and reacts in its own way.</span>
+<span class="t-w">        </span><span class="t-k">try</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">intro</span><span class="t-p">.</span><span class="t-na">enroll</span><span class="t-p">(</span><span class="t-s">"Sam"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">        </span><span class="t-k">catch</span><span class="t-w"> </span><span class="t-p">(</span><span class="t-n">ClassFullException</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">)</span>
+<span class="t-w">        </span><span class="t-p">{</span>
+<span class="t-w">            </span><span class="t-n">System</span><span class="t-p">.</span><span class="t-na">out</span><span class="t-p">.</span><span class="t-na">println</span><span class="t-p">(</span><span class="t-s">"App: "</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-n">e</span><span class="t-p">.</span><span class="t-na">getMessage</span><span class="t-p">()</span><span class="t-w"> </span><span class="t-o">+</span><span class="t-w"> </span><span class="t-s">"; try tomorrow"</span><span class="t-p">);</span>
+<span class="t-w">        </span><span class="t-p">}</span>
+<span class="t-w">    </span><span class="t-p">}</span>
+<span class="t-p">}</span></code></pre><h3>Expected output</h3><pre class="output">Maya is in Bouldering 101
+Jonas is in Bouldering 101
+Bouldering 101 is full; Priya is #1 on the waitlist
+Bouldering 101 is full; Leo is #2 on the waitlist
+Bouldering 101: 2 enrolled, 2 waiting
+App: Bouldering 101 is full; try tomorrow
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>ClassFullException is a checked exception<div class="small">whole file of <code>ClassFullException.java</code></div></td><td><div><span class="tag">require</span> <code>\bclass\s+ClassFullException\s+extends\s+Exception\b</code></div></td></tr><tr><td>C2</td><td>R1</td><td>The constructor passes the message to super()<div class="small">in <code>ClassFullException.ClassFullException</code> of <code>ClassFullException.java</code></div></td><td><div><span class="tag">require</span> <code>\bsuper\s*\(\s*\w+\s*\+</code></div></td></tr><tr><td>C3</td><td>R2</td><td>enroll() declares the exception<div class="small">whole file of <code>ClimbingClass.java</code></div></td><td><div><span class="tag">require</span> <code>\benroll\s*\(\s*String\s+\w+\s*\)\s*throws\s+ClassFullException\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>enroll() throws instead of printing<div class="small">in <code>ClimbingClass.enroll</code> of <code>ClimbingClass.java</code></div></td><td><div><span class="tag">require</span> <code>\bthrow\s*\(?\s*new\s+ClassFullException\s*\(\s*(?:this\s*\.\s*)?name\s*\)</code></div><div><span class="tag">forbid</span> <code>\bSystem\s*\.\s*out\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The front desk catches the exception<div class="small">in <code>FrontDesk.signUp</code> of <code>FrontDesk.java</code></div></td><td><div><span class="tag">require</span> <code>\btry\s*\{[^}]*\benroll\s*\([^}]*\}\s*catch\s*\(\s*ClassFullException\s+\w+\s*\)</code></div></td></tr><tr><td>C6</td><td>R3</td><td>The waitlist message uses getMessage()<div class="small">in <code>FrontDesk.signUp</code> of <code>FrontDesk.java</code></div></td><td><div><span class="tag">require</span> <code>\bgetMessage\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · ClassFullException is a checked exception</dt><dd><p>Write the header as <code>public class ClassFullException extends Exception</code>. Extending <code>Exception</code> (not <code>RuntimeException</code>) makes it a checked exception, so callers can&#x27;t ignore it.</p></dd><dt>C2 · The constructor passes the message to super()</dt><dd><p>Give the class a constructor <code>public ClassFullException(String className)</code> whose first statement is <code>super(className + &quot; is full&quot;);</code>. The parent stores the text, and <code>getMessage()</code> returns it.</p><div class='small'><strong>Hint:</strong></div><p>Figure 10-37 (p. 419) passes a fixed String to <code>super()</code>; yours builds it from the parameter.</p></dd><dt>C3 · enroll() declares the exception</dt><dd><p>Add <code>throws ClassFullException</code> to the end of the <code>enroll()</code> header. It is a checked exception, so a method that throws it without catching it must say so.</p></dd><dt>C4 · enroll() throws instead of printing</dt><dd><p>Replace the print and the <code>return</code> with <code>throw new ClassFullException(name);</code>. Throwing hands the problem to the caller, and the caller decides what to say.</p></dd><dt>C5 · The front desk catches the exception</dt><dd><p>Put <code>session.enroll(member);</code> and the success message in a try block, followed by <code>catch (ClassFullException e)</code>. In the catch block, add the member to <code>waitlist</code> and print the message.</p></dd><dt>C6 · The waitlist message uses getMessage()</dt><dd><p>Start the waitlist line with <code>e.getMessage()</code>, so the wording lives in one place: the exception class.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start with ClassFullException.java: compare it with HighBalanceException in Figure 10-37 (p. 419). What changes when the message depends on the class name?</p></li><li><p>In <code>enroll()</code>, the <code>if</code> stays; only what happens inside it changes. Remember the header, too: the compiler checks it.</p></li><li><p>In <code>signUp()</code>, the line that says the member is in must only run if <code>enroll()</code> succeeded. Which block guarantees that?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The front desk and the app handle the full class differently. Why is that only possible because <code>enroll()</code> throws instead of printing?</p><div class="answer"><p>Printing decides the response inside enroll(), once for everyone, and the caller never learns about it. Throwing reports the problem to whoever called, so each caller can choose: the desk uses the waitlist, the app suggests tomorrow&#x27;s sessions.</p></div></li><li><p>The book warns against creating too many Exception types (p. 421). Was a new class justified here, or would a built-in exception have done? Explain.</p><div class="answer"><p>Justified: no built-in exception means “class full”, and catching something general like IllegalStateException could also catch unrelated bugs. A named type documents the situation and lets callers catch exactly it. (A well-argued no is acceptable too.)</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>ClassCancelledException</code> for a session the gym cancels, thrown by <code>enroll()</code> when a <code>cancelled</code> flag is true. Should the front desk handle it in the same catch block or a separate one? Write the catch block(s) and a test line.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements met</td><td>5</td><td>All structure checks pass and the test program&#x27;s output matches (see the lab report).</td></tr><tr><td>Reasoning</td><td>3</td><td>Warm-up and reflection answers are specific to this code, in the student&#x27;s own words.</td></tr><tr><td>Style</td><td>2</td><td>Allman braces kept; the exception class is small and named ...Exception; the success message prints only after a successful enroll().</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
